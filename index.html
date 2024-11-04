@@ -8,7 +8,7 @@
     <!-- SDKs de Pagamento -->
     <script src="https://sdk.mercadopago.com/js/v2"></script>
     <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=BRL"></script>
-    <!-- Font Awesome - Versão mais recente -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
@@ -95,37 +95,46 @@
 
         .payment-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.5rem;
             margin-bottom: 1.5rem;
         }
 
         .payment-option {
-            border: 2px solid #eee;
-            border-radius: 8px;
-            padding: 1rem;
+            aspect-ratio: 1;
+            padding: 0.5rem;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border-radius: 4px;
+            border: none;
         }
 
         .payment-option:hover {
-            border-color: #F79D44;
+            background: rgba(247, 157, 68, 0.1);
             transform: translateY(-2px);
         }
 
         .payment-option.selected {
-            border-color: #F79D44;
             background: rgba(247, 157, 68, 0.1);
         }
 
         .payment-option i {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+            font-size: 2rem;
+            margin-bottom: 0.3rem;
             display: block;
         }
 
-        /* Cores específicas para cada ícone de pagamento */
+        .payment-option div {
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+
         .payment-option[data-method="mercadopago"] i {
             color: #009EE3;
         }
@@ -236,7 +245,8 @@
             }
 
             .payment-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
             }
         }
     </style>
@@ -254,7 +264,7 @@
                 <li>Bancos de dados personalizáveis</li>
                 <li>Formatação avançada</li>
                 <li>Integração com Word</li>
-                <li>Atualizações para sempre</li>
+                <li>Atualizações por 1 ano</li>
                 <li>Suporte prioritário</li>
             </ul>
             <div class="price">
@@ -332,18 +342,14 @@
 
             paymentOptions.forEach(option => {
                 option.addEventListener('click', function () {
-                    // Remove a classe selected de todas as opções
                     paymentOptions.forEach(opt => opt.classList.remove('selected'));
-                    // Adiciona a classe selected à opção clicada
                     this.classList.add('selected');
 
-                    // Aqui você pode adicionar a lógica para mostrar o formulário correspondente
                     const method = this.dataset.method;
                     const forms = document.querySelectorAll('#payment-forms > div');
                     forms.forEach(form => form.style.display = 'none');
                     document.getElementById(`${method}-form`).style.display = 'block';
 
-                    // Mostra o formulário de registro
                     document.getElementById('register-form').style.display = 'block';
                 });
             });

@@ -1,218 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TAP - Purchase</title>
     <script src="https://sdk.mercadopago.com/js/v2"></script>
     <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=BRL"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Work Sans', sans-serif;
-        }
-
-        body {
-            background: #fff;
-            color: #2E2E2E;
-            line-height: 1.5;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 1rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            background: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            border-radius: 8px;
-        }
-
-        .product {
-            padding-right: 2rem;
-            border-right: 1px solid #eee;
-        }
-
-        .logo {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .logo img {
-            max-width: 180px;
-        }
-
-        h1, h2 {
-            color: #F79D44;
-            margin-bottom: 1rem;
-        }
-
-        .features {
-            list-style: none;
-            margin-bottom: 1.5rem;
-        }
-
-        .features li {
-            margin-bottom: 0.5rem;
-            padding-left: 1.5rem;
-            position: relative;
-        }
-
-        .features li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: #4CAF50;
-        }
-
-        .price {
-            text-align: center;
-            padding: 1rem;
-            background: #f8f8f8;
-            border-radius: 8px;
-            margin: 1rem 0;
-        }
-
-        .price-value {
-            font-size: 2rem;
-            color: #F79D44;
-            font-weight: bold;
-        }
-
-        .payment {
-            padding-left: 1rem;
-        }
-
-        .payment-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .payment-option {
-            border: 2px solid #eee;
-            border-radius: 8px;
-            padding: 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .payment-option:hover {
-            border-color: #F79D44;
-        }
-
-        .payment-option.selected {
-            border-color: #F79D44;
-            background: rgba(247,157,68,0.1);
-        }
-
-        .payment-option img {
-            width: 50px;
-            height: 50px;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid #eee;
-            border-radius: 6px;
-            transition: border-color 0.2s;
-        }
-
-        .form-group input:focus {
-            border-color: #F79D44;
-            outline: none;
-        }
-
-        .strength-meter {
-            height: 4px;
-            background: #eee;
-            margin-top: 0.5rem;
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .strength-meter div {
-            height: 100%;
-            width: 0;
-            transition: width 0.3s, background-color 0.3s;
-        }
-
-        .requirements {
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-        }
-
-        .error {
-            color: #ff4444;
-            font-size: 0.8rem;
-            margin-top: 0.3rem;
-        }
-
-        .success {
-            color: #4CAF50;
-        }
-
-        .btn {
-            background: #F79D44;
-            color: white;
-            border: none;
-            padding: 1rem;
-            border-radius: 6px;
-            width: 100%;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .btn:hover {
-            background: #e58d34;
-        }
-
-        .btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-
-            .product {
-                padding-right: 0;
-                border-right: none;
-                border-bottom: 1px solid #eee;
-                padding-bottom: 1.5rem;
-            }
-
-            .payment {
-                padding-left: 0;
-            }
-
-            .payment-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <div class="container">
         <div class="product">
@@ -229,7 +26,7 @@
                 <li>Suporte prioritário</li>
             </ul>
             <div class="price">
-                <div class="price-value">R$ 99,99</div>
+                <div class="price-value">R$ 49,90</div>
                 <div>Licença anual</div>
             </div>
         </div>
@@ -249,12 +46,22 @@
                     <img src="pix.png" alt="PIX">
                     <div>PIX</div>
                 </div>
+                <div class="payment-option" data-method="pagseguro">
+                    <img src="pagseguro.png" alt="PagSeguro">
+                    <div>PagSeguro</div>
+                </div>
+                <div class="payment-option" data-method="creditcard">
+                    <img src="creditcard.png" alt="Cartão de Crédito">
+                    <div>Cartão de Crédito</div>
+                </div>
             </div>
 
             <div id="payment-forms">
                 <div id="mercadopago-form" style="display:none"></div>
                 <div id="paypal-form" style="display:none"></div>
                 <div id="pix-form" style="display:none"></div>
+                <div id="pagseguro-form" style="display:none"></div>
+                <div id="creditcard-form" style="display:none"></div>
             </div>
 
             <form id="register-form" style="display:none">
@@ -267,7 +74,9 @@
                 <div class="form-group">
                     <label>Senha</label>
                     <input type="password" id="password" required>
-                    <div class="strength-meter"><div id="meter"></div></div>
+                    <div class="strength-meter">
+                        <div id="meter"></div>
+                    </div>
                     <div class="requirements" id="requirements"></div>
                     <div class="error" id="password-error"></div>
                 </div>
@@ -285,139 +94,7 @@
         </div>
     </div>
 
-    <script>
-        const paymentOptions = document.querySelectorAll('.payment-option');
-        const registerForm = document.getElementById('register-form');
-        const registerBtn = document.getElementById('register-btn');
-        const paymentForms = document.querySelectorAll('[id$="-form"]');
-        const passwordInput = document.getElementById('password');
-        const confirmInput = document.getElementById('confirm-password');
-        const emailInput = document.getElementById('email');
-        const meter = document.getElementById('meter');
-        const requirements = document.getElementById('requirements');
-
-        const passwordRules = [
-            { regex: /.{12,}/, text: "12+ caracteres" },
-            { regex: /[A-Z]/, text: "Maiúscula" },
-            { regex: /[a-z]/, text: "Minúscula" },
-            { regex: /[0-9]/, text: "Número" },
-            { regex: /[^A-Za-z0-9]/, text: "Caractere especial" }
-        ];
-
-        paymentOptions.forEach(option => {
-            option.addEventListener('click', () => {
-                paymentOptions.forEach(opt => opt.classList.remove('selected'));
-                option.classList.add('selected');
-                
-                const method = option.dataset.method;
-                paymentForms.forEach(form => form.style.display = 'none');
-                document.getElementById(`${method}-form`).style.display = 'block';
-                registerForm.style.display = 'block';
-                
-                initPayment(method);
-            });
-        });
-
-        function checkPassword() {
-            const password = passwordInput.value;
-            let strength = 0;
-            let reqList = [];
-
-            passwordRules.forEach(rule => {
-                if (rule.regex.test(password)) {
-                    strength++;
-                    reqList.push(`<span class="success">✓ ${rule.text}</span>`);
-                } else {
-                    reqList.push(`<span class="error">✗ ${rule.text}</span>`);
-                }
-            });
-
-            const percent = (strength / passwordRules.length) * 100;
-            meter.style.width = `${percent}%`;
-            meter.style.backgroundColor = 
-                percent <= 25 ? '#ff4444' :
-                percent <= 50 ? '#ffa700' :
-                percent <= 75 ? '#ffce00' : '#4CAF50';
-
-            requirements.innerHTML = reqList.join(' ');
-            validateForm();
-        }
-
-        function validateForm() {
-            const password = passwordInput.value;
-            const confirm = confirmInput.value;
-            const email = emailInput.value;
-
-            const allReqMet = passwordRules.every(rule => rule.regex.test(password));
-            const passwordsMatch = password === confirm;
-            const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-            registerBtn.disabled = !(allReqMet && passwordsMatch && validEmail);
-
-            document.getElementById('confirm-error').textContent = 
-                (confirm && !passwordsMatch) ? 'Senhas não coincidem' : '';
-        }
-
-        passwordInput.addEventListener('input', checkPassword);
-        confirmInput.addEventListener('input', validateForm);
-        emailInput.addEventListener('input', validateForm);
-
-        function initPayment(method) {
-            switch(method) {
-                case 'mercadopago':
-                    const mp = new MercadoPago('YOUR_PUBLIC_KEY');
-                    mp.checkout({
-                        preference: { id: 'YOUR_PREFERENCE_ID' },
-                        render: { container: '#mercadopago-form' }
-                    });
-                    break;
-                case 'paypal':
-                    paypal.Buttons({
-                        createOrder: (data, actions) => {
-                            return actions.order.create({
-                                purchase_units: [{
-                                    amount: { value: '99.99' }
-                                }]
-                            });
-                        },
-                        onApprove: async (data, actions) => {
-                            const order = await actions.order.capture();
-                            handlePaymentSuccess(order);
-                        }
-                    }).render('#paypal-form');
-                    break;
-                case 'pix':
-                    // Implement PIX QR code generation
-                    break;
-            }
-        }
-
-        async function handlePaymentSuccess(paymentData) {
-            const email = emailInput.value;
-            const password = passwordInput.value;
-            
-            try {
-                const response = await fetch('/api/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email,
-                        password,
-                        payment_id: paymentData.id,
-                        payment_provider: paymentData.provider
-                    })
-                });
-
-                if (response.ok) {
-                    window.location.href = '/success';
-                } else {
-                    throw new Error('Falha no registro');
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                alert('Erro no registro. Por favor, tente novamente.');
-            }
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
+
 </html>

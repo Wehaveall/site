@@ -111,6 +111,7 @@
 
         .payment-option:hover {
             border-color: #F79D44;
+            transform: translateY(-2px);
         }
 
         .payment-option.selected {
@@ -122,7 +123,27 @@
             font-size: 2.5rem;
             margin-bottom: 0.5rem;
             display: block;
-            color: #F79D44;
+        }
+
+        /* Cores específicas para cada ícone de pagamento */
+        .payment-option[data-method="mercadopago"] i {
+            color: #009EE3;
+        }
+
+        .payment-option[data-method="paypal"] i {
+            color: #003087;
+        }
+
+        .payment-option[data-method="pix"] i {
+            color: #32BCAD;
+        }
+
+        .payment-option[data-method="pagseguro"] i {
+            color: #469C46;
+        }
+
+        .payment-option[data-method="creditcard"] i {
+            color: #1A1F71;
         }
 
         .form-group {
@@ -306,7 +327,6 @@
     </div>
 
     <script>
-        // Adicione aqui seu código JavaScript para manipulação dos formulários e validações
         document.addEventListener('DOMContentLoaded', function () {
             const paymentOptions = document.querySelectorAll('.payment-option');
 

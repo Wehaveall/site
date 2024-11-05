@@ -410,11 +410,13 @@
 
             paymentOptions.forEach(option => {
                 option.addEventListener('click', async function () {
+                    alert('Payment option clicked!');
                     paymentOptions.forEach(opt => opt.classList.remove('selected'));
                     this.classList.add('selected');
 
                     // Simulating processing delay
                     const method = this.dataset.method;
+                    alert(`Selected payment method: ${method}`);
                     const forms = document.querySelectorAll('#payment-forms > div');
                     forms.forEach(form => form.style.display = 'none');
                     document.getElementById(`${method}-form`).style.display = 'block';
@@ -426,6 +428,7 @@
                     document.querySelector('.payment').appendChild(processingMessage);
 
                     setTimeout(() => {
+                        alert('Processing finished, displaying form.');
                         processingMessage.remove();
                         document.getElementById('register-form').style.display = 'block';
                     }, 3000);
@@ -450,12 +453,14 @@
                 }
 
                 try {
+                    alert('Checking if email is already registered...');
                     const userSnapshot = await db.collection('users').where('email', '==', email).get();
                     if (!userSnapshot.empty) {
                         document.getElementById('email-error').innerText = 'Este email já está cadastrado.';
                         return;
                     }
 
+                    alert('Registering new user...');
                     await db.collection('users').add({
                         Nome: name,
                         active_machines: 0,
@@ -471,6 +476,7 @@
                     alert('Usuário cadastrado com sucesso!');
                 } catch (error) {
                     console.error('Erro ao cadastrar usuário: ', error);
+                    alert('Erro ao cadastrar usuário, verifique o console para mais detalhes.');
                 }
             });
         });

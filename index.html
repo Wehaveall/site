@@ -396,109 +396,28 @@
         </div>
     </div>
     <script>
-       // Firebase configuration
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCPu6EKj6yjA4uQF2q0tR7CnRVRmZn0JgQ",
-            authDomain: "shortcut-6256b.firebaseapp.com", // Confirme que este é o domínio correto
+            authDomain: "shortcut-6256b.firebaseapp.com",
             projectId: "shortcut-6256b",
             storageBucket: "shortcut-6256b.appspot.com",
             messagingSenderId: "295775489890",
             appId: "1:295775489890:web:ab12345xyz"
         };
 
-        // Initialize Firebase with custom auth settings
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Configurar persistência para evitar problemas de autenticação
-        firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-            .catch((error) => {
-                console.error("Erro na configuração de persistência:", error);
-            });
-
-        // Modificar a função registerUser para usar signInWithPopup em vez de createUserWithEmailAndPassword
-        async function registerUser(userData) {
-            try {
-                showLoading('Finalizando cadastro...');
-
-                // Primeiro, criar usuário com email e senha
-                const userCredential = await auth.createUserWithEmailAndPassword(
-                    userData.email,
-                    userData.password
-                );
-
-                // Se a criação do usuário for bem-sucedida, continue com o resto do processo
-                const now = new Date();
-                const subEnd = new Date(now);
-                subEnd.setFullYear(subEnd.getFullYear() + 1);
-
-                const userDoc = {
-                    uid: userCredential.user.uid,
-                    Nome: userData.name,
-                    active_machines: 0,
-                    country: userData.country,
-                    email: userData.email,
-                    pay_method: userData.payMethod,
-                    sub_start: now.toISOString(),
-                    sub_end: subEnd.toISOString(),
-                    created_at: firebase.firestore.FieldValue.serverTimestamp(),
-                    status: 'active',
-                    last_login: firebase.firestore.FieldValue.serverTimestamp()
-                };
-
-                // Usar batch para garantir consistência
-                const batch = db.batch();
-                const userRef = db.collection('users').doc(userCredential.user.uid);
-                batch.set(userRef, userDoc);
-
-                await batch.commit();
-
-                // Atualizar perfil do usuário
-                await userCredential.user.updateProfile({
-                    displayName: userData.name
-                });
-
-                showSuccess('Cadastro realizado com sucesso!');
-
-                // Armazenar dados do usuário localmente
-                localStorage.setItem('userId', userCredential.user.uid);
-                localStorage.setItem('userEmail', userData.email);
-
-                // Redirecionar após sucesso
-                setTimeout(() => {
-                    window.location.href = 'success.html';
-                }, 2000);
-
-            } catch (error) {
-                console.error('Erro no registro:', error);
-                let errorMessage;
-
-                switch (error.code) {
-                    case 'auth/email-already-in-use':
-                        errorMessage = 'Este email já está cadastrado';
-                        break;
-                    case 'auth/invalid-email':
-                        errorMessage = 'Email inválido';
-                        break;
-                    case 'auth/operation-not-allowed':
-                        errorMessage = 'Operação não permitida. Verifique as configurações do Firebase';
-                        break;
-                    case 'auth/weak-password':
-                        errorMessage = 'A senha deve ter pelo menos 6 caracteres';
-                        break;
-                    case 'auth/network-request-failed':
-                        errorMessage = 'Erro de conexão. Verifique sua internet';
-                        break;
-                    default:
-                        errorMessage = `Erro ao finalizar cadastro: ${error.message}`;
-                }
-
-                showError(errorMessage);
-            } finally {
-                hideLoading();
-            }
-        }
+        // Aplicação global state
+        const state = {
+            selectedMethod: null,
+            processing: false,
+            completed: false,
+            user: null
+        };
 
         // Helper Functions
         function showLoading(message = 'Processando...') {
@@ -609,15 +528,18 @@
             return isValid;
         }
 
-        // Payment Processing Simulation
+        // Simulação de Pagamento
         async function simulatePayment(method) {
-            showLoading(`Processando pagamento via ${method}...`);
+            if (state.processing) return;
 
+            state.processing = true;
             try {
-                // Simular um delay de processamento
+                showLoading(`Processando pagamento via ${method}...`);
+
+                // Simular processamento
                 await new Promise(resolve => setTimeout(resolve, 2000));
 
-                // Simular sucesso do pagamento
+                // Atualizar estado
                 state.completed = true;
                 state.selectedMethod = method;
 
@@ -625,17 +547,24 @@
                 showSuccess('Pagamento processado com sucesso!');
 
                 // Mostrar formulário de registro
-                document.getElementById('register-form').classList.remove('hidden');
-                document.getElementById('register-form').scrollIntoView({ behavior: 'smooth' });
+                const registerForm = document.getElementById('register-form');
+                registerForm.classList.remove('hidden');
+                registerForm.scrollIntoView({ behavior: 'smooth' });
 
             } catch (error) {
+                console.error('Erro na simulação:', error);
                 hideLoading();
                 showError('Erro ao processar pagamento. Por favor, tente novamente.');
+            } finally {
+                state.processing = false;
             }
         }
 
-        // User Registration
+        // Registro de Usuário
         async function registerUser(userData) {
+            if (state.processing) return;
+
+            state.processing = true;
             try {
                 showLoading('Finalizando cadastro...');
 
@@ -664,30 +593,29 @@
                     last_login: firebase.firestore.FieldValue.serverTimestamp()
                 };
 
-                // Salvar no Firestore usando UID como ID do documento
+                // Salvar no Firestore
                 await db.collection('users').doc(userCredential.user.uid).set(userDoc);
 
-                // Atualizar perfil do usuário
+                // Atualizar perfil
                 await userCredential.user.updateProfile({
                     displayName: userData.name
                 });
 
                 showSuccess('Cadastro realizado com sucesso!');
 
-                // Armazenar dados do usuário localmente
+                // Armazenar dados localmente
                 localStorage.setItem('userId', userCredential.user.uid);
                 localStorage.setItem('userEmail', userData.email);
 
-                // Redirecionar após sucesso
+                // Redirecionar
                 setTimeout(() => {
                     window.location.href = 'success.html';
                 }, 2000);
 
             } catch (error) {
                 console.error('Erro no registro:', error);
-                let errorMessage = 'Erro ao finalizar cadastro';
+                let errorMessage;
 
-                // Tratamento específico de erros do Firebase
                 switch (error.code) {
                     case 'auth/email-already-in-use':
                         errorMessage = 'Este email já está cadastrado';
@@ -704,17 +632,20 @@
                     case 'auth/network-request-failed':
                         errorMessage = 'Erro de conexão. Verifique sua internet';
                         break;
+                    default:
+                        errorMessage = 'Erro ao finalizar cadastro. Tente novamente.';
                 }
 
                 showError(errorMessage);
             } finally {
+                state.processing = false;
                 hideLoading();
             }
         }
 
         // Event Listeners
         document.addEventListener('DOMContentLoaded', () => {
-            // Monitorar estado da autenticação
+            // Monitorar autenticação
             auth.onAuthStateChanged((user) => {
                 state.user = user;
                 if (user) {
@@ -726,34 +657,33 @@
                 }
             });
 
-            // Click handlers para opções de pagamento
+            // Click handlers para pagamento
             const paymentOptions = document.querySelectorAll('.payment-option');
             paymentOptions.forEach(option => {
                 option.addEventListener('click', async function () {
-                    paymentOptions.forEach(opt => opt.classList.remove('selected'));
-                    this.classList.add('selected');
-                    await simulatePayment(this.dataset.method);
+                    if (!state.processing) {
+                        paymentOptions.forEach(opt => opt.classList.remove('selected'));
+                        this.classList.add('selected');
+                        await simulatePayment(this.dataset.method);
+                    }
                 });
             });
 
-            // Submit handler para formulário de registro
+            // Submit handler para registro
             const registerForm = document.getElementById('register-form');
             registerForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                if (!state.processing && validateForm()) {
+                    const formData = {
+                        name: document.getElementById('name').value.trim(),
+                        email: document.getElementById('email').value.trim(),
+                        country: document.getElementById('country').value.trim(),
+                        password: document.getElementById('password').value,
+                        payMethod: state.selectedMethod
+                    };
 
-                if (!validateForm()) {
-                    return;
+                    await registerUser(formData);
                 }
-
-                const formData = {
-                    name: document.getElementById('name').value.trim(),
-                    email: document.getElementById('email').value.trim(),
-                    country: document.getElementById('country').value.trim(),
-                    password: document.getElementById('password').value,
-                    payMethod: state.selectedMethod
-                };
-
-                await registerUser(formData);
             });
 
             // Validação em tempo real

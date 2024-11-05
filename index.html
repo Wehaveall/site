@@ -5,9 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atalho - Purchase</title>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+
     <!-- SDKs de Pagamento -->
     <script src="https://sdk.mercadopago.com/js/v2"></script>
     <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=BRL"></script>
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -20,64 +27,72 @@
         }
 
         body {
-            background: #fff;
+            background: #f5f5f5;
             color: #2E2E2E;
             line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             width: 100%;
             margin: 2rem auto;
-            padding: 1.5rem;
+            padding: 2rem;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+            gap: 3rem;
             background: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            position: relative;
         }
 
         .product {
-            padding-right: 2rem;
+            padding-right: 3rem;
             border-right: 1px solid #eee;
         }
 
         .logo {
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .logo img {
-            max-width: 180px;
+            max-width: 200px;
+            height: auto;
         }
 
         h1,
         h2 {
             color: #F79D44;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         h1 {
-            font-size: 1.8rem;
+            font-size: 2rem;
             line-height: 1.2;
+            font-weight: 700;
         }
 
         h2 {
             text-align: center;
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
         }
 
         .features {
             list-style: none;
-            margin-bottom: 1.5rem;
+            margin: 2rem 0;
         }
 
         .features li {
-            margin-bottom: 0.5rem;
-            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+            padding-left: 2rem;
             position: relative;
+            font-size: 1.1rem;
         }
 
         .features li::before {
@@ -85,20 +100,23 @@
             position: absolute;
             left: 0;
             color: #4CAF50;
+            font-weight: bold;
         }
 
         .price {
             text-align: center;
-            padding: 1rem;
+            padding: 1.5rem;
             background: #f8f8f8;
-            border-radius: 8px;
-            margin: 1rem 0;
+            border-radius: 12px;
+            margin: 2rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .price-value {
-            font-size: 2rem;
+            font-size: 2.5rem;
             color: #F79D44;
             font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
         .payment {
@@ -108,52 +126,48 @@
 
         .payment-grid {
             display: grid;
-            grid-template-columns: repeat(5, minmax(60px, 1fr));
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
             padding: 0.5rem;
-            max-width: 100%;
-            justify-content: space-between;
         }
 
         .payment-option {
             aspect-ratio: 1;
-            padding: 0.5rem;
+            padding: 1rem;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: transparent;
-            border-radius: 4px;
-            border: none;
-            min-width: 60px;
-            max-width: 100%;
+            background: #fff;
+            border-radius: 8px;
+            border: 2px solid #eee;
+            position: relative;
+            overflow: hidden;
         }
 
         .payment-option:hover {
-            background: rgba(247, 157, 68, 0.1);
             transform: translateY(-2px);
+            border-color: #F79D44;
+            box-shadow: 0 4px 12px rgba(247, 157, 68, 0.15);
         }
 
         .payment-option.selected {
-            background: rgba(247, 157, 68, 0.1);
+            border-color: #F79D44;
+            background: rgba(247, 157, 68, 0.05);
         }
 
         .payment-option i {
-            font-size: 1.8rem;
-            margin-bottom: 0.3rem;
-            display: block;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
         }
 
         .payment-option div {
-            font-size: 0.75rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100%;
+            font-size: 0.85rem;
+            font-weight: 500;
         }
 
         .payment-option[data-method="mercadopago"] i {
@@ -176,26 +190,62 @@
             color: #1A1F71;
         }
 
+        .processing-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .processing .processing-overlay {
+            opacity: 1;
+        }
+
+        #register-form {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        #register-form.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
         }
 
         .form-group input {
             width: 100%;
-            padding: 0.8rem;
+            padding: 1rem;
             border: 2px solid #eee;
-            border-radius: 6px;
-            transition: border-color 0.2s;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
         }
 
         .form-group input:focus {
-            border-color: #F79D44;
             outline: none;
+            border-color: #F79D44;
+            box-shadow: 0 0 0 3px rgba(247, 157, 68, 0.1);
         }
 
         .strength-meter {
@@ -209,22 +259,52 @@
         .strength-meter div {
             height: 100%;
             width: 0;
-            transition: width 0.3s, background-color 0.3s;
+            transition: all 0.3s ease;
         }
 
-        .requirements {
+        .password-strength {
+            margin-top: 1rem;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+
+        .strength-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .strength-item i {
             font-size: 0.8rem;
-            margin-top: 0.5rem;
+            width: 16px;
+            text-align: center;
+        }
+
+        .strength-item.valid {
+            color: #4CAF50;
+        }
+
+        .strength-item.invalid {
+            color: #ff4444;
         }
 
         .error {
             color: #ff4444;
-            font-size: 0.8rem;
-            margin-top: 0.3rem;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .success {
-            color: #4CAF50;
+        .error:before {
+            content: '\f06a';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
         }
 
         .btn {
@@ -232,35 +312,81 @@
             color: white;
             border: none;
             padding: 1rem;
-            border-radius: 6px;
+            border-radius: 8px;
             width: 100%;
-            font-size: 1rem;
-            font-weight: 500;
+            font-size: 1.1rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
         .btn:hover {
             background: #e58d34;
+            transform: translateY(-1px);
         }
 
         .btn:disabled {
             background: #ccc;
             cursor: not-allowed;
+            transform: none;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: #f8f8f8;
+            border-radius: 12px;
+            margin-top: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .success-message i {
+            font-size: 4rem;
+            color: #4CAF50;
+            margin-bottom: 1.5rem;
+        }
+
+        .success-message h3 {
+            color: #4CAF50;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-message p {
+            color: #666;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 768px) {
             .container {
                 grid-template-columns: 1fr;
                 margin: 1rem;
-                padding: 1rem;
+                padding: 1.5rem;
+                gap: 2rem;
             }
 
             .product {
                 padding-right: 0;
                 border-right: none;
                 border-bottom: 1px solid #eee;
-                padding-bottom: 1.5rem;
+                padding-bottom: 2rem;
             }
 
             .payment {
@@ -269,27 +395,32 @@
 
             .payment-grid {
                 grid-template-columns: repeat(3, 1fr);
-                gap: 0.75rem;
-                padding: 0.75rem;
-            }
-
-            .payment-option i {
-                font-size: 1.5rem;
             }
 
             h1 {
-                font-size: 1.5rem;
+                font-size: 1.8rem;
             }
 
             h2 {
-                font-size: 1.3rem;
+                font-size: 1.5rem;
+            }
+
+            .price-value {
+                font-size: 2rem;
             }
         }
 
         @media (max-width: 480px) {
             .payment-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
+            }
+
+            .password-strength {
+                grid-template-columns: 1fr;
+            }
+
+            .features li {
+                font-size: 1rem;
             }
         }
     </style>
@@ -355,49 +486,188 @@
                     <input type="email" id="email" required>
                     <div class="error" id="email-error"></div>
                 </div>
-
+            
                 <div class="form-group">
                     <label>Senha</label>
                     <input type="password" id="password" required>
                     <div class="strength-meter">
                         <div id="meter"></div>
                     </div>
-                    <div class="requirements" id="requirements"></div>
+                    <div class="password-strength">
+                        <div class="strength-item" id="length-check">
+                            <i class="fas fa-circle"></i>
+                            Mínimo 8 caracteres
+                        </div>
+                        <div class="strength-item" id="uppercase-check">
+                            <i class="fas fa-circle"></i>
+                            Uma letra maiúscula
+                        </div>
+                        <div class="strength-item" id="lowercase-check">
+                            <i class="fas fa-circle"></i>
+                            Uma letra minúscula
+                        </div>
+                        <div class="strength-item" id="number-check">
+                            <i class="fas fa-circle"></i>
+                            Um número
+                        </div>
+                        <div class="strength-item" id="special-check">
+                            <i class="fas fa-circle"></i>
+                            Um caractere especial
+                        </div>
+                    </div>
                     <div class="error" id="password-error"></div>
                 </div>
-
+            
                 <div class="form-group">
                     <label>Confirme a senha</label>
                     <input type="password" id="confirm-password" required>
                     <div class="error" id="confirm-error"></div>
                 </div>
-
+            
                 <button type="submit" class="btn" id="register-btn" disabled>
                     Finalizar cadastro
                 </button>
             </form>
-        </div>
-    </div>
+            
+            <script>
+                // Inicialização do Firebase
+                const firebaseConfig = {
+                    apiKey: "AIzaSyCYtFWu8o4EO6uhz7QZPB_r1fqDZLCNnnM",
+                    authDomain: "shortcut-6256b.firebaseapp.com",
+                    projectId: "shortcut-6256b",
+                    storageBucket: "shortcut-6256b.appspot.com",
+                    messagingSenderId: "107722255662262226541",
+                    appId: "1:107722255662262226541:web:YOUR_APP_ID"
+                };
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const paymentOptions = document.querySelectorAll('.payment-option');
+                // Initialize Firebase
+                firebase.initializeApp(firebaseConfig);
+                const db = firebase.firestore();
+                const auth = firebase.auth();
 
-            paymentOptions.forEach(option => {
-                option.addEventListener('click', function () {
-                    paymentOptions.forEach(opt => opt.classList.remove('selected'));
-                    this.classList.add('selected');
+                document.addEventListener('DOMContentLoaded', function () {
+                    const paymentOptions = document.querySelectorAll('.payment-option');
+                    const registerForm = document.getElementById('register-form');
+                    let selectedPayment = null;
 
-                    const method = this.dataset.method;
-                    const forms = document.querySelectorAll('#payment-forms > div');
-                    forms.forEach(form => form.style.display = 'none');
-                    document.getElementById(`${method}-form`).style.display = 'block';
+                    // Função para checar força da senha
+                    function checkPasswordStrength(password) {
+                        const checks = {
+                            length: password.length >= 8,
+                            uppercase: /[A-Z]/.test(password),
+                            lowercase: /[a-z]/.test(password),
+                            number: /[0-9]/.test(password),
+                            special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+                        };
 
-                    document.getElementById('register-form').style.display = 'block';
+                        // Atualiza indicadores visuais
+                        Object.keys(checks).forEach(check => {
+                            const element = document.getElementById(`${check}-check`);
+                            if (element) {
+                                element.classList.toggle('valid', checks[check]);
+                                element.classList.toggle('invalid', !checks[check]);
+                                element.querySelector('i').className = checks[check] ?
+                                    'fas fa-check-circle' : 'fas fa-times-circle';
+                            }
+                        });
+
+                        return Object.values(checks).every(Boolean);
+                    }
+
+                    // Manipulador de opções de pagamento
+                    paymentOptions.forEach(option => {
+                        option.addEventListener('click', async function () {
+                            // Atualiza seleção visual
+                            paymentOptions.forEach(opt => opt.classList.remove('selected'));
+                            this.classList.add('selected');
+                            selectedPayment = this.dataset.method;
+
+                            // Adiciona overlay de processamento
+                            const overlay = document.createElement('div');
+                            overlay.className = 'processing-overlay';
+                            overlay.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando pagamento...';
+                            this.style.position = 'relative';
+                            this.appendChild(overlay);
+
+                            // Simula processamento de pagamento
+                            await new Promise(resolve => setTimeout(resolve, 2000));
+
+                            // Remove overlay e mostra formulário
+                            overlay.remove();
+                            registerForm.style.display = 'block';
+                            document.getElementById('email').focus();
+                        });
+                    });
+
+                    // Manipulador de força da senha
+                    const passwordInput = document.getElementById('password');
+                    const registerBtn = document.getElementById('register-btn');
+
+                    passwordInput.addEventListener('input', function () {
+                        const isStrong = checkPasswordStrength(this.value);
+                        registerBtn.disabled = !isStrong;
+                        const meter = document.getElementById('meter');
+                        meter.style.width = isStrong ? '100%' : '0%';
+                        meter.style.backgroundColor = isStrong ? '#4CAF50' : '#ff4444';
+                    });
+
+                    // Manipulador do formulário de registro
+                    registerForm.addEventListener('submit', async function (e) {
+                        e.preventDefault();
+
+                        const email = document.getElementById('email').value;
+                        const password = passwordInput.value;
+                        const confirmPassword = document.getElementById('confirm-password').value;
+
+                        // Limpa erros anteriores
+                        document.querySelectorAll('.error').forEach(err => err.textContent = '');
+
+                        // Validações
+                        if (password !== confirmPassword) {
+                            document.getElementById('confirm-error').textContent = 'As senhas não coincidem';
+                            return;
+                        }
+
+                        try {
+                            // Cria usuário no Firebase
+                            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+
+                            // Calcula datas
+                            const purchaseDate = new Date();
+                            const expirationDate = new Date(purchaseDate);
+                            expirationDate.setDate(expirationDate.getDate() + 365);
+
+                            // Salva dados no Firestore
+                            await db.collection('users').doc(userCredential.user.uid).set({
+                                email: email,
+                                purchaseDate: purchaseDate,
+                                licenseExpiration: expirationDate,
+                                activeSessions: 0,
+                                maxSessions: 2,
+                                paymentMethod: selectedPayment
+                            });
+
+                            // Mostra mensagem de sucesso
+                            registerForm.innerHTML = `
+                                    <div class="success-message">
+                                        <i class="fas fa-check-circle"></i>
+                                        <h3>Cadastro realizado com sucesso!</h3>
+                                        <p>Sua licença é válida até ${expirationDate.toLocaleDateString()}</p>
+                                        <p>Você pode usar sua conta em até 2 máquinas simultaneamente.</p>
+                                    </div>
+                                `;
+
+                        } catch (error) {
+                            console.error('Error:', error);
+                            if (error.code === 'auth/email-already-in-use') {
+                                document.getElementById('email-error').textContent = 'Este email já está cadastrado';
+                            } else {
+                                document.getElementById('email-error').textContent = 'Erro ao criar conta. Tente novamente.';
+                            }
+                        }
+                    });
                 });
-            });
-        });
-    </script>
-</body>
-
-</html>
+            </script>
+            </body>
+            
+            </html>

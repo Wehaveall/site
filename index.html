@@ -413,12 +413,22 @@
                     paymentOptions.forEach(opt => opt.classList.remove('selected'));
                     this.classList.add('selected');
 
+                    // Simulating processing delay
                     const method = this.dataset.method;
                     const forms = document.querySelectorAll('#payment-forms > div');
                     forms.forEach(form => form.style.display = 'none');
                     document.getElementById(`${method}-form`).style.display = 'block';
 
-                    document.getElementById('register-form').style.display = 'block';
+                    const processingMessage = document.createElement('div');
+                    processingMessage.innerText = 'Processando pagamento...';
+                    processingMessage.style.textAlign = 'center';
+                    processingMessage.style.marginTop = '1rem';
+                    document.querySelector('.payment').appendChild(processingMessage);
+
+                    setTimeout(() => {
+                        processingMessage.remove();
+                        document.getElementById('register-form').style.display = 'block';
+                    }, 3000);
                 });
             });
 

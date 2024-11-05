@@ -1,566 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atalho - Purchase</title>
 
-    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
 
+    <!-- SDKs de Pagamento -->
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=BRL"></script>
 
-            <!DOCTYPE html>
-            <html lang="pt-BR">
-            
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Atalho - Purchase</title>
-            
-                <!-- Firebase SDK -->
-                <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-                <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-                <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-            
-                <!-- SDKs de Pagamento -->
-                <script src="https://sdk.mercadopago.com/js/v2"></script>
-                <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=BRL"></script>
-            
-                <!-- Font Awesome -->
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-            
-                <!-- O CSS fica aqui - mantido como estava -->
-                <style>
-                   
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Work Sans', sans-serif;
-        }
-
+    <!-- Font Awesome e Estilo -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
         body {
+            font-family: 'Arial', sans-serif;
             background: #f5f5f5;
-            color: #2E2E2E;
-            line-height: 1.5;
-            min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
-            padding: 20px;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 600px;
             width: 100%;
-            margin: 2rem auto;
-            padding: 2rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
             background: #fff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 12px;
-            position: relative;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .product {
-            padding-right: 3rem;
-            border-right: 1px solid #eee;
-        }
-
-        .logo {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .logo img {
-            max-width: 200px;
-            height: auto;
-        }
-
-        h1,
-        h2 {
+        .product h1 {
             color: #F79D44;
             margin-bottom: 1.5rem;
         }
 
-        h1 {
-            font-size: 2rem;
-            line-height: 1.2;
-            font-weight: 700;
-        }
-
-        h2 {
-            text-align: center;
-            font-size: 1.8rem;
-        }
-
-        .features {
-            list-style: none;
-            margin: 2rem 0;
-        }
-
-        .features li {
-            margin-bottom: 1rem;
-            padding-left: 2rem;
-            position: relative;
-            font-size: 1.1rem;
-        }
-
-        .features li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: #4CAF50;
-            font-weight: bold;
-        }
-
-        .price {
-            text-align: center;
-            padding: 1.5rem;
-            background: #f8f8f8;
-            border-radius: 12px;
-            margin: 2rem 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .price-value {
-            font-size: 2.5rem;
-            color: #F79D44;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .payment {
-            padding-left: 1rem;
-            max-width: 100%;
-        }
-
         .payment-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 1rem;
-            margin: 2rem 0;
-            padding: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            margin: 1.5rem 0;
         }
 
         .payment-option {
-            aspect-ratio: 1;
-            padding: 1rem;
-            text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: #fff;
-            border-radius: 8px;
-            border: 2px solid #eee;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .payment-option:hover {
-            transform: translateY(-2px);
-            border-color: #F79D44;
-            box-shadow: 0 4px 12px rgba(247, 157, 68, 0.15);
-        }
-
-        .payment-option.selected {
-            border-color: #F79D44;
-            background: rgba(247, 157, 68, 0.05);
-        }
-
-        .payment-option i {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .payment-option div {
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .payment-option[data-method="mercadopago"] i {
-            color: #009EE3;
-        }
-
-        .payment-option[data-method="paypal"] i {
-            color: #003087;
-        }
-
-        .payment-option[data-method="pix"] i {
-            color: #32BCAD;
-        }
-
-        .payment-option[data-method="pagseguro"] i {
-            color: #469C46;
-        }
-
-        .payment-option[data-method="creditcard"] i {
-            color: #1A1F71;
-        }
-
-        .processing-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.9rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .processing .processing-overlay {
-            opacity: 1;
+            padding: 1rem;
+            background: #f1f1f1;
+            border-radius: 5px;
+            text-align: center;
         }
 
         #register-form {
             display: none;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-        }
-
-        #register-form.visible {
-            opacity: 1;
-            transform: translateY(0);
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #333;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #eee;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #F79D44;
-            box-shadow: 0 0 0 3px rgba(247, 157, 68, 0.1);
-        }
-
-        .strength-meter {
-            height: 4px;
-            background: #eee;
-            margin-top: 0.5rem;
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .strength-meter div {
-            height: 100%;
-            width: 0;
-            transition: all 0.3s ease;
-        }
-
-        .password-strength {
-            margin-top: 1rem;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.5rem;
-        }
-
-        .strength-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-            color: #666;
-            transition: all 0.3s ease;
-        }
-
-        .strength-item i {
-            font-size: 0.8rem;
-            width: 16px;
-            text-align: center;
-        }
-
-        .strength-item.valid {
-            color: #4CAF50;
-        }
-
-        .strength-item.invalid {
-            color: #ff4444;
-        }
-
-        .error {
-            color: #ff4444;
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .error:before {
-            content: '\f06a';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
+            margin-bottom: 1rem;
         }
 
         .btn {
             background: #F79D44;
             color: white;
+            padding: 0.75rem;
             border: none;
-            padding: 1rem;
-            border-radius: 8px;
-            width: 100%;
-            font-size: 1.1rem;
-            font-weight: 600;
+            border-radius: 4px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .btn:hover {
-            background: #e58d34;
-            transform: translateY(-1px);
-        }
-
-        .btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
+            width: 100%;
         }
 
         .success-message {
             text-align: center;
-            padding: 3rem 2rem;
-            background: #f8f8f8;
-            border-radius: 12px;
-            margin-top: 2rem;
-            animation: fadeIn 0.5s ease;
+            padding: 2rem;
+            color: green;
+            font-size: 1.2rem;
         }
+    </style>
+</head>
 
-        .success-message i {
-            font-size: 4rem;
-            color: #4CAF50;
-            margin-bottom: 1.5rem;
-        }
+<body>
+    <div class="container">
+        <div class="product">
+            <h1>Atalho - Licença Anual</h1>
+            <p>Escreva mais, digitando menos!</p>
+            <div class="payment-grid">
+                <div class="payment-option" data-method="mercadopago">Mercado Pago</div>
+                <div class="payment-option" data-method="paypal">PayPal</div>
+                <div class="payment-option" data-method="pix">PIX</div>
+                <div class="payment-option" data-method="pagseguro">PagSeguro</div>
+                <div class="payment-option" data-method="creditcard">Cartão de Crédito</div>
+            </div>
+        </div>
 
-        .success-message h3 {
-            color: #4CAF50;
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-        }
+        <!-- Formulário de Registro -->
+        <form id="register-form">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="btn" id="register-btn">Finalizar cadastro</button>
+        </form>
+    </div>
 
-        .success-message p {
-            color: #666;
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-        }
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "YOUR_PUBLIC_FIREBASE_API_KEY",
+            authDomain: "shortcut-6256b.firebaseapp.com",
+            projectId: "shortcut-6256b",
+            storageBucket: "shortcut-6256b.appspot.com",
+            messagingSenderId: "107722255662262226541",
+            appId: "YOUR_PUBLIC_FIREBASE_APP_ID"
+        };
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
+        // Inicializa o Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const paymentOptions = document.querySelectorAll('.payment-option');
+            const registerForm = document.getElementById('register-form');
+            let selectedPayment = null;
 
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-                margin: 1rem;
-                padding: 1.5rem;
-                gap: 2rem;
-            }
+            // Simula o pagamento e exibe o formulário de cadastro
+            paymentOptions.forEach(option => {
+                option.addEventListener('click', async function () {
+                    paymentOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedPayment = this.dataset.method;
 
-            .product {
-                padding-right: 0;
-                border-right: none;
-                border-bottom: 1px solid #eee;
-                padding-bottom: 2rem;
-            }
+                    // Simula processamento
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    registerForm.style.display = 'block';
+                });
+            });
 
-            .payment {
-                padding-left: 0;
-            }
+            // Cadastro de usuário no Firebase
+            registerForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
 
-            .payment-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
 
-            h1 {
-                font-size: 1.8rem;
-            }
+                try {
+                    // Cria usuário e autentica no Firebase
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
 
-            h2 {
-                font-size: 1.5rem;
-            }
+                    // Define as datas de compra e vencimento
+                    const purchaseDate = new Date();
+                    const expirationDate = new Date();
+                    expirationDate.setDate(purchaseDate.getDate() + 365);
 
-            .price-value {
-                font-size: 2rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .payment-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .password-strength {
-                grid-template-columns: 1fr;
-            }
-
-            .features li {
-                font-size: 1rem;
-            }
-        }
-   
-
-                </style>
-            </head>
-            
-            <body>
-                <div class="container">
-                    <div class="product">
-                        <div class="logo">
-                            <img src="logo.png" alt="Atalho Logo">
-                        </div>
-                        <h1>Atalho - Escreva mais digitando menos</h1>
-                        <ul class="features">
-                            <li>Expansão de texto automática</li>
-                            <li>Bancos de dados personalizáveis</li>
-                            <li>Formatação avançada</li>
-                            <li>Integração com Word</li>
-                            <li>Atualizações por 1 ano</li>
-                            <li>Suporte prioritário</li>
-                        </ul>
-                        <div class="price">
-                            <div class="price-value">R$ 49,90</div>
-                            <div>Licença anual</div>
-                        </div>
-                    </div>
-            
-                    <div class="payment">
-                        <h2>Formas de Pagamento</h2>
-                        <div class="payment-grid">
-                            <div class="payment-option" data-method="mercadopago">
-                                <i class="fa-solid fa-hand-holding-dollar"></i>
-                                <div>Mercado Pago</div>
-                            </div>
-                            <div class="payment-option" data-method="paypal">
-                                <i class="fa-brands fa-paypal"></i>
-                                <div>PayPal</div>
-                            </div>
-                            <div class="payment-option" data-method="pix">
-                                <i class="fa-solid fa-qrcode"></i>
-                                <div>PIX</div>
-                            </div>
-                            <div class="payment-option" data-method="pagseguro">
-                                <i class="fa-solid fa-shield-halved"></i>
-                                <div>PagSeguro</div>
-                            </div>
-                            <div class="payment-option" data-method="creditcard">
-                                <i class="fa-solid fa-credit-card"></i>
-                                <div>Cartão de Crédito</div>
-                            </div>
-                        </div>
-            
-                        <div id="payment-forms">
-                            <div id="mercadopago-form" style="display:none"></div>
-                            <div id="paypal-form" style="display:none"></div>
-                            <div id="pix-form" style="display:none"></div>
-                            <div id="pagseguro-form" style="display:none"></div>
-                            <div id="creditcard-form" style="display:none"></div>
-                        </div>
-            
-                        <form id="register-form" style="display:none">
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="email" id="email" required>
-                                <div class="error" id="email-error"></div>
-                            </div>
-            
-                            <div class="form-group">
-                                <label>Senha</label>
-                                <input type="password" id="password" required>
-                                <div class="strength-meter">
-                                    <div id="meter"></div>
-                                </div>
-                                <div class="password-strength">
-                                    <div class="strength-item" id="length-check">
-                                        <i class="fas fa-circle"></i>
-                                        Mínimo 8 caracteres
-                                    </div>
-                                    <div class="strength-item" id="uppercase-check">
-                                        <i class="fas fa-circle"></i>
-                                        Uma letra maiúscula
-                                    </div>
-                                    <div class="strength-item" id="lowercase-check">
-                                        <i class="fas fa-circle"></i>
-                                        Uma letra minúscula
-                                    </div>
-                                    <div class="strength-item" id="number-check">
-                                        <i class="fas fa-circle"></i>
-                                        Um número
-                                    </div>
-                                    <div class="strength-item" id="special-check">
-                                        <i class="fas fa-circle"></i>
-                                        Um caractere especial
-                                    </div>
-                                </div>
-                                <div class="error" id="password-error"></div>
-                            </div>
-            
-                            <div class="form-group">
-                                <label>Confirme a senha</label>
-                                <input type="password" id="confirm-password" required>
-                                <div class="error" id="confirm-error"></div>
-                            </div>
-            
-                            <button type="submit" class="btn" id="register-btn" disabled>
-                                Finalizar cadastro
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            
-                <script>
-                    // Configuração do Firebase
-                    const firebaseConfig = {
-                        apiKey: "AIzaSyCYtFWu8o4EO6uhz7QZPB_r1fqDZLCNnnM",
-                        authDomain: "shortcut-6256b.firebaseapp.com",
-                        projectId: "shortcut-6256b",
-                        storageBucket: "shortcut-6256b.appspot.com",
-                        messagingSenderId: "107722255662262226541",
-                        appId: "1:107722255662262226541:web:YOUR_APP_ID"
-                    };
-
-                    // Inicialização do Firebase
-                    firebase.initializeApp(firebaseConfig);
-                    const db = firebase.firestore();
-                    const auth = firebase.auth();
-
-                    // Todo o código JavaScript existente
-                    document.addEventListener('DOMContentLoaded', function () {
-                        // Todo o código de inicialização e event handlers permanece aqui
+                    // Salva os dados do usuário no Firestore
+                    await db.collection('users').doc(userCredential.user.uid).set({
+                        email: email,
+                        purchaseDate: firebase.firestore.Timestamp.fromDate(purchaseDate),
+                        licenseExpiration: firebase.firestore.Timestamp.fromDate(expirationDate),
+                        activeSessions: 0,
+                        maxSessions: 2,
+                        paymentMethod: selectedPayment
                     });
-                </script>
-            </body>
-            
-            </html>
+
+                    // Mensagem de sucesso
+                    registerForm.innerHTML = `
+                        <div class="success-message">
+                            <h3>Cadastro realizado com sucesso!</h3>
+                            <p>Sua licença é válida até ${expirationDate.toLocaleDateString()}</p>
+                            <p>Você pode usar sua conta em até 2 dispositivos simultaneamente.</p>
+                        </div>
+                    `;
+                } catch (error) {
+                    console.error('Erro:', error);
+                    alert('Erro ao cadastrar. Tente novamente.');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

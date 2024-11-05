@@ -396,26 +396,29 @@
         </div>
     </div>
     <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCPu6EKj6yjA4uQF2q0tR7CnRVRmZn0JgQ",
-            authDomain: "shortcut-6256b.firebaseapp.com",
-            projectId: "shortcut-6256b",
-            storageBucket: "shortcut-6256b.appspot.com",
-            messagingSenderId: "295775489890",
-            appId: "1:295775489890:web:ab12345xyz"
-        };
+           // Firebase configuration
+            const firebaseConfig = {
+                apiKey: "AIzaSyCsIbyCkHx_E5VHQXnHZYmoZSrpnuPrPUQ",
+                authDomain: "shortcut-6256b.firebaseapp.com",
+                databaseURL: "https://shortcut-6256b-default-rtdb.firebaseio.com",
+                projectId: "shortcut-6256b",
+                storageBucket: "shortcut-6256b.appspot.com",
+                messagingSenderId: "526680485333",
+                appId: "1:526680485333:web:a5434dd5b6da2fda9ee15c",
+                measurementId: "G-PZ2EHV9YR6"
+            };
 
-        // Initialize Firebase with error handling
-        try {
-            firebase.initializeApp(firebaseConfig);
-            console.log("Firebase inicializado com sucesso");
-        } catch (error) {
-            console.error("Erro ao inicializar Firebase:", error);
-        }
+            // Initialize Firebase
+            try {
+                firebase.initializeApp(firebaseConfig);
+                console.log("Firebase inicializado com sucesso");
+            } catch (error) {
+                console.error("Erro ao inicializar Firebase:", error);
+            }
 
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+            const auth = firebase.auth();
+            const db = firebase.firestore();
+        
 
         // Application State
         const state = {

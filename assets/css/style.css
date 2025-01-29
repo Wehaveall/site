@@ -1,6 +1,6 @@
 /* 
   ==================================================
-   Variáveis de cores (baseadas no que foi fornecido)
+    Variáveis de cores (baseadas no que foi fornecido)
   ==================================================
 */
 :root {
@@ -58,21 +58,23 @@ body.light-theme {
     padding: 0;
 }
 
-/* Reset básico para alguns elementos */
+/* Reset básico */
 *,
 *::before,
 *::after {
     box-sizing: border-box;
 }
 
-/* Container */
+/* Container padrão */
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 1rem;
 }
 
-/* Cabeçalho e Navbar */
+/* ================================= */
+/* Cabeçalho (Header) e Navbar */
+/* ================================= */
 .header {
     background-color: var(--toolbar-bgcolor);
     border-bottom: 1px solid var(--toolbar-border-color);
@@ -90,7 +92,7 @@ body.light-theme {
 .logo img {
     /* Aumentar a logo */
     height: 150px;
-    /* Caso queira usar largura fixa, troque por: width: 120px; height: auto; */
+    /* Se preferir, pode usar width fixo: width: 120px; height: auto; */
 }
 
 .nav-links {
@@ -109,19 +111,18 @@ body.light-theme {
 .nav-links li a.active,
 .nav-links li a:hover {
     color: var(--folder-color);
-    /* Exemplo: #dbc9ad */
 }
 
-/* Hero / Banner */
+/* ================================= */
+/* Hero / Banner                     */
+/* ================================= */
 .hero {
     display: flex;
     flex-direction: column;
-    /* Coluna para centralizar */
     align-items: center;
-    /* Centraliza horizontal */
     text-align: center;
-    /* Centraliza o texto */
-    margin-top: 2rem;
+    margin-top: 1rem;
+    /* Menor margem p/ "subir" o título */
 }
 
 .hero-content {
@@ -129,34 +130,31 @@ body.light-theme {
     margin-bottom: 1.5rem;
 }
 
+/* Título principal "Atalho" */
 .hero-content h1 {
-    font-size: 2.5rem;
+    font-size: 3rem;
+    /* Maior que o subtítulo */
+    color: #000;
+    /* Cor preta */
+    font-weight: bold;
+    /* Negrito */
+    margin-bottom: 0.5rem;
+}
+
+/* Subtítulo menor e cor folder-color */
+.hero-content h1 span {
+    display: block;
+    font-size: 1.4rem;
+    /* Menor que o título */
     color: var(--folder-color);
-    margin-bottom: 1rem;
+    margin-top: 0.5rem;
 }
 
-.hero-content span {
-    color: var(--text-color);
-}
-
+/* Texto de apoio (descrição) */
 .hero-content p {
     font-size: 1.1rem;
     margin-bottom: 1.5rem;
-}
-
-/* Botão principal (hero) */
-.btn-hero {
-    background-color: var(--button-color);
-    color: #fff;
-    padding: 1rem 2rem;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: background-color 0.2s;
-}
-
-.btn-hero:hover {
-    background-color: #1f1e1e;
+    color: var(--text-color);
 }
 
 /* "Retângulo" de vídeos */
@@ -164,11 +162,12 @@ body.light-theme {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
-    /* para quebrar linha em telas menores */
     justify-content: center;
     background-color: var(--window-left-bgcolor);
     padding: 1rem;
     border-radius: 8px;
+    margin-bottom: 1.5rem;
+    /* espaço p/ botão ficar logo abaixo */
 }
 
 .video-card {
@@ -178,7 +177,26 @@ body.light-theme {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Seção de Recursos */
+/* Botão principal ("Obter Agora") */
+.btn-hero {
+    background-color: var(--button-color);
+    color: #fff;
+    padding: 1rem 2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    margin-bottom: 1.5rem;
+    /* se quiser espaço extra abaixo do botão */
+}
+
+.btn-hero:hover {
+    background-color: #1f1e1e;
+}
+
+/* ================================= */
+/* Seção de Recursos (Features)      */
+/* ================================= */
 .features {
     padding: 2rem 0;
 }
@@ -213,7 +231,9 @@ body.light-theme {
     margin-bottom: 1rem;
 }
 
-/* Seção de Downloads */
+/* ================================= */
+/* Seção de Downloads                */
+/* ================================= */
 .downloads {
     padding: 2rem 0;
 }
@@ -264,7 +284,9 @@ body.light-theme {
     background-color: #1f1e1e;
 }
 
-/* Seção CTA */
+/* ================================= */
+/* Seção CTA                         */
+/* ================================= */
 .cta {
     text-align: center;
     background-color: #fff;
@@ -294,7 +316,9 @@ body.light-theme {
     background-color: #1f1e1e;
 }
 
-/* Seção de Compra (comprar.html) */
+/* ================================= */
+/* Seção de Compra (comprar.html)    */
+/* ================================= */
 .purchase {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -371,7 +395,7 @@ body.light-theme {
 
 .payment-option:hover {
     background: rgba(219, 201, 173, 0.1);
-    /* var(--selected-bg) com opacidade */
+    /* var(--folder-color) com opacidade */
     transform: translateY(-2px);
 }
 
@@ -550,6 +574,14 @@ body.light-theme {
         margin-top: 1rem;
     }
 
+    .hero-content h1 {
+        font-size: 2.2rem;
+    }
+
+    .hero-content h1 span {
+        font-size: 1.2rem;
+    }
+
     .purchase {
         grid-template-columns: 1fr;
     }
@@ -564,5 +596,10 @@ body.light-theme {
 
     .payment-grid {
         grid-template-columns: repeat(3, 1fr);
+    }
+
+    .video-card iframe {
+        width: 280px;
+        height: 158px;
     }
 }

@@ -4,143 +4,247 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="Atalho - A ferramenta que otimiza sua digitação com expansão automática de texto" />
     <title>Atalho - Escreva mais digitando menos</title>
 
-    <!-- Font Awesome (opcional) -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- CSS principal -->
     <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 
 <body class="light-theme">
-    <!-- Cabeçalho -->
+    <!-- Header Fixo -->
     <header class="header">
-        <div class="container navbar">
+        <div class="navbar">
             <div class="logo">
-                <!-- Ajuste o caminho para sua logo -->
-                <img src="assets/img/logo.svg" alt="Logo Atalho" />
+                <a href="index.html">
+                    <img src="assets/img/logo.svg" alt="Logo Atalho" class="logo-img" />
+                </a>
             </div>
-            <ul class="nav-links">
-                <li><a href="#features">Recursos</a></li>
-                <li><a href="#downloads">Downloads</a></li>
-                <li><a href="comprar.html">Comprar</a></li>
-            </ul>
+            <nav class="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="#features" class="nav-link">Recursos</a></li>
+                    <li><a href="#downloads" class="nav-link">Downloads</a></li>
+                    <li><a href="comprar.html" class="nav-link btn-primary">Comprar</a></li>
+                </ul>
+            </nav>
         </div>
     </header>
 
-    <!-- Seção Principal (Hero) -->
-    <section class="hero container">
-        <div class="hero-content">
-            <!-- Título "Atalho" preto, negrito -->
-            <h1>
-                Atalho
-                <!-- Subtítulo menor e cor laranja -->
-                <span>O caminho mais curto entre o que você pensa e o que digita.</span>
-            </h1>
-            <p>Expanda rapidamente textos repetitivos, padronize documentos e ganhe agilidade na sua rotina!</p>
-        </div>
+    <!-- Hero Section com Background Gradiente -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Atalho
+                    <span class="hero-subtitle">O caminho mais curto entre o que você pensa e o que digita.</span>
+                </h1>
+                <p class="hero-description">
+                    Transforme sua forma de escrever com expansão automática de texto.
+                    Padronize documentos e aumente sua produtividade em segundos!
+                </p>
+                <div class="hero-buttons">
+                    <a href="comprar.html" class="btn-hero">Começar Agora</a>
+                    <a href="#features" class="btn-hero-secondary">Ver Recursos</a>
+                </div>
+            </div>
 
-        <!-- Vídeos em um retângulo -->
-        <div class="hero-videos">
-            <div class="video-card">
-                <!-- Exemplo de vídeo embed (substitua o link) -->
-                <iframe width="600" height="380" src="https://www.youtube.com/embed/VIDEO_ID_1" frameborder="0"
-                    allowfullscreen>
-                </iframe>
-            </div>
-         
-        </div>
-
-        <!-- Botão abaixo dos vídeos -->
-        <a class="btn-hero" href="comprar.html">Obter Agora</a>
-    </section>
-
-    <!-- Seção de Recursos (Features) -->
-    <section class="features container" id="features">
-        <h2>Principais Funcionalidades</h2>
-        <div class="features-grid">
-            <div class="feature-item">
-                <i class="fa-solid fa-bolt"></i>
-                <h3>Expansão Automática</h3>
-                <p>Transforme atalhos em textos completos, economizando tempo em cada digitação.</p>
-            </div>
-            <div class="feature-item">
-                <i class="fa-solid fa-database"></i>
-                <h3>Bancos de Dados Customizados</h3>
-                <p>Crie suas próprias bibliotecas de frases, termos médicos, jurídicos ou o que precisar.</p>
-            </div>
-            <div class="feature-item">
-                <i class="fa-solid fa-file-lines"></i>
-                <h3>Formatação Avançada</h3>
-                <p>Use tags de formatação para gerar textos prontos com negrito, itálico e muito mais.</p>
-            </div>
-            <div class="feature-item">
-                <i class="fa-solid fa-file-word"></i>
-                <h3>Integração com Word</h3>
-                <p>Funciona perfeitamente dentro do Microsoft Word e outros editores de texto.</p>
-            </div>
-            <div class="feature-item">
-                <i class="fa-solid fa-sync"></i>
-                <h3>Atualizações Contínuas</h3>
-                <p>Receba melhorias e correções pelo período de 1 ano sem custo adicional.</p>
-            </div>
-            <div class="feature-item">
-                <i class="fa-solid fa-headset"></i>
-                <h3>Suporte Prioritário</h3>
-                <p>Tenha acesso a suporte rápido e especializado para resolver qualquer problema.</p>
+            <div class="hero-media">
+                <div class="video-showcase">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/VIDEO_ID_1" title="Demonstração do Atalho"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Seção de Downloads -->
-    <section class="downloads container" id="downloads">
-        <h2>Downloads</h2>
-        <p>Encontre aqui atalhos prontos para facilitar sua rotina em diversas áreas.</p>
-        <div class="downloads-grid">
-            <div class="download-card">
-                <img src="assets/img/screenshots/medical.jpg" alt="Atalhos Médicos" />
-                <h3>Pacote Médico</h3>
-                <p>Biblioteca de termos e expressões médicas para laudos e relatórios.</p>
-                <a href="#" class="btn-download">Download</a>
+    <!-- Seção de Recursos com Cards Modernos -->
+    <section id="features" class="features">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Recursos Principais</h2>
+                <p>Descubra como o Atalho pode revolucionar sua forma de trabalhar</p>
             </div>
-            <div class="download-card">
-                <img src="assets/img/screenshots/legal.jpg" alt="Atalhos Jurídicos" />
-                <h3>Pacote Jurídico</h3>
-                <p>Modelos de petições, contratos e expressões legais.</p>
-                <a href="#" class="btn-download">Download</a>
-            </div>
-            <div class="download-card">
-                <img src="assets/img/screenshots/default.jpg" alt="Atalhos Gerais" />
-                <h3>Pacote Genérico</h3>
-                <p>Conjunto variado de atalhos úteis para qualquer área.</p>
-                <a href="#" class="btn-download">Download</a>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <h3>Expansão Automática</h3>
+                    <p>Transforme pequenos atalhos em textos completos instantaneamente, economizando tempo precioso em
+                        cada digitação.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-database"></i>
+                    </div>
+                    <h3>Bancos Personalizados</h3>
+                    <p>Crie suas próprias bibliotecas de frases e termos técnicos, adaptando o Atalho ao seu fluxo de
+                        trabalho.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-file-lines"></i>
+                    </div>
+                    <h3>Formatação Avançada</h3>
+                    <p>Use tags inteligentes para formatar seus textos automaticamente com negrito, itálico e muito
+                        mais.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-file-word"></i>
+                    </div>
+                    <h3>Integração Office</h3>
+                    <p>Compatibilidade total com Microsoft Word e outros editores, mantendo sua experiência familiar.
+                    </p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Seção CTA -->
-    <section class="cta container">
-        <h2>Pronto para aumentar sua produtividade?</h2>
-        <p>Adquira o Atalho e ganhe liberdade para se concentrar no que realmente importa!</p>
-        <a href="comprar.html" class="btn-cta">Comprar Agora</a>
+    <!-- Seção de Downloads com Visual Moderno -->
+    <section id="downloads" class="downloads">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Downloads</h2>
+                <p>Bibliotecas prontas para usar em sua área de atuação</p>
+            </div>
+
+            <div class="downloads-grid">
+                <div class="download-card">
+                    <div class="card-image">
+                        <img src="assets/img/screenshots/medical.jpg" alt="Pacote Médico" loading="lazy" />
+                    </div>
+                    <div class="card-content">
+                        <h3>Pacote Médico</h3>
+                        <p>Biblioteca completa com termos médicos, modelos de laudos e expressões técnicas.</p>
+                        <a href="#" class="btn-download">
+                            <i class="fa-solid fa-download"></i>
+                            Download
+                        </a>
+                    </div>
+                </div>
+
+                <div class="download-card">
+                    <div class="card-image">
+                        <img src="assets/img/screenshots/legal.jpg" alt="Pacote Jurídico" loading="lazy" />
+                    </div>
+                    <div class="card-content">
+                        <h3>Pacote Jurídico</h3>
+                        <p>Modelos de petições, contratos e expressões jurídicas padronizadas.</p>
+                        <a href="#" class="btn-download">
+                            <i class="fa-solid fa-download"></i>
+                            Download
+                        </a>
+                    </div>
+                </div>
+
+                <div class="download-card">
+                    <div class="card-image">
+                        <img src="assets/img/screenshots/default.jpg" alt="Pacote Padrão" loading="lazy" />
+                    </div>
+                    <div class="card-content">
+                        <h3>Pacote Padrão</h3>
+                        <p>Conjunto versátil de atalhos para uso geral em qualquer área.</p>
+                        <a href="#" class="btn-download">
+                            <i class="fa-solid fa-download"></i>
+                            Download
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
-    <!-- Rodapé -->
+    <!-- Seção CTA Moderna -->
+    <section class="cta">
+        <div class="cta-container">
+            <h2>Pronto para aumentar sua produtividade?</h2>
+            <p>Junte-se a milhares de profissionais que já otimizaram seu fluxo de trabalho</p>
+            <div class="cta-buttons">
+                <a href="comprar.html" class="btn-cta">Começar Agora</a>
+                <a href="#features" class="btn-cta-secondary">Saiba Mais</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Moderno -->
     <footer class="footer">
-        <div class="container footer-content">
-            <div class="footer-logo">
-                <img src="assets/img/logo.svg" alt="Logo Atalho" />
+        <div class="footer-container">
+            <div class="footer-brand">
+                <img src="assets/img/logo.svg" alt="Logo Atalho" class="footer-logo" />
+                <p>© 2025 Atalho App. Todos os direitos reservados.</p>
             </div>
-            <p>© 2025 Atalho App. Todos os direitos reservados.</p>
-            <div class="social">
-                <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#"><i class="fa-brands fa-twitter"></i></a>
-                <a href="#"><i class="fa-brands fa-youtube"></i></a>
+
+            <div class="footer-social">
+                <a href="#" class="social-link" aria-label="Facebook">
+                    <i class="fa-brands fa-facebook-f"></i>
+                </a>
+                <a href="#" class="social-link" aria-label="Instagram">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+                <a href="#" class="social-link" aria-label="Twitter">
+                    <i class="fa-brands fa-twitter"></i>
+                </a>
+                <a href="#" class="social-link" aria-label="LinkedIn">
+                    <i class="fa-brands fa-linkedin-in"></i>
+                </a>
+            </div>
+
+            <div class="footer-links">
+                <nav class="footer-nav">
+                    <a href="#">Política de Privacidade</a>
+                    <a href="#">Termos de Uso</a>
+                    <a href="#">FAQ</a>
+                    <a href="#">Contato</a>
+                </nav>
             </div>
         </div>
     </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Smooth scroll para links internos
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.classList.add('header-scrolled');
+            } else {
+                header.classList.remove('header-scrolled');
+            }
+        });
+    </script>
 </body>
 
 </html>

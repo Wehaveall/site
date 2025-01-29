@@ -1,18 +1,71 @@
-/* Reset básico */
-* {
+/* 
+  ==================================================
+   Variáveis de cores (baseadas no que foi fornecido)
+  ==================================================
+*/
+:root {
+    --font-family: 'Work Sans', sans-serif;
+    --focused-bg-color: #c7ba9dcb;
+    /* Bege suave */
+    --icon-color: #C1C1C1;
+    /* Cinza claro */
+    --folder-color: #dbc9ad;
+    /* Tom de laranja claro */
+    --selected-bg: #dbc9ad;
+    --selected-color: #333333;
+    --icon-bg-color: transparent;
+
+    --folder-icon-color: #c4b59c;
+    --folder-icon-hover: #a89278;
+
+    /* dark theme examples */
+    --dark-folder-icon-color: #d6c7ae;
+    --dark-folder-icon-hover: #e8d9c0;
+
+    --gray-ccc: #ccc;
+    --gray-666: #666;
+    --gray-999: #999;
+    --gray-bbb: #bbb;
+
+    /* Light-theme custom properties */
+    --window-bgcolor: #F2F2F2;
+    --window-left-bgcolor: #EDE7E3;
+    --input-bgcolor: #FFFFFF;
+    --text-color: #0f0f0f;
+    --myTable-evenbgcolor: #EDE7E3;
+    --myTable-oddbgcolor: #F7F4F0;
+    --button-color: #2b2a2a;
+    --icon-bar-color: #DAD4CE;
+    --toolbar-bgcolor: #F2F2F2;
+    --toolbar-border-color: #A8977D;
+    --toolbar-button-bgcolor: #E4E0DB;
+    --toolbar-button-color: #4D4D4D;
+    --toolbar-button-hover-bgcolor: #DAD4CE;
+    --toolbar-button-active-bgcolor: #A8977D;
+    --toolbar-button-active-color: #4D4D4D;
+}
+
+/* 
+  ============================================
+    Estilos base para a classe .light-theme
+  ============================================
+*/
+body.light-theme {
+    background-color: var(--window-bgcolor);
+    color: var(--text-color);
+    font-family: var(--font-family);
     margin: 0;
     padding: 0;
+}
+
+/* Reset básico para alguns elementos */
+*,
+*::before,
+*::after {
     box-sizing: border-box;
-    font-family: 'Work Sans', Arial, sans-serif;
 }
 
-body {
-    background-color: #f5f5f5;
-    color: #2E2E2E;
-    line-height: 1.5;
-}
-
-/* Container genérico para centralizar conteúdo */
+/* Container */
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -21,8 +74,8 @@ body {
 
 /* Cabeçalho e Navbar */
 .header {
-    background-color: #fff;
-    border-bottom: 1px solid #eee;
+    background-color: var(--toolbar-bgcolor);
+    border-bottom: 1px solid var(--toolbar-border-color);
     position: sticky;
     top: 0;
     z-index: 999;
@@ -34,6 +87,12 @@ body {
     justify-content: space-between;
 }
 
+.logo img {
+    /* Aumentar a logo */
+    height: 80px;
+    /* Caso queira usar largura fixa, troque por: width: 120px; height: auto; */
+}
+
 .nav-links {
     list-style: none;
     display: flex;
@@ -42,42 +101,42 @@ body {
 
 .nav-links li a {
     text-decoration: none;
-    color: #444;
+    color: var(--toolbar-button-color);
     font-weight: 500;
     transition: color 0.3s;
 }
 
 .nav-links li a.active,
 .nav-links li a:hover {
-    color: #F79D44;
-    /* Cor principal */
-}
-
-.logo img {
-    height: 50px;
+    color: var(--folder-color);
+    /* Exemplo: #dbc9ad */
 }
 
 /* Hero / Banner */
 .hero {
     display: flex;
+    flex-direction: column;
+    /* Coluna para centralizar */
     align-items: center;
-    justify-content: space-between;
+    /* Centraliza horizontal */
+    text-align: center;
+    /* Centraliza o texto */
     margin-top: 2rem;
 }
 
 .hero-content {
-    flex: 1;
-    margin-right: 2rem;
+    max-width: 800px;
+    margin-bottom: 1.5rem;
 }
 
 .hero-content h1 {
-    font-size: 3rem;
-    color: #F79D44;
+    font-size: 2.5rem;
+    color: var(--folder-color);
     margin-bottom: 1rem;
 }
 
-.hero-content h1 span {
-    color: #2E2E2E;
+.hero-content span {
+    color: var(--text-color);
 }
 
 .hero-content p {
@@ -85,8 +144,9 @@ body {
     margin-bottom: 1.5rem;
 }
 
+/* Botão principal (hero) */
 .btn-hero {
-    background-color: #F79D44;
+    background-color: var(--button-color);
     color: #fff;
     padding: 1rem 2rem;
     border-radius: 6px;
@@ -96,12 +156,26 @@ body {
 }
 
 .btn-hero:hover {
-    background-color: #e58d34;
+    background-color: #1f1e1e;
 }
 
-.hero-image img {
-    max-width: 400px;
-    width: 100%;
+/* "Retângulo" de vídeos */
+.hero-videos {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    /* para quebrar linha em telas menores */
+    justify-content: center;
+    background-color: var(--window-left-bgcolor);
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.video-card {
+    background: #fff;
+    padding: 0.5rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Seção de Recursos */
@@ -112,7 +186,7 @@ body {
 .features h2 {
     text-align: center;
     margin-bottom: 2rem;
-    color: #F79D44;
+    color: var(--folder-color);
 }
 
 .features-grid {
@@ -132,7 +206,7 @@ body {
 .feature-item i {
     font-size: 2rem;
     margin-bottom: 1rem;
-    color: #F79D44;
+    color: var(--folder-color);
 }
 
 .feature-item h3 {
@@ -147,7 +221,7 @@ body {
 .downloads h2 {
     text-align: center;
     margin-bottom: 1rem;
-    color: #F79D44;
+    color: var(--folder-color);
 }
 
 .downloads-grid {
@@ -172,13 +246,13 @@ body {
 
 .download-card h3 {
     margin: 1rem 0;
-    color: #F79D44;
+    color: var(--folder-color);
 }
 
 .btn-download {
     display: inline-block;
     text-decoration: none;
-    background-color: #F79D44;
+    background-color: var(--button-color);
     color: #fff;
     padding: 0.6rem 1.2rem;
     border-radius: 6px;
@@ -187,7 +261,7 @@ body {
 }
 
 .btn-download:hover {
-    background-color: #e58d34;
+    background-color: #1f1e1e;
 }
 
 /* Seção CTA */
@@ -202,13 +276,13 @@ body {
 
 .cta h2 {
     margin-bottom: 1rem;
-    color: #F79D44;
+    color: var(--folder-color);
 }
 
 .btn-cta {
     display: inline-block;
     text-decoration: none;
-    background-color: #F79D44;
+    background-color: var(--button-color);
     color: #fff;
     padding: 0.8rem 2rem;
     border-radius: 6px;
@@ -217,7 +291,7 @@ body {
 }
 
 .btn-cta:hover {
-    background-color: #e58d34;
+    background-color: #1f1e1e;
 }
 
 /* Seção de Compra (comprar.html) */
@@ -258,7 +332,7 @@ body {
 .price-box .price {
     display: block;
     font-size: 2rem;
-    color: #F79D44;
+    color: var(--folder-color);
     font-weight: bold;
 }
 
@@ -268,7 +342,7 @@ body {
 }
 
 .payment-section h2 {
-    color: #F79D44;
+    color: var(--folder-color);
     margin-bottom: 1rem;
 }
 
@@ -296,13 +370,14 @@ body {
 }
 
 .payment-option:hover {
-    background: rgba(247, 157, 68, 0.1);
+    background: rgba(219, 201, 173, 0.1);
+    /* var(--selected-bg) com opacidade */
     transform: translateY(-2px);
 }
 
 .payment-option.selected {
-    background: rgba(247, 157, 68, 0.1);
-    border-color: #F79D44;
+    background: rgba(219, 201, 173, 0.1);
+    border-color: var(--folder-color);
 }
 
 .payment-option i {
@@ -318,7 +393,7 @@ body {
 
 #register-form h3 {
     margin-bottom: 1rem;
-    color: #F79D44;
+    color: var(--folder-color);
 }
 
 .form-group {
@@ -341,7 +416,7 @@ body {
 }
 
 .form-group input:focus {
-    border-color: #F79D44;
+    border-color: var(--folder-color);
     outline: none;
 }
 
@@ -370,7 +445,7 @@ body {
 }
 
 .btn {
-    background: #F79D44;
+    background: var(--button-color);
     color: white;
     border: none;
     padding: 1rem;
@@ -384,7 +459,7 @@ body {
 }
 
 .btn:hover {
-    background: #e58d34;
+    background: #1f1e1e;
 }
 
 .btn:disabled {
@@ -423,7 +498,7 @@ body {
     width: 40px;
     height: 40px;
     border: 4px solid #f3f3f3;
-    border-top: 4px solid #F79D44;
+    border-top: 4px solid var(--folder-color);
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin: 0 auto 1rem;
@@ -441,8 +516,8 @@ body {
 
 /* Rodapé */
 .footer {
-    background-color: #fff;
-    border-top: 1px solid #eee;
+    background-color: var(--toolbar-bgcolor);
+    border-top: 1px solid var(--toolbar-border-color);
     margin-top: 2rem;
 }
 
@@ -459,26 +534,20 @@ body {
 }
 
 .social a {
-    color: #666;
+    color: var(--toolbar-button-color);
     margin: 0 0.3rem;
     font-size: 1.2rem;
     transition: color 0.2s;
 }
 
 .social a:hover {
-    color: #F79D44;
+    color: var(--folder-color);
 }
 
 /* Responsividade */
 @media (max-width: 768px) {
     .hero {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .hero-content {
-        margin-right: 0;
-        margin-bottom: 2rem;
+        margin-top: 1rem;
     }
 
     .purchase {

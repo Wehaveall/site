@@ -6,19 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Atalho - Comprar</title>
 
-    <!-- Font Awesome -->
+    <!-- Font Awesome (opcional) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
     <!-- CSS principal -->
     <link rel="stylesheet" href="assets/css/style.css" />
-
-    <!-- Firebase SDKs (caso necessário) -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 
-<body>
+<body class="light-theme">
     <!-- Cabeçalho -->
     <header class="header">
         <nav class="navbar container">
@@ -111,7 +106,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="confirm-password">Confirme a senha</label>
+                    <label for="confirm-password">Confirme a Senha</label>
                     <input type="password" id="confirm-password" required />
                     <div class="error-message" id="confirm-password-error"></div>
                 </div>
@@ -160,9 +155,13 @@
         </div>
     </footer>
 
-    <!-- Scripts -->
-    <script src="assets/js/firebase.js"></script> <!-- Inicializa Firebase -->
-    <script src="assets/js/payment.js"></script> <!-- Lógica de Pagamento e Cadastro -->
+    <!-- Scripts (Firebase, pagamento, etc.) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <!-- Script principal (ex.: firebase init + payment logic) -->
+    <script src="assets/js/payment.js"></script>
 </body>
 
 </html>

@@ -61,6 +61,7 @@ body {
 
 /* Header e Navegação */
 /* Header e Navegação */
+/* Header e Navegação */
 :root {
     --header-height: 60px;
     --header-bg: #f5f0e6;
@@ -78,7 +79,6 @@ body {
     transition: all 0.3s ease;
     border-bottom: 1px solid var(--header-border);
     overflow: visible;
-    /* Permite que o logo ultrapasse o header */
 }
 
 .header-scrolled {
@@ -100,18 +100,20 @@ body {
 .logo {
     position: relative;
     z-index: 999;
+    height: calc(var(--header-height) * 2);
+    margin-right: auto;
     display: flex;
     align-items: center;
-    margin-right: auto;
 }
 
 .logo-img {
-    height: calc(var(--header-height) * 2);
-    /* Logo 2x mais alto que o header */
+    height: 100%;
     width: auto;
-    transform: translateY(10px);
-    /* Ajuste fino da posição */
-    transition: transform 0.3s ease;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    max-height: none;
+    object-fit: contain;
 }
 
 .nav-links {
@@ -168,7 +170,7 @@ body {
 
 /* Responsividade */
 @media (max-width: 768px) {
-    .logo-img {
+    .logo {
         height: calc(var(--header-height) * 1.5);
     }
 
@@ -182,11 +184,10 @@ body {
         padding: 0 1rem;
     }
 
-    .logo-img {
+    .logo {
         height: calc(var(--header-height) * 1.2);
     }
 }
-
 
 .btn-primary {
     background: var(--text-dark);

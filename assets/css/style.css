@@ -89,7 +89,7 @@ body.light-theme {
 
 .logo img {
     /* Aumentar a logo */
-    height: 80px;
+    height: 150px;
     /* Caso queira usar largura fixa, troque por: width: 120px; height: auto; */
 }
 

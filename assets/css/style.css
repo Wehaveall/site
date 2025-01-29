@@ -111,7 +111,7 @@ body {
     width: auto;
     position: absolute;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-40%);
     max-height: none;
     object-fit: contain;
 }

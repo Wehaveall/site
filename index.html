@@ -2,451 +2,133 @@
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Atalho - A menor distância entre o que você pensa e digita. Software de expansão de texto e produtividade.">
-    <title>Atalho - Expansão de texto inteligente</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atalho - Escreva mais digitando menos</title>
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
-    <!-- Stripe -->
-    <script src="https://js.stripe.com/v3/"></script>
-
-    <style>
-        :root {
-            --primary-color: #F79D44;
-            --primary-hover: #e58d34;
-            --text-color: #2E2E2E;
-            --bg-color: #f5f5f5;
-            --success-color: #4CAF50;
-            --error-color: #ff4444;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Work Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-
-        body {
-            background: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.5;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .header {
-            background: white;
-            padding: 1rem 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .logo img {
-            height: 40px;
-            width: auto;
-        }
-
-        .hero {
-            text-align: center;
-            padding: 4rem 0;
-            background: linear-gradient(135deg, #fff6e6 0%, #fff 100%);
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: var(--text-color);
-        }
-
-        .hero p {
-            font-size: 1.25rem;
-            color: #666;
-            margin-bottom: 2rem;
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            padding: 4rem 0;
-        }
-
-        .feature-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .pricing {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            margin: 4rem auto;
-        }
-
-        .price {
-            font-size: 3rem;
-            color: var(--primary-color);
-            font-weight: bold;
-            text-align: center;
-            margin: 2rem 0;
-        }
-
-        .features-list {
-            list-style: none;
-            margin: 2rem 0;
-        }
-
-        .features-list li {
-            margin-bottom: 1rem;
-            padding-left: 2rem;
-            position: relative;
-        }
-
-        .features-list li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: var(--success-color);
-        }
-
-        .btn {
-            display: inline-block;
-            background: var(--primary-color);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background-color 0.3s ease;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            text-align: center;
-        }
-
-        .btn:hover {
-            background: var(--primary-hover);
-        }
-
-        .payment-methods {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-
-        .payment-method {
-            padding: 1rem;
-            border: 2px solid #eee;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-
-        .payment-method:hover {
-            border-color: var(--primary-color);
-            background: rgba(247, 157, 68, 0.1);
-        }
-
-        .payment-method.selected {
-            border-color: var(--primary-color);
-            background: rgba(247, 157, 68, 0.1);
-        }
-
-        .payment-method i {
-            font-size: 2rem;
-            color: var(--text-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .form {
-            margin-top: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #eee;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        .form-group input:focus {
-            border-color: var(--primary-color);
-            outline: none;
-        }
-
-        .password-strength {
-            margin-top: 0.5rem;
-        }
-
-        .meter {
-            height: 4px;
-            background: #eee;
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .meter-bar {
-            height: 100%;
-            width: 0;
-            transition: all 0.3s ease;
-        }
-
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            max-width: 90%;
-            width: 400px;
-            text-align: center;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .payment-methods {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .pricing {
-                margin: 2rem 1rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .payment-methods {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
+    <!-- CSS principal -->
+    <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 
 <body>
+    <!-- Cabeçalho -->
     <header class="header">
-        <nav class="nav container">
+        <nav class="navbar container">
             <div class="logo">
-                <img src="src/images/Atalho.svg" alt="Atalho Logo">
+                <a href="index.html">
+                    <!-- Substitua pela sua logo -->
+                    <img src="assets/img/logo.png" alt="Logo Atalho" />
+                </a>
             </div>
-            <div class="nav-links">
-                <a href="#recursos" class="btn-outline">Recursos</a>
-                <a href="#preco" class="btn">Comprar</a>
-            </div>
+            <ul class="nav-links">
+                <li><a href="#features">Recursos</a></li>
+                <li><a href="#downloads">Downloads</a></li>
+                <li><a href="comprar.html">Comprar</a></li>
+            </ul>
         </nav>
     </header>
 
-    <main>
-        <section class="hero">
-            <div class="container">
-                <h1>Escreva mais digitando menos</h1>
-                <p>Aumente sua produtividade com expansão de texto inteligente</p>
-                <a href="#preco" class="btn">Comece agora por R$49,90/ano</a>
-            </div>
-        </section>
-
-        <section id="recursos" class="container">
-            <div class="features">
-                <div class="feature-card">
-                    <i class="fas fa-bolt"></i>
-                    <h3>Expansão Automática</h3>
-                    <p>Digite pequenos atalhos que se expandem em textos completos</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-paint-brush"></i>
-                    <h3>Formatação Mantida</h3>
-                    <p>Preserve toda a formatação ao expandir seus textos</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-file-word"></i>
-                    <h3>Integração com Word</h3>
-                    <p>Funciona perfeitamente com o Microsoft Word</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-database"></i>
-                    <h3>Bancos Personalizáveis</h3>
-                    <p>Organize seus atalhos em bancos temáticos</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="preco" class="container">
-            <div class="pricing">
-                <h2>Licença Anual</h2>
-                <div class="price">R$ 49,90</div>
-                <ul class="features-list">
-                    <li>Todas as funcionalidades</li>
-                    <li>Atualizações gratuitas</li>
-                    <li>Suporte prioritário</li>
-                    <li>Acesso à biblioteca de atalhos</li>
-                </ul>
-
-                <div class="payment-methods">
-                    <div class="payment-method" data-method="mercadopago">
-                        <i class="fas fa-hand-holding-dollar"></i>
-                        <div>Mercado Pago</div>
-                    </div>
-                    <div class="payment-method" data-method="paypal">
-                        <i class="fab fa-paypal"></i>
-                        <div>PayPal</div>
-                    </div>
-                    <div class="payment-method" data-method="pix">
-                        <i class="fas fa-qrcode"></i>
-                        <div>PIX</div>
-                    </div>
-                    <div class="payment-method" data-method="pagseguro">
-                        <i class="fas fa-shield-halved"></i>
-                        <div>PagSeguro</div>
-                    </div>
-                    <div class="payment-method" data-method="creditcard">
-                        <i class="fas fa-credit-card"></i>
-                        <div>Cartão</div>
-                    </div>
-                </div>
-
-                <form id="register-form" class="form hidden">
-                    <div class="form-group">
-                        <label for="name">Nome</label>
-                        <input type="text" id="name" required>
-                        <div class="error-message" id="name-error"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" required>
-                        <div class="error-message" id="email-error"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">Senha</label>
-                        <input type="password" id="password" required>
-                        <div class="password-strength">
-                            <div class="meter">
-                                <div class="meter-bar"></div>
-                            </div>
-                            <div class="strength-text"></div>
-                        </div>
-                        <div class="error-message" id="password-error"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="confirm-password">Confirme a senha</label>
-                        <input type="password" id="confirm-password" required>
-                        <div class="error-message" id="confirm-password-error"></div>
-                    </div>
-
-                    <button type="submit" class="btn" id="register-btn">
-                        Finalizar cadastro
-                    </button>
-                </form>
-            </div>
-        </section>
-    </main>
-
-    <!-- Loading Modal -->
-    <div id="loading-modal" class="modal hidden">
-        <div class="modal-content">
-            <div class="spinner"></div>
-            <p id="loading-message">Processando...</p>
+    <!-- Banner / Hero Section -->
+    <section class="hero container">
+        <div class="hero-content">
+            <h1>Atalho <br> <span>Escreva mais digitando menos</span></h1>
+            <p>Expanda rapidamente textos repetitivos, padronize documentos e ganhe agilidade na sua rotina!</p>
+            <a class="btn-hero" href="comprar.html">Obter Agora</a>
         </div>
-    </div>
-
-    <!-- Success Modal -->
-    <div id="success-modal" class="modal hidden">
-        <div class="modal-content">
-            <i class="fas fa-check-circle"
-                style="font-size: 3rem; color: var(--success-color); margin-bottom: 1rem;"></i>
-            <h3>Sucesso!</h3>
-            <p id="success-message">Operação realizada com sucesso.</p>
+        <div class="hero-image">
+            <img src="assets/img/hero-illustration.png" alt="Demonstração do Atalho App" />
         </div>
-    </div>
+    </section>
+
+    <!-- Seção de Recursos -->
+    <section class="features container" id="features">
+        <h2>Principais Funcionalidades</h2>
+        <div class="features-grid">
+            <div class="feature-item">
+                <i class="fa-solid fa-bolt"></i>
+                <h3>Expansão Automática</h3>
+                <p>Transforme atalhos em textos completos, economizando tempo em cada digitação.</p>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-database"></i>
+                <h3>Bancos de Dados Customizados</h3>
+                <p>Crie suas próprias bibliotecas de frases, termos médicos, jurídicos ou o que precisar.</p>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-file-lines"></i>
+                <h3>Formatação Avançada</h3>
+                <p>Use tags de formatação para gerar textos prontos com negrito, itálico e muito mais.</p>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-file-word"></i>
+                <h3>Integração com Word</h3>
+                <p>Funciona perfeitamente dentro do Microsoft Word e outros editores de texto.</p>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-sync"></i>
+                <h3>Atualizações Contínuas</h3>
+                <p>Receba melhorias e correções pelo período de 1 ano sem custo adicional.</p>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-headset"></i>
+                <h3>Suporte Prioritário</h3>
+                <p>Tenha acesso a suporte rápido e especializado para resolver qualquer problema.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Downloads -->
+    <section class="downloads container" id="downloads">
+        <h2>Downloads</h2>
+        <p>Encontre aqui atalhos prontos para facilitar sua rotina em diversas áreas.</p>
+        <div class="downloads-grid">
+            <div class="download-card">
+                <img src="assets/img/screenshots/medical.jpg" alt="Atalhos Médicos" />
+                <h3>Pacote Médico</h3>
+                <p>Biblioteca de termos e expressões médicas para laudos e relatórios.</p>
+                <a href="#" class="btn-download">Download</a>
+            </div>
+            <div class="download-card">
+                <img src="assets/img/screenshots/legal.jpg" alt="Atalhos Jurídicos" />
+                <h3>Pacote Jurídico</h3>
+                <p>Modelos de petições, contratos e expressões legais.</p>
+                <a href="#" class="btn-download">Download</a>
+            </div>
+            <div class="download-card">
+                <img src="assets/img/screenshots/default.jpg" alt="Atalhos Gerais" />
+                <h3>Pacote Genérico</h3>
+                <p>Conjunto variado de atalhos úteis para qualquer área.</p>
+                <a href="#" class="btn-download">Download</a>
+            </div>
+            <!-- Adicione mais pacotes de atalhos conforme desejar -->
+        </div>
+    </section>
+
+    <!-- Seção de CTA -->
+    <section class="cta container">
+        <h2>Pronto para aumentar sua produtividade?</h2>
+        <p>Adquira o Atalho e ganhe liberdade para se concentrar no que realmente importa!</p>
+        <a href="comprar.html" class="btn-cta">Comprar Agora</a>
+    </section>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-logo">
+                <img src="assets/img/logo.png" alt="Logo Atalho" />
+            </div>
+            <p>© 2025 Atalho App. Todos os direitos reservados.</p>
+            <div class="social">
+                <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                <a href="#"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

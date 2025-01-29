@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atalho - Comprar</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <!-- CSS principal -->
+    <link rel="stylesheet" href="assets/css/style.css" />
+
+    <!-- Firebase SDKs (caso necessário) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+    <!-- Cabeçalho -->
+    <header class="header">
+        <nav class="navbar container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="assets/img/logo.png" alt="Logo Atalho" />
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html#features">Recursos</a></li>
+                <li><a href="index.html#downloads">Downloads</a></li>
+                <li><a href="comprar.html" class="active">Comprar</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="purchase container">
+        <div class="product-info">
+            <h1>Atalho</h1>
+            <ul>
+                <li>Expansão de texto automática</li>
+                <li>Bancos de dados personalizáveis</li>
+                <li>Formatação avançada</li>
+                <li>Integração com Word</li>
+                <li>Atualizações por 1 ano</li>
+                <li>Suporte prioritário</li>
+            </ul>
+            <div class="price-box">
+                <span class="price">R$ 49,90</span>
+                <span class="license">Licença anual</span>
+            </div>
+        </div>
+
+        <div class="payment-section">
+            <h2>Formas de Pagamento</h2>
+            <div class="payment-grid">
+                <button class="payment-option" data-method="mercadopago">
+                    <i class="fa-solid fa-hand-holding-dollar"></i>
+                    <div>Mercado Pago</div>
+                </button>
+                <button class="payment-option" data-method="paypal">
+                    <i class="fa-brands fa-paypal"></i>
+                    <div>PayPal</div>
+                </button>
+                <button class="payment-option" data-method="pix">
+                    <i class="fa-solid fa-qrcode"></i>
+                    <div>PIX</div>
+                </button>
+                <button class="payment-option" data-method="pagseguro">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <div>PagSeguro</div>
+                </button>
+                <button class="payment-option" data-method="creditcard">
+                    <i class="fa-solid fa-credit-card"></i>
+                    <div>Cartão</div>
+                </button>
+            </div>
+
+            <!-- Formulário de Cadastro -->
+            <form id="register-form" class="hidden">
+                <h3>Finalize seu cadastro</h3>
+                <div class="form-group">
+                    <label for="name">Nome</label>
+                    <input type="text" id="name" required />
+                    <div class="error-message" id="name-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required />
+                    <div class="error-message" id="email-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="country">País</label>
+                    <input type="text" id="country" required value="Brasil" />
+                    <div class="error-message" id="country-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" required />
+                    <div class="password-strength">
+                        <div class="strength-meter">
+                            <div class="meter-bar"></div>
+                        </div>
+                        <div class="strength-text"></div>
+                    </div>
+                    <div class="error-message" id="password-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm-password">Confirme a senha</label>
+                    <input type="password" id="confirm-password" required />
+                    <div class="error-message" id="confirm-password-error"></div>
+                </div>
+
+                <button type="submit" class="btn" id="register-btn">
+                    Finalizar cadastro
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Modal de Carregamento -->
+    <div id="loading-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="spinner"></div>
+            <p id="loading-message">Processando...</p>
+        </div>
+    </div>
+
+    <!-- Modal de Sucesso -->
+    <div id="success-modal" class="modal hidden">
+        <div class="modal-content">
+            <i class="fas fa-check-circle" style="font-size: 3rem; color: #4CAF50; margin-bottom: 1rem;"></i>
+            <h3>Sucesso!</h3>
+            <p id="success-message">Operação realizada com sucesso.</p>
+        </div>
+    </div>
+
+    <!-- Modal de Erro -->
+    <div id="error-modal" class="modal hidden">
+        <div class="modal-content">
+            <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: #ff4444; margin-bottom: 1rem;"></i>
+            <h3>Erro</h3>
+            <p id="error-message">Ocorreu um erro. Tente novamente.</p>
+            <button class="btn" style="margin-top: 1rem;"
+                onclick="document.getElementById('error-modal').classList.add('hidden')">
+                Fechar
+            </button>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <p>© 2025 Atalho App. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="assets/js/firebase.js"></script> <!-- Inicializa Firebase -->
+    <script src="assets/js/payment.js"></script> <!-- Lógica de Pagamento e Cadastro -->
+</body>
+
+</html>

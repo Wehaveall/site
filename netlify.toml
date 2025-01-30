@@ -1,0 +1,12 @@
+[build]
+  functions = "netlify/functions"
+  publish = "." # ou a pasta onde está seu site estático
+
+[dev]
+  publish = "."
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200

@@ -2,45 +2,68 @@
 
 class MercadoPagoService {
     constructor() {
-        // Inicializa o SDK do Mercado Pago
         this.mp = new MercadoPago('TEST-f6d0456b-ff4f-4c22-afef-53b2c4d4ec35', {
             locale: 'pt-BR'
         });
+
+        // URL da sua função Netlify
+        this.apiUrl = 'https://seu-site-netlify.netlify.app/.netlify/functions/create-preference';
     }
 
-    createPixButton(container) {
-        const pixButton = this.mp.bricks().create('pix', container, {
-            initialization: {
-                amount: 49.90
-            },
-            callbacks: {
-                onReady: () => {
-                    console.log('Brick pronto');
+    async createPixPayment() {
+        try {
+            // Chamar a função Netlify
+            const response = await fetch(this.apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
                 },
-                onSubmit: ({ selectedPaymentMethod, formData }) => {
-                    return new Promise((resolve, reject) => {
-                        console.log('Pagamento iniciado');
-                        resolve();
-                    });
+                body: JSON.stringify({
+                    amount: 49.90,
+                    description: 'Licença Anual - Atalho App'
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro na resposta do servidor');
+            }
+
+            const data = await response.json();
+
+            // Criar o Brick com a preferência retornada
+            const bricksBuilder = await this.mp.bricks();
+
+            const settings = {
+                initialization: {
+                    preferenceId: data.id
                 },
-                onError: (error) => {
-                    console.error(error);
-                }
-            },
-            locale: 'pt-BR',
-            customization: {
-                paymentMethods: {
-                    pix: 'all'
-                },
-                visual: {
-                    style: {
-                        theme: 'default'
+                callbacks: {
+                    onReady: () => {
+                        console.log('Brick pronto');
+                    },
+                    onSubmit: (formData) => {
+                        console.log('Pagamento iniciado', formData);
+                    },
+                    onError: (error) => {
+                        console.error('Erro no brick:', error);
                     }
                 }
-            }
-        });
+            };
 
-        return pixButton;
+            return {
+                
+                success: true,
+                bricksBuilder,
+                settings
+            };
+
+        } catch (error) {
+            console.error('Erro ao criar preferência:', error);
+            return {
+                success: false,
+                error: 'Erro ao iniciar pagamento'
+            };
+        }
     }
 }
 

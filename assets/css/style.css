@@ -249,9 +249,9 @@ body {
 /* ----------------------- */
 .video-showcase {
     width: 100%;
-    max-width: 700px;
+    max-width: 840px;
+    /* Aumentado em 20% (700px * 1.2 = 840px) */
 }
-
 .video-container {
     position: relative;
     padding-bottom: 56.25%;

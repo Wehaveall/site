@@ -2,17 +2,16 @@
 
 class MercadoPagoService {
     constructor() {
-        // Substitua TEST-XXXX pela sua Public Key
+        // Substitua pela sua Public Key
         this.publicKey = 'TEST-f6d0456b-ff4f-4c22-afef-53b2c4d4ec35';
 
-        // Substitua TEST-XXXX pelo seu Access Token
+        // Substitua pelo seu Access Token
         this.accessToken = 'TEST-7601417945820618-013008-87f0900af129b320e5d12f6fabe39620-231065568';
 
         // Inicializa o SDK do Mercado Pago
-        const mercadopago = new window.MercadoPago(this.publicKey, {
+        this.mercadopago = new MercadoPago(this.publicKey, {
             locale: 'pt-BR'
         });
-        this.mercadopago = mercadopago;
     }
 
     async createPixPayment() {
@@ -27,7 +26,7 @@ class MercadoPagoService {
                     transaction_amount: 49.90,
                     payment_method_id: 'pix',
                     payer: {
-                        email: 'test@test.com' // Isso será substituído pelo email do comprador
+                        email: 'test@test.com'
                     },
                     description: 'Licença Anual - Atalho App'
                 })
@@ -77,4 +76,5 @@ class MercadoPagoService {
     }
 }
 
-export default MercadoPagoService;
+// Cria uma instância global
+window.mpService = new MercadoPagoService();

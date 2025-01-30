@@ -5,7 +5,6 @@ class PixModalController {
         this.modalElement = document.getElementById('pix-modal');
         this.modalRoot = document.getElementById('pix-modal-root');
         this.paymentCheckInterval = null;
-        this.mpService = new MercadoPagoService();
     }
 
     show() {
@@ -29,7 +28,7 @@ class PixModalController {
         this.renderLoading();
 
         try {
-            const result = await this.mpService.createPixPayment();
+            const result = await window.mpService.createPixPayment();
 
             if (result.success) {
                 this.renderQRCode(result.qrCodeBase64);
@@ -50,7 +49,7 @@ class PixModalController {
 
     async checkPaymentStatus(paymentId) {
         try {
-            const result = await this.mpService.checkPaymentStatus(paymentId);
+            const result = await window.mpService.checkPaymentStatus(paymentId);
 
             if (result.success && result.status === 'approved') {
                 this.clearCheckPaymentInterval();
@@ -63,11 +62,11 @@ class PixModalController {
 
     handlePaymentSuccess() {
         this.hide();
-        showSuccess('Pagamento realizado com sucesso!');
+        window.showSuccess('Pagamento realizado com sucesso!');
         const registerForm = document.getElementById('register-form');
         registerForm.classList.remove('hidden');
         registerForm.scrollIntoView({ behavior: 'smooth' });
-        state.selectedMethod = 'pix';
+        window.state.selectedMethod = 'pix';
     }
 
     renderLoading() {
@@ -75,7 +74,7 @@ class PixModalController {
             <div class="modal-content">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-semibold">Pagamento via PIX</h3>
-                    <button onclick="pixModal.hide()" class="text-gray-500 hover:text-gray-700">
+                    <button onclick="window.pixModal.hide()" class="text-gray-500 hover:text-gray-700">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -92,7 +91,7 @@ class PixModalController {
             <div class="modal-content">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-semibold">Pagamento via PIX</h3>
-                    <button onclick="pixModal.hide()" class="text-gray-500 hover:text-gray-700">
+                    <button onclick="window.pixModal.hide()" class="text-gray-500 hover:text-gray-700">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -101,7 +100,7 @@ class PixModalController {
                         <i class="fas fa-exclamation-circle text-4xl"></i>
                     </div>
                     <p class="text-red-600 mb-4">${message}</p>
-                    <button onclick="pixModal.generatePixPayment()" 
+                    <button onclick="window.pixModal.generatePixPayment()" 
                             class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                         Tentar Novamente
                     </button>
@@ -115,7 +114,7 @@ class PixModalController {
             <div class="modal-content">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-semibold">Pagamento via PIX</h3>
-                    <button onclick="pixModal.hide()" class="text-gray-500 hover:text-gray-700">
+                    <button onclick="window.pixModal.hide()" class="text-gray-500 hover:text-gray-700">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -146,5 +145,5 @@ class PixModalController {
     }
 }
 
-// Inicializa o controlador do modal
-const pixModal = new PixModalController();
+// Cria uma instância global
+window.pixModal = new PixModalController();

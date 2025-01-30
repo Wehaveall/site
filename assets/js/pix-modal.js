@@ -74,7 +74,7 @@ class PixModalController {
             <div class="modal-content">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-semibold">Pagamento via PIX</h3>
-                    <button onclick="window.pixModal.hide()" class="text-gray-500 hover:text-gray-700">
+                    <button onclick="pixModal.hide()" class="text-gray-500 hover:text-gray-700">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -91,7 +91,7 @@ class PixModalController {
             <div class="modal-content">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-semibold">Pagamento via PIX</h3>
-                    <button onclick="window.pixModal.hide()" class="text-gray-500 hover:text-gray-700">
+                    <button onclick="pixModal.hide()" class="text-gray-500 hover:text-gray-700">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -100,7 +100,7 @@ class PixModalController {
                         <i class="fas fa-exclamation-circle text-4xl"></i>
                     </div>
                     <p class="text-red-600 mb-4">${message}</p>
-                    <button onclick="window.pixModal.generatePixPayment()" 
+                    <button onclick="pixModal.generatePixPayment()" 
                             class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                         Tentar Novamente
                     </button>
@@ -114,7 +114,7 @@ class PixModalController {
             <div class="modal-content">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-semibold">Pagamento via PIX</h3>
-                    <button onclick="window.pixModal.hide()" class="text-gray-500 hover:text-gray-700">
+                    <button onclick="pixModal.hide()" class="text-gray-500 hover:text-gray-700">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>

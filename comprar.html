@@ -7,15 +7,16 @@
     <meta name="description" content="Atalho - Adquira sua licença e otimize sua produtividade" />
     <title>Atalho - Comprar</title>
 
+    <!-- Fonts and Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <!-- Styles -->
     <link rel="stylesheet" href="assets/css/style.css" />
 
-
-    <script src="https://cdn.jsdelivr.net/npm/cors-anywhere@0.4.4/lib/cors-anywhere.min.js"></script>
-    <!-- SDK Mercado Pago -->
+    <!-- Mercado Pago SDK -->
     <script src="https://sdk.mercadopago.com/js/v2"></script>
 </head>
 
@@ -40,7 +41,7 @@
         </div>
     </header>
 
-    <!-- Seção Principal -->
+    <!-- Main Purchase Section -->
     <section class="purchase-hero">
         <div class="section-container">
             <div class="hero-content-centered">
@@ -50,7 +51,7 @@
                 </h1>
 
                 <div class="purchase-grid">
-                    <!-- Coluna de Informações do Produto -->
+                    <!-- Product Information -->
                     <div class="product-info">
                         <ul class="features-list">
                             <li>
@@ -80,7 +81,7 @@
                         </div>
                     </div>
 
-                    <!-- Coluna de Pagamento -->
+                    <!-- Payment Section -->
                     <div class="payment-section">
                         <h2>Formas de Pagamento</h2>
                         <div class="payment-grid">
@@ -88,17 +89,9 @@
                                 <i class="fa-solid fa-hand-holding-dollar"></i>
                                 <div>Mercado Pago</div>
                             </button>
-                            <button class="payment-option" data-method="paypal">
-                                <i class="fa-brands fa-paypal"></i>
-                                <div>PayPal</div>
-                            </button>
                             <button class="payment-option" data-method="pix">
                                 <i class="fa-solid fa-qrcode"></i>
                                 <div>PIX</div>
-                            </button>
-                            <button class="payment-option" data-method="pagseguro">
-                                <i class="fa-solid fa-shield-halved"></i>
-                                <div>PagSeguro</div>
                             </button>
                             <button class="payment-option" data-method="creditcard">
                                 <i class="fa-solid fa-credit-card"></i>
@@ -106,7 +99,12 @@
                             </button>
                         </div>
 
-                        <!-- Formulário de Cadastro -->
+                        <!-- Mercado Pago Button Container -->
+                        <div id="mercado-pago-button-container" class="hidden mt-4">
+                            <!-- Mercado Pago button will be dynamically inserted here -->
+                        </div>
+
+                        <!-- Registration Form -->
                         <form id="register-form" class="hidden">
                             <h3>Finalize seu cadastro</h3>
                             <div class="form-group">
@@ -155,7 +153,7 @@
         </div>
     </section>
 
-    <!-- Modais -->
+    <!-- Modals -->
     <div id="loading-modal" class="modal hidden">
         <div class="modal-content">
             <div class="spinner"></div>
@@ -182,7 +180,7 @@
         </div>
     </div>
 
-    <!-- Modal do PIX -->
+    <!-- PIX Modal -->
     <div id="pix-modal" class="modal hidden">
         <div id="pix-modal-root"></div>
     </div>
@@ -208,17 +206,69 @@
     </footer>
 
     <!-- Scripts -->
-    <!-- Scripts -->
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-   
-    <!-- Seus scripts na ordem correta -->
+
+    <!-- Custom Scripts -->
     <script src="assets/js/firebase.js"></script>
     <script src="assets/js/mercadopago-service.js"></script>
     <script src="assets/js/pix-modal.js"></script>
     <script src="assets/js/payment.js"></script>
+
+    <!-- Mercado Pago Integration Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mpService = new MercadoPagoService();
+
+            // Payment method selection handler
+            const paymentOptions = document.querySelectorAll('.payment-option');
+            paymentOptions.forEach(option => {
+                option.addEventListener('click', async function () {
+                    // Remove selection from all options
+                    paymentOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+
+                    const method = this.dataset.method;
+                    const mercadopagoContainer = document.getElementById('mercado-pago-button-container');
+
+                    if (method === 'mercadopago') {
+                        try {
+                            // Show loading
+                            mercadopagoContainer.innerHTML = '<div class="spinner"></div>';
+                            mercadopagoContainer.classList.remove('hidden');
+
+                            // Create payment preference
+                            const preferenceId = await mpService.createPaymentPreference();
+
+                            // Render Mercado Pago button
+                            const mp = new MercadoPago('TEST-f6d0456b-ff4f-4c22-afef-53b2c4d4ec35', {
+                                locale: 'pt-BR'
+                            });
+
+                            mp.checkout({
+                                preference: {
+                                    id: preferenceId
+                                },
+                                render: {
+                                    container: '#mercado-pago-button-container',
+                                    label: 'Pagar com Mercado Pago'
+                                }
+                            });
+                        } catch (error) {
+                            console.error('Erro ao configurar pagamento:', error);
+                            mercadopagoContainer.innerHTML =
+                                '<p class="text-red-500">Erro ao carregar pagamento. Tente novamente.</p>';
+                        }
+                    } else {
+                        // Hide Mercado Pago container for other payment methods
+                        mercadopagoContainer.classList.add('hidden');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -4,69 +4,32 @@ class PixModalController {
     constructor() {
         this.modalElement = document.getElementById('pix-modal');
         this.modalRoot = document.getElementById('pix-modal-root');
-        this.paymentCheckInterval = null;
     }
 
     show() {
         this.modalElement.classList.remove('hidden');
-        this.generatePixPayment();
+        this.initPayment();
     }
 
     hide() {
         this.modalElement.classList.add('hidden');
-        this.clearCheckPaymentInterval();
     }
 
-    clearCheckPaymentInterval() {
-        if (this.paymentCheckInterval) {
-            clearInterval(this.paymentCheckInterval);
-            this.paymentCheckInterval = null;
-        }
-    }
-
-    async generatePixPayment() {
+    async initPayment() {
         this.renderLoading();
 
         try {
             const result = await window.mpService.createPixPayment();
 
             if (result.success) {
-                this.renderQRCode(result.qrCodeBase64);
-                this.startPaymentCheck(result.paymentId);
+                this.renderPaymentButton(result.pixButton);
             } else {
-                this.renderError('Erro ao gerar QR Code PIX');
+                this.renderError('Erro ao iniciar pagamento PIX');
             }
         } catch (error) {
-            console.error('Erro ao gerar pagamento:', error);
+            console.error('Erro ao iniciar pagamento:', error);
             this.renderError('Erro ao processar pagamento');
         }
-    }
-
-    startPaymentCheck(paymentId) {
-        this.clearCheckPaymentInterval();
-        this.paymentCheckInterval = setInterval(() => this.checkPaymentStatus(paymentId), 5000);
-    }
-
-    async checkPaymentStatus(paymentId) {
-        try {
-            const result = await window.mpService.checkPaymentStatus(paymentId);
-
-            if (result.success && result.status === 'approved') {
-                this.clearCheckPaymentInterval();
-                this.handlePaymentSuccess();
-            }
-        } catch (error) {
-            console.error('Erro ao verificar status:', error);
-        }
-    }
-
-    handlePaymentSuccess() {
-        this.hide();
-        window.showSuccess('Pagamento realizado com sucesso!');
-        const registerForm = document.getElementById('register-form');
-        registerForm.classList.remove('hidden');
-        registerForm.scrollIntoView({ behavior: 'smooth' });
-        window.state.selectedMethod = 'pix';
     }
 
     renderLoading() {
@@ -80,7 +43,7 @@ class PixModalController {
                 </div>
                 <div class="text-center py-8">
                     <div class="spinner"></div>
-                    <p class="mt-4">Gerando QR Code...</p>
+                    <p class="mt-4">Iniciando pagamento...</p>
                 </div>
             </div>
         `;
@@ -100,7 +63,7 @@ class PixModalController {
                         <i class="fas fa-exclamation-circle text-4xl"></i>
                     </div>
                     <p class="text-red-600 mb-4">${message}</p>
-                    <button onclick="pixModal.generatePixPayment()" 
+                    <button onclick="pixModal.initPayment()" 
                             class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                         Tentar Novamente
                     </button>
@@ -109,7 +72,7 @@ class PixModalController {
         `;
     }
 
-    renderQRCode(qrCodeBase64) {
+    renderPaymentButton(pixButton) {
         this.modalRoot.innerHTML = `
             <div class="modal-content">
                 <div class="flex justify-between items-center mb-4">
@@ -119,29 +82,20 @@ class PixModalController {
                     </button>
                 </div>
                 <div class="text-center">
-                    <div class="mb-4">
-                        <img src="data:image/png;base64,${qrCodeBase64}" 
-                             alt="QR Code PIX" 
-                             class="mx-auto w-64 h-64">
-                    </div>
+                    <div class="mb-4" id="pix-button-container"></div>
                     <p class="text-lg font-semibold mb-4">Valor: R$ 49,90</p>
                     <div class="border-t pt-4">
-                        <p class="text-sm text-gray-600 mb-2">
-                            1. Abra o app do seu banco
-                        </p>
-                        <p class="text-sm text-gray-600 mb-2">
-                            2. Escolha pagar via PIX
-                        </p>
                         <p class="text-sm text-gray-600">
-                            3. Escaneie o QR Code acima
+                            Clique no botão acima para gerar o QR Code PIX
                         </p>
-                    </div>
-                    <div class="mt-6 text-sm text-gray-500">
-                        O pagamento será confirmado automaticamente
                     </div>
                 </div>
             </div>
         `;
+
+        // Renderiza o botão do Mercado Pago
+        const container = document.getElementById('pix-button-container');
+        pixButton.render(container);
     }
 }
 

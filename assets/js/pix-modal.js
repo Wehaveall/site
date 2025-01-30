@@ -26,12 +26,13 @@ class PixModalController {
         try {
             const result = await window.mpService.createPixPayment();
 
-            if (result.success) {
+            if (result.success && result.qrCodeBase64) {
                 this.renderQRCode(result.qrCodeBase64, result.qrCode);
-                // Inicia verificação de status
-                this.startPaymentCheck(result.paymentId);
+                if (result.paymentId) {
+                    this.startPaymentCheck(result.paymentId);
+                }
             } else {
-                this.renderError('Erro ao gerar QR Code PIX');
+                this.renderError(result.error || 'Erro ao gerar QR Code PIX');
             }
         } catch (error) {
             console.error('Erro ao gerar pagamento:', error);
@@ -45,15 +46,22 @@ class PixModalController {
         }
 
         this.paymentCheckInterval = setInterval(async () => {
-            const status = await window.mpService.checkPaymentStatus(paymentId);
-            if (status.success && status.status === 'approved') {
-                this.handlePaymentSuccess();
+            try {
+                const result = await window.mpService.checkPaymentStatus(paymentId);
+                if (result.success && result.status === 'approved') {
+                    this.handlePaymentSuccess();
+                }
+            } catch (error) {
+                console.error('Erro ao verificar status:', error);
             }
         }, 3000);
     }
 
     handlePaymentSuccess() {
-        clearInterval(this.paymentCheckInterval);
+        if (this.paymentCheckInterval) {
+            clearInterval(this.paymentCheckInterval);
+            this.paymentCheckInterval = null;
+        }
         this.hide();
         window.showSuccess('Pagamento realizado com sucesso!');
         const registerForm = document.getElementById('register-form');
@@ -113,9 +121,15 @@ class PixModalController {
                 </div>
                 <div class="text-center">
                     <div class="mb-4">
-                        <img src="${qrCodeBase64}" 
+                        <img src="data:image/png;base64,${qrCodeBase64}" 
                              alt="QR Code PIX" 
                              class="mx-auto w-64 h-64">
+                    </div>
+                    <div class="mb-4">
+                        <button onclick="navigator.clipboard.writeText('${qrCodeText}')"
+                                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                            Copiar código PIX
+                        </button>
                     </div>
                     <p class="text-lg font-semibold mb-4">Valor: R$ 49,90</p>
                     <div class="border-t pt-4">

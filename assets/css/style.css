@@ -179,9 +179,6 @@ body {
     margin: 0 auto;
     gap: 2rem;
 }
-.hero-content {
-    max-width: 600px;
-}
 
 .hero-title {
     font-size: 3.5rem;

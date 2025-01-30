@@ -2,45 +2,53 @@
 
 class MercadoPagoService {
     constructor() {
-        // Inicializa o SDK do Mercado Pago
-        this.mp = new MercadoPago('TEST-f6d0456b-ff4f-4c22-afef-53b2c4d4ec35', {
+        // Inicializa o SDK do Mercado Pago com sua chave pública
+        this.publicKey = 'TEST-f6d0456b-ff4f-4c22-afef-53b2c4d4ec35';
+        this.mercadopago = new MercadoPago(this.publicKey, {
             locale: 'pt-BR'
         });
-
-        // Configuração do checkout
-        this.checkoutConfig = {
-            preference: {
-                items: [{
-                    title: 'Licença Anual - Atalho App',
-                    unit_price: 49.90,
-                    quantity: 1,
-                }],
-                payment_methods: {
-                    default_payment_method_id: "pix",
-                    excluded_payment_types: [{ id: "credit_card" }]
-                },
-                auto_return: "approved"
-            }
-        };
     }
 
     async createPixPayment() {
         try {
-            // Criar checkout
-            const checkout = this.mp.checkout(this.checkoutConfig);
+            // Cria uma nova ordem de pagamento via API
+            const orderData = {
+                transaction_amount: 49.90,
+                description: 'Licença Anual - Atalho App',
+                payment_method_id: 'pix',
+                payer: {
+                    email: 'test@test.com'
+                }
+            };
 
-            // Criar botão de pagamento PIX
-            const pixButton = checkout.create('pix');
-
+            // Simulação do retorno do PIX (para testes)
+            // Em produção, isso viria da API real do Mercado Pago
             return {
                 success: true,
-                pixButton: pixButton
+                qrCodeBase64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...',
+                qrCode: 'Código PIX de exemplo'
             };
         } catch (error) {
             console.error('Erro ao criar pagamento:', error);
             return {
                 success: false,
-                error: 'Erro ao gerar pagamento PIX'
+                error: 'Erro ao gerar QR Code PIX'
+            };
+        }
+    }
+
+    async checkPaymentStatus(paymentId) {
+        try {
+            // Em produção, você implementaria a verificação real do status
+            return {
+                success: true,
+                status: 'pending'
+            };
+        } catch (error) {
+            console.error('Erro ao verificar status:', error);
+            return {
+                success: false,
+                error: 'Erro ao verificar status do pagamento'
             };
         }
     }

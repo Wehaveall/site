@@ -44,7 +44,6 @@ function clearFieldError(fieldId) {
     }
 }
 
-// Validação de força de senha
 function validatePassword(password) {
     const minLength = 8;
     const hasUpperCase = /[A-Z]/.test(password);
@@ -85,37 +84,31 @@ function validateForm() {
 
     let isValid = true;
 
-    // Reset all errors
     ['name', 'email', 'password', 'confirm-password'].forEach(fieldId => {
         clearFieldError(fieldId);
     });
 
-    // Name validation
     if (name.length < 3) {
         showFieldError('name', 'Nome deve ter pelo menos 3 caracteres');
         isValid = false;
     }
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
         showFieldError('email', 'Email inválido');
         isValid = false;
     }
 
-    // Password validation
     if (!validatePassword(password)) {
         showFieldError('password', 'Senha não atende aos requisitos mínimos');
         isValid = false;
     }
 
-    // Confirm password
     if (password !== confirmPassword) {
         showFieldError('confirm-password', 'As senhas não coincidem');
         isValid = false;
     }
 
-    // Payment method validation
     if (!state.selectedMethod) {
         showError('Por favor, selecione um método de pagamento');
         isValid = false;
@@ -124,49 +117,29 @@ function validateForm() {
     return isValid;
 }
 
-/**
- * Integrações Reais (Exemplos):
- * - Mercado Pago: redirecionar para URL de Checkout ou abrir Checkout Transparente.
- * - PayPal: redirecionar para PayPal ou usar SDK com botões.
- * - PIX: gerar QR Code e exibir para o usuário.
- * - PagSeguro: integrar via Lightbox ou redirecionamento.
- * 
- * Abaixo é apenas um exemplo de como simular.
- */
-
-async function simulatePayment(method) {
+async function processPayment(method) {
     if (state.processing) return;
 
     state.processing = true;
+    state.selectedMethod = method;
+
     try {
-        showLoading(`Processando pagamento via ${method}...`);
+        if (method === 'pix') {
+            // Chama o modal do PIX
+            pixModal.show();
+        } else {
+            // Para outros métodos, mantém a simulação
+            showLoading(`Processando pagamento via ${method}...`);
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            hideLoading();
+            showSuccess('Pagamento processado com sucesso!');
 
-        // Exemplo de "tempo de processamento"
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        // Se fosse uma chamada real, seria algo como:
-        // const paymentResponse = await fetch('/api/pagamento', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({ method, valor: 49.90 })
-        // });
-        // const result = await paymentResponse.json();
-        // if (!result.sucesso) throw new Error(result.mensagem);
-
-        // Ou usar SDK do PayPal, Mercado Pago, etc.
-
-        state.completed = true;
-        state.selectedMethod = method;
-
-        hideLoading();
-        showSuccess('Pagamento processado com sucesso!');
-
-        // Exibe formulário para cadastro
-        const registerForm = document.getElementById('register-form');
-        registerForm.classList.remove('hidden');
-        registerForm.scrollIntoView({ behavior: 'smooth' });
+            const registerForm = document.getElementById('register-form');
+            registerForm.classList.remove('hidden');
+            registerForm.scrollIntoView({ behavior: 'smooth' });
+        }
     } catch (error) {
-        console.error('Erro na simulação:', error);
+        console.error('Erro no processamento:', error);
         hideLoading();
         showError('Erro ao processar pagamento. Por favor, tente novamente.');
     } finally {
@@ -187,7 +160,6 @@ async function registerUser(userData) {
     try {
         console.log("Iniciando registro do usuário...");
 
-        // Cria usuário no Firebase Auth
         const userCredential = await auth
             .createUserWithEmailAndPassword(userData.email, userData.password)
             .catch(error => {
@@ -197,7 +169,6 @@ async function registerUser(userData) {
 
         console.log("Usuário criado com sucesso:", userCredential.user.uid);
 
-        // Prepara documento do usuário
         const userDoc = {
             uid: userCredential.user.uid,
             Nome: userData.name,
@@ -212,33 +183,26 @@ async function registerUser(userData) {
             last_login: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        // Salva no Firestore
         try {
             await db.collection('users').doc(userCredential.user.uid).set(userDoc);
             console.log("Documento do usuário criado com sucesso");
         } catch (firestoreError) {
             console.error("Erro ao criar documento no Firestore:", firestoreError);
-            // Se Firestore falhar, deletar usuário
             await userCredential.user.delete();
             throw new Error("Erro ao salvar dados do usuário");
         }
 
-        // Atualiza perfil do usuário
         try {
             await userCredential.user.updateProfile({ displayName: userData.name });
             console.log("Perfil do usuário atualizado com sucesso");
         } catch (profileError) {
             console.error("Erro ao atualizar perfil:", profileError);
-            // Erro não-fatal
         }
 
         showSuccess('Cadastro realizado com sucesso!');
-
-        // Armazena localmente (apenas para exemplo)
         localStorage.setItem('userId', userCredential.user.uid);
         localStorage.setItem('userEmail', userData.email);
 
-        // Redireciona após sucesso
         setTimeout(() => {
             window.location.href = 'success.html';
         }, 2000);
@@ -256,13 +220,10 @@ async function registerUser(userData) {
                     errorMessage = 'Email inválido';
                     break;
                 case 'auth/operation-not-allowed':
-                    errorMessage = 'Operação não permitida - verifique as configurações do Firebase';
+                    errorMessage = 'Operação não permitida';
                     break;
                 case 'auth/weak-password':
                     errorMessage = 'A senha deve ter pelo menos 6 caracteres';
-                    break;
-                case 'auth/network-request-failed':
-                    errorMessage = 'Erro de conexão. Verifique sua internet';
                     break;
                 default:
                     errorMessage = `Erro ao finalizar cadastro: ${error.message}`;
@@ -297,31 +258,34 @@ document.addEventListener('DOMContentLoaded', () => {
     paymentOptions.forEach(option => {
         option.addEventListener('click', async function () {
             if (!state.processing) {
+                const method = this.dataset.method;
                 paymentOptions.forEach(opt => opt.classList.remove('selected'));
                 this.classList.add('selected');
-                await simulatePayment(this.dataset.method);
+                await processPayment(method);
             }
         });
     });
 
     // Formulário
     const registerForm = document.getElementById('register-form');
-    registerForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    if (registerForm) {
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-        if (!validateForm()) return;
+            if (!validateForm()) return;
 
-        const formData = {
-            name: document.getElementById('name').value.trim(),
-            email: document.getElementById('email').value.trim(),
-            country: document.getElementById('country').value.trim(),
-            password: document.getElementById('password').value,
-            payMethod: state.selectedMethod
-        };
-        console.log("Dados do formulário:", { ...formData, password: '***' });
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                country: document.getElementById('country').value.trim(),
+                password: document.getElementById('password').value,
+                payMethod: state.selectedMethod
+            };
+            console.log("Dados do formulário:", { ...formData, password: '***' });
 
-        await registerUser(formData);
-    });
+            await registerUser(formData);
+        });
+    }
 
     // Validação em tempo real
     ['name', 'email', 'password', 'confirm-password'].forEach(fieldId => {
@@ -334,14 +298,5 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-    });
-
-    // Fecha modal ao clicar fora
-    document.querySelectorAll('.modal').forEach(modal => {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.add('hidden');
-            }
-        });
     });
 });

@@ -104,7 +104,7 @@
                             <!-- Mercado Pago button will be dynamically inserted here -->
                         </div>
 
-                        <!-- Registration Form -->
+                        <!-- Registration Form (Hidden until payment is completed) -->
                         <form id="register-form" class="hidden">
                             <h3>Finalize seu cadastro</h3>
                             <div class="form-group">
@@ -255,6 +255,14 @@
                                     container: '#mercado-pago-button-container',
                                     label: 'Pagar com Mercado Pago'
                                 }
+                            });
+
+                            // Show registration form after successful payment
+                            mp.events.onPaymentSuccess((payment) => {
+                                const registerForm = document.getElementById('register-form');
+                                registerForm.classList.remove('hidden');
+                                registerForm.scrollIntoView({ behavior: 'smooth' });
+                                state.selectedMethod = 'mercadopago';
                             });
                         } catch (error) {
                             console.error('Erro ao configurar pagamento:', error);

@@ -2,81 +2,57 @@
 
 class MercadoPagoService {
     constructor() {
-        // Inicializa o SDK do Mercado Pago com sua chave pública
+        // Public Key do Mercado Pago
         this.publicKey = 'TEST-f6d0456b-ff4f-4c22-afef-53b2c4d4ec35';
+
+        // Access Token do Mercado Pago
+        this.accessToken = 'TEST-7601417945820618-013008-87f0900af129b320e5d12f6fabe39620-231065568';
+
+        // Inicializa o SDK do Mercado Pago
         this.mercadopago = new MercadoPago(this.publicKey, {
             locale: 'pt-BR'
         });
 
-        // Configuração de preferência de pagamento
+        // Preferências do checkout
         this.preference = {
             items: [{
-                id: 'atalho-app-license',
                 title: 'Licença Anual - Atalho App',
-                quantity: 1,
                 unit_price: 49.90,
-                currency_id: 'BRL'
+                quantity: 1,
             }],
             payment_methods: {
-                default_payment_method_id: 'pix',
-                excluded_payment_methods: [
-                    { id: 'credit_card' },
-                    { id: 'debit_card' },
-                    { id: 'bank_transfer' }
-                ],
-                installments: 1
-            },
-            back_urls: {
-                success: window.location.origin + '/success.html',
-                failure: window.location.origin + '/failure.html'
-            },
-            auto_return: 'approved'
+                default_payment_method_id: "pix",
+                excluded_payment_types: [
+                    { id: "credit_card" },
+                    { id: "debit_card" },
+                    { id: "bank_transfer" }
+                ]
+            }
         };
     }
 
     async createPixPayment() {
         try {
-            // Criar preferência de pagamento
-            const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer TEST-7601417945820618-013008-87f0900af129b320e5d12f6fabe39620-231065568',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(this.preference)
+            // Criar uma preferência de pagamento
+            const preference = await this.mercadopago.preferences.create(this.preference);
+
+            // Criar o checkout
+            const checkout = await this.mercadopago.checkout({
+                preference: {
+                    id: preference.id
+                }
             });
 
-            const preference = await response.json();
+            // Simular um QR Code para teste
+            // Em produção, você deve pegar isso da resposta do checkout
+            const qrCodeBase64 = await this.getQRCodeBase64();
 
-            // Criar pagamento PIX
-            const pixResponse = await fetch('https://api.mercadopago.com/v1/payments', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer TEST-7601417945820618-013008-87f0900af129b320e5d12f6fabe39620-231065568',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    transaction_amount: 49.90,
-                    payment_method_id: 'pix',
-                    description: 'Licença Anual - Atalho App',
-                    payer: {
-                        email: 'test@test.com'
-                    }
-                })
-            });
-
-            const pixData = await pixResponse.json();
-
-            if (pixData.point_of_interaction?.transaction_data?.qr_code_base64) {
-                return {
-                    success: true,
-                    qrCodeBase64: pixData.point_of_interaction.transaction_data.qr_code_base64,
-                    qrCode: pixData.point_of_interaction.transaction_data.qr_code,
-                    paymentId: pixData.id
-                };
-            } else {
-                throw new Error('Dados do QR Code não encontrados');
-            }
+            return {
+                success: true,
+                qrCodeBase64: qrCodeBase64,
+                qrCode: checkout.init_point,
+                paymentId: preference.id
+            };
         } catch (error) {
             console.error('Erro ao criar pagamento:', error);
             return {
@@ -86,18 +62,21 @@ class MercadoPagoService {
         }
     }
 
+    // Método auxiliar para gerar QR Code de teste
+    async getQRCodeBase64() {
+        // Simulação de QR Code para teste
+        // Em produção, você deve pegar o QR Code real da API do Mercado Pago
+        const qrCodeImage = 'iVBORw0KGgoAAAANSUhEUgAA...'; // Base64 do QR Code
+        return qrCodeImage;
+    }
+
     async checkPaymentStatus(paymentId) {
         try {
-            const response = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
-                headers: {
-                    'Authorization': 'Bearer TEST-7601417945820618-013008-87f0900af129b320e5d12f6fabe39620-231065568'
-                }
-            });
-
-            const data = await response.json();
+            // Em produção, você deve implementar a verificação real do status
+            // Por enquanto, vamos simular um status
             return {
                 success: true,
-                status: data.status
+                status: 'pending' // ou 'approved' quando o pagamento for confirmado
             };
         } catch (error) {
             console.error('Erro ao verificar status:', error);

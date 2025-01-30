@@ -2,94 +2,68 @@
 
 class MercadoPagoService {
     constructor() {
-        this.publicKey = 'TEST-f6d0456b-ff4f-4c22-afef-53b2c4d4ec35';
-        this.accessToken = 'TEST-7601417945820618-013008-87f0900af129b320e5d12f6fabe39620-231065568';
-
         // Inicializa o SDK do Mercado Pago
-        this.mercadopago = new MercadoPago(this.publicKey, {
-            locale: 'pt-BR'
-        });
+        this.mp = new MercadoPago('TEST-f6d0456b-ff4f-4c22-afef-53b2c4d4ec35');
+
+        // Configuração da preferência
+        this.preferenceId = null;
+        this.bricks = null;
     }
 
     async createPixPayment() {
         try {
-            // Gerar preferência de pagamento
-            const preferenceData = {
-                transaction_amount: 49.90,
-                payment_method_id: 'pix',
-                description: 'Licença Anual - Atalho App',
-                payer: {
-                    email: 'test@test.com',
-                    first_name: 'Test',
-                    last_name: 'User'
-                }
+            // Criar o Brick de pagamento
+            const bricksBuilder = await this.mp.bricks();
+
+            // Container para o QR Code
+            const renderComponent = async (preferenceId) => {
+                await bricksBuilder.create("wallet", "pix-container", {
+                    initialization: {
+                        preferenceId: preferenceId,
+                        redirectMode: "modal"
+                    },
+                    callbacks: {
+                        onReady: () => {
+                            console.log('Brick pronto');
+                        },
+                        onSubmit: () => {
+                            console.log('Pagamento enviado');
+                        },
+                        onError: (error) => {
+                            console.error('Erro no brick:', error);
+                        }
+                    }
+                });
             };
 
-            // Criar pagamento
-            const response = await fetch('https://api.mercadopago.com/v1/payments', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${this.accessToken}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(preferenceData)
-            });
+            // Simula a criação de uma preferência (em produção, isso viria do seu backend)
+            const preference = {
+                id: 'TEST_PREFERENCE_ID',
+                init_point: 'https://www.mercadopago.com.br/test-qr'
+            };
 
-            if (!response.ok) {
-                throw new Error('Erro na resposta do Mercado Pago');
-            }
+            this.preferenceId = preference.id;
 
-            const paymentData = await response.json();
-
-            // Verificar se temos os dados do QR Code
-            if (paymentData.point_of_interaction &&
-                paymentData.point_of_interaction.transaction_data) {
-                const transactionData = paymentData.point_of_interaction.transaction_data;
-
-                return {
-                    success: true,
-                    qrCode: transactionData.qr_code,
-                    qrCodeBase64: transactionData.qr_code_base64,
-                    paymentId: paymentData.id
-                };
-            } else {
-                throw new Error('QR Code não encontrado na resposta');
-            }
+            return {
+                success: true,
+                preferenceId: preference.id,
+                renderFunction: renderComponent
+            };
         } catch (error) {
             console.error('Erro ao criar pagamento:', error);
             return {
                 success: false,
-                error: 'Erro ao gerar QR Code PIX'
+                error: 'Erro ao iniciar pagamento PIX'
             };
         }
     }
 
-    async checkPaymentStatus(paymentId) {
-        if (!paymentId) return { success: false, error: 'ID do pagamento não fornecido' };
-
-        try {
-            const response = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
-                headers: {
-                    'Authorization': `Bearer ${this.accessToken}`
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Erro ao verificar status do pagamento');
-            }
-
-            const paymentData = await response.json();
-            return {
-                success: true,
-                status: paymentData.status
-            };
-        } catch (error) {
-            console.error('Erro ao verificar status:', error);
-            return {
-                success: false,
-                error: 'Erro ao verificar status do pagamento'
-            };
-        }
+    async checkPaymentStatus() {
+        // Em produção, isso seria implementado com webhooks
+        return {
+            success: true,
+            status: 'pending'
+        };
     }
 }
 

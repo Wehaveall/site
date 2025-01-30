@@ -9,7 +9,7 @@ class PixModalController {
 
     show() {
         this.modalElement.classList.remove('hidden');
-        this.generatePixPayment();
+        this.initPayment();
     }
 
     hide() {
@@ -20,54 +20,24 @@ class PixModalController {
         }
     }
 
-    async generatePixPayment() {
+    async initPayment() {
         this.renderLoading();
 
         try {
             const result = await window.mpService.createPixPayment();
 
-            if (result.success && result.qrCodeBase64) {
-                this.renderQRCode(result.qrCodeBase64, result.qrCode);
-                if (result.paymentId) {
-                    this.startPaymentCheck(result.paymentId);
+            if (result.success) {
+                this.renderPixContainer();
+                if (result.renderFunction) {
+                    await result.renderFunction(result.preferenceId);
                 }
             } else {
-                this.renderError(result.error || 'Erro ao gerar QR Code PIX');
+                this.renderError(result.error || 'Erro ao iniciar pagamento');
             }
         } catch (error) {
-            console.error('Erro ao gerar pagamento:', error);
+            console.error('Erro ao iniciar pagamento:', error);
             this.renderError('Erro ao processar pagamento');
         }
-    }
-
-    startPaymentCheck(paymentId) {
-        if (this.paymentCheckInterval) {
-            clearInterval(this.paymentCheckInterval);
-        }
-
-        this.paymentCheckInterval = setInterval(async () => {
-            try {
-                const result = await window.mpService.checkPaymentStatus(paymentId);
-                if (result.success && result.status === 'approved') {
-                    this.handlePaymentSuccess();
-                }
-            } catch (error) {
-                console.error('Erro ao verificar status:', error);
-            }
-        }, 3000);
-    }
-
-    handlePaymentSuccess() {
-        if (this.paymentCheckInterval) {
-            clearInterval(this.paymentCheckInterval);
-            this.paymentCheckInterval = null;
-        }
-        this.hide();
-        window.showSuccess('Pagamento realizado com sucesso!');
-        const registerForm = document.getElementById('register-form');
-        registerForm.classList.remove('hidden');
-        registerForm.scrollIntoView({ behavior: 'smooth' });
-        window.state.selectedMethod = 'pix';
     }
 
     renderLoading() {
@@ -81,7 +51,7 @@ class PixModalController {
                 </div>
                 <div class="text-center py-8">
                     <div class="spinner"></div>
-                    <p class="mt-4">Gerando QR Code...</p>
+                    <p class="mt-4">Iniciando pagamento...</p>
                 </div>
             </div>
         `;
@@ -101,7 +71,7 @@ class PixModalController {
                         <i class="fas fa-exclamation-circle text-4xl"></i>
                     </div>
                     <p class="text-red-600 mb-4">${message}</p>
-                    <button onclick="pixModal.generatePixPayment()" 
+                    <button onclick="pixModal.initPayment()" 
                             class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                         Tentar Novamente
                     </button>
@@ -110,7 +80,7 @@ class PixModalController {
         `;
     }
 
-    renderQRCode(qrCodeBase64, qrCodeText) {
+    renderPixContainer() {
         this.modalRoot.innerHTML = `
             <div class="modal-content">
                 <div class="flex justify-between items-center mb-4">
@@ -120,28 +90,12 @@ class PixModalController {
                     </button>
                 </div>
                 <div class="text-center">
-                    <div class="mb-4">
-                        <img src="data:image/png;base64,${qrCodeBase64}" 
-                             alt="QR Code PIX" 
-                             class="mx-auto w-64 h-64">
-                    </div>
-                    <div class="mb-4">
-                        <button onclick="navigator.clipboard.writeText('${qrCodeText}')"
-                                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                            Copiar código PIX
-                        </button>
-                    </div>
+                    <div id="pix-container" class="mb-4"></div>
                     <p class="text-lg font-semibold mb-4">Valor: R$ 49,90</p>
                     <div class="border-t pt-4">
-                        <p class="text-sm text-gray-600 mb-2">
-                            1. Abra o app do seu banco
-                        </p>
-                        <p class="text-sm text-gray-600 mb-2">
-                            2. Escolha pagar via PIX
-                        </p>
-                        <p class="text-sm text-gray-600">
-                            3. Escaneie o QR Code acima
-                        </p>
+                        <p class="text-sm text-gray-600 mb-2">1. Abra o app do seu banco</p>
+                        <p class="text-sm text-gray-600 mb-2">2. Escolha pagar via PIX</p>
+                        <p class="text-sm text-gray-600">3. Escaneie o QR Code acima</p>
                     </div>
                     <div class="mt-6 text-sm text-gray-500">
                         O pagamento será confirmado automaticamente

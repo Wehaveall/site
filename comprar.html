@@ -15,9 +15,7 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="assets/css/style.css" />
-
-    <!-- Mercado Pago SDK -->
-    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <link rel="stylesheet" href="assets/css/purchase.css" />
 </head>
 
 <body class="light-theme">
@@ -57,8 +55,7 @@
                             <span>Oferta Especial</span>
                         </div>
                         <div class="product-image">
-                            <img src="assets/img/atalho-preview.png" alt="Atalho Preview" class="preview-img"
-                                onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22286%22%20height%3D%22180%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20286%20180%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_17a3f093956%20text%20%7B%20fill%3A%23AAAAAA%3Bfont-weight%3Abold%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A14pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_17a3f093956%22%3E%3Crect%20width%3D%22286%22%20height%3D%22180%22%20fill%3D%22%23EEEEEE%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22107.1875%22%20y%3D%2296.24375%22%3EAtalho%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E'" />
+                            <img src="assets/img/atalho-preview.png" alt="Atalho Preview" class="preview-img" />
                         </div>
                         <ul class="features-list">
                             <li>
@@ -105,20 +102,6 @@
                                 <i class="fa-solid fa-qrcode"></i>
                                 <div>Gerar QR Code PIX</div>
                                 <i class="fa-solid fa-arrow-right"></i>
-                            </button>
-                        </div>
-
-                        <!-- Debug Info (será removido na versão de produção) -->
-                        <div id="debug-info"
-                            style="margin: 1rem 0; padding: 1rem; background: #f8f9fa; border-radius: 8px; font-size: 0.8rem;">
-                            <h4 style="margin-top: 0;">Informações de Debug</h4>
-                            <div id="debug-log"
-                                style="max-height: 100px; overflow-y: auto; font-family: monospace; margin-bottom: 1rem;">
-                                Logs de debug aparecerão aqui
-                            </div>
-                            <button onclick="document.getElementById('debug-log').innerHTML = ''"
-                                style="background: #e9ecef; border: none; padding: 0.5rem; border-radius: 4px; cursor: pointer;">
-                                Limpar logs
                             </button>
                         </div>
 
@@ -244,7 +227,7 @@
             <i class="fas fa-exclamation-circle error-icon"></i>
             <h3>Erro</h3>
             <p id="error-message">Ocorreu um erro. Tente novamente.</p>
-            <button class="btn-hero" onclick="document.getElementById('error-modal').classList.add('hidden')">
+            <button class="btn-hero modal-close-btn">
                 Fechar
             </button>
         </div>
@@ -285,67 +268,26 @@
 
     <!-- Custom Scripts -->
     <script src="assets/js/firebase.js"></script>
-
-    <!-- Logger function for debug -->
-    <script>
-        // Função de log para ajudar a depurar
-        function debugLog(message) {
-            const logElement = document.getElementById('debug-log');
-            if (logElement) {
-                const timestamp = new Date().toLocaleTimeString();
-                logElement.innerHTML += `<div>[${timestamp}] ${message}</div>`;
-                logElement.scrollTop = logElement.scrollHeight;
-            }
-            console.log(message);
-        }
-
-        // Sobrescreve o alert original para também registrar no debug
-        const originalAlert = window.alert;
-        window.alert = function (message) {
-            debugLog(`ALERT: ${message}`);
-            originalAlert(message);
-        };
-
-        // Captura erros não tratados
-        window.onerror = function (message, source, lineno, colno, error) {
-            debugLog(`ERRO: ${message} (${source}:${lineno}:${colno})`);
-            return false;
-        };
-
-        debugLog("Página carregada, aguardando inicialização...");
-    </script>
-
     <script src="assets/js/mercadopago-service.js"></script>
     <script src="assets/js/pix-modal.js"></script>
     <script src="assets/js/payment.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            debugLog("Página de compra inicializada");
-
-            // Verificar se o SDK do Mercado Pago foi carregado
-            if (typeof MercadoPago !== 'undefined') {
-                debugLog("SDK do Mercado Pago detectado");
-            } else {
-                debugLog("AVISO: SDK do Mercado Pago não detectado");
-            }
+            console.log("Página de compra inicializada");
 
             // Inicializar botão de PIX
             const pixButton = document.getElementById('pix-button');
             if (pixButton) {
-                debugLog("Botão PIX encontrado, adicionando evento");
                 pixButton.addEventListener('click', () => {
-                    debugLog("Botão PIX clicado");
                     if (!state.processing) {
                         state.selectedMethod = 'pix';
                         pixModal.show();
                     }
                 });
-            } else {
-                debugLog("ERRO: Botão PIX não encontrado!");
             }
 
-            // Fechar modais ao clicar fora
+            // Fechar modais
             document.querySelectorAll('.modal').forEach(modal => {
                 modal.addEventListener('click', (e) => {
                     if (e.target === modal) {
@@ -358,17 +300,15 @@
                 });
             });
 
-            // Teste de conexão com a API do Mercado Pago
-            fetch('https://api.mercadopago.com/v1/payment_methods')
-                .then(response => {
-                    debugLog(`Teste de conexão com API: Status ${response.status}`);
-                    if (!response.ok) {
-                        debugLog(`AVISO: API retornou status ${response.status} - Provável problema de CORS`);
+            // Botões para fechar modais
+            document.querySelectorAll('.modal-close-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const modal = this.closest('.modal');
+                    if (modal) {
+                        modal.classList.add('hidden');
                     }
-                })
-                .catch(error => {
-                    debugLog(`ERRO ao testar API: ${error.message}`);
                 });
+            });
         });
     </script>
 </body>

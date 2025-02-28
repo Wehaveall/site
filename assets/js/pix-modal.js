@@ -1,4 +1,4 @@
-// pix-modal.js - Versão com diagnóstico e correções
+// pix-modal.js - Versão atualizada
 
 class PixModalController {
     constructor() {
@@ -8,7 +8,6 @@ class PixModalController {
         this.mpService = new MercadoPagoService();
         this.paymentExpirationTime = null;
         this.countdownInterval = null;
-        this.currentPaymentId = null;
     }
 
     show() {
@@ -38,20 +37,14 @@ class PixModalController {
 
         try {
             console.log("Solicitando geração de QR Code PIX...");
-
-            // Tenta criar o pagamento PIX
             const result = await this.mpService.createPixPayment();
 
             if (result.success) {
-                console.log("QR Code PIX gerado com sucesso:", result);
-                this.currentPaymentId = result.paymentId;
+                console.log("QR Code PIX gerado com sucesso!");
                 this.paymentExpirationTime = result.expirationDate;
                 this.renderQRCode(result.qrCodeBase64, result.qrCodeText);
                 this.startPaymentCheck(result.paymentId);
                 this.startExpirationCountdown();
-
-                // Salvar o ID do pagamento para referência quando o usuário se registrar
-                state.paymentId = result.paymentId;
 
                 // Salvar o ID do pagamento no Firebase para referência futura
                 try {
@@ -66,7 +59,6 @@ class PixModalController {
                     console.log("Registro de pagamento pendente criado no Firestore");
                 } catch (dbError) {
                     console.error("Erro ao salvar referência do pagamento:", dbError);
-                    alert("Aviso: Pagamento gerado, mas houve um erro ao registrá-lo. O cadastro ainda funcionará normalmente.");
                 }
             } else {
                 console.error("Erro na geração do QR Code:", result.error);
@@ -74,8 +66,7 @@ class PixModalController {
             }
         } catch (error) {
             console.error('Erro ao gerar pagamento:', error);
-            alert("Erro durante a geração do pagamento: " + error.message);
-            this.renderError('Erro ao processar pagamento. Por favor, tente novamente.');
+            this.renderError('Erro ao processar pagamento');
         }
     }
 
@@ -106,27 +97,15 @@ class PixModalController {
         if (!countdownElement) return;
 
         if (timeLeft <= 0) {
-            countdownElement.innerHTML = '<span style="color: #ff4444;">QR Code expirado</span>';
+            countdownElement.innerHTML = '<span class="text-red-600">QR Code expirado</span>';
             this.clearIntervals();
-
-            // Adiciona botão para gerar novo QR code
-            const refreshButton = document.createElement('button');
-            refreshButton.className = 'btn-hero';
-            refreshButton.style.marginTop = '1rem';
-            refreshButton.textContent = 'Gerar novo QR Code';
-            refreshButton.onclick = () => this.generatePixPayment();
-
-            const buttonContainer = document.getElementById('pix-refresh-container');
-            if (buttonContainer && !buttonContainer.querySelector('button')) {
-                buttonContainer.appendChild(refreshButton);
-            }
             return;
         }
 
         const minutes = Math.floor(timeLeft / (1000 * 60));
         const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-        countdownElement.textContent = `${minutes}m ${seconds}s`;
+        countdownElement.textContent = `Expira em: ${minutes}m ${seconds}s`;
     }
 
     async checkPaymentStatus(paymentId) {
@@ -135,18 +114,6 @@ class PixModalController {
 
             if (result.success) {
                 console.log(`Status do pagamento ${paymentId}: ${result.status}`);
-
-                // Atualiza o elemento de status se existir
-                const statusElement = document.getElementById('pix-status-text');
-                if (statusElement) {
-                    if (result.status === 'pending') {
-                        statusElement.textContent = 'Aguardando pagamento...';
-                    } else if (result.status === 'approved') {
-                        statusElement.innerHTML = '<span style="color: #4CAF50;">Pagamento confirmado!</span>';
-                    } else {
-                        statusElement.textContent = `Status: ${result.status}`;
-                    }
-                }
 
                 if (result.status === 'approved') {
                     console.log("Pagamento aprovado! Finalizando processo...");
@@ -168,138 +135,115 @@ class PixModalController {
     async handlePaymentSuccess(paymentId) {
         try {
             // Atualizar status no Firestore
-            try {
-                const paymentRef = db.collection('pending_payments').doc(paymentId.toString());
-                await paymentRef.update({
-                    status: 'approved',
-                    approved_at: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                console.log("Status de pagamento atualizado no Firestore");
-            } catch (dbError) {
-                console.error("Erro ao atualizar status no Firestore:", dbError);
-                // Continua mesmo com erro no Firestore
-            }
+            const paymentRef = db.collection('pending_payments').doc(paymentId.toString());
+            await paymentRef.update({
+                status: 'approved',
+                approved_at: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            console.log("Status de pagamento atualizado no Firestore");
 
-            // Atualizar o modal para mostrar a confirmação de pagamento
-            this.renderPaymentSuccess();
+            this.hide();
+            showSuccess('Pagamento confirmado com sucesso!');
 
-            // Após 3 segundos, fechar o modal e mostrar o formulário de registro
-            setTimeout(() => {
-                this.hide();
-                showSuccess('Pagamento confirmado com sucesso!');
+            // Exibir formulário de registro
+            const registerForm = document.getElementById('register-form');
+            registerForm.classList.remove('hidden');
+            registerForm.scrollIntoView({ behavior: 'smooth' });
 
-                // Exibir formulário de registro
-                const registerForm = document.getElementById('register-form');
-                if (registerForm) {
-                    registerForm.classList.remove('hidden');
-                    registerForm.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                    alert("Formulário de registro não encontrado!");
-                }
-
-                // Atualizar estado da aplicação
-                state.selectedMethod = 'pix';
-                state.completed = true;
-            }, 3000);
+            // Atualizar estado da aplicação
+            state.selectedMethod = 'pix';
+            state.completed = true;
 
         } catch (error) {
             console.error('Erro ao processar confirmação de pagamento:', error);
-            alert('Houve um erro ao finalizar seu pagamento. Entre em contato com o suporte.');
+            showError('Houve um erro ao finalizar seu pagamento. Entre em contato com o suporte.');
         }
     }
 
     renderLoading() {
         this.modalRoot.innerHTML = `
-            <div class="pix-modal-header">
-                <h3>Pagamento via PIX</h3>
-                <button onclick="pixModal.hide()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div style="text-align: center; padding: 2rem 0;">
-                <div class="spinner"></div>
-                <p style="margin-top: 1rem;">Gerando QR Code...</p>
+            <div class="modal-content">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold">Pagamento via PIX</h3>
+                    <button onclick="pixModal.hide()" style="background: none; border: none; cursor: pointer;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="text-center py-8">
+                    <div class="spinner"></div>
+                    <p class="mt-4">Gerando QR Code...</p>
+                </div>
             </div>
         `;
     }
 
     renderError(message) {
         this.modalRoot.innerHTML = `
-            <div class="pix-modal-header">
-                <h3>Pagamento via PIX</h3>
-                <button onclick="pixModal.hide()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div style="text-align: center; padding: 2rem 0;">
-                <div style="color: #ff4444; margin-bottom: 1.5rem;">
-                    <i class="fas fa-exclamation-circle" style="font-size: 3rem;"></i>
+            <div class="modal-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="font-size: 1.25rem; font-weight: 600;">Pagamento via PIX</h3>
+                    <button onclick="pixModal.hide()" style="background: none; border: none; cursor: pointer;">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-                <p style="color: #ff4444; margin-bottom: 1rem;">${message}</p>
-                <p style="color: #666; font-size: 0.9rem; margin-bottom: 1.5rem;">
-                    Detalhes técnicos: O erro pode estar relacionado a restrições de CORS ao chamar a API diretamente. 
-                    Em uma implementação de produção, esta chamada deve ser feita através de um backend.
-                </p>
-                <button onclick="pixModal.generatePixPayment()" class="btn-hero">
-                    Tentar Novamente
-                </button>
-            </div>
-        `;
-    }
-
-    renderPaymentSuccess() {
-        this.modalRoot.innerHTML = `
-            <div style="text-align: center; padding: 2rem 0;">
-                <div style="color: #4CAF50; margin-bottom: 1.5rem;">
-                    <i class="fas fa-check-circle" style="font-size: 3rem;"></i>
+                <div style="text-align: center; padding: 2rem 0;">
+                    <div style="color: #ff4444; margin-bottom: 1rem;">
+                        <i class="fas fa-exclamation-circle" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <p style="color: #ff4444; margin-bottom: 1rem;">${message}</p>
+                    <button onclick="pixModal.generatePixPayment()" 
+                            style="padding: 0.5rem 1rem; background-color: #4682B4; color: white; border-radius: 0.25rem; border: none; cursor: pointer;">
+                        Tentar Novamente
+                    </button>
                 </div>
-                <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">Pagamento Confirmado!</h3>
-                <p style="margin-bottom: 1.5rem;">Seu pagamento foi processado com sucesso.</p>
-                <p>Redirecionando para o formulário de cadastro...</p>
             </div>
         `;
     }
 
     renderQRCode(qrCodeBase64, qrCodeText) {
         this.modalRoot.innerHTML = `
-            <div class="pix-modal-header">
-                <h3>Pagamento via PIX</h3>
-                <button onclick="pixModal.hide()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div>
-                <div class="qr-container">
-                    <img src="data:image/png;base64,${qrCodeBase64}" alt="QR Code PIX">
+            <div class="modal-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="font-size: 1.25rem; font-weight: 600;">Pagamento via PIX</h3>
+                    <button onclick="pixModal.hide()" style="background: none; border: none; cursor: pointer;">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-                
-                <div class="pix-timer">
-                    <i class="fas fa-clock"></i> Expira em: <span id="pix-countdown">--:--</span>
-                </div>
-                
-                <p class="pix-amount">Valor: R$ 49,90</p>
-                
-                <button id="copy-pix-button" class="copy-pix-button" onclick="navigator.clipboard.writeText('${qrCodeText}').then(() => { 
-                    document.getElementById('copy-pix-button').innerHTML = '<i class=\\'fas fa-check\\'></i> Código Copiado!';
-                    setTimeout(() => {
-                        document.getElementById('copy-pix-button').innerHTML = '<i class=\\'fas fa-copy\\'></i> Copiar Código PIX';
-                    }, 3000);
-                })">
-                    <i class="fas fa-copy"></i> Copiar Código PIX
-                </button>
-                
-                <div id="pix-refresh-container" style="text-align: center; margin: 1rem 0;"></div>
-                
-                <div class="pix-instructions">
-                    <p><i class="fas fa-1"></i> Abra o app do seu banco</p>
-                    <p><i class="fas fa-2"></i> Escolha pagar via PIX com QR Code</p>
-                    <p><i class="fas fa-3"></i> Escaneie o QR Code acima ou cole o código copiado</p>
-                    <p><i class="fas fa-4"></i> Confirme o pagamento no app do seu banco</p>
-                </div>
-                
-                <div class="pix-status" id="pix-status">
-                    <div class="spinner"></div>
-                    <span id="pix-status-text">Aguardando pagamento...</span>
+                <div style="text-align: center;">
+                    <div style="margin-bottom: 1rem;">
+                        <img src="data:image/png;base64,${qrCodeBase64}" 
+                             alt="QR Code PIX" 
+                             style="margin: 0 auto; width: 200px; height: 200px;">
+                    </div>
+                    <p id="pix-countdown" style="margin-bottom: 0.5rem; font-size: 0.875rem; color: #666;">
+                        Calculando tempo restante...
+                    </p>
+                    <p style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">Valor: R$ 49,90</p>
+                    
+                    <div style="margin-top: 1rem; margin-bottom: 1rem;">
+                        <button id="copy-pix-button" onclick="navigator.clipboard.writeText('${qrCodeText}').then(() => document.getElementById('copy-pix-button').textContent = 'Código Copiado!')"
+                                style="padding: 0.5rem 1rem; background-color: #e9ecef; color: #333; border-radius: 0.25rem; border: none; cursor: pointer; width: 80%; margin: 0 auto; display: block;">
+                            Copiar Código PIX
+                        </button>
+                    </div>
+                    
+                    <div style="border-top: 1px solid #e9ecef; padding-top: 1rem; margin-top: 1rem;">
+                        <p style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem;">
+                            1. Abra o app do seu banco
+                        </p>
+                        <p style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem;">
+                            2. Escolha pagar via PIX com QR Code
+                        </p>
+                        <p style="font-size: 0.875rem; color: #666; margin-bottom: 0.5rem;">
+                            3. Escaneie o QR Code acima ou cole o código copiado
+                        </p>
+                        <p style="font-size: 0.875rem; color: #666;">
+                            4. Confirme o pagamento no app do seu banco
+                        </p>
+                    </div>
+                    <div style="margin-top: 1.5rem; font-size: 0.875rem; color: #666;">
+                        Aguardando confirmação do pagamento...
+                    </div>
                 </div>
             </div>
         `;

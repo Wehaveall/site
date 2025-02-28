@@ -1,5 +1,3 @@
-// payment.js - Versão simplificada focando no PIX
-
 // Estado da aplicação
 const state = {
     selectedMethod: null,
@@ -117,20 +115,59 @@ function validateForm() {
         isValid = false;
     }
 
-    // Verifica se um método de pagamento foi selecionado
     if (!state.selectedMethod) {
-        showError('Por favor, faça o pagamento via PIX antes de prosseguir');
+        showError('Por favor, selecione um método de pagamento');
         isValid = false;
     }
 
     return isValid;
 }
 
-async function registerUser(userData) {
+async function processPayment(method) {
     if (state.processing) return;
 
-    if (!state.completed && !state.paymentId) {
-        showError('Por favor, complete o pagamento via PIX antes de prosseguir');
+    state.processing = true;
+    state.selectedMethod = method;
+
+    try {
+        if (method === 'pix') {
+            // Abre o modal do PIX que terá a lógica de geração e checagem
+            pixModal.show();
+        } else if (method === 'cartao') {
+            // Implementação com cartão de crédito usando Mercado Pago
+            showLoading(`Processando pagamento via cartão...`);
+
+            const mpButton = document.getElementById('mercado-pago-button-container');
+            if (mpButton) {
+                mpButton.classList.remove('hidden');
+                hideLoading();
+            } else {
+                throw new Error('Container do Mercado Pago não encontrado');
+            }
+        } else {
+            // Para outros métodos mantém simulação temporariamente
+            showLoading(`Processando pagamento via ${method}...`);
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            hideLoading();
+            showSuccess('Pagamento processado com sucesso!');
+
+            const registerForm = document.getElementById('register-form');
+            registerForm.classList.remove('hidden');
+            registerForm.scrollIntoView({ behavior: 'smooth' });
+        }
+    } catch (error) {
+        console.error('Erro no processamento:', error);
+        hideLoading();
+        showError('Erro ao processar pagamento. Por favor, tente novamente.');
+    } finally {
+        state.processing = false;
+    }
+}
+
+async function registerUser(userData) {
+    if (state.processing) return;
+    if (!userData.payMethod) {
+        showError('Por favor, selecione um método de pagamento primeiro');
         return;
     }
 
@@ -165,7 +202,7 @@ async function registerUser(userData) {
             active_machines: 0,
             country: userData.country,
             email: userData.email,
-            pay_method: 'pix',
+            pay_method: userData.payMethod,
             sub_start: new Date().toISOString(),
             sub_end: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
             created_at: firebase.firestore.FieldValue.serverTimestamp(),
@@ -236,11 +273,11 @@ async function registerUser(userData) {
     }
 }
 
-// Listeners quando a página é carregada
+// Listeners
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Página de compra carregada");
 
-    // Monitora autenticação
+    // Monitora auth
     auth.onAuthStateChanged((user) => {
         state.user = user;
         if (user) {
@@ -252,7 +289,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Formulário de registro
+    // Botões de pagamento
+    const paymentOptions = document.querySelectorAll('.payment-option');
+    paymentOptions.forEach(option => {
+        option.addEventListener('click', async function () {
+            if (!state.processing) {
+                const method = this.dataset.method;
+                paymentOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                await processPayment(method);
+            }
+        });
+    });
+
+    // Formulário
     const registerForm = document.getElementById('register-form');
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
@@ -264,7 +314,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: document.getElementById('name').value.trim(),
                 email: document.getElementById('email').value.trim(),
                 country: document.getElementById('country').value.trim(),
-                password: document.getElementById('password').value
+                password: document.getElementById('password').value,
+                payMethod: state.selectedMethod
             };
             console.log("Dados do formulário:", { ...formData, password: '***' });
 
@@ -288,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fechar modais ao clicar fora deles
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', (e) => {
-            if (e.target === modal && modal.id !== 'pix-modal') {
+            if (e.target === modal) {
                 modal.classList.add('hidden');
             }
         });

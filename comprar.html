@@ -32,9 +32,9 @@
             </div>
             <nav class="nav-menu">
                 <ul class="nav-links">
-                    <li><a href="#features" class="nav-link">Recursos</a></li>
+                    <li><a href="index.html#features" class="nav-link">Recursos</a></li>
                     <li><a href="tutoriais.html" class="nav-link">Tutoriais</a></li>
-                    <li><a href="#downloads" class="nav-link">Downloads de Bibliotecas</a></li>
+                    <li><a href="index.html#downloads" class="nav-link">Downloads de Bibliotecas</a></li>
                     <li><a href="comprar.html" class="nav-link btn-primary">Comprar</a></li>
                 </ul>
             </nav>
@@ -85,6 +85,16 @@
                     <div class="payment-section">
                         <h2>Formas de Pagamento</h2>
                         <div class="payment-grid">
+                            <button class="payment-option" data-method="pix">
+                                <i class="fa-solid fa-qrcode"></i>
+                                <div>PIX</div>
+                            </button>
+
+                            <button class="payment-option" data-method="cartao">
+                                <i class="fa-solid fa-credit-card"></i>
+                                <div>Cartão</div>
+                            </button>
+
                             <button class="payment-option" data-method="mercadopago">
                                 <i class="fa-solid fa-hand-holding-dollar"></i>
                                 <div>Mercado Pago</div>
@@ -174,7 +184,9 @@
 
     <!-- PIX Modal -->
     <div id="pix-modal" class="modal hidden">
-        <div id="pix-modal-root"></div>
+        <div id="pix-modal-root" class="modal-content">
+            <!-- Conteúdo do modal PIX será inserido dinamicamente -->
+        </div>
     </div>
 
     <!-- Footer -->
@@ -212,58 +224,17 @@
     <!-- Mercado Pago Integration Script -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const mpService = new MercadoPagoService();
+            console.log("Página de compra inicializada");
 
-            // Payment method selection handler
-            const paymentOptions = document.querySelectorAll('.payment-option');
-            paymentOptions.forEach(option => {
-                option.addEventListener('click', async function () {
-                    // Remove selection from all options
-                    paymentOptions.forEach(opt => opt.classList.remove('selected'));
-                    this.classList.add('selected');
-
-                    const method = this.dataset.method;
-                    const mercadopagoContainer = document.getElementById('mercado-pago-button-container');
-
-                    if (method === 'mercadopago') {
-                        try {
-                            // Show loading
-                            mercadopagoContainer.innerHTML = '<div class="spinner"></div>';
-                            mercadopagoContainer.classList.remove('hidden');
-
-                            // Create payment preference
-                            const preferenceId = await mpService.createPaymentPreference();
-
-                            // Render Mercado Pago button
-                            const mp = new MercadoPago('TEST-f6d0456b-ff4f-4c22-afef-53b2c4d4ec35', {
-                                locale: 'pt-BR'
-                            });
-
-                            mp.checkout({
-                                preference: {
-                                    id: preferenceId
-                                },
-                                render: {
-                                    container: '#mercado-pago-button-container',
-                                    label: 'Pagar com Mercado Pago'
-                                }
-                            });
-
-                            // Show registration form after successful payment
-                            mp.events.onPaymentSuccess((payment) => {
-                                const registerForm = document.getElementById('register-form');
-                                registerForm.classList.remove('hidden');
-                                registerForm.scrollIntoView({ behavior: 'smooth' });
-                                state.selectedMethod = 'mercadopago';
-                            });
-                        } catch (error) {
-                            console.error('Erro ao configurar pagamento:', error);
-                            mercadopagoContainer.innerHTML =
-                                '<p class="text-red-500">Erro ao carregar pagamento. Tente novamente.</p>';
+            // Fechar modais ao clicar fora
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        if (modal.id === 'pix-modal') {
+                            pixModal.hide();
+                        } else {
+                            modal.classList.add('hidden');
                         }
-                    } else {
-                        // Hide Mercado Pago container for other payment methods
-                        mercadopagoContainer.classList.add('hidden');
                     }
                 });
             });

@@ -1,112 +1,177 @@
-class MercadoPagoService {
-    constructor() {
-        // Apontando para o servidor local
-        this.apiBaseUrl = 'http://localhost:3000/api';
-        // Mantendo as credenciais para referência (não são usadas no frontend)
-        this.publicKey = 'TEST-f6d0456b-ff4f-4c22-afef-53b2c4d4ec35';
-        this.accessToken = 'TEST-7601417945820618-013008-87f0900af129b320e5d12f6fabe39620-231065568';
-    }
+// VERSÃO CORRIGIDA - 2025-02-28
+const express = require('express');
+const cors = require('cors');
+const axios = require('axios');
 
-    async createPaymentPreference() {
-        try {
-            const response = await fetch(`${this.apiBaseUrl}/create-preference`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    items: [
-                        {
-                            title: 'Licença Atalho',
-                            unit_price: 49.90,
-                            quantity: 1,
-                            currency_id: 'BRL'
-                        }
-                    ]
-                })
-            });
+// Logs de diagnóstico
+console.log("Iniciando servidor...");
 
-            if (!response.ok) {
-                throw new Error(`Erro HTTP! status: ${response.status}`);
+// Defina o token diretamente no código
+const MP_ACCESS_TOKEN = 'TEST-7601417945820618-013008-87f0900af129b320e5d12f6fabe39620-231065568';
+console.log("Token configurado:", MP_ACCESS_TOKEN ? "✓ Token definido" : "✗ Token não definido");
+
+const app = express();
+const PORT = 3000;
+
+// Middleware
+app.use(cors({
+    // Permitir todas as origens durante o desenvolvimento
+    origin: '*',
+    methods: ['GET', 'POST'],
+    credentials: true
+}));
+
+app.use(express.json());
+
+// Rota de teste simples
+app.get('/', (req, res) => {
+    res.send('Servidor do Atalho está funcionando!');
+});
+
+// Rota para testar se a API está operacional
+app.get('/api/test', (req, res) => {
+    res.json({
+        status: 'success',
+        message: 'API do servidor Atalho está funcionando!',
+        time: new Date().toISOString()
+    });
+});
+
+// Rota para criar pagamento PIX
+app.post('/api/create-pix', async (req, res) => {
+    try {
+        console.log('Recebida requisição para criar pagamento PIX');
+        console.log('Corpo da requisição:', req.body);
+        console.log('Tentando acessar o Mercado Pago...');
+
+        // Montando o corpo da requisição
+        const paymentData = {
+            transaction_amount: 49.90,
+            description: 'Licença Anual do Atalho',
+            payment_method_id: 'pix',
+            payer: {
+                email: 'cliente@email.com',
+                first_name: 'Cliente',
+                last_name: 'Teste'
             }
+        };
 
-            const preferenceData = await response.json();
-            return preferenceData.id;
-        } catch (error) {
-            console.error('Erro ao criar preferência de pagamento:', error);
-            throw error;
-        }
-    }
+        console.log('Dados do pagamento:', JSON.stringify(paymentData, null, 2));
+        console.log('Token usado:', MP_ACCESS_TOKEN.substring(0, 10) + '...');
 
-    async createPixPayment() {
         try {
-            console.log('Criando pagamento PIX...');
+            const response = await axios.post(
+                'https://api.mercadopago.com/v1/payments',
+                paymentData,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${MP_ACCESS_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
 
-            // Chamando a rota correta no servidor local
-            const response = await fetch(`${this.apiBaseUrl}/create-pix`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    // Você pode adicionar dados do cliente aqui se necessário
-                    amount: 49.90,
-                    description: 'Licença Anual do Atalho'
-                })
-            });
+            console.log('Resposta do Mercado Pago:', JSON.stringify(response.data, null, 2));
+            res.json(response.data);
+        } catch (mercadoPagoError) {
+            console.error('Erro específico do Mercado Pago:');
 
-            if (!response.ok) {
-                throw new Error(`Erro HTTP! status: ${response.status}`);
-            }
+            if (mercadoPagoError.response) {
+                // O servidor respondeu com um status diferente de 2xx
+                console.error('Status:', mercadoPagoError.response.status);
+                console.error('Headers:', mercadoPagoError.response.headers);
+                console.error('Dados:', JSON.stringify(mercadoPagoError.response.data, null, 2));
 
-            const paymentData = await response.json();
-            console.log('Resposta do pagamento PIX:', paymentData);
+                res.status(500).json({
+                    success: false,
+                    error: 'Erro na API do Mercado Pago',
+                    details: mercadoPagoError.response.data
+                });
+            } else if (mercadoPagoError.request) {
+                // A requisição foi feita mas não houve resposta
+                console.error('Sem resposta do Mercado Pago');
+                console.error('Requisição:', mercadoPagoError.request);
 
-            if (paymentData.status === 'pending' &&
-                paymentData.point_of_interaction &&
-                paymentData.point_of_interaction.transaction_data) {
-
-                const transactionData = paymentData.point_of_interaction.transaction_data;
-
-                return {
-                    success: true,
-                    paymentId: paymentData.id,
-                    qrCodeBase64: transactionData.qr_code_base64,
-                    qrCodeText: transactionData.qr_code,
-                    expirationDate: new Date(paymentData.date_of_expiration)
-                };
+                res.status(500).json({
+                    success: false,
+                    error: 'Não foi possível conectar ao Mercado Pago'
+                });
             } else {
-                console.error('Resposta inválida do servidor:', paymentData);
-                return { success: false, error: 'Falha ao gerar QR code PIX' };
-            }
-        } catch (error) {
-            console.error('Erro ao criar pagamento PIX:', error);
-            return { success: false, error: error.message };
-        }
-    }
+                // Algo aconteceu ao configurar a requisição
+                console.error('Erro ao configurar requisição:', mercadoPagoError.message);
 
-    async checkPaymentStatus(paymentId) {
+                res.status(500).json({
+                    success: false,
+                    error: 'Erro na configuração da requisição',
+                    message: mercadoPagoError.message
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Erro geral ao criar pagamento PIX:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Erro ao processar pagamento',
+            message: error.message
+        });
+    }
+});
+
+// Rota para verificar status do pagamento
+app.get('/api/payment-status/:id', async (req, res) => {
+    try {
+        const paymentId = req.params.id;
+        console.log(`Verificando status do pagamento ${paymentId}`);
+
         try {
-            console.log(`Verificando status do pagamento ${paymentId}...`);
+            const response = await axios.get(
+                `https://api.mercadopago.com/v1/payments/${paymentId}`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${MP_ACCESS_TOKEN}`
+                    }
+                }
+            );
 
-            // Chamando a rota correta no servidor local
-            const response = await fetch(`${this.apiBaseUrl}/payment-status/${paymentId}`);
+            console.log('Status do pagamento:', response.data.status);
+            res.json(response.data);
+        } catch (mercadoPagoError) {
+            console.error('Erro específico do Mercado Pago ao verificar status:');
 
-            if (!response.ok) {
-                throw new Error(`Erro HTTP! status: ${response.status}`);
+            if (mercadoPagoError.response) {
+                console.error('Status:', mercadoPagoError.response.status);
+                console.error('Dados:', JSON.stringify(mercadoPagoError.response.data, null, 2));
+
+                res.status(500).json({
+                    success: false,
+                    error: 'Erro na API do Mercado Pago',
+                    details: mercadoPagoError.response.data
+                });
+            } else {
+                console.error('Erro ao conectar com Mercado Pago:', mercadoPagoError.message);
+
+                res.status(500).json({
+                    success: false,
+                    error: 'Erro ao verificar status',
+                    message: mercadoPagoError.message
+                });
             }
-
-            const paymentData = await response.json();
-            console.log('Status atual do pagamento:', paymentData.status);
-
-            return {
-                success: true,
-                paymentId: paymentData.id,
-                status: paymentData.status
-            };
-        } catch (error) {
-            console.error('Erro ao verificar status do pagamento:', error);
-            return { success: false, error: error.message };
         }
+    } catch (error) {
+        console.error('Erro geral ao verificar status:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Erro ao verificar status',
+            message: error.message
+        });
     }
-}
+});
+
+// Iniciar servidor
+app.listen(PORT, () => {
+    console.log(`Servidor rodando em http://localhost:${PORT}`);
+    console.log(`API disponível em http://localhost:${PORT}/api`);
+    console.log(`Teste a API em http://localhost:${PORT}/api/test`);
+});
+
+console.log("Script de servidor carregado completamente!");

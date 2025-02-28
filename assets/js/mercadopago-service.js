@@ -3,7 +3,7 @@ class MercadoPagoService {
         // Use your actual Mercado Pago credentials
         this.publicKey = 'TEST-f6d0456b-ff4f-4c22-afef-53b2c4d4ec35';
         this.accessToken = 'TEST-7601417945820618-013008-87f0900af129b320e5d12f6fabe39620-231065568';
-        this.apiBaseUrl = 'https://api.mercadopago.com';
+        this.apiBaseUrl = 'http://localhost:3000/api';
     }
 
     async createPaymentPreference() {

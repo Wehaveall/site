@@ -15,6 +15,9 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="assets/css/style.css" />
+
+    <!-- Mercado Pago SDK -->
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
 </head>
 
 <body class="light-theme">
@@ -50,12 +53,6 @@
                 <div class="purchase-grid">
                     <!-- Product Information -->
                     <div class="product-info">
-                        <div class="badge">
-                            <span>Oferta Especial</span>
-                        </div>
-                        <div class="product-image">
-                            <img src="assets/img/product-preview.png" alt="Atalho Preview" class="preview-img" />
-                        </div>
                         <ul class="features-list">
                             <li>
                                 <i class="fa-solid fa-check"></i>
@@ -79,44 +76,34 @@
                             </li>
                         </ul>
                         <div class="price-box">
-                            <div class="price-container">
-                                <span class="old-price">R$ 99,90</span>
-                                <span class="price">R$ 49,90</span>
-                                <span class="discount-badge">50% OFF</span>
-                            </div>
+                            <span class="price">R$ 49,90</span>
                             <span class="license">Licença anual</span>
                         </div>
                     </div>
 
                     <!-- Payment Section -->
                     <div class="payment-section">
-                        <h2>Compre com PIX</h2>
-                        <p class="payment-description">
-                            Pagamento instantâneo, aprovação imediata. Pague com PIX e tenha acesso à sua licença em
-                            minutos.
-                        </p>
-
-                        <div class="payment-option-container">
-                            <button id="pix-button" class="payment-option pix-button" data-method="pix">
+                        <h2>Formas de Pagamento</h2>
+                        <div class="payment-grid">
+                            <button class="payment-option" data-method="pix">
                                 <i class="fa-solid fa-qrcode"></i>
-                                <div>Gerar QR Code PIX</div>
-                                <i class="fa-solid fa-arrow-right"></i>
+                                <div>PIX</div>
+                            </button>
+
+                            <button class="payment-option" data-method="cartao">
+                                <i class="fa-solid fa-credit-card"></i>
+                                <div>Cartão</div>
+                            </button>
+
+                            <button class="payment-option" data-method="mercadopago">
+                                <i class="fa-solid fa-hand-holding-dollar"></i>
+                                <div>Mercado Pago</div>
                             </button>
                         </div>
 
-                        <div class="payment-info">
-                            <div class="info-item">
-                                <i class="fa-solid fa-shield-check"></i>
-                                <span>Pagamento 100% seguro</span>
-                            </div>
-                            <div class="info-item">
-                                <i class="fa-solid fa-bolt"></i>
-                                <span>Acesso imediato</span>
-                            </div>
-                            <div class="info-item">
-                                <i class="fa-solid fa-undo"></i>
-                                <span>Garantia de 7 dias</span>
-                            </div>
+                        <!-- Mercado Pago Button Container -->
+                        <div id="mercado-pago-button-container" class="hidden mt-4">
+                            <!-- Mercado Pago button will be dynamically inserted here -->
                         </div>
 
                         <!-- Registration Form (Hidden until payment is completed) -->
@@ -162,43 +149,6 @@
                                 Finalizar cadastro
                             </button>
                         </form>
-                    </div>
-                </div>
-
-                <!-- Testimonials Section -->
-                <div class="testimonials-section">
-                    <h3>O que nossos clientes dizem</h3>
-                    <div class="testimonials-grid">
-                        <div class="testimonial-card">
-                            <div class="testimonial-rating">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                            </div>
-                            <p class="testimonial-text">"Economizo pelo menos 1 hora por dia usando o Atalho. A melhor
-                                ferramenta de produtividade que já comprei!"</p>
-                            <div class="testimonial-author">
-                                <span class="author-name">Carlos Silva</span>
-                                <span class="author-profession">Advogado</span>
-                            </div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-rating">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                            </div>
-                            <p class="testimonial-text">"Seus templates personalizáveis são excelentes. Facilitou muito
-                                meu trabalho como médica."</p>
-                            <div class="testimonial-author">
-                                <span class="author-name">Dra. Ana Costa</span>
-                                <span class="author-profession">Médica</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -271,20 +221,10 @@
     <script src="assets/js/pix-modal.js"></script>
     <script src="assets/js/payment.js"></script>
 
+    <!-- Mercado Pago Integration Script -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             console.log("Página de compra inicializada");
-
-            // Inicializar botão de PIX
-            const pixButton = document.getElementById('pix-button');
-            if (pixButton) {
-                pixButton.addEventListener('click', () => {
-                    if (!state.processing) {
-                        state.selectedMethod = 'pix';
-                        pixModal.show();
-                    }
-                });
-            }
 
             // Fechar modais ao clicar fora
             document.querySelectorAll('.modal').forEach(modal => {

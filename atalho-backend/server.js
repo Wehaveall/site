@@ -1,4 +1,4 @@
-// VERSÃO CORRIGIDA - 2025-02-28
+// VERSÃO CORRIGIDA - 2025-02-28 (com idempotency key)
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
@@ -15,13 +15,19 @@ const PORT = 3000;
 
 // Middleware
 app.use(cors({
-    // Permitir todas as origens durante o desenvolvimento
     origin: '*',
     methods: ['GET', 'POST'],
     credentials: true
 }));
 
 app.use(express.json());
+
+// Função para gerar uma idempotency key única
+function generateIdempotencyKey() {
+    const timestamp = new Date().getTime();
+    const random = Math.floor(Math.random() * 1000000);
+    return `${timestamp}-${random}`;
+}
 
 // Rota de teste simples
 app.get('/', (req, res) => {
@@ -43,6 +49,10 @@ app.post('/api/create-pix', async (req, res) => {
         console.log('Recebida requisição para criar pagamento PIX');
         console.log('Corpo da requisição:', req.body);
         console.log('Tentando acessar o Mercado Pago...');
+
+        // Gera uma idempotency key única para esta transação
+        const idempotencyKey = generateIdempotencyKey();
+        console.log('Idempotency Key gerada:', idempotencyKey);
 
         // Montando o corpo da requisição
         const paymentData = {
@@ -66,7 +76,8 @@ app.post('/api/create-pix', async (req, res) => {
                 {
                     headers: {
                         'Authorization': `Bearer ${MP_ACCESS_TOKEN}`,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-Idempotency-Key': idempotencyKey // Adicionando o cabeçalho obrigatório
                     }
                 }
             );

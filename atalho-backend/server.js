@@ -1,96 +1,112 @@
-const express = require('express');
-const cors = require('cors');
-const axios = require('axios');
-// Não precisamos do dotenv se definirmos o token diretamente
-// require('dotenv').config();
+class MercadoPagoService {
+    constructor() {
+        // Apontando para o servidor local
+        this.apiBaseUrl = 'http://localhost:3000/api';
+        // Mantendo as credenciais para referência (não são usadas no frontend)
+        this.publicKey = 'TEST-f6d0456b-ff4f-4c22-afef-53b2c4d4ec35';
+        this.accessToken = 'TEST-7601417945820618-013008-87f0900af129b320e5d12f6fabe39620-231065568';
+    }
 
-// Adicione mensagens de console para diagnóstico
-console.log("Iniciando servidor...");
-
-// Defina o token diretamente no código (apenas para teste)
-const MP_ACCESS_TOKEN = 'TEST-7601417945820618-013008-87f0900af129b320e5d12f6fabe39620-231065568';
-
-const app = express();
-const PORT = 3000; // Definimos diretamente, sem usar variável de ambiente
-
-// Middleware
-app.use(cors({
-    origin: 'https://wehaveall.github.io',
-    methods: ['GET', 'POST'],
-    credentials: true
-}));
-app.use(express.json());
-
-// Adicione uma rota de teste simples
-app.get('/', (req, res) => {
-    res.send('Servidor do Atalho está funcionando!');
-});
-
-// Rota para criar pagamento PIX
-app.post('/api/create-pix', async (req, res) => {
-    try {
-        console.log('Recebida requisição para criar pagamento PIX');
-
-        const response = await axios.post(
-            'https://api.mercadopago.com/v1/payments',
-            {
-                transaction_amount: 49.90,
-                description: 'Licença Anual do Atalho',
-                payment_method_id: 'pix',
-                payer: {
-                    email: 'cliente@email.com',
-                    first_name: 'Cliente',
-                    last_name: 'Teste'
-                }
-            },
-            {
+    async createPaymentPreference() {
+        try {
+            const response = await fetch(`${this.apiBaseUrl}/create-preference`, {
+                method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${MP_ACCESS_TOKEN}`, // Use a constante definida acima
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify({
+                    items: [
+                        {
+                            title: 'Licença Atalho',
+                            unit_price: 49.90,
+                            quantity: 1,
+                            currency_id: 'BRL'
+                        }
+                    ]
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erro HTTP! status: ${response.status}`);
             }
-        );
 
-        console.log('Resposta do Mercado Pago:', response.data);
-        res.json(response.data);
-    } catch (error) {
-        console.error('Erro ao criar pagamento PIX:', error.response?.data || error.message);
-        res.status(500).json({
-            success: false,
-            error: 'Erro ao processar pagamento'
-        });
+            const preferenceData = await response.json();
+            return preferenceData.id;
+        } catch (error) {
+            console.error('Erro ao criar preferência de pagamento:', error);
+            throw error;
+        }
     }
-});
 
-// Rota para verificar status do pagamento
-app.get('/api/payment-status/:id', async (req, res) => {
-    try {
-        const paymentId = req.params.id;
-        console.log(`Verificando status do pagamento ${paymentId}`);
+    async createPixPayment() {
+        try {
+            console.log('Criando pagamento PIX...');
 
-        const response = await axios.get(
-            `https://api.mercadopago.com/v1/payments/${paymentId}`,
-            {
+            // Chamando a rota correta no servidor local
+            const response = await fetch(`${this.apiBaseUrl}/create-pix`, {
+                method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${MP_ACCESS_TOKEN}` // Use a constante definida acima
-                }
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    // Você pode adicionar dados do cliente aqui se necessário
+                    amount: 49.90,
+                    description: 'Licença Anual do Atalho'
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erro HTTP! status: ${response.status}`);
             }
-        );
 
-        console.log('Status do pagamento:', response.data.status);
-        res.json(response.data);
-    } catch (error) {
-        console.error('Erro ao verificar status:', error.response?.data || error.message);
-        res.status(500).json({
-            success: false,
-            error: 'Erro ao verificar status'
-        });
+            const paymentData = await response.json();
+            console.log('Resposta do pagamento PIX:', paymentData);
+
+            if (paymentData.status === 'pending' &&
+                paymentData.point_of_interaction &&
+                paymentData.point_of_interaction.transaction_data) {
+
+                const transactionData = paymentData.point_of_interaction.transaction_data;
+
+                return {
+                    success: true,
+                    paymentId: paymentData.id,
+                    qrCodeBase64: transactionData.qr_code_base64,
+                    qrCodeText: transactionData.qr_code,
+                    expirationDate: new Date(paymentData.date_of_expiration)
+                };
+            } else {
+                console.error('Resposta inválida do servidor:', paymentData);
+                return { success: false, error: 'Falha ao gerar QR code PIX' };
+            }
+        } catch (error) {
+            console.error('Erro ao criar pagamento PIX:', error);
+            return { success: false, error: error.message };
+        }
     }
-});
 
-// Iniciar servidor
-app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
-});
+    async checkPaymentStatus(paymentId) {
+        try {
+            console.log(`Verificando status do pagamento ${paymentId}...`);
 
-console.log("Script de servidor carregado completamente!");
+            // Chamando a rota correta no servidor local
+            const response = await fetch(`${this.apiBaseUrl}/payment-status/${paymentId}`);
+
+            if (!response.ok) {
+                throw new Error(`Erro HTTP! status: ${response.status}`);
+            }
+
+            const paymentData = await response.json();
+            console.log('Status atual do pagamento:', paymentData.status);
+
+            return {
+                success: true,
+                paymentId: paymentData.id,
+                status: paymentData.status
+            };
+        } catch (error) {
+            console.error('Erro ao verificar status do pagamento:', error);
+            return { success: false, error: error.message };
+        }
+    }
+}

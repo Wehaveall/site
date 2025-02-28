@@ -1,17 +1,29 @@
+// VERSÃO CORRIGIDA - SUBSTITUA O ARQUIVO COMPLETAMENTE - 2025-02-28
+
 class MercadoPagoService {
     constructor() {
-        // Use your actual Mercado Pago credentials
+        // IMPORTANTE: Log de inicialização para confirmar que estamos usando a versão correta
+        console.log('Inicializando MercadoPagoService - VERSÃO CORRIGIDA');
+
+        // Apontando para o servidor local
+        this.apiBaseUrl = 'http://localhost:3000/api';
+
+        // Credenciais (não usadas aqui, apenas para referência)
         this.publicKey = 'TEST-f6d0456b-ff4f-4c22-afef-53b2c4d4ec35';
         this.accessToken = 'TEST-7601417945820618-013008-87f0900af129b320e5d12f6fabe39620-231065568';
-        this.apiBaseUrl = 'http://localhost:3000/api';
+
+        // Log para confirmar URL base
+        console.log('API Base URL:', this.apiBaseUrl);
     }
 
     async createPaymentPreference() {
         try {
-            const response = await fetch(`${this.apiBaseUrl}/checkout/preferences`, {
+            console.log('Criando preferência de pagamento...');
+            console.log('URL sendo acessada:', `${this.apiBaseUrl}/create-preference`);
+
+            const response = await fetch(`${this.apiBaseUrl}/create-preference`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${this.accessToken}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
@@ -22,15 +34,13 @@ class MercadoPagoService {
                             quantity: 1,
                             currency_id: 'BRL'
                         }
-                    ],
-                    back_urls: {
-                        success: window.location.origin + '/success.html',
-                        failure: window.location.origin + '/failure.html',
-                        pending: window.location.origin + '/pending.html'
-                    },
-                    auto_return: 'approved'
+                    ]
                 })
             });
+
+            if (!response.ok) {
+                throw new Error(`Erro HTTP! status: ${response.status}`);
+            }
 
             const preferenceData = await response.json();
             return preferenceData.id;
@@ -40,35 +50,33 @@ class MercadoPagoService {
         }
     }
 
-    // Novo método para criar pagamento PIX
     async createPixPayment() {
         try {
             console.log('Criando pagamento PIX...');
 
-            // Em um ambiente real, esta chamada seria para o seu backend
-            // que utilizaria o SDK do Mercado Pago para gerar o pagamento
-            // Aqui estamos simulando com uma chamada direta à API
+            // ATENÇÃO: Log exato da URL - isso ajudará a diagnosticar o problema
+            const pixUrl = `${this.apiBaseUrl}/create-pix`;
+            console.log('URL EXATA sendo acessada:', pixUrl);
 
-            const response = await fetch(`${this.apiBaseUrl}/v1/payments`, {
+            const response = await fetch(pixUrl, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${this.accessToken}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    transaction_amount: 49.90,
-                    description: 'Licença Anual do Atalho',
-                    payment_method_id: 'pix',
-                    payer: {
-                        email: 'cliente@email.com',
-                        first_name: 'Cliente',
-                        last_name: 'Teste'
-                    }
+                    amount: 49.90,
+                    description: 'Licença Anual do Atalho'
                 })
             });
 
+            console.log('Resposta recebida do servidor:', response.status, response.statusText);
+
+            if (!response.ok) {
+                throw new Error(`Erro HTTP! status: ${response.status}`);
+            }
+
             const paymentData = await response.json();
-            console.log('Resposta do pagamento PIX:', paymentData);
+            console.log('Dados do pagamento PIX:', paymentData);
 
             if (paymentData.status === 'pending' &&
                 paymentData.point_of_interaction &&
@@ -84,7 +92,7 @@ class MercadoPagoService {
                     expirationDate: new Date(paymentData.date_of_expiration)
                 };
             } else {
-                console.error('Resposta inválida do Mercado Pago:', paymentData);
+                console.error('Resposta inválida do servidor:', paymentData);
                 return { success: false, error: 'Falha ao gerar QR code PIX' };
             }
         } catch (error) {
@@ -93,17 +101,21 @@ class MercadoPagoService {
         }
     }
 
-    // Método para verificar o status do pagamento
     async checkPaymentStatus(paymentId) {
         try {
             console.log(`Verificando status do pagamento ${paymentId}...`);
 
-            const response = await fetch(`${this.apiBaseUrl}/v1/payments/${paymentId}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${this.accessToken}`
-                }
-            });
+            // ATENÇÃO: Log exato da URL
+            const statusUrl = `${this.apiBaseUrl}/payment-status/${paymentId}`;
+            console.log('URL EXATA sendo acessada:', statusUrl);
+
+            const response = await fetch(statusUrl);
+
+            console.log('Resposta recebida do servidor:', response.status, response.statusText);
+
+            if (!response.ok) {
+                throw new Error(`Erro HTTP! status: ${response.status}`);
+            }
 
             const paymentData = await response.json();
             console.log('Status atual do pagamento:', paymentData.status);

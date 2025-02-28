@@ -15,7 +15,6 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="assets/css/style.css" />
-    <link rel="stylesheet" href="assets/css/purchase.css" />
 </head>
 
 <body class="light-theme">
@@ -55,7 +54,7 @@
                             <span>Oferta Especial</span>
                         </div>
                         <div class="product-image">
-                            <img src="assets/img/atalho-preview.png" alt="Atalho Preview" class="preview-img" />
+                            <img src="assets/img/product-preview.png" alt="Atalho Preview" class="preview-img" />
                         </div>
                         <ul class="features-list">
                             <li>
@@ -107,7 +106,7 @@
 
                         <div class="payment-info">
                             <div class="info-item">
-                                <i class="fa-solid fa-shield-alt"></i>
+                                <i class="fa-solid fa-shield-check"></i>
                                 <span>Pagamento 100% seguro</span>
                             </div>
                             <div class="info-item">
@@ -227,7 +226,7 @@
             <i class="fas fa-exclamation-circle error-icon"></i>
             <h3>Erro</h3>
             <p id="error-message">Ocorreu um erro. Tente novamente.</p>
-            <button class="btn-hero modal-close-btn">
+            <button class="btn-hero" onclick="document.getElementById('error-modal').classList.add('hidden')">
                 Fechar
             </button>
         </div>
@@ -287,7 +286,7 @@
                 });
             }
 
-            // Fechar modais
+            // Fechar modais ao clicar fora
             document.querySelectorAll('.modal').forEach(modal => {
                 modal.addEventListener('click', (e) => {
                     if (e.target === modal) {
@@ -296,16 +295,6 @@
                         } else {
                             modal.classList.add('hidden');
                         }
-                    }
-                });
-            });
-
-            // Botões para fechar modais
-            document.querySelectorAll('.modal-close-btn').forEach(button => {
-                button.addEventListener('click', function () {
-                    const modal = this.closest('.modal');
-                    if (modal) {
-                        modal.classList.add('hidden');
                     }
                 });
             });

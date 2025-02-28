@@ -3,7 +3,8 @@ const state = {
     selectedMethod: null,
     processing: false,
     completed: false,
-    user: null
+    user: null,
+    paymentId: null
 };
 
 function showLoading(message = 'Processando...') {
@@ -60,17 +61,22 @@ function validatePassword(password) {
     if (hasSpecialChar) strength += 12.5;
 
     const meter = document.querySelector('.meter-bar');
-    meter.style.width = `${strength}%`;
+    if (meter) {
+        meter.style.width = `${strength}%`;
 
-    if (strength < 40) {
-        meter.style.backgroundColor = '#ff4444';
-        document.querySelector('.strength-text').textContent = 'Senha muito fraca';
-    } else if (strength < 70) {
-        meter.style.backgroundColor = '#ffa700';
-        document.querySelector('.strength-text').textContent = 'Senha média';
-    } else {
-        meter.style.backgroundColor = '#00C851';
-        document.querySelector('.strength-text').textContent = 'Senha forte';
+        if (strength < 40) {
+            meter.style.backgroundColor = '#ff4444';
+            const strengthText = document.querySelector('.strength-text');
+            if (strengthText) strengthText.textContent = 'Senha muito fraca';
+        } else if (strength < 70) {
+            meter.style.backgroundColor = '#ffa700';
+            const strengthText = document.querySelector('.strength-text');
+            if (strengthText) strengthText.textContent = 'Senha média';
+        } else {
+            meter.style.backgroundColor = '#00C851';
+            const strengthText = document.querySelector('.strength-text');
+            if (strengthText) strengthText.textContent = 'Senha forte';
+        }
     }
 
     return strength >= 70;
@@ -125,10 +131,21 @@ async function processPayment(method) {
 
     try {
         if (method === 'pix') {
-            // Chama o modal do PIX
+            // Abre o modal do PIX que terá a lógica de geração e checagem
             pixModal.show();
+        } else if (method === 'cartao') {
+            // Implementação com cartão de crédito usando Mercado Pago
+            showLoading(`Processando pagamento via cartão...`);
+
+            const mpButton = document.getElementById('mercado-pago-button-container');
+            if (mpButton) {
+                mpButton.classList.remove('hidden');
+                hideLoading();
+            } else {
+                throw new Error('Container do Mercado Pago não encontrado');
+            }
         } else {
-            // Para outros métodos, mantém a simulação
+            // Para outros métodos mantém simulação temporariamente
             showLoading(`Processando pagamento via ${method}...`);
             await new Promise(resolve => setTimeout(resolve, 2000));
             hideLoading();
@@ -160,6 +177,16 @@ async function registerUser(userData) {
     try {
         console.log("Iniciando registro do usuário...");
 
+        // Verificar se o pagamento foi realmente confirmado
+        if (state.paymentId) {
+            const paymentRef = db.collection('pending_payments').doc(state.paymentId.toString());
+            const paymentDoc = await paymentRef.get();
+
+            if (!paymentDoc.exists || paymentDoc.data().status !== 'approved') {
+                throw new Error('Pagamento não confirmado. Por favor, complete o pagamento antes de prosseguir.');
+            }
+        }
+
         const userCredential = await auth
             .createUserWithEmailAndPassword(userData.email, userData.password)
             .catch(error => {
@@ -186,6 +213,13 @@ async function registerUser(userData) {
         try {
             await db.collection('users').doc(userCredential.user.uid).set(userDoc);
             console.log("Documento do usuário criado com sucesso");
+
+            // Associar o pagamento ao usuário, se houver um paymentId
+            if (state.paymentId) {
+                await db.collection('pending_payments').doc(state.paymentId.toString()).update({
+                    user_uid: userCredential.user.uid
+                });
+            }
         } catch (firestoreError) {
             console.error("Erro ao criar documento no Firestore:", firestoreError);
             await userCredential.user.delete();
@@ -228,6 +262,8 @@ async function registerUser(userData) {
                 default:
                     errorMessage = `Erro ao finalizar cadastro: ${error.message}`;
             }
+        } else {
+            errorMessage = error.message;
         }
 
         showError(errorMessage);
@@ -298,5 +334,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
+    });
+
+    // Fechar modais ao clicar fora deles
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
     });
 });

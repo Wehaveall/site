@@ -110,28 +110,32 @@ class PixModalController {
 
     async checkPaymentStatus(paymentId) {
         try {
-            const result = await this.mpService.checkPaymentStatus(paymentId);
+            console.log(`Verificando status do pagamento ${paymentId}...`);
 
-            if (result.success) {
-                console.log(`Status do pagamento ${paymentId}: ${result.status}`);
+            // Simulação: Após 10 segundos, considere o pagamento aprovado
+            const startTime = this.startCheckTime || Date.now();
+            this.startCheckTime = startTime;
 
-                if (result.status === 'approved') {
-                    console.log("Pagamento aprovado! Finalizando processo...");
-                    this.clearIntervals();
-                    this.handlePaymentSuccess(paymentId);
-                } else if (result.status === 'rejected' || result.status === 'cancelled') {
-                    console.log("Pagamento rejeitado ou cancelado");
-                    this.clearIntervals();
-                    this.renderError('Pagamento cancelado ou rejeitado. Por favor, tente novamente.');
-                }
-            } else {
-                console.error("Erro ao verificar status:", result.error);
+            const elapsedTime = Date.now() - startTime;
+            console.log(`Tempo decorrido: ${elapsedTime / 1000} segundos`);
+
+            if (elapsedTime > 10000) {  // 10 segundos
+                console.log("Simulando pagamento aprovado após 10 segundos");
+                return {
+                    success: true,
+                    paymentId: paymentId,
+                    status: 'approved'
+                };
             }
+
+            // Código original para verificar o status real
+            const result = await this.mpService.checkPaymentStatus(paymentId);
+            return result;
         } catch (error) {
             console.error('Erro ao verificar status do pagamento:', error);
+            return { success: false, error: error.message };
         }
     }
-
     async handlePaymentSuccess(paymentId) {
         try {
             // Atualizar status no Firestore

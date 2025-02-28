@@ -1,4 +1,4 @@
-// pix-modal.js - Versão modernizada
+// pix-modal.js - Versão com diagnóstico e correções
 
 class PixModalController {
     constructor() {
@@ -38,10 +38,12 @@ class PixModalController {
 
         try {
             console.log("Solicitando geração de QR Code PIX...");
+
+            // Tenta criar o pagamento PIX
             const result = await this.mpService.createPixPayment();
 
             if (result.success) {
-                console.log("QR Code PIX gerado com sucesso!");
+                console.log("QR Code PIX gerado com sucesso:", result);
                 this.currentPaymentId = result.paymentId;
                 this.paymentExpirationTime = result.expirationDate;
                 this.renderQRCode(result.qrCodeBase64, result.qrCodeText);
@@ -64,6 +66,7 @@ class PixModalController {
                     console.log("Registro de pagamento pendente criado no Firestore");
                 } catch (dbError) {
                     console.error("Erro ao salvar referência do pagamento:", dbError);
+                    alert("Aviso: Pagamento gerado, mas houve um erro ao registrá-lo. O cadastro ainda funcionará normalmente.");
                 }
             } else {
                 console.error("Erro na geração do QR Code:", result.error);
@@ -71,6 +74,7 @@ class PixModalController {
             }
         } catch (error) {
             console.error('Erro ao gerar pagamento:', error);
+            alert("Erro durante a geração do pagamento: " + error.message);
             this.renderError('Erro ao processar pagamento. Por favor, tente novamente.');
         }
     }
@@ -112,7 +116,10 @@ class PixModalController {
             refreshButton.textContent = 'Gerar novo QR Code';
             refreshButton.onclick = () => this.generatePixPayment();
 
-            countdownElement.parentNode.appendChild(refreshButton);
+            const buttonContainer = document.getElementById('pix-refresh-container');
+            if (buttonContainer && !buttonContainer.querySelector('button')) {
+                buttonContainer.appendChild(refreshButton);
+            }
             return;
         }
 
@@ -161,12 +168,17 @@ class PixModalController {
     async handlePaymentSuccess(paymentId) {
         try {
             // Atualizar status no Firestore
-            const paymentRef = db.collection('pending_payments').doc(paymentId.toString());
-            await paymentRef.update({
-                status: 'approved',
-                approved_at: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            console.log("Status de pagamento atualizado no Firestore");
+            try {
+                const paymentRef = db.collection('pending_payments').doc(paymentId.toString());
+                await paymentRef.update({
+                    status: 'approved',
+                    approved_at: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                console.log("Status de pagamento atualizado no Firestore");
+            } catch (dbError) {
+                console.error("Erro ao atualizar status no Firestore:", dbError);
+                // Continua mesmo com erro no Firestore
+            }
 
             // Atualizar o modal para mostrar a confirmação de pagamento
             this.renderPaymentSuccess();
@@ -178,8 +190,12 @@ class PixModalController {
 
                 // Exibir formulário de registro
                 const registerForm = document.getElementById('register-form');
-                registerForm.classList.remove('hidden');
-                registerForm.scrollIntoView({ behavior: 'smooth' });
+                if (registerForm) {
+                    registerForm.classList.remove('hidden');
+                    registerForm.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    alert("Formulário de registro não encontrado!");
+                }
 
                 // Atualizar estado da aplicação
                 state.selectedMethod = 'pix';
@@ -188,7 +204,7 @@ class PixModalController {
 
         } catch (error) {
             console.error('Erro ao processar confirmação de pagamento:', error);
-            showError('Houve um erro ao finalizar seu pagamento. Entre em contato com o suporte.');
+            alert('Houve um erro ao finalizar seu pagamento. Entre em contato com o suporte.');
         }
     }
 
@@ -219,7 +235,11 @@ class PixModalController {
                 <div style="color: #ff4444; margin-bottom: 1.5rem;">
                     <i class="fas fa-exclamation-circle" style="font-size: 3rem;"></i>
                 </div>
-                <p style="color: #ff4444; margin-bottom: 1.5rem;">${message}</p>
+                <p style="color: #ff4444; margin-bottom: 1rem;">${message}</p>
+                <p style="color: #666; font-size: 0.9rem; margin-bottom: 1.5rem;">
+                    Detalhes técnicos: O erro pode estar relacionado a restrições de CORS ao chamar a API diretamente. 
+                    Em uma implementação de produção, esta chamada deve ser feita através de um backend.
+                </p>
                 <button onclick="pixModal.generatePixPayment()" class="btn-hero">
                     Tentar Novamente
                 </button>
@@ -267,6 +287,8 @@ class PixModalController {
                 })">
                     <i class="fas fa-copy"></i> Copiar Código PIX
                 </button>
+                
+                <div id="pix-refresh-container" style="text-align: center; margin: 1rem 0;"></div>
                 
                 <div class="pix-instructions">
                     <p><i class="fas fa-1"></i> Abra o app do seu banco</p>

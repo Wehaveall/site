@@ -211,24 +211,24 @@ body {
 .hero-subtitle {
     display: block !important;
     font-size: 1.5rem !important;
-    color: #4b2b03 !important;
+    color: #21c069 !important;
     /* Forçar a cor com !important */
     margin-top: 1rem !important;
     font-weight: 600 !important;
     letter-spacing: 0.02em !important;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+   
 }
 
 
-.hero-description {
+/* .hero-description {
     font-size: 1.1rem;
     color: #4a4a4a;
-    /* Mais escuro para legibilidade */
+
     line-height: 1.7;
     text-align: center;
     max-width: 600px;
     margin: 0;
-}
+} */
 
 .hero-buttons {
     display: flex;

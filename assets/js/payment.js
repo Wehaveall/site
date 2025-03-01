@@ -282,10 +282,24 @@ document.addEventListener('DOMContentLoaded', () => {
         state.user = user;
         if (user) {
             console.log('Usuário autenticado:', user.uid);
+
+            // Verificar se o documento existe antes de tentar atualizar
             db.collection('users')
                 .doc(user.uid)
-                .update({ last_login: firebase.firestore.FieldValue.serverTimestamp() })
-                .catch(console.error);
+                .get()
+                .then(doc => {
+                    if (doc.exists) {
+                        // Só atualiza se o documento já existir
+                        return db.collection('users')
+                            .doc(user.uid)
+                            .update({ last_login: firebase.firestore.FieldValue.serverTimestamp() });
+                    } else {
+                        console.log('Documento do usuário ainda não existe, pulando atualização');
+                    }
+                })
+                .catch(error => {
+                    console.warn('Erro ao verificar/atualizar último login:', error);
+                });
         }
     });
 

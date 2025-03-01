@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Diagnóstico</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+        }
+
+        .success-box {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="success-box">
+        <h1>Cadastro realizado com sucesso!</h1>
+        <p>Esta é uma página de diagnóstico simplificada.</p>
+        <p>Email cadastrado: <span id="userEmail">...</span></p>
+    </div>
+
+    <div>
+        <h2>Diagnóstico:</h2>
+        <ul id="diagnosticsList"></ul>
+    </div>
+
+    <script>
+        // Recuperar e exibir o email 
+        document.getElementById('userEmail').textContent =
+            localStorage.getItem('userEmail') || 'Não encontrado';
+
+        // Lista para diagnóstico
+        const diagnosticsList = document.getElementById('diagnosticsList');
+        function addDiagnostic(message) {
+            const item = document.createElement('li');
+            item.textContent = message;
+            diagnosticsList.appendChild(item);
+        }
+
+        // Verificar localização
+        addDiagnostic(`URL: ${window.location.href}`);
+
+        // Verificar dados do localStorage
+        const keys = Object.keys(localStorage);
+        addDiagnostic(`LocalStorage: ${keys.join(', ')}`);
+
+        // Verificar se o CSS seria carregado
+        const cssTest = document.createElement('link');
+        cssTest.rel = 'stylesheet';
+        cssTest.href = '/site/assets/css/style.css';
+        cssTest.onload = () => addDiagnostic('CSS carregado com sucesso');
+        cssTest.onerror = () => addDiagnostic('ERRO ao carregar CSS');
+        document.head.appendChild(cssTest);
+    </script>
+</body>
+
+</html>

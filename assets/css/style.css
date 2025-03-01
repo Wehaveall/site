@@ -37,6 +37,7 @@ body {
 /* --------------- */
 /* Ajuste no header para corresponder ao design */
 /* Remover a borda do header e estender o degradê */
+/* Ajuste no header - simplificar o degradê */
 .header {
     position: fixed;
     top: 0;
@@ -45,48 +46,54 @@ body {
     height: var(--header-height);
     background: linear-gradient(135deg,
             #e6dac8 0%,
-            #ece3d6 30%,
-            #f3efe8 60%,
+            #f0e9df 70%,
             white 100%);
     z-index: 998;
     transition: all 0.3s ease;
     border-bottom: none;
-    /* Removendo a borda */
     overflow: visible;
 }
 
-/* Criando um pseudo-elemento para estender o degradê */
+/* Remover o pseudo-elemento anterior que criava um efeito abrupto */
 .header::after {
+    display: none;
+}
+
+/* Modificar o fundo da seção hero para continuar o degradê */
+.hero {
+    padding-top: calc(var(--header-height) + 10px);
+    background: linear-gradient(135deg,
+            #f0e9df 0%,
+            /* Começar com a cor que termina o header */
+            #f7f3ed 30%,
+            white 70%);
+    /* Terminar em branco total */
+    overflow: hidden;
+    position: relative;
+}
+
+/* Criar um elemento de transição entre o header e o hero */
+.hero::before {
     content: "";
     position: absolute;
-    top: 100%;
+    top: 0;
     left: 0;
     right: 0;
-    height: 25px;
-    /* Altura da extensão do degradê */
+    height: 40px;
+    /* Área de transição */
     background: linear-gradient(to bottom,
-            rgba(230, 218, 200, 0.5) 0%,
-            rgba(255, 255, 255, 0) 100%);
-    z-index: 996;
-    /* Menor que o header mas maior que o conteúdo */
+            rgba(240, 233, 223, 0.8) 0%,
+            rgba(240, 233, 223, 0.2) 100%);
     pointer-events: none;
-    /* Para não interferir com cliques */
 }
 
-/* Ajustar também a versão com scroll */
+/* Ajustar o header em estado de scroll para manter a consistência */
 .header-scrolled {
     box-shadow: none;
-    /* Removendo sombra que poderia criar uma linha visual */
     background: linear-gradient(135deg,
             #e6dac8 0%,
-            #ece3d6 30%,
-            #f3efe8 60%,
+            #f0e9df 70%,
             white 100%);
-}
-
-.header-scrolled::after {
-    opacity: 0.8;
-    /* Ligeiramente mais sutil quando scrollado */
 }
 
 .navbar {

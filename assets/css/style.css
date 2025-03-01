@@ -36,7 +36,7 @@ body {
 /* Header e Logo */
 /* --------------- */
 /* Ajuste no header para corresponder ao design */
-/* Aplicar degradê diagonal mais suave no header */
+/* Remover a borda do header e estender o degradê */
 .header {
     position: fixed;
     top: 0;
@@ -48,16 +48,35 @@ body {
             #ece3d6 30%,
             #f3efe8 60%,
             white 100%);
-    /* Degradê diagonal com múltiplos pontos de parada */
     z-index: 998;
     transition: all 0.3s ease;
-    border-bottom: 1px solid #e0d5c0;
+    border-bottom: none;
+    /* Removendo a borda */
     overflow: visible;
 }
 
-/* Ajustar a versão com scroll para manter o mesmo degradê suave */
+/* Criando um pseudo-elemento para estender o degradê */
+.header::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 25px;
+    /* Altura da extensão do degradê */
+    background: linear-gradient(to bottom,
+            rgba(230, 218, 200, 0.5) 0%,
+            rgba(255, 255, 255, 0) 100%);
+    z-index: 996;
+    /* Menor que o header mas maior que o conteúdo */
+    pointer-events: none;
+    /* Para não interferir com cliques */
+}
+
+/* Ajustar também a versão com scroll */
 .header-scrolled {
-    box-shadow: 0 2px 10px rgba(219, 201, 173, 0.2);
+    box-shadow: none;
+    /* Removendo sombra que poderia criar uma linha visual */
     background: linear-gradient(135deg,
             #e6dac8 0%,
             #ece3d6 30%,
@@ -65,6 +84,10 @@ body {
             white 100%);
 }
 
+.header-scrolled::after {
+    opacity: 0.8;
+    /* Ligeiramente mais sutil quando scrollado */
+}
 
 .navbar {
     position: relative;

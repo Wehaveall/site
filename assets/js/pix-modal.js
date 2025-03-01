@@ -417,17 +417,33 @@ class PixModalController {
 
     async handlePaymentSuccess(paymentId) {
         try {
-            // Tente atualizar o Firebase, mas não dependa disso
+            // Garantir autenticação antes de tentar escrever no Firestore
+            if (typeof window.ensureAuthentication === 'function') {
+                await window.ensureAuthentication();
+            }
+
+            console.log("Processando confirmação de pagamento:", paymentId);
+
             try {
-                const paymentRef = db.collection('pending_payments').doc(paymentId.toString());
-                await paymentRef.update({
+                const paymentData = {
+                    payment_id: paymentId,
                     status: 'approved',
-                    approved_at: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                console.log("Status de pagamento atualizado no Firestore");
+                    approved_at: firebase.firestore.FieldValue.serverTimestamp(),
+                    method: 'pix',
+                    // Adicionar uid do usuário anônimo se disponível
+                    anonymous_uid: firebase.auth().currentUser?.uid || null
+                };
+
+                console.log("Tentando salvar dados de pagamento:", paymentData);
+
+                // Usar set com merge em vez de update
+                const paymentRef = db.collection('pending_payments').doc(paymentId.toString());
+                await paymentRef.set(paymentData, { merge: true });
+
+                console.log("Status de pagamento atualizado com sucesso no Firestore");
             } catch (firebaseError) {
-                // Apenas registre o erro, não o trate como fatal
-                console.log("Firebase não atualizado (isso é esperado em testes):", firebaseError);
+                // Capturar e registrar erro, mas continuar com o fluxo
+                console.warn("Erro ao atualizar Firebase:", firebaseError);
             }
 
             this.hide();

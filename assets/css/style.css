@@ -42,20 +42,19 @@ body {
     left: 0;
     right: 0;
     height: var(--header-height);
-    background: #f5f0e6;
-    /* Cor sólida em vez de gradiente */
+    background: linear-gradient(to top, #e6dac8, white);
+    /* Degradê na direção inversa do footer */
     z-index: 998;
     transition: all 0.3s ease;
     border-bottom: 1px solid #e0d5c0;
-    /* Borda mais visível */
     overflow: visible;
 }
 
+/* Ajustar a versão com scroll para manter o degradê */
 .header-scrolled {
-    box-shadow: 0 2px 10px rgba(219, 201, 173, 0.1);
-    background: rgba(245, 240, 230, 0.98);
+    box-shadow: 0 2px 10px rgba(219, 201, 173, 0.2);
+    background: linear-gradient(to top, #e6dac8, white);
 }
-
 .navbar {
     position: relative;
     height: 100%;

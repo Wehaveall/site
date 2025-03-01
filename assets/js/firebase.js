@@ -36,3 +36,24 @@ db.enablePersistence()
             console.log('O navegador não suporta persistência');
         }
     });
+
+
+// Adicionar após a inicialização do Firebase
+// Função para garantir autenticação anônima quando necessário
+async function ensureAuthentication() {
+    if (!auth.currentUser) {
+        try {
+            console.log("Realizando autenticação anônima para operações no Firestore...");
+            await auth.signInAnonymously();
+            console.log("Autenticação anônima bem-sucedida");
+        } catch (error) {
+            console.error("Erro na autenticação anônima:", error);
+        }
+    }
+}
+
+// Expor para uso global
+window.ensureAuthentication = ensureAuthentication;
+
+// Tentar autenticação anônima imediatamente
+ensureAuthentication();    

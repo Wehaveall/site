@@ -1,63 +1,245 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Diagnóstico</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Atalho - Cadastro realizado com sucesso" />
+    <!-- Configurações de CSP corretas para permitir fontes e recursos necessários -->
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; font-src 'self' data: https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data:;">
+    <title>Atalho - Cadastro Realizado com Sucesso</title>
+
+    <!-- Fonts and Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://wehaveall.github.io/site/assets/css/style.css" />
+
     <style>
-        body {
-            font-family: Arial;
-            padding: 20px;
+        .success-container {
+            padding-top: calc(var(--header-height) + 20px);
+            background: linear-gradient(to bottom, var(--header-bg), white);
+            min-height: calc(100vh - var(--header-height));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
         }
 
-        .success-box {
-            background: #e8f5e9;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+        .success-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            padding: 3rem;
+            max-width: 600px;
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .success-icon {
+            font-size: 5rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+        }
+
+        .success-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .success-message {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .next-steps {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .next-steps h3 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        .next-steps-list {
+            text-align: left;
+            list-style-position: inside;
+        }
+
+        .next-steps-list li {
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .next-steps-list i {
+            color: var(--primary);
+            margin-right: 10px;
+            margin-top: 5px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .success-card {
+                padding: 2rem;
+            }
+
+            .success-title {
+                font-size: 2rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-hero,
+            .btn-hero-secondary {
+                width: 100%;
+            }
         }
     </style>
 </head>
 
-<body>
-    <div class="success-box">
-        <h1>Cadastro realizado com sucesso!</h1>
-        <p>Esta é uma página de diagnóstico simplificada.</p>
-        <p>Email cadastrado: <span id="userEmail">...</span></p>
-    </div>
+<body class="light-theme">
+    <!-- Header -->
+    <header class="header">
+        <div class="navbar">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="assets/img/logo.svg" alt="Logo Atalho" class="logo-img" />
+                    <span class="logo-text">Atalho</span>
+                </a>
+            </div>
+            <nav class="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="index.html#features" class="nav-link">Recursos</a></li>
+                    <li><a href="tutoriais.html" class="nav-link">Tutoriais</a></li>
+                    <li><a href="index.html#downloads" class="nav-link">Downloads de Bibliotecas</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-    <div>
-        <h2>Diagnóstico:</h2>
-        <ul id="diagnosticsList"></ul>
-    </div>
+    <!-- Success Section -->
+    <section class="success-container">
+        <div class="success-card">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h1 class="success-title">Cadastro realizado com sucesso!</h1>
+            <p class="success-message">
+                Parabéns! Seu pagamento foi confirmado e sua conta foi criada com sucesso.
+                Agora você tem acesso completo ao Atalho e pode começar a otimizar sua produtividade.
+            </p>
 
+            <div id="user-info">
+                <!-- Informações do usuário serão inseridas aqui via JavaScript -->
+            </div>
+
+            <div class="next-steps">
+                <h3>Próximos passos:</h3>
+                <ul class="next-steps-list">
+                    <li>
+                        <i class="fas fa-download"></i>
+                        <span>Baixe o aplicativo Atalho para começar a usar</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-file-alt"></i>
+                        <span>Acesse a seção de tutoriais para aprender a utilizar todas as funcionalidades</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-database"></i>
+                        <span>Faça o download das bibliotecas de termos para seu segmento</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-envelope"></i>
+                        <span>Você receberá um e-mail com instruções detalhadas</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="action-buttons">
+                <a href="download.html" class="btn-hero">
+                    <i class="fas fa-download"></i> Baixar Atalho
+                </a>
+                <a href="tutoriais.html" class="btn-hero-secondary">
+                    <i class="fas fa-book"></i> Ver Tutoriais
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <p>© 2025 Atalho App. Todos os direitos reservados.</p>
+            </div>
+            <div class="footer-social">
+                <a href="#" class="social-link" aria-label="Facebook">
+                    <i class="fa-brands fa-facebook-f"></i>
+                </a>
+                <a href="#" class="social-link" aria-label="Instagram">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+                <a href="#" class="social-link" aria-label="Twitter">
+                    <i class="fa-brands fa-twitter"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
     <script>
-        // Recuperar e exibir o email 
-        document.getElementById('userEmail').textContent =
-            localStorage.getItem('userEmail') || 'Não encontrado';
+        document.addEventListener('DOMContentLoaded', function () {
+            // Recuperar informações do usuário salvas no localStorage
+            const userId = localStorage.getItem('userId');
+            const userEmail = localStorage.getItem('userEmail');
 
-        // Lista para diagnóstico
-        const diagnosticsList = document.getElementById('diagnosticsList');
-        function addDiagnostic(message) {
-            const item = document.createElement('li');
-            item.textContent = message;
-            diagnosticsList.appendChild(item);
-        }
+            // Exibir informações na página se disponíveis
+            if (userEmail) {
+                const userInfoDiv = document.getElementById('user-info');
+                if (userInfoDiv) {
+                    userInfoDiv.innerHTML = `
+                        <div style="background: var(--header-bg); padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                            <p style="margin: 0;">E-mail cadastrado: <strong>${userEmail}</strong></p>
+                        </div>
+                    `;
+                }
+            }
 
-        // Verificar localização
-        addDiagnostic(`URL: ${window.location.href}`);
-
-        // Verificar dados do localStorage
-        const keys = Object.keys(localStorage);
-        addDiagnostic(`LocalStorage: ${keys.join(', ')}`);
-
-        // Verificar se o CSS seria carregado
-        const cssTest = document.createElement('link');
-        cssTest.rel = 'stylesheet';
-        cssTest.href = '/site/assets/css/style.css';
-        cssTest.onload = () => addDiagnostic('CSS carregado com sucesso');
-        cssTest.onerror = () => addDiagnostic('ERRO ao carregar CSS');
-        document.head.appendChild(cssTest);
+            // Efeito de scroll suave para links internos
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
     </script>
 </body>
 

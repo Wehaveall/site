@@ -36,64 +36,83 @@ body {
 /* Header e Logo */
 /* --------------- */
 /* Ajuste no header para corresponder ao design */
-/* Remover a borda do header e estender o degradê */
-/* Ajuste no header - simplificar o degradê */
+/* Tornar o degradê mais visível na altura do header */
+
+/* Ajustar o ângulo e os pontos de parada para acelerar a transição vertical */
 .header {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     height: var(--header-height);
-    background: linear-gradient(135deg,
+    /* Alterando o ângulo para 120deg para dar mais ênfase à transição vertical */
+    background: linear-gradient(120deg,
             #e6dac8 0%,
-            #f0e9df 70%,
-            white 100%);
+            #e6dac8 20%,
+            /* Manter o bege por mais tempo à esquerda */
+            #f0e9df 40%,
+            /* Acelerar a transição após os 20% */
+            white 60%);
+    /* Concluir a transição mais cedo */
     z-index: 998;
     transition: all 0.3s ease;
     border-bottom: none;
     overflow: visible;
 }
 
-/* Remover o pseudo-elemento anterior que criava um efeito abrupto */
-.header::after {
-    display: none;
+/* Adicionar um gradiente de reforço exclusivamente vertical */
+.header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(to bottom,
+            #e6dac8 0%,
+            rgba(240, 233, 223, 0.5) 70%,
+            rgba(255, 255, 255, 0.3) 100%);
+    pointer-events: none;
+    z-index: -1;
 }
 
-/* Modificar o fundo da seção hero para continuar o degradê */
+/* Ajustar o header em estado de scroll */
+.header-scrolled {
+    box-shadow: none;
+    background: linear-gradient(120deg,
+            #e6dac8 0%,
+            #e6dac8 20%,
+            #f0e9df 40%,
+            white 60%);
+}
+
+.header-scrolled::before {
+    opacity: 0.9;
+}
+
+/* Modificar o fundo da seção hero para combinar com a nova transição */
 .hero {
     padding-top: calc(var(--header-height) + 10px);
-    background: linear-gradient(135deg,
+    background: linear-gradient(120deg,
             #f0e9df 0%,
-            /* Começar com a cor que termina o header */
-            #f7f3ed 30%,
-            white 70%);
-    /* Terminar em branco total */
+            #f7f3ed 20%,
+            white 50%);
     overflow: hidden;
     position: relative;
 }
 
-/* Criar um elemento de transição entre o header e o hero */
+/* Elemento de transição entre header e hero */
 .hero::before {
     content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 40px;
-    /* Área de transição */
+    height: 30px;
     background: linear-gradient(to bottom,
-            rgba(240, 233, 223, 0.8) 0%,
-            rgba(240, 233, 223, 0.2) 100%);
+            rgba(240, 233, 223, 0.7) 0%,
+            rgba(240, 233, 223, 0.1) 100%);
     pointer-events: none;
-}
-
-/* Ajustar o header em estado de scroll para manter a consistência */
-.header-scrolled {
-    box-shadow: none;
-    background: linear-gradient(135deg,
-            #e6dac8 0%,
-            #f0e9df 70%,
-            white 100%);
 }
 
 .navbar {

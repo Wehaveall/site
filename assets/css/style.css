@@ -155,8 +155,10 @@ body {
 /* Seção Hero */
 /* ---------------- */
 .hero {
-    padding-top: calc(var(--header-height) + 20px);
-    background: linear-gradient(to bottom, var(--header-bg), white);
+    padding-top: calc(var(--header-height) + 10px);
+    /* Reduzido para subir o vídeo */
+    background: #ffffff;
+    /* Mudado de gradiente para branco sólido */
     overflow: hidden;
 }
 
@@ -175,7 +177,8 @@ body {
     text-align: center;
     max-width: 800px;
     width: 100%;
-    gap: 3rem;
+    gap: 2rem;
+    /* Reduzido de 3rem para um layout mais compacto */
 }
 
 .hero-title {
@@ -190,14 +193,16 @@ body {
 .hero-subtitle {
     display: block;
     font-size: 1.5rem;
-    color: var(--primary);
+    color: #b8a27b;
+    /* Cor um pouco mais escura para contraste */
     margin-top: 1rem;
     font-weight: 500;
 }
 
 .hero-description {
     font-size: 1.1rem;
-    color: var(--text-light);
+    color: #4a4a4a;
+    /* Mais escuro para legibilidade */
     line-height: 1.7;
     text-align: center;
     max-width: 600px;
@@ -216,15 +221,16 @@ body {
     border-radius: 8px;
     text-decoration: none;
     font-weight: 600;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     border: 2px solid var(--text-dark);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .btn-hero:hover {
     background: var(--primary);
     border-color: var(--primary);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(219, 201, 173, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-hero-secondary {
@@ -241,7 +247,8 @@ body {
 .btn-hero-secondary:hover {
     background: var(--text-dark);
     color: white;
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* ----------------------- */
@@ -250,15 +257,19 @@ body {
 .video-showcase {
     width: 100%;
     max-width: 840px;
-    /* Aumentado em 20% (700px * 1.2 = 840px) */
+    margin-top: -10px;
+    /* Move o vídeo para cima */
+    margin-bottom: 20px;
 }
+
 .video-container {
     position: relative;
     padding-bottom: 56.25%;
     height: 0;
     overflow: hidden;
     border-radius: 12px;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    /* Sombra mais pronunciada para aspecto profissional */
     margin: 0;
     width: 100%;
 }
@@ -344,6 +355,7 @@ body {
 .features {
     background: var(--background);
     padding: 4rem 0;
+    border-top: 1px solid #f0f0f0;
 }
 
 .features-grid {
@@ -497,7 +509,7 @@ body {
 
 /* Footer */
 .footer {
-    background: var(--background-alt);
+    background: linear-gradient(to bottom, var(--header-bg), white);
     padding: 4rem 0 2rem;
 }
 
@@ -706,6 +718,7 @@ body {
     border-radius: 12px;
     box-shadow: var(--shadow-md);
 }
+
 .features-list {
     list-style: none;
     margin: 2rem 0;
@@ -940,7 +953,7 @@ body {
 /* Footer ajustado */
 .footer {
     width: 100%;
-    background: var(--background-alt);
+    background: linear-gradient(to bottom, var(--header-bg), white);
     padding: 2rem 0;
     margin-top: auto;
 }

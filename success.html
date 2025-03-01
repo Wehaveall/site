@@ -146,6 +146,14 @@
                     `;
                 }
             }
+
+            // ADICIONADO: Marcar que um checkout bem-sucedido ocorreu
+            localStorage.setItem('successfulCheckout', 'true');
+
+            // ADICIONADO: Definir um tempo de expiração para esta marcação (48 horas)
+            const expiryTime = new Date();
+            expiryTime.setHours(expiryTime.getHours() + 48);
+            localStorage.setItem('checkoutExpiry', expiryTime.toISOString());
         });
     </script>
 </body>

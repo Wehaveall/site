@@ -237,6 +237,14 @@ async function registerUser(userData) {
         localStorage.setItem('userId', userCredential.user.uid);
         localStorage.setItem('userEmail', userData.email);
 
+        // ADICIONADO: Marcar checkout bem-sucedido
+        localStorage.setItem('successfulCheckout', 'true');
+
+        // ADICIONADO: Definir tempo de expiração (48 horas)
+        const expiryTime = new Date();
+        expiryTime.setHours(expiryTime.getHours() + 48);
+        localStorage.setItem('checkoutExpiry', expiryTime.toISOString());
+
         setTimeout(() => {
             window.location.href = 'success.html';
         }, 2000);

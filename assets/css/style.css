@@ -205,19 +205,21 @@ body {
 
 
 /* Escurecer ainda mais o subtítulo para melhor legibilidade */
+/* Forçar a cor do subtítulo com maior especificidade e !important */
+.hero .hero-container .hero-content-centered .hero-title .hero-subtitle,
+.hero-title .hero-subtitle,
 .hero-subtitle {
-    display: block;
-    font-size: 1.5rem;
-    color: #30200b;
-    /* Cor muito mais escura para máximo contraste */
-    margin-top: 1rem;
-    font-weight: 600;
-    /* Aumentado de 500 para 600 */
-    letter-spacing: 0.02em;
-    /* Leve espaçamento entre letras para melhor leitura */
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
-    /* Sutil sombra de texto para destacar */
+    display: block !important;
+    font-size: 1.5rem !important;
+    color: #4b2b03 !important;
+    /* Forçar a cor com !important */
+    margin-top: 1rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.02em !important;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) !important;
 }
+
+
 .hero-description {
     font-size: 1.1rem;
     color: #4a4a4a;

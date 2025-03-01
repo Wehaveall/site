@@ -203,16 +203,21 @@ body {
     margin: 0;
 }
 
-/* Escurecer a cor do subtítulo para maior legibilidade */
+
+/* Escurecer ainda mais o subtítulo para melhor legibilidade */
 .hero-subtitle {
     display: block;
     font-size: 1.5rem;
-    color: #937b4d;
-    /* Cor bem mais escura para o subtítulo */
+    color: #553b1a;
+    /* Cor muito mais escura para máximo contraste */
     margin-top: 1rem;
-    font-weight: 500;
+    font-weight: 600;
+    /* Aumentado de 500 para 600 */
+    letter-spacing: 0.02em;
+    /* Leve espaçamento entre letras para melhor leitura */
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+    /* Sutil sombra de texto para destacar */
 }
-
 .hero-description {
     font-size: 1.1rem;
     color: #4a4a4a;

@@ -35,16 +35,19 @@ body {
 /* --------------- */
 /* Header e Logo */
 /* --------------- */
+/* Ajuste no header para corresponder ao design */
 .header {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     height: var(--header-height);
-    background: var(--header-bg);
+    background: #f5f0e6;
+    /* Cor sólida em vez de gradiente */
     z-index: 998;
     transition: all 0.3s ease;
-    border-bottom: 1px solid var(--header-border);
+    border-bottom: 1px solid #e0d5c0;
+    /* Borda mais visível */
     overflow: visible;
 }
 
@@ -165,11 +168,11 @@ body {
 .hero-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 4rem 1.5rem;
+    padding: 3rem 1.5rem;
+    /* Reduzido de 4rem para 3rem */
     display: flex;
     justify-content: center;
 }
-
 .hero-content-centered {
     display: flex;
     flex-direction: column;
@@ -190,11 +193,12 @@ body {
     margin: 0;
 }
 
+/* Escurecer a cor do subtítulo para maior legibilidade */
 .hero-subtitle {
     display: block;
     font-size: 1.5rem;
-    color: #b8a27b;
-    /* Cor um pouco mais escura para contraste */
+    color: #937b4d;
+    /* Cor bem mais escura para o subtítulo */
     margin-top: 1rem;
     font-weight: 500;
 }
@@ -257,8 +261,8 @@ body {
 .video-showcase {
     width: 100%;
     max-width: 840px;
-    margin-top: -10px;
-    /* Move o vídeo para cima */
+    margin-top: -30px;
+    /* Aumentado o valor negativo para subir mais o vídeo */
     margin-bottom: 20px;
 }
 
@@ -507,9 +511,9 @@ body {
     justify-content: center;
 }
 
-/* Footer */
+/* Deixar o degradê do footer mais óbvio */
 .footer {
-    background: linear-gradient(to bottom, var(--header-bg), white);
+    background: linear-gradient(to bottom, #e6dac8, white);
     padding: 4rem 0 2rem;
 }
 

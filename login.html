@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Atalho</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -167,10 +169,48 @@
         // Verifica se usuário já está logado
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
-                console.log('✅ Usuário já está logado, redirecionando...');
-                window.location.href = 'dashboard.html';
+                console.log('ℹ️ Usuário já está logado:', user.email);
+                
+                // Mostra opção para ir ao dashboard ao invés de redirecionar automaticamente
+                const loginForm = document.getElementById('login-form');
+                loginForm.innerHTML = `
+                    <div style="text-align: center; padding: 2rem;">
+                        <div style="color: #28a745; margin-bottom: 1rem;">
+                            <i class="fas fa-user-check" style="font-size: 3rem;"></i>
+                        </div>
+                        <h3 style="color: #28a745; margin-bottom: 1rem;">Você já está logado!</h3>
+                        <p style="color: #6c757d; margin-bottom: 1.5rem;">
+                            Email: <strong>${user.email}</strong>
+                        </p>
+                        <div style="display: flex; gap: 1rem; justify-content: center;">
+                            <button onclick="window.location.href='dashboard.html'" 
+                                    style="padding: 0.75rem 1.5rem; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                                🏠 Ir para Dashboard
+                            </button>
+                            <button onclick="logout()" 
+                                    style="padding: 0.75rem 1.5rem; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                                🚪 Fazer Logout
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                console.log('ℹ️ Usuário não está logado, mostrando formulário de login');
             }
         });
+
+        // Função para logout
+        async function logout() {
+            try {
+                await firebase.auth().signOut();
+                console.log('✅ Logout realizado com sucesso');
+                // Recarrega a página para mostrar o formulário de login
+                window.location.reload();
+            } catch (error) {
+                console.error('❌ Erro no logout:', error);
+                showError('Erro ao fazer logout: ' + error.message);
+            }
+        }
 
         // Manipulador do formulário de login
         document.getElementById('login-form').addEventListener('submit', async function(e) {

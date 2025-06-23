@@ -389,17 +389,46 @@
                     const testRef = db.collection('users').doc(user.uid);
                     console.log('📋 Referência criada para:', testRef.path);
                     
-                    // NOVO: Teste direto de leitura
-                    console.log('🧪 TESTE: Tentando ler todos os documentos da coleção users...');
-                    const allUsersSnapshot = await db.collection('users').get();
-                    console.log('📊 Total de documentos na coleção users:', allUsersSnapshot.size);
+                    // TESTE DE PERMISSÕES ESPECÍFICO
+                    console.log('🔐 TESTE DE PERMISSÕES:');
                     
-                    allUsersSnapshot.forEach((doc) => {
-                        console.log('📄 Documento encontrado:', {
-                            id: doc.id,
-                            data: doc.data()
-                        });
-                    });
+                    // Teste 1: Tentar ler um documento específico pelo UID
+                    try {
+                        console.log('🧪 Teste 1: Lendo documento pelo UID...');
+                        const docByUid = await db.collection('users').doc(user.uid).get();
+                        console.log('✅ Sucesso na leitura por UID:', docByUid.exists);
+                    } catch (uidError) {
+                        console.error('❌ Erro na leitura por UID:', uidError.message);
+                    }
+                    
+                    // Teste 2: Tentar listar todos os documentos
+                    try {
+                        console.log('🧪 Teste 2: Listando todos os documentos...');
+                        const allDocs = await db.collection('users').limit(1).get();
+                        console.log('✅ Sucesso na listagem:', allDocs.size, 'documentos');
+                    } catch (listError) {
+                        console.error('❌ Erro na listagem:', listError.message);
+                    }
+                    
+                    // Teste 3: Tentar query por campo
+                    try {
+                        console.log('🧪 Teste 3: Query por user.uid...');
+                        const queryDocs = await db.collection('users').where('user.uid', '==', user.uid).limit(1).get();
+                        console.log('✅ Sucesso na query:', queryDocs.size, 'documentos');
+                    } catch (queryError) {
+                        console.error('❌ Erro na query:', queryError.message);
+                    }
+                    
+                    // Teste 4: Tentar query por email
+                    try {
+                        console.log('🧪 Teste 4: Query por email...');
+                        const emailDocs = await db.collection('users').where('email', '==', user.email).limit(1).get();
+                        console.log('✅ Sucesso na query por email:', emailDocs.size, 'documentos');
+                    } catch (emailError) {
+                        console.error('❌ Erro na query por email:', emailError.message);
+                    }
+                    
+                    console.log('🔐 TESTES DE PERMISSÃO CONCLUÍDOS');
                     
                     currentUser = user;
                     

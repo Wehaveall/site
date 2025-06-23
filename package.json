@@ -5,7 +5,7 @@
   "main": "index.html",
   "scripts": {
     "dev": "vercel dev",
-    "build": "echo 'Static site - no build needed'"
+    "build": "echo 'Build completed - static site'"
   },
   "dependencies": {
     "mercadopago": "^2.0.15"

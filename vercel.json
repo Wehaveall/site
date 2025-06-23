@@ -1,0 +1,16 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".",
+  "installCommand": "npm install",
+  "functions": {
+    "api/create-pix.js": {
+      "maxDuration": 30
+    },
+    "api/payment-status.js": {
+      "maxDuration": 30
+    },
+    "api/simulate-payment.js": {
+      "maxDuration": 30
+    }
+  }
+} 

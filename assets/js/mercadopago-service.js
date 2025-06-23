@@ -71,14 +71,16 @@ class MercadoPagoService {
             }
 
             const data = await response.json();
+            console.log("📋 Resposta da API:", data);
 
-            if (data.point_of_interaction && data.point_of_interaction.transaction_data) {
+            // Verifica se a resposta tem os dados necessários
+            if (data.success && data.paymentId && data.qrCodeBase64) {
                 return {
                     success: true,
-                    paymentId: data.id,
-                    qrCodeBase64: data.point_of_interaction.transaction_data.qr_code_base64,
-                    qrCodeText: data.point_of_interaction.transaction_data.qr_code,
-                    expirationDate: data.date_of_expiration,
+                    paymentId: data.paymentId,
+                    qrCodeBase64: data.qrCodeBase64,
+                    qrCodeText: data.qrCodeText,
+                    expirationDate: data.expirationDate,
                     status: data.status
                 };
             } else {

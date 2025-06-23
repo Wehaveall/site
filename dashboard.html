@@ -180,7 +180,35 @@
         function formatDate(timestamp) {
             if (!timestamp) return 'Data não disponível';
             
-            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            let date;
+            
+            // Se for um timestamp do Firestore
+            if (timestamp.toDate) {
+                date = timestamp.toDate();
+            }
+            // Se for uma string de data
+            else if (typeof timestamp === 'string') {
+                date = new Date(timestamp);
+            }
+            // Se for um número (timestamp Unix)
+            else if (typeof timestamp === 'number') {
+                date = new Date(timestamp);
+            }
+            // Se já for um objeto Date
+            else if (timestamp instanceof Date) {
+                date = timestamp;
+            }
+            else {
+                console.warn('⚠️ Formato de data não reconhecido:', timestamp);
+                return 'Data inválida';
+            }
+            
+            // Verifica se a data é válida
+            if (isNaN(date.getTime())) {
+                console.warn('⚠️ Data inválida:', timestamp);
+                return 'Data inválida';
+            }
+            
             return date.toLocaleDateString('pt-BR', {
                 day: '2-digit',
                 month: '2-digit',
@@ -294,24 +322,36 @@
         function updateUI() {
             if (!currentUser || !customerData) return;
             
+            console.log('🔄 Atualizando interface com dados:', customerData);
+            
             // Dados do usuário no header
             document.getElementById('user-name').textContent = customerData.Nome || 'Usuário';
             
-            // Informações da conta
+            // Informações da conta - usando os campos exatos do Firebase
             document.getElementById('account-name').textContent = customerData.Nome || '-';
             document.getElementById('account-email').textContent = customerData.email || currentUser.email;
             document.getElementById('account-phone').textContent = customerData.phone || '-';
             document.getElementById('account-company').textContent = customerData.country || '-';
-            document.getElementById('payment-id').textContent = customerData.payment_id || '-';
+            document.getElementById('payment-id').textContent = customerData.id || customerData.payment_id || '-';
             
-            // Datas
-            if (customerData.license_activated_at) {
+            // Datas - verificando diferentes possíveis campos de data
+            if (customerData.sub_start) {
+                document.getElementById('activation-date').textContent = formatDate(customerData.sub_start);
+            } else if (customerData.license_activated_at) {
                 document.getElementById('activation-date').textContent = formatDate(customerData.license_activated_at);
+            } else {
+                document.getElementById('activation-date').textContent = formatDate(new Date());
             }
             
-            if (customerData.created_at) {
+            if (customerData.sub_start) {
+                document.getElementById('account-created').textContent = formatDate(customerData.sub_start);
+            } else if (customerData.created_at) {
                 document.getElementById('account-created').textContent = formatDate(customerData.created_at);
+            } else {
+                document.getElementById('account-created').textContent = formatDate(new Date(currentUser.metadata.creationTime));
             }
+            
+            console.log('✅ Interface atualizada com sucesso');
         }
 
         // Função para fazer logout

@@ -18,6 +18,11 @@
 
     <!-- Mercado Pago SDK -->
     <script src="https://sdk.mercadopago.com/js/v2"></script>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
 
 <body class="light-theme">
@@ -210,11 +215,6 @@
     </footer>
 
     <!-- Scripts -->
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
     <!-- Custom Scripts -->
     <script src="assets/js/firebase.js"></script>
     <script src="assets/js/mercadopago-service.js"></script>
@@ -239,6 +239,88 @@
                 });
             });
         });
+    </script>
+
+    <script>
+        // Estado global da aplicação
+        const state = {
+            selectedMethod: null,
+            completed: false,
+            paymentId: null,
+            customerData: null
+        };
+
+        // Função para mostrar mensagens
+        function showSuccess(message) {
+            alert('✅ ' + message);
+        }
+
+        function showError(message) {
+            alert('❌ ' + message);
+        }
+
+        // Manipulador do formulário de dados do cliente
+        document.getElementById('customer-data-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('customer-name').value.trim();
+            const email = document.getElementById('customer-email').value.trim();
+            const phone = document.getElementById('customer-phone').value.trim();
+            const company = document.getElementById('customer-company').value.trim();
+
+            if (!name || !email) {
+                showError('Por favor, preencha pelo menos o nome e email.');
+                return;
+            }
+
+            // Validação básica de email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showError('Por favor, insira um email válido.');
+                return;
+            }
+
+            // Salva os dados do cliente
+            const customerData = {
+                name,
+                email,
+                phone: phone || null,
+                company: company || null
+            };
+
+            console.log("💾 Dados do cliente coletados:", customerData);
+            state.customerData = customerData;
+
+            // Desabilita o botão durante o processamento
+            const btn = document.getElementById('proceed-payment-btn');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = '⏳ Processando...';
+
+            try {
+                // Abre o modal PIX com os dados do cliente
+                pixModal.show(customerData);
+            } catch (error) {
+                console.error("Erro ao processar pagamento:", error);
+                showError('Erro ao processar pagamento. Tente novamente.');
+            } finally {
+                // Reabilita o botão
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        });
+
+        // Efeito hover no botão
+        document.getElementById('proceed-payment-btn').addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+        });
+
+        document.getElementById('proceed-payment-btn').addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+
+        // Inicialização
+        console.log("🚀 Página de compra carregada - Sistema de segurança ativo");
     </script>
 </body>
 

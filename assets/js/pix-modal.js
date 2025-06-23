@@ -1,4 +1,4 @@
-// pix-modal.js - Versão PRODUÇÃO (PIX REAL)
+// pix-modal.js - Versão PRODUÇÃO com Segurança Aprimorada
 
 class PixModalController {
     constructor() {
@@ -8,12 +8,51 @@ class PixModalController {
         this.mpService = new MercadoPagoService();
         this.paymentExpirationTime = null;
         this.countdownInterval = null;
-        this.currentPaymentId = null; // Armazenar o ID do pagamento atual
+        this.currentPaymentId = null;
+        this.customerData = null; // Dados do cliente salvos antes do pagamento
     }
 
-    show() {
+    // Método para salvar dados do cliente ANTES de gerar o PIX
+    async saveCustomerDataBeforePayment(customerData) {
+        this.customerData = customerData;
+        
+        try {
+            // Salva os dados no Firebase ANTES de gerar o PIX
+            const prePaymentRef = db.collection('pre_payments').doc();
+            const prePaymentData = {
+                customer_data: customerData,
+                amount: 49.90,
+                status: 'awaiting_payment',
+                created_at: firebase.firestore.FieldValue.serverTimestamp(),
+                method: 'pix',
+                environment: 'production',
+                anonymous_uid: firebase.auth().currentUser?.uid || null
+            };
+            
+            await prePaymentRef.set(prePaymentData);
+            console.log("✅ Dados do cliente salvos ANTES do pagamento:", prePaymentRef.id);
+            
+            return prePaymentRef.id;
+        } catch (error) {
+            console.error("❌ Erro ao salvar dados antes do pagamento:", error);
+            throw error;
+        }
+    }
+
+    show(customerData = null) {
         this.modalElement.classList.remove('hidden');
-        this.generatePixPayment();
+        
+        if (customerData) {
+            // Se há dados do cliente, salva primeiro e depois gera o PIX
+            this.saveCustomerDataBeforePayment(customerData)
+                .then(() => this.generatePixPayment())
+                .catch(error => {
+                    console.error("Erro ao salvar dados:", error);
+                    this.renderError('Erro ao processar dados. Tente novamente.');
+                });
+        } else {
+            this.generatePixPayment();
+        }
     }
 
     hide() {
@@ -48,7 +87,7 @@ class PixModalController {
                 this.startPaymentCheck(result.paymentId);
                 this.startExpirationCountdown();
 
-                // Tenta salvar no Firebase (opcional)
+                // Salva o pagamento pendente no Firebase
                 try {
                     const paymentRef = db.collection('pending_payments').doc(result.paymentId.toString());
                     await paymentRef.set({
@@ -57,7 +96,9 @@ class PixModalController {
                         status: 'pending',
                         created_at: firebase.firestore.FieldValue.serverTimestamp(),
                         method: 'pix',
-                        environment: 'production'
+                        environment: 'production',
+                        customer_data: this.customerData || null,
+                        anonymous_uid: firebase.auth().currentUser?.uid || null
                     });
                     console.log("✅ Registro de pagamento criado no Firestore");
                 } catch (dbError) {
@@ -73,11 +114,38 @@ class PixModalController {
         }
     }
 
+    // Método para simular pagamento aprovado (apenas para testes)
+    async simulatePaymentApproval() {
+        if (!this.currentPaymentId) {
+            showError('Nenhum pagamento ativo para simular');
+            return;
+        }
+
+        console.log("🧪 SIMULAÇÃO: Simulando aprovação do pagamento:", this.currentPaymentId);
+        
+        try {
+            // Usa o serviço para simular o pagamento
+            const result = await this.mpService.simulatePaymentApproval(this.currentPaymentId);
+            
+            if (result.success) {
+                console.log("✅ SIMULAÇÃO: Pagamento simulado com sucesso!");
+                this.clearIntervals();
+                await this.handlePaymentSuccess(this.currentPaymentId, true);
+            } else {
+                console.error("❌ SIMULAÇÃO: Erro na simulação:", result.error);
+                showError('Erro ao simular pagamento: ' + result.error);
+            }
+        } catch (error) {
+            console.error("❌ SIMULAÇÃO: Erro inesperado:", error);
+            showError('Erro inesperado na simulação');
+        }
+    }
+
     startPaymentCheck(paymentId) {
         this.clearIntervals();
         console.log(`🔍 PRODUÇÃO: Iniciando verificação do pagamento PIX REAL ${paymentId}`);
 
-        // Verifica imediatamente e depois a cada 5 segundos (mais espaçado para produção)
+        // Verifica imediatamente e depois a cada 5 segundos
         this.checkPaymentStatus(paymentId);
         this.paymentCheckInterval = setInterval(() => this.checkPaymentStatus(paymentId), 5000);
     }
@@ -115,7 +183,6 @@ class PixModalController {
         try {
             console.log(`🔍 PRODUÇÃO: Verificando status do pagamento PIX REAL ${paymentId}...`);
 
-            // Verificação REAL com a API do Mercado Pago
             const result = await this.mpService.checkPaymentStatus(paymentId);
 
             if (result.success) {
@@ -124,13 +191,12 @@ class PixModalController {
                 if (result.status === 'approved') {
                     console.log("✅ PRODUÇÃO: Pagamento PIX REAL aprovado! Finalizando processo...");
                     this.clearIntervals();
-                    this.handlePaymentSuccess(paymentId);
+                    await this.handlePaymentSuccess(paymentId, false);
                 } else if (result.status === 'rejected' || result.status === 'cancelled') {
                     console.log("❌ PRODUÇÃO: Pagamento PIX rejeitado ou cancelado");
                     this.clearIntervals();
                     this.renderError('Pagamento cancelado ou rejeitado. Por favor, tente novamente.');
                 }
-                // Se status for 'pending', continua verificando
             } else {
                 console.error("❌ PRODUÇÃO: Erro ao verificar status:", result.error);
             }
@@ -139,47 +205,73 @@ class PixModalController {
         }
     }
 
-    async handlePaymentSuccess(paymentId) {
+    async handlePaymentSuccess(paymentId, isSimulation = false) {
         try {
             if (typeof window.ensureAuthentication === 'function') {
                 await window.ensureAuthentication();
             }
 
-            console.log("🎉 PRODUÇÃO: Processando confirmação de pagamento PIX REAL:", paymentId);
+            const logPrefix = isSimulation ? "🧪 SIMULAÇÃO:" : "🎉 PRODUÇÃO:";
+            console.log(`${logPrefix} Processando confirmação de pagamento:`, paymentId);
 
+            // Atualiza o status no Firebase
             try {
                 const paymentData = {
                     payment_id: paymentId,
                     status: 'approved',
                     approved_at: firebase.firestore.FieldValue.serverTimestamp(),
                     method: 'pix',
-                    environment: 'production',
-                    anonymous_uid: firebase.auth().currentUser?.uid || null
+                    environment: isSimulation ? 'simulation' : 'production',
+                    customer_data: this.customerData || null,
+                    anonymous_uid: firebase.auth().currentUser?.uid || null,
+                    is_simulation: isSimulation
                 };
 
+                // Atualiza tanto pending_payments quanto cria em approved_payments
                 const paymentRef = db.collection('pending_payments').doc(paymentId.toString());
                 await paymentRef.set(paymentData, { merge: true });
 
-                console.log("✅ PRODUÇÃO: Status de pagamento atualizado no Firestore");
+                const approvedRef = db.collection('approved_payments').doc(paymentId.toString());
+                await approvedRef.set(paymentData);
+
+                console.log(`✅ ${logPrefix} Status de pagamento atualizado no Firestore`);
             } catch (firebaseError) {
-                console.warn("⚠️ PRODUÇÃO: Erro ao atualizar Firebase (não crítico):", firebaseError);
+                console.warn(`⚠️ ${logPrefix} Erro ao atualizar Firebase (não crítico):`, firebaseError);
             }
 
             this.hide();
-            showSuccess('🎉 Pagamento PIX confirmado com sucesso!');
+            
+            if (isSimulation) {
+                showSuccess('🧪 Pagamento SIMULADO com sucesso! (Apenas para testes)');
+            } else {
+                showSuccess('🎉 Pagamento PIX confirmado com sucesso!');
+            }
 
-            const registerForm = document.getElementById('register-form');
-            registerForm.classList.remove('hidden');
-            registerForm.scrollIntoView({ behavior: 'smooth' });
+            // Se já temos dados do cliente, vai direto para o sucesso
+            if (this.customerData) {
+                this.redirectToSuccess(paymentId);
+            } else {
+                // Mostra formulário para coletar dados
+                const registerForm = document.getElementById('register-form');
+                registerForm.classList.remove('hidden');
+                registerForm.scrollIntoView({ behavior: 'smooth' });
+            }
 
             state.selectedMethod = 'pix';
             state.completed = true;
             state.paymentId = paymentId;
 
         } catch (error) {
-            console.error('❌ PRODUÇÃO: Erro ao processar confirmação de pagamento:', error);
+            console.error(`❌ ${isSimulation ? 'SIMULAÇÃO' : 'PRODUÇÃO'}: Erro ao processar confirmação:`, error);
             showError('Houve um erro ao finalizar seu pagamento. Entre em contato com o suporte.');
         }
+    }
+
+    redirectToSuccess(paymentId) {
+        // Redireciona para página de sucesso ou mostra confirmação final
+        setTimeout(() => {
+            window.location.href = 'success.html?payment=' + paymentId;
+        }, 2000);
     }
 
     renderLoading() {
@@ -246,6 +338,15 @@ class PixModalController {
                         <button id="copy-pix-button" onclick="navigator.clipboard.writeText('${qrCodeText}').then(() => document.getElementById('copy-pix-button').textContent = 'Código Copiado!')"
                                 style="padding: 0.5rem 1rem; background-color: #e9ecef; color: #333; border-radius: 0.25rem; border: none; cursor: pointer; width: 80%; margin: 0 auto; display: block;">
                             📋 Copiar Código PIX
+                        </button>
+                    </div>
+                    
+                    <!-- BOTÃO DE SIMULAÇÃO PARA TESTES -->
+                    <div style="margin-bottom: 1rem; padding: 0.5rem; background-color: #fff3cd; border-radius: 0.25rem; border: 1px solid #ffeaa7;">
+                        <p style="font-size: 0.75rem; color: #856404; margin-bottom: 0.5rem;">🧪 Apenas para testes:</p>
+                        <button onclick="pixModal.simulatePaymentApproval()" 
+                                style="padding: 0.5rem 1rem; background-color: #ffc107; color: #212529; border-radius: 0.25rem; border: none; cursor: pointer; font-size: 0.875rem;">
+                            ⚡ Simular Pagamento Aprovado
                         </button>
                     </div>
                     

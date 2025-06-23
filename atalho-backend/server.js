@@ -187,6 +187,122 @@ app.get('/api/payment-status/:id', async (req, res) => {
     }
 });
 
+// Rota para receber webhooks do Mercado Pago
+app.post('/api/webhook', (req, res) => {
+    try {
+        console.log('🔔 WEBHOOK: Recebida notificação do Mercado Pago');
+        console.log('Headers:', req.headers);
+        console.log('Body:', JSON.stringify(req.body, null, 2));
+
+        const { action, data } = req.body;
+
+        if (action === 'payment.updated' && data && data.id) {
+            console.log(`🔔 WEBHOOK: Pagamento ${data.id} foi atualizado`);
+            
+            // Aqui você pode implementar lógica adicional:
+            // - Verificar o status do pagamento
+            // - Atualizar banco de dados
+            // - Enviar email de confirmação
+            // - Liberar acesso ao produto
+            
+            // Por enquanto, apenas logamos
+            console.log(`📝 WEBHOOK: Processando atualização do pagamento ${data.id}`);
+        }
+
+        // Sempre responder 200 OK para o Mercado Pago
+        res.status(200).json({ received: true });
+    } catch (error) {
+        console.error('❌ WEBHOOK: Erro ao processar webhook:', error);
+        res.status(200).json({ received: true }); // Mesmo com erro, responde OK
+    }
+});
+
+// Rota para simular pagamento aprovado (apenas para testes)
+app.post('/api/simulate-payment/:id', async (req, res) => {
+    try {
+        const paymentId = req.params.id;
+        console.log(`🧪 SIMULAÇÃO: Simulando aprovação do pagamento ${paymentId}`);
+
+        // Simula um pagamento aprovado
+        const simulatedPayment = {
+            id: parseInt(paymentId),
+            status: 'approved',
+            status_detail: 'accredited',
+            date_approved: new Date().toISOString(),
+            date_last_updated: new Date().toISOString(),
+            transaction_amount: 49.90,
+            currency_id: 'BRL',
+            payment_method_id: 'pix',
+            payment_type_id: 'bank_transfer',
+            live_mode: false, // Marca como simulação
+            simulation: true,
+            description: 'Licença Anual do Atalho (SIMULAÇÃO)',
+            collector_id: 231065568,
+            payer: {
+                id: "1499372801",
+                email: "cliente@email.com",
+                first_name: "Cliente",
+                last_name: "Simulado"
+            }
+        };
+
+        console.log('✅ SIMULAÇÃO: Pagamento simulado como aprovado:', simulatedPayment);
+        res.json(simulatedPayment);
+    } catch (error) {
+        console.error('❌ SIMULAÇÃO: Erro ao simular pagamento:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Erro ao simular pagamento',
+            message: error.message
+        });
+    }
+});
+
+// Rota para salvar dados do cliente (chamada antes do PIX)
+app.post('/api/save-customer-data', (req, res) => {
+    try {
+        console.log('💾 DADOS: Salvando dados do cliente antes do pagamento');
+        console.log('Dados recebidos:', JSON.stringify(req.body, null, 2));
+
+        const { name, email, phone, company } = req.body;
+
+        if (!name || !email) {
+            return res.status(400).json({
+                success: false,
+                error: 'Nome e email são obrigatórios'
+            });
+        }
+
+        // Aqui você pode salvar no banco de dados de sua escolha
+        // Por enquanto, apenas logamos e retornamos sucesso
+        
+        const customerData = {
+            name,
+            email,
+            phone: phone || null,
+            company: company || null,
+            created_at: new Date().toISOString(),
+            status: 'awaiting_payment'
+        };
+
+        console.log('✅ DADOS: Dados do cliente salvos:', customerData);
+
+        res.json({
+            success: true,
+            message: 'Dados salvos com sucesso',
+            customer_id: `customer_${Date.now()}`,
+            data: customerData
+        });
+    } catch (error) {
+        console.error('❌ DADOS: Erro ao salvar dados do cliente:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Erro ao salvar dados',
+            message: error.message
+        });
+    }
+});
+
 // Iniciar servidor
 app.listen(PORT, () => {
     console.log(`🚀 Servidor PRODUÇÃO rodando em http://localhost:${PORT}`);

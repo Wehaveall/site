@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Atalho</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="navbar">
+            <div class="logo">
+                <a href="index.html" class="logo-link">
+                    <img src="assets/img/logo.svg" alt="Logo Atalho" class="logo-img" />
+                    <span class="logo-text">Atalho</span>
+                </a>
+            </div>
+            <nav class="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="index.html" class="nav-link">Início</a></li>
+                    <li><a href="comprar.html" class="nav-link btn-primary">Comprar</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main style="padding-top: 100px; min-height: 100vh; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+        <div class="container" style="max-width: 500px; margin: 0 auto; padding: 2rem;">
+            
+            <!-- Formulário de Login -->
+            <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="color: #007bff; margin-bottom: 1rem;">
+                        <i class="fas fa-sign-in-alt" style="font-size: 3rem;"></i>
+                    </div>
+                    <h1 style="color: #2c3e50; margin-bottom: 0.5rem;">Entrar na sua Conta</h1>
+                    <p style="color: #6c757d;">Acesse sua licença do Atalho</p>
+                </div>
+
+                <form id="login-form">
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
+                            Email
+                        </label>
+                        <input type="email" id="login-email" required
+                               style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem;"
+                               placeholder="seu@email.com">
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
+                            Senha
+                        </label>
+                        <input type="password" id="login-password" required
+                               style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem;"
+                               placeholder="Sua senha">
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" id="remember-me" style="margin-right: 0.5rem;">
+                            <span style="color: #6c757d; font-size: 0.9rem;">Lembrar de mim</span>
+                        </label>
+                        <a href="reset-password.html" style="color: #007bff; text-decoration: none; font-size: 0.9rem;">
+                            Esqueci minha senha
+                        </a>
+                    </div>
+
+                    <button type="submit" id="login-btn"
+                            style="width: 100%; padding: 1rem; background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: transform 0.2s; margin-bottom: 1rem;">
+                        🔑 Entrar
+                    </button>
+
+                    <div style="text-align: center; margin-top: 1rem;">
+                        <p style="color: #6c757d; margin-bottom: 0.5rem;">Ainda não tem uma conta?</p>
+                        <a href="comprar.html" style="color: #28a745; text-decoration: none; font-weight: 600;">
+                            Comprar Licença do Atalho
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Informações Adicionais -->
+            <div style="background: #e8f4fd; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; border-left: 4px solid #007bff;">
+                <h3 style="color: #007bff; margin-bottom: 1rem;">💡 Sobre o Login</h3>
+                <ul style="list-style: none; padding: 0; color: #333;">
+                    <li style="padding: 0.25rem 0;">🔒 Seus dados estão protegidos</li>
+                    <li style="padding: 0.25rem 0;">📱 Acesse de qualquer dispositivo</li>
+                    <li style="padding: 0.25rem 0;">⚙️ Gerencie suas configurações</li>
+                    <li style="padding: 0.25rem 0;">📥 Baixe o software a qualquer momento</li>
+                </ul>
+            </div>
+
+            <!-- Suporte -->
+            <div style="background: #fff3cd; border-radius: 12px; padding: 1.5rem; border-left: 4px solid #ffc107;">
+                <h3 style="color: #856404; margin-bottom: 1rem;">🆘 Precisa de Ajuda?</h3>
+                <p style="color: #856404; margin-bottom: 1rem;">
+                    Se você não consegue acessar sua conta, entre em contato conosco.
+                </p>
+                <div style="display: flex; gap: 1rem;">
+                    <button onclick="window.open('mailto:suporte@atalho.com')" 
+                            style="padding: 0.5rem 1rem; background: #ffc107; color: #856404; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                        📧 Email
+                    </button>
+                    <button onclick="window.open('https://wa.me/5511999999999')" 
+                            style="padding: 0.5rem 1rem; background: #25d366; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                        📱 WhatsApp
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="assets/js/firebase.js"></script>
+
+    <script>
+        // Função para mostrar mensagens
+        function showSuccess(message) {
+            alert('✅ ' + message);
+        }
+
+        function showError(message) {
+            alert('❌ ' + message);
+        }
+
+        // Função para fazer login
+        async function login(email, password) {
+            try {
+                console.log('🔐 Tentando fazer login...');
+                
+                const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                console.log('✅ Login realizado com sucesso:', user.uid);
+                return user;
+                
+            } catch (error) {
+                console.error('❌ Erro no login:', error);
+                
+                // Traduz erros comuns do Firebase
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        throw new Error('Email não encontrado. Verifique se você já tem uma conta.');
+                    case 'auth/wrong-password':
+                        throw new Error('Senha incorreta. Tente novamente ou use "Esqueci minha senha".');
+                    case 'auth/invalid-email':
+                        throw new Error('Email inválido.');
+                    case 'auth/user-disabled':
+                        throw new Error('Esta conta foi desabilitada. Entre em contato com o suporte.');
+                    case 'auth/too-many-requests':
+                        throw new Error('Muitas tentativas de login. Tente novamente mais tarde.');
+                    default:
+                        throw new Error('Erro no login: ' + error.message);
+                }
+            }
+        }
+
+        // Verifica se usuário já está logado
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                console.log('✅ Usuário já está logado, redirecionando...');
+                window.location.href = 'dashboard.html';
+            }
+        });
+
+        // Manipulador do formulário de login
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            
+            // Validações básicas
+            if (!email || !password) {
+                showError('Por favor, preencha email e senha.');
+                return;
+            }
+
+            // Validação básica de email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showError('Por favor, insira um email válido.');
+                return;
+            }
+
+            // Desabilita o botão durante o processamento
+            const btn = document.getElementById('login-btn');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = '⏳ Entrando...';
+
+            try {
+                // Faz login
+                const user = await login(email, password);
+                
+                // Sucesso!
+                showSuccess('Login realizado com sucesso!');
+                
+                // Redireciona para dashboard
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1000);
+
+            } catch (error) {
+                console.error("Erro no login:", error);
+                showError(error.message);
+            } finally {
+                // Reabilita o botão
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        });
+
+        // Efeito hover no botão
+        document.getElementById('login-btn').addEventListener('mouseenter', function() {
+            if (!this.disabled) {
+                this.style.transform = 'translateY(-2px)';
+            }
+        });
+
+        document.getElementById('login-btn').addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+
+        // Foco automático no campo de email
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('login-email').focus();
+        });
+
+        console.log("🚀 Página de login carregada");
+    </script>
+</body>
+
+</html> 

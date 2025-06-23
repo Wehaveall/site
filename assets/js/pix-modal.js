@@ -264,10 +264,21 @@ class PixModalController {
                             1. Verifique seu email para o link de cadastro
                         </p>
                         <p style="color: #333; margin-bottom: 0.5rem;">
-                            2. Complete seu cadastro para ativar a licença
+                            2. Crie seu login e senha para acessar o sistema
+                        </p>
+                        <p style="color: #333; margin-bottom: 0.5rem;">
+                            3. Complete seus dados pessoais
                         </p>
                         <p style="color: #333;">
-                            3. Receba sua licença do Atalho imediatamente
+                            4. Baixe o software e comece a usar!
+                        </p>
+                    </div>
+
+                    <div style="background: #e8f5e8; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #28a745; margin-bottom: 0.5rem;">🔐 Sua Conta do Atalho</h4>
+                        <p style="color: #333; margin: 0; font-size: 0.9rem;">
+                            Você criará um login e senha para acessar sua licença, 
+                            baixar o software e gerenciar suas configurações.
                         </p>
                     </div>
 

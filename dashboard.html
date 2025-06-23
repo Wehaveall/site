@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Atalho</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="navbar">
+            <div class="logo">
+                <a href="index.html" class="logo-link">
+                    <img src="assets/img/logo.svg" alt="Logo Atalho" class="logo-img" />
+                    <span class="logo-text">Atalho</span>
+                </a>
+            </div>
+            <nav class="nav-menu">
+                <ul class="nav-links">
+                    <li><span id="user-name" style="color: #007bff;">Carregando...</span></li>
+                    <li><button id="logout-btn" class="nav-link" style="background: none; border: none; cursor: pointer; color: #dc3545;">Sair</button></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main style="padding-top: 100px; min-height: 100vh; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+        <div class="container" style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+            
+            <!-- Boas-vindas -->
+            <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;">
+                <div style="color: #28a745; margin-bottom: 1rem;">
+                    <i class="fas fa-user-check" style="font-size: 3rem;"></i>
+                </div>
+                <h1 style="color: #28a745; margin-bottom: 1rem;">🎉 Bem-vindo ao Atalho!</h1>
+                <p style="color: #6c757d; margin-bottom: 1rem;">
+                    Sua licença foi ativada com sucesso. Agora você pode baixar e configurar o Atalho.
+                </p>
+            </div>
+
+            <!-- Grid de Cards -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                
+                <!-- Card de Licença -->
+                <div style="background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                        <div style="background: #28a745; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <div>
+                            <h3 style="margin: 0; color: #2c3e50;">Sua Licença</h3>
+                            <p style="margin: 0; color: #6c757d; font-size: 0.9rem;">Status da sua assinatura</p>
+                        </div>
+                    </div>
+                    <div id="license-info">
+                        <p style="margin-bottom: 0.5rem;"><strong>Status:</strong> <span style="color: #28a745;">✅ Ativa</span></p>
+                        <p style="margin-bottom: 0.5rem;"><strong>Tipo:</strong> Licença Anual</p>
+                        <p style="margin-bottom: 0.5rem;"><strong>Valor:</strong> R$ 49,90</p>
+                        <p style="margin-bottom: 1rem;"><strong>Ativada em:</strong> <span id="activation-date">Carregando...</span></p>
+                        <div style="background: #e8f5e8; padding: 1rem; border-radius: 6px;">
+                            <p style="margin: 0; color: #28a745; font-size: 0.9rem;">
+                                <strong>🎯 Licença válida por 1 ano</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card de Download -->
+                <div style="background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                        <div style="background: #007bff; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <div>
+                            <h3 style="margin: 0; color: #2c3e50;">Download</h3>
+                            <p style="margin: 0; color: #6c757d; font-size: 0.9rem;">Baixe o software</p>
+                        </div>
+                    </div>
+                    <p style="margin-bottom: 1rem; color: #6c757d;">
+                        Baixe a versão mais recente do Atalho para começar a usar.
+                    </p>
+                    <button onclick="downloadSoftware()" 
+                            style="width: 100%; padding: 0.75rem; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                        📥 Baixar Atalho v2.0
+                    </button>
+                    <p style="margin-top: 0.5rem; color: #6c757d; font-size: 0.8rem; text-align: center;">
+                        Compatível com Windows 10/11
+                    </p>
+                </div>
+
+                <!-- Card de Suporte -->
+                <div style="background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                        <div style="background: #ffc107; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <div>
+                            <h3 style="margin: 0; color: #2c3e50;">Suporte</h3>
+                            <p style="margin: 0; color: #6c757d; font-size: 0.9rem;">Ajuda e tutoriais</p>
+                        </div>
+                    </div>
+                    <p style="margin-bottom: 1rem; color: #6c757d;">
+                        Precisa de ajuda? Acesse nossos tutoriais ou entre em contato.
+                    </p>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="window.open('https://youtube.com', '_blank')" 
+                                style="flex: 1; padding: 0.5rem; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">
+                            📺 Tutoriais
+                        </button>
+                        <button onclick="window.open('mailto:suporte@atalho.com')" 
+                                style="flex: 1; padding: 0.5rem; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">
+                            📧 Contato
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informações da Conta -->
+            <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <h2 style="color: #2c3e50; margin-bottom: 1.5rem;">👤 Informações da Conta</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    <div>
+                        <p style="margin-bottom: 0.5rem;"><strong>Nome:</strong> <span id="account-name">Carregando...</span></p>
+                        <p style="margin-bottom: 0.5rem;"><strong>Email:</strong> <span id="account-email">Carregando...</span></p>
+                    </div>
+                    <div>
+                        <p style="margin-bottom: 0.5rem;"><strong>Telefone:</strong> <span id="account-phone">-</span></p>
+                        <p style="margin-bottom: 0.5rem;"><strong>Empresa:</strong> <span id="account-company">-</span></p>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e9ecef;">
+                    <p style="margin-bottom: 0.5rem;"><strong>ID do Pagamento:</strong> <span id="payment-id">Carregando...</span></p>
+                    <p style="margin-bottom: 0;"><strong>Conta criada em:</strong> <span id="account-created">Carregando...</span></p>
+                </div>
+            </div>
+
+            <!-- Instruções de Instalação -->
+            <div style="background: #e8f4fd; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; border-left: 4px solid #007bff;">
+                <h3 style="color: #007bff; margin-bottom: 1rem;">🚀 Como começar a usar o Atalho</h3>
+                <ol style="color: #333; margin-left: 1rem;">
+                    <li style="margin-bottom: 0.5rem;">Clique em "Baixar Atalho v2.0" acima</li>
+                    <li style="margin-bottom: 0.5rem;">Execute o arquivo baixado e siga as instruções</li>
+                    <li style="margin-bottom: 0.5rem;">Abra o Atalho e configure seus primeiros atalhos</li>
+                    <li style="margin-bottom: 0.5rem;">Comece a economizar tempo digitando menos!</li>
+                </ol>
+                <div style="background: white; padding: 1rem; border-radius: 6px; margin-top: 1rem;">
+                    <p style="margin: 0; color: #007bff; font-weight: 600;">
+                        💡 Dica: Assista aos tutoriais para aproveitar ao máximo o Atalho!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="assets/js/firebase.js"></script>
+
+    <script>
+        let currentUser = null;
+        let customerData = null;
+
+        // Função para mostrar mensagens
+        function showSuccess(message) {
+            alert('✅ ' + message);
+        }
+
+        function showError(message) {
+            alert('❌ ' + message);
+        }
+
+        // Função para formatar data
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Data não disponível';
+            
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Função para carregar dados do cliente
+        async function loadCustomerData(uid) {
+            try {
+                console.log('📊 Carregando dados do cliente:', uid);
+                
+                const customerRef = db.collection('customers').doc(uid);
+                const doc = await customerRef.get();
+                
+                if (!doc.exists) {
+                    throw new Error('Dados do cliente não encontrados');
+                }
+                
+                customerData = doc.data();
+                console.log('✅ Dados carregados:', customerData);
+                
+                // Atualiza a interface
+                updateUI();
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados:', error);
+                showError('Erro ao carregar dados da conta: ' + error.message);
+            }
+        }
+
+        // Função para atualizar a interface
+        function updateUI() {
+            if (!currentUser || !customerData) return;
+            
+            // Dados do usuário no header
+            document.getElementById('user-name').textContent = customerData.name || 'Usuário';
+            
+            // Informações da conta
+            document.getElementById('account-name').textContent = customerData.name || '-';
+            document.getElementById('account-email').textContent = customerData.email || currentUser.email;
+            document.getElementById('account-phone').textContent = customerData.phone || '-';
+            document.getElementById('account-company').textContent = customerData.company || '-';
+            document.getElementById('payment-id').textContent = customerData.payment_id || '-';
+            
+            // Datas
+            if (customerData.license_activated_at) {
+                document.getElementById('activation-date').textContent = formatDate(customerData.license_activated_at);
+            }
+            
+            if (customerData.created_at) {
+                document.getElementById('account-created').textContent = formatDate(customerData.created_at);
+            }
+        }
+
+        // Função para fazer logout
+        async function logout() {
+            try {
+                await firebase.auth().signOut();
+                console.log('✅ Logout realizado');
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('❌ Erro no logout:', error);
+                showError('Erro ao fazer logout: ' + error.message);
+            }
+        }
+
+        // Função para download do software
+        function downloadSoftware() {
+            // Simula download
+            showSuccess('Download iniciado! O arquivo será baixado em breve.');
+            
+            // Aqui você colocaria o link real do software
+            // window.open('https://releases.atalho.com/atalho-v2.0-setup.exe', '_blank');
+            
+            console.log('📥 Download do software solicitado');
+        }
+
+        // Verificação de autenticação
+        firebase.auth().onAuthStateChanged(async function(user) {
+            if (user) {
+                console.log('✅ Usuário autenticado:', user.uid);
+                currentUser = user;
+                
+                // Carrega dados do cliente
+                await loadCustomerData(user.uid);
+                
+            } else {
+                console.log('❌ Usuário não autenticado, redirecionando...');
+                window.location.href = 'login.html';
+            }
+        });
+
+        // Event listeners
+        document.getElementById('logout-btn').addEventListener('click', logout);
+
+        console.log("🚀 Dashboard carregado");
+    </script>
+</body>
+
+</html> 

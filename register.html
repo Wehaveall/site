@@ -47,51 +47,81 @@
 
             <!-- Formulário de Cadastro -->
             <div id="registration-form" style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                <h2 style="color: #2c3e50; margin-bottom: 1.5rem; text-align: center;">
-                    📝 Complete seu Cadastro
+                <h2 style="color: #2c3e50; margin-bottom: 1rem; text-align: center;">
+                    📝 Crie sua Conta do Atalho
                 </h2>
                 <p style="color: #7f8c8d; text-align: center; margin-bottom: 2rem;">
-                    Preencha seus dados para ativar sua licença do Atalho
+                    Complete seu cadastro para acessar sua licença e gerenciar suas configurações
                 </p>
 
                 <form id="customer-registration-form">
-                    <div style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
-                            Nome Completo *
-                        </label>
-                        <input type="text" id="customer-name" required
-                               style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem;"
-                               placeholder="Seu nome completo">
+                    <!-- Seção de Login -->
+                    <div style="background: #e8f4fd; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                        <h3 style="color: #0066cc; margin-bottom: 1rem; font-size: 1.1rem;">🔐 Dados de Acesso</h3>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
+                                Email de Login *
+                            </label>
+                            <input type="email" id="login-email" required
+                                   style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem;"
+                                   placeholder="seu@email.com">
+                            <small style="color: #7f8c8d;">Este será seu email de login no sistema</small>
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
+                                Senha *
+                            </label>
+                            <input type="password" id="login-password" required minlength="6"
+                                   style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem;"
+                                   placeholder="Mínimo 6 caracteres">
+                            <small style="color: #7f8c8d;">Escolha uma senha segura com pelo menos 6 caracteres</small>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
+                                Confirmar Senha *
+                            </label>
+                            <input type="password" id="confirm-password" required minlength="6"
+                                   style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem;"
+                                   placeholder="Digite a senha novamente">
+                        </div>
                     </div>
 
-                    <div style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
-                            Email *
-                        </label>
-                        <input type="email" id="customer-email" required
-                               style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem;"
-                               placeholder="seu@email.com">
-                        <small style="color: #7f8c8d;">Sua licença será enviada para este email</small>
+                    <!-- Seção de Dados Pessoais -->
+                    <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                        <h3 style="color: #495057; margin-bottom: 1rem; font-size: 1.1rem;">👤 Dados Pessoais</h3>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
+                                Nome Completo *
+                            </label>
+                            <input type="text" id="customer-name" required
+                                   style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem;"
+                                   placeholder="Seu nome completo">
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
+                                Telefone (opcional)
+                            </label>
+                            <input type="tel" id="customer-phone"
+                                   style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem;"
+                                   placeholder="(11) 99999-9999">
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
+                                Empresa (opcional)
+                            </label>
+                            <input type="text" id="customer-company"
+                                   style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem;"
+                                   placeholder="Nome da sua empresa">
+                        </div>
                     </div>
 
-                    <div style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
-                            Telefone (opcional)
-                        </label>
-                        <input type="tel" id="customer-phone"
-                               style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem;"
-                               placeholder="(11) 99999-9999">
-                    </div>
-
-                    <div style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
-                            Empresa (opcional)
-                        </label>
-                        <input type="text" id="customer-company"
-                               style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem;"
-                               placeholder="Nome da sua empresa">
-                    </div>
-
+                    <!-- Seção Adicional -->
                     <div style="margin-bottom: 1.5rem;">
                         <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
                             Como você conheceu o Atalho? (opcional)
@@ -119,9 +149,20 @@
 
                     <button type="submit" id="complete-registration-btn"
                             style="width: 100%; padding: 1rem; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: transform 0.2s;">
-                        🚀 Ativar Licença do Atalho
+                        🚀 Criar Conta e Ativar Licença
                     </button>
                 </form>
+            </div>
+
+            <!-- Informações sobre a Conta -->
+            <div style="background: #fff3cd; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; border-left: 4px solid #ffc107;">
+                <h3 style="color: #856404; margin-bottom: 1rem;">💡 Sobre sua Conta</h3>
+                <ul style="list-style: none; padding: 0; color: #856404;">
+                    <li style="padding: 0.25rem 0;">🔑 Use email e senha para fazer login no sistema</li>
+                    <li style="padding: 0.25rem 0;">📱 Acesse de qualquer dispositivo</li>
+                    <li style="padding: 0.25rem 0;">⚙️ Gerencie suas configurações e licenças</li>
+                    <li style="padding: 0.25rem 0;">📧 Receba atualizações e suporte</li>
+                </ul>
             </div>
 
             <!-- Seção de Segurança -->
@@ -129,9 +170,9 @@
                 <h3 style="color: #28a745; margin-bottom: 1rem;">🔒 Seus Dados Estão Seguros</h3>
                 <ul style="list-style: none; padding: 0; color: #6c757d;">
                     <li style="padding: 0.25rem 0;">✓ Pagamento já confirmado e processado</li>
-                    <li style="padding: 0.25rem 0;">✓ Dados criptografados e protegidos</li>
-                    <li style="padding: 0.25rem 0;">✓ Licença ativada imediatamente após cadastro</li>
-                    <li style="padding: 0.25rem 0;">✓ Suporte técnico prioritário incluído</li>
+                    <li style="padding: 0.25rem 0;">✓ Senhas criptografadas com segurança máxima</li>
+                    <li style="padding: 0.25rem 0;">✓ Dados protegidos por Firebase Auth</li>
+                    <li style="padding: 0.25rem 0;">✓ Acesso seguro via HTTPS</li>
                 </ul>
             </div>
         </div>
@@ -148,6 +189,24 @@
 
         function showError(message) {
             alert('❌ ' + message);
+        }
+
+        // Função para validar senhas
+        function validatePasswords() {
+            const password = document.getElementById('login-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (password !== confirmPassword) {
+                showError('As senhas não coincidem.');
+                return false;
+            }
+            
+            if (password.length < 6) {
+                showError('A senha deve ter pelo menos 6 caracteres.');
+                return false;
+            }
+            
+            return true;
         }
 
         // Função para obter parâmetros da URL
@@ -189,8 +248,35 @@
             }
         }
 
+        // Função para criar conta Firebase Auth
+        async function createFirebaseAccount(email, password) {
+            try {
+                console.log('🔐 Criando conta Firebase Auth...');
+                
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                console.log('✅ Conta Firebase criada:', user.uid);
+                return user;
+            } catch (error) {
+                console.error('❌ Erro ao criar conta Firebase:', error);
+                
+                // Traduz erros comuns do Firebase
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        throw new Error('Este email já está em uso. Tente fazer login ou use outro email.');
+                    case 'auth/invalid-email':
+                        throw new Error('Email inválido.');
+                    case 'auth/weak-password':
+                        throw new Error('Senha muito fraca. Use pelo menos 6 caracteres.');
+                    default:
+                        throw new Error('Erro ao criar conta: ' + error.message);
+                }
+            }
+        }
+
         // Função para completar o registro
-        async function completeRegistration(paymentId, customerData) {
+        async function completeRegistration(paymentId, customerData, firebaseUser) {
             try {
                 console.log('💾 Completando registro para pagamento:', paymentId);
                 
@@ -198,15 +284,19 @@
                 const paymentRef = db.collection('approved_payments').doc(paymentId);
                 await paymentRef.update({
                     customer_data: customerData,
+                    firebase_uid: firebaseUser.uid,
+                    firebase_email: firebaseUser.email,
                     registration_completed: true,
                     registration_completed_at: firebase.firestore.FieldValue.serverTimestamp(),
                     awaiting_registration: false
                 });
                 
                 // Cria registro na coleção de clientes
-                const customerRef = db.collection('customers').doc();
+                const customerRef = db.collection('customers').doc(firebaseUser.uid);
                 await customerRef.set({
                     ...customerData,
+                    firebase_uid: firebaseUser.uid,
+                    firebase_email: firebaseUser.email,
                     payment_id: paymentId,
                     license_status: 'active',
                     license_type: 'annual',
@@ -215,7 +305,7 @@
                 });
                 
                 console.log('✅ Registro completado com sucesso!');
-                return customerRef.id;
+                return firebaseUser.uid;
             } catch (error) {
                 console.error('❌ Erro ao completar registro:', error);
                 throw error;
@@ -251,15 +341,21 @@
             
             const { paymentId, token } = getUrlParams();
             
+            const loginEmail = document.getElementById('login-email').value.trim();
+            const loginPassword = document.getElementById('login-password').value;
             const name = document.getElementById('customer-name').value.trim();
-            const email = document.getElementById('customer-email').value.trim();
             const phone = document.getElementById('customer-phone').value.trim();
             const company = document.getElementById('customer-company').value.trim();
             const referralSource = document.getElementById('referral-source').value;
             const termsAccepted = document.getElementById('terms-accept').checked;
 
-            if (!name || !email) {
-                showError('Por favor, preencha pelo menos o nome e email.');
+            // Validações
+            if (!name || !loginEmail || !loginPassword) {
+                showError('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+
+            if (!validatePasswords()) {
                 return;
             }
 
@@ -270,7 +366,7 @@
 
             // Validação básica de email
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
+            if (!emailRegex.test(loginEmail)) {
                 showError('Por favor, insira um email válido.');
                 return;
             }
@@ -279,12 +375,16 @@
             const btn = document.getElementById('complete-registration-btn');
             const originalText = btn.textContent;
             btn.disabled = true;
-            btn.textContent = '⏳ Ativando licença...';
+            btn.textContent = '⏳ Criando conta e ativando licença...';
 
             try {
+                // 1. Cria conta no Firebase Auth
+                const firebaseUser = await createFirebaseAccount(loginEmail, loginPassword);
+                
+                // 2. Prepara dados do cliente
                 const customerData = {
                     name,
-                    email,
+                    email: loginEmail,
                     phone: phone || null,
                     company: company || null,
                     referral_source: referralSource || null,
@@ -292,23 +392,36 @@
                     terms_accepted_at: new Date().toISOString()
                 };
 
-                const customerId = await completeRegistration(paymentId, customerData);
+                // 3. Completa o registro no Firestore
+                const customerId = await completeRegistration(paymentId, customerData, firebaseUser);
                 
-                // Sucesso!
-                showSuccess('🎉 Licença ativada com sucesso! Você receberá as instruções por email.');
+                // 4. Sucesso!
+                showSuccess('🎉 Conta criada e licença ativada com sucesso!');
                 
-                // Redireciona para página de sucesso
+                // 5. Redireciona para página de dashboard
                 setTimeout(() => {
-                    window.location.href = `success.html?customer=${customerId}&payment=${paymentId}`;
+                    window.location.href = `dashboard.html`;
                 }, 2000);
 
             } catch (error) {
                 console.error("Erro ao completar registro:", error);
-                showError('Erro ao ativar licença. Tente novamente ou entre em contato com o suporte.');
+                showError('Erro: ' + error.message);
             } finally {
                 // Reabilita o botão
                 btn.disabled = false;
                 btn.textContent = originalText;
+            }
+        });
+
+        // Validação em tempo real das senhas
+        document.getElementById('confirm-password').addEventListener('input', function() {
+            const password = document.getElementById('login-password').value;
+            const confirmPassword = this.value;
+            
+            if (confirmPassword && password !== confirmPassword) {
+                this.style.borderColor = '#dc3545';
+            } else {
+                this.style.borderColor = '#e9ecef';
             }
         });
 
@@ -323,7 +436,7 @@
             this.style.transform = 'translateY(0)';
         });
 
-        console.log("🚀 Página de registro carregada");
+        console.log("🚀 Página de registro com autenticação carregada");
     </script>
 </body>
 

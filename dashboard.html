@@ -133,7 +133,7 @@
                     </div>
                     <div>
                         <p style="margin-bottom: 0.5rem;"><strong>Telefone:</strong> <span id="account-phone">-</span></p>
-                        <p style="margin-bottom: 0.5rem;"><strong>Empresa:</strong> <span id="account-company">-</span></p>
+                        <p style="margin-bottom: 0.5rem;"><strong>País:</strong> <span id="account-company">-</span></p>
                     </div>
                 </div>
                 <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e9ecef;">
@@ -195,22 +195,31 @@
             try {
                 console.log('📊 Tentando carregar dados do usuário:', uid);
                 
-                // Busca na coleção 'users' usando o UID do usuário autenticado
+                // Busca na coleção 'users' pelo campo user.uid (não pelo ID do documento)
                 try {
-                    const userRef = db.collection('users').doc(uid);
-                    const doc = await userRef.get();
+                    console.log('🔍 Buscando por user.uid =', uid);
                     
-                    if (doc.exists) {
-                        customerData = doc.data();
+                    const usersQuery = db.collection('users')
+                        .where('user.uid', '==', uid)
+                        .limit(1);
+                    
+                    const querySnapshot = await usersQuery.get();
+                    
+                    if (!querySnapshot.empty) {
+                        const userDoc = querySnapshot.docs[0];
+                        customerData = userDoc.data();
+                        
                         console.log('✅ Dados encontrados na coleção users:', customerData);
+                        console.log('📋 ID do documento:', userDoc.id);
+                        
                         updateUI();
                         return;
                     } else {
-                        console.log('ℹ️ Documento do usuário não existe na coleção users');
+                        console.log('ℹ️ Nenhum documento encontrado com user.uid =', uid);
                     }
                 } catch (firestoreError) {
-                    console.error('❌ Erro ao acessar coleção users:', firestoreError);
-                    throw firestoreError; // Re-throw para ser capturado pelo catch principal
+                    console.error('❌ Erro ao buscar na coleção users:', firestoreError);
+                    throw firestoreError;
                 }
                 
                 // Se não encontrou na coleção users, tenta buscar em approved_payments
@@ -228,10 +237,10 @@
                         
                         // Cria dados básicos do cliente baseado no pagamento
                         customerData = {
-                            name: 'Cliente Atalho',
+                            Nome: 'Cliente Atalho',
                             email: currentUser.email,
                             phone: '-',
-                            company: '-',
+                            country: 'brazil',
                             payment_id: paymentData.payment_id,
                             license_activated_at: paymentData.approved_at || paymentData.created_at,
                             created_at: paymentData.created_at,
@@ -248,10 +257,10 @@
                 
                 // Se não encontrou nada, cria dados básicos
                 customerData = {
-                    name: currentUser.displayName || 'Cliente Atalho',
+                    Nome: currentUser.displayName || 'Cliente Atalho',
                     email: currentUser.email,
                     phone: '-',
-                    company: '-',
+                    country: 'brazil',
                     payment_id: 'Não disponível',
                     license_activated_at: new Date(),
                     created_at: new Date(currentUser.metadata.creationTime),
@@ -266,10 +275,10 @@
                 
                 // Fallback: usa apenas dados do Firebase Auth
                 customerData = {
-                    name: currentUser.displayName || 'Cliente Atalho',
+                    Nome: currentUser.displayName || 'Cliente Atalho',
                     email: currentUser.email,
                     phone: '-',
-                    company: '-',
+                    country: 'brazil',
                     payment_id: 'Não disponível',
                     license_activated_at: new Date(),
                     created_at: new Date(currentUser.metadata.creationTime),
@@ -286,13 +295,13 @@
             if (!currentUser || !customerData) return;
             
             // Dados do usuário no header
-            document.getElementById('user-name').textContent = customerData.name || 'Usuário';
+            document.getElementById('user-name').textContent = customerData.Nome || 'Usuário';
             
             // Informações da conta
-            document.getElementById('account-name').textContent = customerData.name || '-';
+            document.getElementById('account-name').textContent = customerData.Nome || '-';
             document.getElementById('account-email').textContent = customerData.email || currentUser.email;
             document.getElementById('account-phone').textContent = customerData.phone || '-';
-            document.getElementById('account-company').textContent = customerData.company || '-';
+            document.getElementById('account-company').textContent = customerData.country || '-';
             document.getElementById('payment-id').textContent = customerData.payment_id || '-';
             
             // Datas

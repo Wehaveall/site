@@ -306,7 +306,7 @@ class PixModalController {
                 console.log("QR Code PIX gerado com sucesso!");
                 this.paymentExpirationTime = result.expirationDate;
                 this.renderQRCode(result.qrCodeBase64, result.qrCodeText);
-                this.paymentId = result.paymentId; // Armazenar o ID para uso posterior
+                this.currentPaymentId = result.paymentId; // Armazenar o ID para simulação
                 this.startPaymentCheck(result.paymentId);
                 this.startExpirationCountdown();
 
@@ -342,6 +342,10 @@ class PixModalController {
     startPaymentCheck(paymentId) {
         this.clearIntervals();
         console.log(`Iniciando verificação periódica do pagamento ${paymentId}`);
+
+        // Inicializar tempo de simulação
+        this.simulationStartTime = Date.now();
+        console.log("⏱️ Tempo de simulação iniciado - aguarde 60 segundos para aprovação automática");
 
         // Verificar imediatamente e depois a cada 3 segundos
         this.checkPaymentStatus(paymentId);
@@ -384,8 +388,8 @@ class PixModalController {
                 const elapsed = Date.now() - this.simulationStartTime;
                 console.log(`Tempo decorrido desde início: ${Math.floor(elapsed / 1000)} segundos`);
 
-                if (elapsed >= 10000) { // 10 segundos
-                    console.log("!! SIMULAÇÃO: 10 segundos passados, considerando pagamento APROVADO !!");
+                if (elapsed >= 60000) { // 60 segundos
+                    console.log("!! SIMULAÇÃO: 60 segundos passados, considerando pagamento APROVADO !!");
                     this.clearIntervals();
                     this.handlePaymentSuccess(paymentId);
                     return;
@@ -412,6 +416,16 @@ class PixModalController {
             }
         } catch (error) {
             console.error('Erro ao verificar status do pagamento:', error);
+        }
+    }
+
+    simulateApproval() {
+        console.log("🧪 SIMULAÇÃO FORÇADA: Aprovando pagamento imediatamente!");
+        if (this.currentPaymentId) {
+            this.clearIntervals();
+            this.handlePaymentSuccess(this.currentPaymentId);
+        } else {
+            console.error("Nenhum ID de pagamento disponível para simulação");
         }
     }
 
@@ -551,8 +565,12 @@ class PixModalController {
                             Aguardando confirmação do pagamento...
                         </p>
                         <p style="font-size: 0.875rem; color: #2e8b57; margin-top: 0.5rem;">
-                            <strong>SIMULAÇÃO:</strong> Pagamento será considerado aprovado em 10 segundos!
+                            <strong>SIMULAÇÃO:</strong> Pagamento será considerado aprovado em 60 segundos!
                         </p>
+                        <button onclick="pixModal.simulateApproval()" 
+                                style="margin-top: 1rem; padding: 0.5rem 1rem; background-color: #28a745; color: white; border-radius: 0.25rem; border: none; cursor: pointer; font-size: 0.875rem;">
+                            🧪 Simular Aprovação Imediata (Só para Teste)
+                        </button>
                     </div>
                 </div>
             </div>

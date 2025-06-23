@@ -31,11 +31,15 @@
                 </a>
             </div>
             <nav class="nav-menu">
-                <ul class="nav-links">
+                <ul class="nav-links" id="nav-links">
                     <li><a href="#features" class="nav-link">Recursos</a></li>
                     <li><a href="tutoriais.html" class="nav-link">Tutoriais</a></li>
                     <li><a href="#downloads" class="nav-link">Downloads de Bibliotecas</a></li>
-                    <li><a href="login.html" class="nav-link">Entrar</a></li>
+                    <!-- Links dinâmicos baseados na autenticação -->
+                    <li id="nav-register"><a href="register.html" class="nav-link">Cadastro</a></li>
+                    <li id="nav-login"><a href="login.html" class="nav-link">Entrar</a></li>
+                    <li id="nav-dashboard" style="display: none;"><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+                    <li id="nav-logout" style="display: none;"><a href="#" class="nav-link" onclick="logout()">Sair</a></li>
                     <li><a href="comprar.html" class="nav-link btn-primary">Comprar</a></li>
                 </ul>
             </nav>
@@ -165,7 +169,56 @@
     </footer>
 
     <!-- Scripts -->
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="assets/js/firebase.js"></script>
+    
     <script>
+        // Função para logout
+        async function logout() {
+            try {
+                await firebase.auth().signOut();
+                console.log('✅ Logout realizado com sucesso');
+                updateNavMenu(null); // Atualiza menu para usuário deslogado
+                // Opcional: redirecionar ou mostrar mensagem
+                alert('Logout realizado com sucesso!');
+            } catch (error) {
+                console.error('❌ Erro no logout:', error);
+                alert('Erro ao fazer logout: ' + error.message);
+            }
+        }
+
+        // Função para atualizar o menu baseado no status de autenticação
+        function updateNavMenu(user) {
+            const navRegister = document.getElementById('nav-register');
+            const navLogin = document.getElementById('nav-login');
+            const navDashboard = document.getElementById('nav-dashboard');
+            const navLogout = document.getElementById('nav-logout');
+
+            if (user) {
+                // Usuário logado: esconder Cadastro/Entrar, mostrar Dashboard/Sair
+                navRegister.style.display = 'none';
+                navLogin.style.display = 'none';
+                navDashboard.style.display = 'block';
+                navLogout.style.display = 'block';
+                console.log('✅ Menu atualizado para usuário logado:', user.email);
+            } else {
+                // Usuário deslogado: mostrar Cadastro/Entrar, esconder Dashboard/Sair
+                navRegister.style.display = 'block';
+                navLogin.style.display = 'block';
+                navDashboard.style.display = 'none';
+                navLogout.style.display = 'none';
+                console.log('ℹ️ Menu atualizado para usuário deslogado');
+            }
+        }
+
+        // Listener para mudanças no estado de autenticação
+        firebase.auth().onAuthStateChanged(function(user) {
+            updateNavMenu(user);
+        });
+
         // Smooth scroll para links internos
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {

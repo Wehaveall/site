@@ -221,7 +221,8 @@
         // Função para carregar dados do cliente
         async function loadCustomerData(uid) {
             try {
-                console.log('📊 Tentando carregar dados do usuário:', uid);
+                console.log('📊 === INÍCIO DO CARREGAMENTO DE DADOS ===');
+                console.log('🔍 UID do usuário:', uid);
                 
                 // Busca na coleção 'users' pelo campo user.uid (não pelo ID do documento)
                 try {
@@ -231,89 +232,88 @@
                         .where('user.uid', '==', uid)
                         .limit(1);
                     
+                    console.log('📋 Query criada, executando...');
                     const querySnapshot = await usersQuery.get();
+                    console.log('📊 Resultado da query - documentos encontrados:', querySnapshot.size);
                     
                     if (!querySnapshot.empty) {
                         const userDoc = querySnapshot.docs[0];
                         customerData = userDoc.data();
                         
-                        console.log('✅ Dados encontrados na coleção users:', customerData);
+                        console.log('✅ DADOS ENCONTRADOS na coleção users:');
                         console.log('📋 ID do documento:', userDoc.id);
+                        console.log('📄 Dados completos:', JSON.stringify(customerData, null, 2));
+                        console.log('📝 Campo Nome:', customerData.Nome);
+                        console.log('📧 Campo email:', customerData.email);
+                        console.log('📱 Campo phone:', customerData.phone);
+                        console.log('🌍 Campo country:', customerData.country);
+                        console.log('🆔 Campo id:', customerData.id);
+                        console.log('📅 Campo sub_start:', customerData.sub_start);
+                        console.log('📅 Campo sub_end:', customerData.sub_end);
                         
                         updateUI();
                         return;
                     } else {
-                        console.log('ℹ️ Nenhum documento encontrado com user.uid =', uid);
+                        console.log('❌ Nenhum documento encontrado com user.uid =', uid);
+                        
+                        // TESTE ALTERNATIVO: Buscar por email
+                        console.log('🔄 Tentativa alternativa: buscar por email =', currentUser.email);
+                        const emailQuery = db.collection('users')
+                            .where('email', '==', currentUser.email)
+                            .limit(1);
+                        
+                        const emailSnapshot = await emailQuery.get();
+                        console.log('📊 Resultado da busca por email - documentos:', emailSnapshot.size);
+                        
+                        if (!emailSnapshot.empty) {
+                            const userDoc = emailSnapshot.docs[0];
+                            customerData = userDoc.data();
+                            
+                            console.log('✅ DADOS ENCONTRADOS por email:');
+                            console.log('📋 ID do documento:', userDoc.id);
+                            console.log('📄 Dados completos:', JSON.stringify(customerData, null, 2));
+                            
+                            updateUI();
+                            return;
+                        }
                     }
                 } catch (firestoreError) {
                     console.error('❌ Erro ao buscar na coleção users:', firestoreError);
                     throw firestoreError;
                 }
                 
-                // Se não encontrou na coleção users, tenta buscar em approved_payments
-                try {
-                    console.log('🔍 Tentando buscar em approved_payments...');
-                    const paymentsQuery = db.collection('approved_payments')
-                        .where('anonymous_uid', '==', uid)
-                        .limit(1);
-                    
-                    const querySnapshot = await paymentsQuery.get();
-                    
-                    if (!querySnapshot.empty) {
-                        const paymentDoc = querySnapshot.docs[0];
-                        const paymentData = paymentDoc.data();
-                        
-                        // Cria dados básicos do cliente baseado no pagamento
-                        customerData = {
-                            Nome: 'Cliente Atalho',
-                            email: currentUser.email,
-                            phone: '-',
-                            country: 'brazil',
-                            payment_id: paymentData.payment_id,
-                            license_activated_at: paymentData.approved_at || paymentData.created_at,
-                            created_at: paymentData.created_at,
-                            license_status: 'active'
-                        };
-                        
-                        console.log('✅ Dados criados baseados no pagamento:', customerData);
-                        updateUI();
-                        return;
-                    }
-                } catch (paymentError) {
-                    console.warn('⚠️ Erro ao acessar pagamentos:', paymentError.message);
-                }
-                
-                // Se não encontrou nada, cria dados básicos
+                // Se chegou aqui, não encontrou dados
+                console.log('⚠️ NENHUM DADO ENCONTRADO - Usando fallback');
                 customerData = {
-                    Nome: currentUser.displayName || 'Cliente Atalho',
+                    Nome: 'Dados não encontrados',
                     email: currentUser.email,
-                    phone: '-',
-                    country: 'brazil',
-                    payment_id: 'Não disponível',
+                    phone: 'Não encontrado',
+                    country: 'Não encontrado',
+                    payment_id: 'Não encontrado',
                     license_activated_at: new Date(),
                     created_at: new Date(currentUser.metadata.creationTime),
                     license_status: 'active'
                 };
                 
-                console.log('ℹ️ Usando dados básicos do Firebase Auth:', customerData);
+                console.log('🔄 Dados de fallback:', customerData);
                 updateUI();
                 
             } catch (error) {
-                console.error('❌ Erro geral ao carregar dados:', error);
+                console.error('❌ ERRO GERAL ao carregar dados:', error);
                 
-                // Fallback: usa apenas dados do Firebase Auth
+                // Fallback final
                 customerData = {
-                    Nome: currentUser.displayName || 'Cliente Atalho',
+                    Nome: 'Erro ao carregar',
                     email: currentUser.email,
-                    phone: '-',
-                    country: 'brazil',
-                    payment_id: 'Não disponível',
+                    phone: 'Erro',
+                    country: 'Erro',
+                    payment_id: 'Erro',
                     license_activated_at: new Date(),
                     created_at: new Date(currentUser.metadata.creationTime),
-                    license_status: 'active'
+                    license_status: 'error'
                 };
                 
-                console.log('🔄 Usando fallback com dados do Auth:', customerData);
+                console.log('🆘 Fallback final:', customerData);
                 updateUI();
             }
         }
@@ -388,6 +388,18 @@
                 try {
                     const testRef = db.collection('users').doc(user.uid);
                     console.log('📋 Referência criada para:', testRef.path);
+                    
+                    // NOVO: Teste direto de leitura
+                    console.log('🧪 TESTE: Tentando ler todos os documentos da coleção users...');
+                    const allUsersSnapshot = await db.collection('users').get();
+                    console.log('📊 Total de documentos na coleção users:', allUsersSnapshot.size);
+                    
+                    allUsersSnapshot.forEach((doc) => {
+                        console.log('📄 Documento encontrado:', {
+                            id: doc.id,
+                            data: doc.data()
+                        });
+                    });
                     
                     currentUser = user;
                     

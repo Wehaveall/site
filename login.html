@@ -8,6 +8,25 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    
+    <style>
+        /* Estilos específicos para a página de login */
+        #login-email:focus, #login-password:focus {
+            border-color: var(--primary) !important;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(219, 201, 173, 0.2);
+        }
+        
+        #login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        a[href="reset-password.html"]:hover,
+        a[href="register.html"]:hover {
+            color: var(--primary) !important;
+        }
+    </style>
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -34,57 +53,57 @@
     </header>
 
     <!-- Main Content -->
-    <main style="padding-top: 100px; min-height: 100vh; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+    <main style="padding-top: 100px; min-height: 100vh; background: linear-gradient(120deg, #f0e9df 0%, #f7f3ed 20%, white 50%);">
         <div class="container" style="max-width: 500px; margin: 0 auto; padding: 2rem;">
             
             <!-- Formulário de Login -->
-            <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow-lg);">
                 <div style="text-align: center; margin-bottom: 2rem;">
-                    <div style="color: #007bff; margin-bottom: 1rem;">
+                    <div style="color: var(--primary-dark); margin-bottom: 1rem;">
                         <i class="fas fa-sign-in-alt" style="font-size: 3rem;"></i>
                     </div>
-                    <h1 style="color: #2c3e50; margin-bottom: 0.5rem;">Entrar na sua Conta</h1>
-                    <p style="color: #6c757d;">Acesse sua licença do Atalho</p>
+                    <h1 style="color: var(--text-dark); margin-bottom: 0.5rem;">Entrar na sua Conta</h1>
+                    <p style="color: var(--text-light);">Acesse sua licença do Atalho</p>
                 </div>
 
                 <form id="login-form">
                     <div style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;">
                             Email
                         </label>
                         <input type="email" id="login-email" required
-                               style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem;"
+                               style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
                                placeholder="seu@email.com">
                     </div>
 
                     <div style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;">
                             Senha
                         </label>
                         <input type="password" id="login-password" required
-                               style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem;"
+                               style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
                                placeholder="Sua senha">
                     </div>
 
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
                         <label style="display: flex; align-items: center; cursor: pointer;">
                             <input type="checkbox" id="remember-me" style="margin-right: 0.5rem;">
-                            <span style="color: #6c757d; font-size: 0.9rem;">Lembrar de mim</span>
+                            <span style="color: var(--text-light); font-size: 0.9rem;">Lembrar de mim</span>
                         </label>
-                        <a href="reset-password.html" style="color: #007bff; text-decoration: none; font-size: 0.9rem;">
+                        <a href="reset-password.html" style="color: var(--primary-dark); text-decoration: none; font-size: 0.9rem; transition: color 0.2s ease;">
                             Esqueci minha senha
                         </a>
                     </div>
 
                     <button type="submit" id="login-btn"
-                            style="width: 100%; padding: 1rem; background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: transform 0.2s; margin-bottom: 1rem;">
+                            style="width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: var(--text-dark); border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; margin-bottom: 1rem;">
                         🔑 Entrar
                     </button>
 
                     <div style="text-align: center; margin-top: 1rem;">
-                        <p style="color: #6c757d; margin-bottom: 0.5rem;">Ainda não tem uma conta?</p>
-                        <a href="comprar.html" style="color: #28a745; text-decoration: none; font-weight: 600;">
-                            Comprar Licença do Atalho
+                        <p style="color: var(--text-light); margin-bottom: 0.5rem;">Ainda não tem uma conta?</p>
+                        <a href="register.html" style="color: var(--primary-dark); text-decoration: none; font-weight: 600; transition: color 0.2s ease;">
+                            Cadastre-se
                         </a>
                     </div>
                 </form>

@@ -8,9 +8,9 @@ class MercadoPagoService {
         // Apontando para o servidor local
         this.apiBaseUrl = 'http://localhost:3000/api';
 
-        // Credenciais (não usadas aqui, apenas para referência)
-        this.publicKey = 'TEST-f6d0456b-ff4f-4c22-afef-53b2c4d4ec35';
-        this.accessToken = 'TEST-7601417945820618-013008-87f0900af129b320e5d12f6fabe39620-231065568';
+        // Credenciais de PRODUÇÃO (apenas para referência, o backend usa o Access Token)
+        this.publicKey = 'APP_USR-eb7579bb-3460-43d1-83eb-1010a62d1bd2';
+        this.accessToken = 'APP_USR-7601417945820618-013008-5b2554be4b9451d02eaed17ed992b76b-231065568';
 
         // Log para confirmar URL base
         console.log('API Base URL:', this.apiBaseUrl);

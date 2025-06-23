@@ -12,6 +12,12 @@ const client = new MercadoPagoConfig({
 
 const payment = new Payment(client);
 
+// Função para gerar CPF válido para testes
+function generateValidCPF() {
+    // CPF válido para testes: 11144477735
+    return '11144477735';
+}
+
 module.exports = async (req, res) => {
     // Configura CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -39,7 +45,7 @@ module.exports = async (req, res) => {
                 last_name: 'Atalho',
                 identification: {
                     type: 'CPF',
-                    number: '12345678901'
+                    number: generateValidCPF()
                 }
             },
             notification_url: `${req.headers.origin || 'https://atalho.me'}/api/webhook`

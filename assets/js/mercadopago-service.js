@@ -5,8 +5,8 @@ class MercadoPagoService {
         // IMPORTANTE: Log de inicialização para confirmar que estamos usando a versão correta
         console.log('Inicializando MercadoPagoService - VERSÃO CORRIGIDA');
 
-        // Apontando para o servidor local
-        this.apiBaseUrl = 'http://localhost:3000/api';
+        // Apontando para as Serverless Functions do Vercel
+        this.apiBaseUrl = '/api';
 
         // Credenciais de PRODUÇÃO (apenas para referência, o backend usa o Access Token)
         this.publicKey = 'APP_USR-eb7579bb-3460-43d1-83eb-1010a62d1bd2';
@@ -97,7 +97,7 @@ class MercadoPagoService {
         try {
             console.log(`🔍 Verificando status do pagamento ${paymentId}...`);
 
-            const response = await fetch(`${this.apiBaseUrl}/payment-status/${paymentId}`);
+            const response = await fetch(`${this.apiBaseUrl}/payment-status?paymentId=${paymentId}`);
 
             if (!response.ok) {
                 const errorData = await response.json();
@@ -129,7 +129,7 @@ class MercadoPagoService {
         try {
             console.log(`🧪 Simulando aprovação do pagamento ${paymentId}...`);
 
-            const response = await fetch(`${this.apiBaseUrl}/simulate-payment/${paymentId}`, {
+            const response = await fetch(`${this.apiBaseUrl}/simulate-payment?paymentId=${paymentId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

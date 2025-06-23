@@ -193,25 +193,29 @@
         // Função para carregar dados do cliente
         async function loadCustomerData(uid) {
             try {
-                console.log('📊 Tentando carregar dados do cliente:', uid);
+                console.log('📊 Tentando carregar dados do usuário:', uid);
                 
-                // Primeiro, tenta buscar na coleção customers
+                // Busca na coleção 'users' usando o UID do usuário autenticado
                 try {
-                    const customerRef = db.collection('customers').doc(uid);
-                    const doc = await customerRef.get();
+                    const userRef = db.collection('users').doc(uid);
+                    const doc = await userRef.get();
                     
                     if (doc.exists) {
                         customerData = doc.data();
-                        console.log('✅ Dados encontrados na coleção customers:', customerData);
+                        console.log('✅ Dados encontrados na coleção users:', customerData);
                         updateUI();
                         return;
+                    } else {
+                        console.log('ℹ️ Documento do usuário não existe na coleção users');
                     }
                 } catch (firestoreError) {
-                    console.warn('⚠️ Erro ao acessar coleção customers:', firestoreError.message);
+                    console.error('❌ Erro ao acessar coleção users:', firestoreError);
+                    throw firestoreError; // Re-throw para ser capturado pelo catch principal
                 }
                 
-                // Se não encontrou, tenta buscar em approved_payments
+                // Se não encontrou na coleção users, tenta buscar em approved_payments
                 try {
+                    console.log('🔍 Tentando buscar em approved_payments...');
                     const paymentsQuery = db.collection('approved_payments')
                         .where('anonymous_uid', '==', uid)
                         .limit(1);
@@ -328,10 +332,23 @@
         firebase.auth().onAuthStateChanged(async function(user) {
             if (user) {
                 console.log('✅ Usuário autenticado:', user.uid);
-                currentUser = user;
+                console.log('📧 Email do usuário:', user.email);
+                console.log('🔗 Testando conexão com Firestore...');
                 
-                // Carrega dados do cliente
-                await loadCustomerData(user.uid);
+                // Teste básico de conexão com Firestore
+                try {
+                    const testRef = db.collection('users').doc(user.uid);
+                    console.log('📋 Referência criada para:', testRef.path);
+                    
+                    currentUser = user;
+                    
+                    // Carrega dados do cliente
+                    await loadCustomerData(user.uid);
+                    
+                } catch (connectionError) {
+                    console.error('❌ Erro de conexão com Firestore:', connectionError);
+                    showError('Erro de conexão com o banco de dados: ' + connectionError.message);
+                }
                 
             } else {
                 console.log('❌ Usuário não autenticado, redirecionando...');

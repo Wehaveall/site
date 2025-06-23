@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete seu Cadastro - Atalho</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="navbar">
+            <div class="logo">
+                <a href="index.html" class="logo-link">
+                    <img src="assets/img/logo.svg" alt="Logo Atalho" class="logo-img" />
+                    <span class="logo-text">Atalho</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main style="padding-top: 100px; min-height: 100vh; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+        <div class="container" style="max-width: 600px; margin: 0 auto; padding: 2rem;">
+            
+            <!-- Status do Pagamento -->
+            <div id="payment-status" style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;">
+                <div style="color: #28a745; margin-bottom: 1rem;">
+                    <i class="fas fa-check-circle" style="font-size: 3rem;"></i>
+                </div>
+                <h1 style="color: #28a745; margin-bottom: 1rem;">✅ Pagamento Confirmado!</h1>
+                <p style="color: #6c757d; margin-bottom: 1rem;">
+                    Seu pagamento PIX de <strong>R$ 49,90</strong> foi aprovado com sucesso.
+                </p>
+                <div id="payment-details" style="background: #f8f9fa; padding: 1rem; border-radius: 6px;">
+                    <p style="margin: 0; color: #6c757d;">
+                        <strong>ID do Pagamento:</strong> <span id="payment-id">Carregando...</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Formulário de Cadastro -->
+            <div id="registration-form" style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <h2 style="color: #2c3e50; margin-bottom: 1.5rem; text-align: center;">
+                    📝 Complete seu Cadastro
+                </h2>
+                <p style="color: #7f8c8d; text-align: center; margin-bottom: 2rem;">
+                    Preencha seus dados para ativar sua licença do Atalho
+                </p>
+
+                <form id="customer-registration-form">
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
+                            Nome Completo *
+                        </label>
+                        <input type="text" id="customer-name" required
+                               style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem;"
+                               placeholder="Seu nome completo">
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
+                            Email *
+                        </label>
+                        <input type="email" id="customer-email" required
+                               style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem;"
+                               placeholder="seu@email.com">
+                        <small style="color: #7f8c8d;">Sua licença será enviada para este email</small>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
+                            Telefone (opcional)
+                        </label>
+                        <input type="tel" id="customer-phone"
+                               style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem;"
+                               placeholder="(11) 99999-9999">
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
+                            Empresa (opcional)
+                        </label>
+                        <input type="text" id="customer-company"
+                               style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem;"
+                               placeholder="Nome da sua empresa">
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 500;">
+                            Como você conheceu o Atalho? (opcional)
+                        </label>
+                        <select id="referral-source" style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem;">
+                            <option value="">Selecione uma opção</option>
+                            <option value="google">Pesquisa no Google</option>
+                            <option value="social">Redes Sociais</option>
+                            <option value="friend">Indicação de amigo</option>
+                            <option value="youtube">YouTube</option>
+                            <option value="blog">Blog/Site</option>
+                            <option value="other">Outro</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 2rem;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" id="terms-accept" required style="margin-right: 0.5rem;">
+                            <span style="color: #2c3e50;">
+                                Aceito os <a href="#" style="color: #007bff;">termos de uso</a> e 
+                                <a href="#" style="color: #007bff;">política de privacidade</a>
+                            </span>
+                        </label>
+                    </div>
+
+                    <button type="submit" id="complete-registration-btn"
+                            style="width: 100%; padding: 1rem; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: transform 0.2s;">
+                        🚀 Ativar Licença do Atalho
+                    </button>
+                </form>
+            </div>
+
+            <!-- Seção de Segurança -->
+            <div style="background: #e8f5e8; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; border-left: 4px solid #28a745;">
+                <h3 style="color: #28a745; margin-bottom: 1rem;">🔒 Seus Dados Estão Seguros</h3>
+                <ul style="list-style: none; padding: 0; color: #6c757d;">
+                    <li style="padding: 0.25rem 0;">✓ Pagamento já confirmado e processado</li>
+                    <li style="padding: 0.25rem 0;">✓ Dados criptografados e protegidos</li>
+                    <li style="padding: 0.25rem 0;">✓ Licença ativada imediatamente após cadastro</li>
+                    <li style="padding: 0.25rem 0;">✓ Suporte técnico prioritário incluído</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="assets/js/firebase.js"></script>
+
+    <script>
+        // Função para mostrar mensagens
+        function showSuccess(message) {
+            alert('✅ ' + message);
+        }
+
+        function showError(message) {
+            alert('❌ ' + message);
+        }
+
+        // Função para obter parâmetros da URL
+        function getUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return {
+                paymentId: urlParams.get('payment'),
+                token: urlParams.get('token')
+            };
+        }
+
+        // Função para validar o token de registro
+        async function validateRegistrationToken(paymentId, token) {
+            try {
+                console.log(`🔍 Validando token de registro para pagamento ${paymentId}`);
+                
+                // Verifica no Firebase se o token é válido
+                const paymentRef = db.collection('approved_payments').doc(paymentId);
+                const doc = await paymentRef.get();
+                
+                if (!doc.exists) {
+                    throw new Error('Pagamento não encontrado');
+                }
+                
+                const data = doc.data();
+                
+                if (data.registration_token !== token) {
+                    throw new Error('Token de registro inválido');
+                }
+                
+                if (data.registration_completed) {
+                    throw new Error('Cadastro já foi completado para este pagamento');
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('❌ Erro na validação:', error);
+                throw error;
+            }
+        }
+
+        // Função para completar o registro
+        async function completeRegistration(paymentId, customerData) {
+            try {
+                console.log('💾 Completando registro para pagamento:', paymentId);
+                
+                // Atualiza o pagamento com os dados do cliente
+                const paymentRef = db.collection('approved_payments').doc(paymentId);
+                await paymentRef.update({
+                    customer_data: customerData,
+                    registration_completed: true,
+                    registration_completed_at: firebase.firestore.FieldValue.serverTimestamp(),
+                    awaiting_registration: false
+                });
+                
+                // Cria registro na coleção de clientes
+                const customerRef = db.collection('customers').doc();
+                await customerRef.set({
+                    ...customerData,
+                    payment_id: paymentId,
+                    license_status: 'active',
+                    license_type: 'annual',
+                    license_activated_at: firebase.firestore.FieldValue.serverTimestamp(),
+                    created_at: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                console.log('✅ Registro completado com sucesso!');
+                return customerRef.id;
+            } catch (error) {
+                console.error('❌ Erro ao completar registro:', error);
+                throw error;
+            }
+        }
+
+        // Inicialização da página
+        document.addEventListener('DOMContentLoaded', async function() {
+            const { paymentId, token } = getUrlParams();
+            
+            if (!paymentId || !token) {
+                showError('Link inválido. Verifique o email recebido.');
+                return;
+            }
+            
+            document.getElementById('payment-id').textContent = paymentId;
+            
+            try {
+                // Valida o token
+                const paymentData = await validateRegistrationToken(paymentId, token);
+                console.log('✅ Token válido, pagamento encontrado:', paymentData);
+                
+            } catch (error) {
+                showError('Link inválido ou expirado: ' + error.message);
+                document.getElementById('registration-form').style.display = 'none';
+                return;
+            }
+        });
+
+        // Manipulador do formulário de registro
+        document.getElementById('customer-registration-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const { paymentId, token } = getUrlParams();
+            
+            const name = document.getElementById('customer-name').value.trim();
+            const email = document.getElementById('customer-email').value.trim();
+            const phone = document.getElementById('customer-phone').value.trim();
+            const company = document.getElementById('customer-company').value.trim();
+            const referralSource = document.getElementById('referral-source').value;
+            const termsAccepted = document.getElementById('terms-accept').checked;
+
+            if (!name || !email) {
+                showError('Por favor, preencha pelo menos o nome e email.');
+                return;
+            }
+
+            if (!termsAccepted) {
+                showError('Por favor, aceite os termos de uso.');
+                return;
+            }
+
+            // Validação básica de email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showError('Por favor, insira um email válido.');
+                return;
+            }
+
+            // Desabilita o botão durante o processamento
+            const btn = document.getElementById('complete-registration-btn');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = '⏳ Ativando licença...';
+
+            try {
+                const customerData = {
+                    name,
+                    email,
+                    phone: phone || null,
+                    company: company || null,
+                    referral_source: referralSource || null,
+                    terms_accepted: true,
+                    terms_accepted_at: new Date().toISOString()
+                };
+
+                const customerId = await completeRegistration(paymentId, customerData);
+                
+                // Sucesso!
+                showSuccess('🎉 Licença ativada com sucesso! Você receberá as instruções por email.');
+                
+                // Redireciona para página de sucesso
+                setTimeout(() => {
+                    window.location.href = `success.html?customer=${customerId}&payment=${paymentId}`;
+                }, 2000);
+
+            } catch (error) {
+                console.error("Erro ao completar registro:", error);
+                showError('Erro ao ativar licença. Tente novamente ou entre em contato com o suporte.');
+            } finally {
+                // Reabilita o botão
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        });
+
+        // Efeito hover no botão
+        document.getElementById('complete-registration-btn').addEventListener('mouseenter', function() {
+            if (!this.disabled) {
+                this.style.transform = 'translateY(-2px)';
+            }
+        });
+
+        document.getElementById('complete-registration-btn').addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+
+        console.log("🚀 Página de registro carregada");
+    </script>
+</body>
+
+</html> 

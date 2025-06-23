@@ -1,4 +1,4 @@
-// pix-modal.js - Versão PRODUÇÃO com Segurança Aprimorada
+// pix-modal.js - Versão PRODUÇÃO com Email de Confirmação
 
 class PixModalController {
     constructor() {
@@ -9,50 +9,11 @@ class PixModalController {
         this.paymentExpirationTime = null;
         this.countdownInterval = null;
         this.currentPaymentId = null;
-        this.customerData = null; // Dados do cliente salvos antes do pagamento
     }
 
-    // Método para salvar dados do cliente ANTES de gerar o PIX
-    async saveCustomerDataBeforePayment(customerData) {
-        this.customerData = customerData;
-        
-        try {
-            // Salva os dados no Firebase ANTES de gerar o PIX
-            const prePaymentRef = db.collection('pre_payments').doc();
-            const prePaymentData = {
-                customer_data: customerData,
-                amount: 49.90,
-                status: 'awaiting_payment',
-                created_at: firebase.firestore.FieldValue.serverTimestamp(),
-                method: 'pix',
-                environment: 'production',
-                anonymous_uid: firebase.auth().currentUser?.uid || null
-            };
-            
-            await prePaymentRef.set(prePaymentData);
-            console.log("✅ Dados do cliente salvos ANTES do pagamento:", prePaymentRef.id);
-            
-            return prePaymentRef.id;
-        } catch (error) {
-            console.error("❌ Erro ao salvar dados antes do pagamento:", error);
-            throw error;
-        }
-    }
-
-    show(customerData = null) {
+    show() {
         this.modalElement.classList.remove('hidden');
-        
-        if (customerData) {
-            // Se há dados do cliente, salva primeiro e depois gera o PIX
-            this.saveCustomerDataBeforePayment(customerData)
-                .then(() => this.generatePixPayment())
-                .catch(error => {
-                    console.error("Erro ao salvar dados:", error);
-                    this.renderError('Erro ao processar dados. Tente novamente.');
-                });
-        } else {
-            this.generatePixPayment();
-        }
+        this.generatePixPayment();
     }
 
     hide() {
@@ -97,8 +58,8 @@ class PixModalController {
                         created_at: firebase.firestore.FieldValue.serverTimestamp(),
                         method: 'pix',
                         environment: 'production',
-                        customer_data: this.customerData || null,
-                        anonymous_uid: firebase.auth().currentUser?.uid || null
+                        anonymous_uid: firebase.auth().currentUser?.uid || null,
+                        awaiting_registration: true // Indica que precisa de cadastro
                     });
                     console.log("✅ Registro de pagamento criado no Firestore");
                 } catch (dbError) {
@@ -222,9 +183,10 @@ class PixModalController {
                     approved_at: firebase.firestore.FieldValue.serverTimestamp(),
                     method: 'pix',
                     environment: isSimulation ? 'simulation' : 'production',
-                    customer_data: this.customerData || null,
                     anonymous_uid: firebase.auth().currentUser?.uid || null,
-                    is_simulation: isSimulation
+                    is_simulation: isSimulation,
+                    awaiting_registration: true, // Cliente precisa se cadastrar
+                    registration_token: this.generateRegistrationToken() // Token único para cadastro
                 };
 
                 // Atualiza tanto pending_payments quanto cria em approved_payments
@@ -235,6 +197,10 @@ class PixModalController {
                 await approvedRef.set(paymentData);
 
                 console.log(`✅ ${logPrefix} Status de pagamento atualizado no Firestore`);
+
+                // Envia email de confirmação (simulado)
+                await this.sendConfirmationEmail(paymentId, paymentData.registration_token);
+
             } catch (firebaseError) {
                 console.warn(`⚠️ ${logPrefix} Erro ao atualizar Firebase (não crítico):`, firebaseError);
             }
@@ -242,19 +208,9 @@ class PixModalController {
             this.hide();
             
             if (isSimulation) {
-                showSuccess('🧪 Pagamento SIMULADO com sucesso! (Apenas para testes)');
+                this.showRegistrationModal(paymentId, 'simulation');
             } else {
-                showSuccess('🎉 Pagamento PIX confirmado com sucesso!');
-            }
-
-            // Se já temos dados do cliente, vai direto para o sucesso
-            if (this.customerData) {
-                this.redirectToSuccess(paymentId);
-            } else {
-                // Mostra formulário para coletar dados
-                const registerForm = document.getElementById('register-form');
-                registerForm.classList.remove('hidden');
-                registerForm.scrollIntoView({ behavior: 'smooth' });
+                this.showRegistrationModal(paymentId, 'production');
             }
 
             state.selectedMethod = 'pix';
@@ -267,11 +223,72 @@ class PixModalController {
         }
     }
 
-    redirectToSuccess(paymentId) {
-        // Redireciona para página de sucesso ou mostra confirmação final
-        setTimeout(() => {
-            window.location.href = 'success.html?payment=' + paymentId;
-        }, 2000);
+    generateRegistrationToken() {
+        // Gera um token único para o cadastro
+        return 'reg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    async sendConfirmationEmail(paymentId, registrationToken) {
+        // Simula envio de email (você pode integrar com SendGrid, etc.)
+        console.log(`📧 EMAIL: Enviando email de confirmação para pagamento ${paymentId}`);
+        console.log(`🔗 LINK: http://localhost:3000/register?payment=${paymentId}&token=${registrationToken}`);
+        
+        // Aqui você integraria com seu serviço de email
+        // await emailService.send({
+        //     to: 'cliente@email.com',
+        //     subject: 'Pagamento aprovado - Complete seu cadastro',
+        //     template: 'payment-approved',
+        //     data: { paymentId, registrationToken }
+        // });
+    }
+
+    showRegistrationModal(paymentId, environment) {
+        // Mostra modal explicando o próximo passo
+        this.modalElement.classList.remove('hidden');
+        this.modalRoot.innerHTML = `
+            <div class="modal-content">
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="color: #28a745; margin-bottom: 1rem;">
+                        <i class="fas fa-check-circle" style="font-size: 3rem;"></i>
+                    </div>
+                    <h2 style="color: #28a745; margin-bottom: 1rem;">
+                        🎉 Pagamento ${environment === 'simulation' ? 'Simulado' : 'Confirmado'}!
+                    </h2>
+                    <p style="margin-bottom: 1.5rem; color: #6c757d;">
+                        Seu pagamento PIX de <strong>R$ 49,90</strong> foi aprovado com sucesso.
+                    </p>
+                    
+                    <div style="background: #e8f4fd; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h3 style="color: #0066cc; margin-bottom: 1rem;">📧 Próximos Passos:</h3>
+                        <p style="color: #333; margin-bottom: 0.5rem;">
+                            1. Verifique seu email para o link de cadastro
+                        </p>
+                        <p style="color: #333; margin-bottom: 0.5rem;">
+                            2. Complete seu cadastro para ativar a licença
+                        </p>
+                        <p style="color: #333;">
+                            3. Receba sua licença do Atalho imediatamente
+                        </p>
+                    </div>
+
+                    <div style="background: #fff3cd; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
+                        <p style="color: #856404; margin: 0; font-size: 0.9rem;">
+                            <strong>📱 Não recebeu o email?</strong><br>
+                            Verifique sua caixa de spam ou entre em contato conosco.
+                        </p>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <strong>ID do Pagamento:</strong> ${paymentId}
+                    </div>
+
+                    <button onclick="pixModal.hide(); window.location.href='index.html'" 
+                            style="padding: 1rem 2rem; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem;">
+                        ✅ Entendi, aguardar email
+                    </button>
+                </div>
+            </div>
+        `;
     }
 
     renderLoading() {
@@ -369,7 +386,7 @@ class PixModalController {
                             <strong>🔄 Aguardando confirmação do pagamento...</strong>
                         </p>
                         <p style="font-size: 0.75rem; color: #666; margin-top: 0.5rem;">
-                            O pagamento será confirmado automaticamente após a aprovação pelo seu banco.
+                            Após a aprovação, você receberá um email para completar seu cadastro.
                         </p>
                     </div>
                 </div>

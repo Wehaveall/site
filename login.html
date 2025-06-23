@@ -166,12 +166,51 @@
             }
         }
 
+        // Função para logout completo
+        async function logout() {
+            try {
+                console.log('🚪 Iniciando logout completo...');
+                
+                // Faz logout do Firebase
+                await firebase.auth().signOut();
+                
+                // Limpa localStorage
+                localStorage.clear();
+                
+                // Limpa sessionStorage
+                sessionStorage.clear();
+                
+                console.log('✅ Logout completo realizado');
+                
+                // Aguarda um pouco e recarrega a página
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
+                
+            } catch (error) {
+                console.error('❌ Erro no logout:', error);
+                showError('Erro ao fazer logout: ' + error.message);
+            }
+        }
+
         // Verifica se usuário já está logado
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
-                console.log('ℹ️ Usuário já está logado:', user.email);
+                console.log('ℹ️ Usuário detectado:', {
+                    uid: user.uid,
+                    email: user.email,
+                    isAnonymous: user.isAnonymous,
+                    displayName: user.displayName
+                });
                 
-                // Mostra opção para ir ao dashboard ao invés de redirecionar automaticamente
+                // Se for usuário anônimo, faz logout automático
+                if (user.isAnonymous) {
+                    console.log('🔄 Usuário anônimo detectado, fazendo logout...');
+                    logout();
+                    return;
+                }
+                
+                // Se for usuário real, mostra opções
                 const loginForm = document.getElementById('login-form');
                 loginForm.innerHTML = `
                     <div style="text-align: center; padding: 2rem;">
@@ -180,9 +219,9 @@
                         </div>
                         <h3 style="color: #28a745; margin-bottom: 1rem;">Você já está logado!</h3>
                         <p style="color: #6c757d; margin-bottom: 1.5rem;">
-                            Email: <strong>${user.email}</strong>
+                            Email: <strong>${user.email || 'Não disponível'}</strong>
                         </p>
-                        <div style="display: flex; gap: 1rem; justify-content: center;">
+                        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                             <button onclick="window.location.href='dashboard.html'" 
                                     style="padding: 0.75rem 1.5rem; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
                                 🏠 Ir para Dashboard
@@ -192,23 +231,43 @@
                                 🚪 Fazer Logout
                             </button>
                         </div>
+                        <div style="margin-top: 1rem;">
+                            <button onclick="forceLogout()" 
+                                    style="padding: 0.5rem 1rem; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">
+                                🔧 Forçar Logout Completo
+                            </button>
+                        </div>
                     </div>
                 `;
             } else {
-                console.log('ℹ️ Usuário não está logado, mostrando formulário de login');
+                console.log('ℹ️ Nenhum usuário logado, mostrando formulário de login');
             }
         });
 
-        // Função para logout
-        async function logout() {
+        // Função para forçar logout completo (caso haja problemas)
+        async function forceLogout() {
             try {
+                console.log('⚡ Forçando logout completo...');
+                
+                // Múltiplas tentativas de limpeza
                 await firebase.auth().signOut();
-                console.log('✅ Logout realizado com sucesso');
-                // Recarrega a página para mostrar o formulário de login
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Limpa cookies relacionados ao Firebase
+                document.cookie.split(";").forEach(function(c) { 
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                });
+                
+                console.log('✅ Logout forçado concluído');
+                alert('Logout forçado realizado! A página será recarregada.');
+                
+                // Recarrega a página
                 window.location.reload();
+                
             } catch (error) {
-                console.error('❌ Erro no logout:', error);
-                showError('Erro ao fazer logout: ' + error.message);
+                console.error('❌ Erro no logout forçado:', error);
+                alert('Erro no logout forçado. Tente fechar e abrir o navegador.');
             }
         }
 

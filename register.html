@@ -558,9 +558,9 @@
                     throw new Error(result.error || 'Falha ao criar a conta no servidor.');
                 }
 
-                console.log('✅ Usuário criado no backend. Fazendo login no cliente...');
-                // Passo 2: Se o backend criou o usuário, fazer login no cliente
-                await firebase.auth().signInWithEmailAndPassword(loginEmail, loginPassword);
+                console.log('✅ Usuário criado no backend. Fazendo login com token personalizado...');
+                // Passo 2: Se o backend criou o usuário, fazer login usando o token personalizado
+                await firebase.auth().signInWithCustomToken(result.customToken);
                 
                 showSuccess('🎉 Conta criada e login realizado com sucesso!');
                 

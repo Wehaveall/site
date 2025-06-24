@@ -76,9 +76,18 @@ export default async function handler(req, res) {
     await db.collection('users').doc(userRecord.uid).set(customerData);
     console.log(`[API] ✅ Dados do usuário salvos no Firestore.`);
 
-    // 4. Responde ao cliente com sucesso
+    // 4. Gera um token personalizado para login automático
+    console.log(`[API] Gerando token personalizado para login automático...`);
+    const customToken = await adminInstance.auth().createCustomToken(userRecord.uid);
+    console.log(`[API] ✅ Token personalizado gerado`);
+
+    // 5. Responde ao cliente com sucesso
     console.log(`[API] ✅ Processo concluído com sucesso para UID: ${userRecord.uid}`);
-    return res.status(201).json({ success: true, uid: userRecord.uid });
+    return res.status(201).json({ 
+      success: true, 
+      uid: userRecord.uid,
+      customToken: customToken 
+    });
 
   } catch (error) {
     console.error('[API] ❌ Erro ao criar usuário:', error);

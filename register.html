@@ -122,11 +122,19 @@
             padding: 0.75rem;
             border-radius: 8px;
             border-left: 3px solid var(--primary);
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
         }
 
         .requirement-item {
             margin: 0.25rem 0;
-            transition: color 0.2s ease;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .requirement-item:hover {
+            transform: translateX(2px);
         }
 
         .submit-button {
@@ -464,6 +472,9 @@
 
             // Validação inicial
             validateFormAndToggleButton();
+            
+            // Inicializar indicadores de senha
+            updatePasswordRequirements('');
         });
 
         // Manipulador do formulário de registro
@@ -560,22 +571,11 @@
                 symbol: /[:$%#@!*&^()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(password)
             };
 
-            // Atualizar indicadores visuais
-            document.getElementById('req-length').innerHTML = requirements.length ? 
-                '<span style="color: #28a745;">✓ Mínimo 8 caracteres</span>' : 
-                '<span style="color: #dc3545;">✗ Mínimo 8 caracteres</span>';
-                
-            document.getElementById('req-uppercase').innerHTML = requirements.uppercase ? 
-                '<span style="color: #28a745;">✓ Uma letra maiúscula</span>' : 
-                '<span style="color: #dc3545;">✗ Uma letra maiúscula</span>';
-                
-            document.getElementById('req-number').innerHTML = requirements.number ? 
-                '<span style="color: #28a745;">✓ Um número</span>' : 
-                '<span style="color: #dc3545;">✗ Um número</span>';
-                
-            document.getElementById('req-symbol').innerHTML = requirements.symbol ? 
-                '<span style="color: #28a745;">✓ Um caractere especial</span>' : 
-                '<span style="color: #dc3545;">✗ Um caractere especial</span>';
+            // Atualizar indicadores visuais com animação
+            updateRequirement('req-length', requirements.length, 'Mínimo 8 caracteres');
+            updateRequirement('req-uppercase', requirements.uppercase, 'Uma letra maiúscula');
+            updateRequirement('req-number', requirements.number, 'Um número');
+            updateRequirement('req-symbol', requirements.symbol, 'Um caractere especial');
 
             // Alterar cor da borda do campo
             const passwordField = document.getElementById('login-password');
@@ -584,6 +584,31 @@
                 passwordField.style.borderColor = allValid ? '#28a745' : '#dc3545';
             } else {
                 passwordField.style.borderColor = 'rgba(219, 201, 173, 0.3)';
+            }
+        }
+
+        // Função auxiliar para atualizar cada requisito individualmente
+        function updateRequirement(elementId, isValid, text) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+
+            const icon = isValid ? '✓' : '✗';
+            const color = isValid ? '#28a745' : '#dc3545';
+            const bgColor = isValid ? 'rgba(40, 167, 69, 0.1)' : 'rgba(220, 53, 69, 0.1)';
+            
+            element.innerHTML = `<span style="color: ${color}; transition: all 0.3s ease;">${icon} ${text}</span>`;
+            element.style.backgroundColor = bgColor;
+            element.style.borderRadius = '4px';
+            element.style.padding = '0.25rem 0.5rem';
+            element.style.transition = 'all 0.3s ease';
+            
+            // Adicionar pequena animação quando muda de estado
+            if (element.dataset.previousState !== isValid.toString()) {
+                element.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    element.style.transform = 'scale(1)';
+                }, 150);
+                element.dataset.previousState = isValid.toString();
             }
         }
 

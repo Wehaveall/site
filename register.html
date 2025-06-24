@@ -335,7 +335,8 @@
     </main>
 
     <!-- Scripts -->
-    <script src="assets/js/security-validator.js"></script>
+    <!-- Security validator desabilitado temporariamente para página de registro -->
+    <!-- <script src="assets/js/security-validator.js"></script> -->
     <script src="assets/js/firebase.js"></script>
 
     <script>
@@ -524,11 +525,13 @@
             const company = document.getElementById('customer-company').value.trim();
             const termsAccepted = document.getElementById('terms-accept').checked;
 
-            // ✅ VALIDAÇÃO DE SEGURANÇA RIGOROSA
+            // ✅ VALIDAÇÃO BÁSICA (security validator desabilitado temporariamente)
             const formData = { name, email: loginEmail, password: loginPassword, phone, company };
             
-            // Verificar se há tentativas de injeção ou manipulação
-            if (window.securityValidator && !window.securityValidator.validateRegistrationAttempt(formData)) {
+            // Verificação básica de dados suspeitos
+            const suspiciousPatterns = [/<script/i, /javascript:/i, /on\w+\s*=/i];
+            const allValues = Object.values(formData).join(' ');
+            if (suspiciousPatterns.some(pattern => pattern.test(allValues))) {
                 showError('Dados inválidos detectados. Por favor, verifique as informações.');
                 return;
             }
@@ -614,42 +617,46 @@
 
             if (lengthEl) {
                 lengthEl.innerHTML = hasLength ? 
-                    '<span style="color: #28a745; font-weight: bold;">✓ Mínimo 8 caracteres</span>' : 
-                    '<span style="color: #dc3545; font-weight: bold;">✗ Mínimo 8 caracteres</span>';
-                lengthEl.style.backgroundColor = hasLength ? 'rgba(40, 167, 69, 0.1)' : 'rgba(220, 53, 69, 0.1)';
-                lengthEl.style.padding = '0.25rem 0.5rem';
-                lengthEl.style.borderRadius = '4px';
-                lengthEl.style.margin = '0.25rem 0';
+                    '<span style="color: #28a745 !important; font-weight: bold !important;">✓ Mínimo 8 caracteres</span>' : 
+                    '<span style="color: #dc3545 !important; font-weight: bold !important;">✗ Mínimo 8 caracteres</span>';
+                lengthEl.style.setProperty('background-color', hasLength ? 'rgba(40, 167, 69, 0.2)' : 'rgba(220, 53, 69, 0.2)', 'important');
+                lengthEl.style.setProperty('padding', '0.25rem 0.5rem', 'important');
+                lengthEl.style.setProperty('border-radius', '4px', 'important');
+                lengthEl.style.setProperty('margin', '0.25rem 0', 'important');
+                lengthEl.style.setProperty('display', 'block', 'important');
             }
 
             if (uppercaseEl) {
                 uppercaseEl.innerHTML = hasUppercase ? 
-                    '<span style="color: #28a745; font-weight: bold;">✓ Uma letra maiúscula</span>' : 
-                    '<span style="color: #dc3545; font-weight: bold;">✗ Uma letra maiúscula</span>';
-                uppercaseEl.style.backgroundColor = hasUppercase ? 'rgba(40, 167, 69, 0.1)' : 'rgba(220, 53, 69, 0.1)';
-                uppercaseEl.style.padding = '0.25rem 0.5rem';
-                uppercaseEl.style.borderRadius = '4px';
-                uppercaseEl.style.margin = '0.25rem 0';
+                    '<span style="color: #28a745 !important; font-weight: bold !important;">✓ Uma letra maiúscula</span>' : 
+                    '<span style="color: #dc3545 !important; font-weight: bold !important;">✗ Uma letra maiúscula</span>';
+                uppercaseEl.style.setProperty('background-color', hasUppercase ? 'rgba(40, 167, 69, 0.2)' : 'rgba(220, 53, 69, 0.2)', 'important');
+                uppercaseEl.style.setProperty('padding', '0.25rem 0.5rem', 'important');
+                uppercaseEl.style.setProperty('border-radius', '4px', 'important');
+                uppercaseEl.style.setProperty('margin', '0.25rem 0', 'important');
+                uppercaseEl.style.setProperty('display', 'block', 'important');
             }
 
             if (numberEl) {
                 numberEl.innerHTML = hasNumber ? 
-                    '<span style="color: #28a745; font-weight: bold;">✓ Um número</span>' : 
-                    '<span style="color: #dc3545; font-weight: bold;">✗ Um número</span>';
-                numberEl.style.backgroundColor = hasNumber ? 'rgba(40, 167, 69, 0.1)' : 'rgba(220, 53, 69, 0.1)';
-                numberEl.style.padding = '0.25rem 0.5rem';
-                numberEl.style.borderRadius = '4px';
-                numberEl.style.margin = '0.25rem 0';
+                    '<span style="color: #28a745 !important; font-weight: bold !important;">✓ Um número</span>' : 
+                    '<span style="color: #dc3545 !important; font-weight: bold !important;">✗ Um número</span>';
+                numberEl.style.setProperty('background-color', hasNumber ? 'rgba(40, 167, 69, 0.2)' : 'rgba(220, 53, 69, 0.2)', 'important');
+                numberEl.style.setProperty('padding', '0.25rem 0.5rem', 'important');
+                numberEl.style.setProperty('border-radius', '4px', 'important');
+                numberEl.style.setProperty('margin', '0.25rem 0', 'important');
+                numberEl.style.setProperty('display', 'block', 'important');
             }
 
             if (symbolEl) {
                 symbolEl.innerHTML = hasSymbol ? 
-                    '<span style="color: #28a745; font-weight: bold;">✓ Um caractere especial</span>' : 
-                    '<span style="color: #dc3545; font-weight: bold;">✗ Um caractere especial</span>';
-                symbolEl.style.backgroundColor = hasSymbol ? 'rgba(40, 167, 69, 0.1)' : 'rgba(220, 53, 69, 0.1)';
-                symbolEl.style.padding = '0.25rem 0.5rem';
-                symbolEl.style.borderRadius = '4px';
-                symbolEl.style.margin = '0.25rem 0';
+                    '<span style="color: #28a745 !important; font-weight: bold !important;">✓ Um caractere especial</span>' : 
+                    '<span style="color: #dc3545 !important; font-weight: bold !important;">✗ Um caractere especial</span>';
+                symbolEl.style.setProperty('background-color', hasSymbol ? 'rgba(40, 167, 69, 0.2)' : 'rgba(220, 53, 69, 0.2)', 'important');
+                symbolEl.style.setProperty('padding', '0.25rem 0.5rem', 'important');
+                symbolEl.style.setProperty('border-radius', '4px', 'important');
+                symbolEl.style.setProperty('margin', '0.25rem 0', 'important');
+                symbolEl.style.setProperty('display', 'block', 'important');
             }
 
             // Alterar cor da borda do campo

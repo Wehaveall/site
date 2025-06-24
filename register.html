@@ -407,33 +407,6 @@
             return true;
         }
 
-        // Função para criar conta Firebase Auth
-        async function createFirebaseAccount(email, password) {
-            try {
-                console.log('🔐 Criando conta Firebase Auth...');
-                
-                const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
-                const user = userCredential.user;
-                
-                console.log('✅ Conta Firebase criada:', user.uid);
-                return user;
-            } catch (error) {
-                console.error('❌ Erro ao criar conta Firebase:', error);
-                
-                // Traduz erros comuns do Firebase
-                switch (error.code) {
-                    case 'auth/email-already-in-use':
-                        throw new Error('Este e-mail já está em uso. Tente fazer login ou use outro e-mail.');
-                    case 'auth/invalid-email':
-                        throw new Error('E-mail inválido.');
-                    case 'auth/weak-password':
-                        throw new Error('Senha muito fraca. Use pelo menos 8 caracteres, 1 maiúscula, 1 número e 1 caractere especial.');
-                    default:
-                        throw new Error('Erro ao criar conta: ' + error.message);
-                }
-            }
-        }
-
         // Função para validar todos os campos e habilitar/desabilitar o botão
         function validateFormAndToggleButton() {
             const email = document.getElementById('login-email').value.trim();
@@ -549,90 +522,57 @@
             const company = document.getElementById('customer-company').value.trim();
             const termsAccepted = document.getElementById('terms-accept').checked;
 
-            // ✅ VALIDAÇÃO DE SEGURANÇA COMPLETA
-            const formData = { name, email: loginEmail, password: loginPassword, phone, company };
-            
-            // Verificar se há tentativas de injeção ou manipulação
-            if (window.securityValidator && !window.securityValidator.validateRegistrationAttempt(formData)) {
+            // Validações de segurança e de campos (existentes)
+            if (window.securityValidator && !window.securityValidator.validateRegistrationAttempt({ name, email: loginEmail, password: loginPassword, phone, company })) {
                 showError('Dados inválidos detectados. Por favor, verifique as informações.');
                 return;
             }
-
-            // Validações básicas
-            if (!name || !loginEmail || !loginPassword) {
-                showError('Por favor, preencha todos os campos obrigatórios.');
+            if (!name || !loginEmail || !loginPassword || !validatePasswords() || !termsAccepted) {
+                showError('Por favor, preencha todos os campos obrigatórios corretamente e aceite os termos.');
                 return;
             }
 
-            if (!validatePasswords()) {
-                return;
-            }
-
-            if (!termsAccepted) {
-                showError('Por favor, aceite os termos de uso.');
-                return;
-            }
-
-            // Validação rigorosa de email
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(loginEmail) || loginEmail.length > 254) {
-                showError('Por favor, insira um e-mail válido.');
-                return;
-            }
-
-            // Desabilita o botão durante o processamento
             const btn = document.getElementById('complete-registration-btn');
             const originalText = btn.textContent;
             btn.disabled = true;
             btn.textContent = '⏳ Criando conta...';
 
             try {
-                // 1. Cria conta no Firebase Auth
-                console.log('🌐 Tentando criar conta via:', window.location.origin);
-                const firebaseUser = await createFirebaseAccount(loginEmail, loginPassword);
-                
-                // 2. Prepara dados do cliente
-                const customerData = {
-                    name,
-                    email: loginEmail,
-                    phone: phone || null,
-                    company: company || null,
-                    country: "Brasil", // Campo padrão
-                    terms_accepted: true,
-                    terms_accepted_at: new Date().toISOString(),
-                    created_at: firebase.firestore.FieldValue.serverTimestamp(),
-                    
-                    // Campos de licença - iniciam vazios até o pagamento
-                    license_active: false,
-                    license_type: null,
-                    payment_status: 'pending',
-                    pay_method: null,
-                    sub_start: null,
-                    sub_end: null,
-                    last_payment_date: null,
-                    
-                    // Campos técnicos
-                    active_machines: 0,
-                    id: null // Será definido depois se necessário
-                };
+                // Passo 1: Enviar dados para nossa API de backend
+                console.log('Enviando dados para a API de criação de usuário...');
+                const response = await fetch('/api/create-user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: loginEmail,
+                        password: loginPassword,
+                        name,
+                        phone,
+                        company
+                    }),
+                });
 
-                // 3. Salva dados do usuário no Firestore
-                const userRef = db.collection('users').doc(firebaseUser.uid);
-                await userRef.set(customerData);
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Falha ao criar a conta no servidor.');
+                }
+
+                console.log('✅ Usuário criado no backend. Fazendo login no cliente...');
+                // Passo 2: Se o backend criou o usuário, fazer login no cliente
+                await firebase.auth().signInWithEmailAndPassword(loginEmail, loginPassword);
                 
-                // 4. Sucesso!
-                showSuccess('🎉 Conta criada com sucesso!');
+                showSuccess('🎉 Conta criada e login realizado com sucesso!');
                 
-                // 5. Redireciona para página de dashboard
+                // Passo 3: Redirecionar para o dashboard
                 setTimeout(() => {
                     window.location.href = `dashboard.html`;
-                }, 2000);
+                }, 1500);
 
             } catch (error) {
-                console.error("Erro ao completar registro:", error);
+                console.error("Erro no processo de registro:", error);
                 showError('Erro: ' + error.message);
             } finally {
-                // Reabilita o botão
                 btn.disabled = false;
                 btn.textContent = originalText;
             }
@@ -731,10 +671,6 @@
                 passwordField.style.borderColor = 'rgba(219, 201, 173, 0.3)';
             }
         }
-
-
-
-
 
         console.log("🚀 Página de registro simplificada carregada");
     </script>

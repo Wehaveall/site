@@ -1,2 +1,16 @@
+# Firebase
+node_modules/
+firebase-debug.log
+*.log
+
+# Vercel
 .vercel
-node_modules
+
+# Credenciais
+*.json
+*.jsonc
+secrets.js
+
+# Sistema
+.DS_Store
+Thumbs.db

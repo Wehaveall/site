@@ -16,14 +16,13 @@ class SecurityValidator {
     // =====================================
 
     initializeProtections() {
-        // Temporariamente desabilitando proteções que causam problemas
-        // this.preventDevToolsManipulation();
-        // this.preventConsoleManipulation();
+        this.preventDevToolsManipulation();
+        this.preventConsoleManipulationSafe();
         this.validatePageIntegrity();
         this.setupCSRFProtection();
-        // this.monitorDOMChanges();
+        this.monitorDOMChangesSafe();
         
-        console.log('🔒 Proteções de segurança ativadas (modo simplificado)');
+        console.log('🔒 Proteções de segurança ativadas (modo completo)');
     }
 
     // =====================================
@@ -46,7 +45,7 @@ class SecurityValidator {
                 if (!devtools.open) {
                     devtools.open = true;
                     console.warn('🚨 DevTools detectado - Monitoramento ativo');
-                    self.logSecurityEvent('devtools_opened');
+                    self.logSecurityEventSafe('devtools_opened');
                 }
             } else {
                 devtools.open = false;
@@ -60,7 +59,7 @@ class SecurityValidator {
                 (e.ctrlKey && e.shiftKey && e.key === 'C') ||
                 (e.ctrlKey && e.key === 'U')) {
                 e.preventDefault();
-                self.logSecurityEvent('devtools_attempt');
+                self.logSecurityEventSafe('devtools_attempt');
                 return false;
             }
         });
@@ -68,7 +67,7 @@ class SecurityValidator {
         // Bloquear menu de contexto
         document.addEventListener('contextmenu', (e) => {
             e.preventDefault();
-            self.logSecurityEvent('context_menu_attempt');
+            self.logSecurityEventSafe('context_menu_attempt');
         });
     }
 
@@ -76,31 +75,55 @@ class SecurityValidator {
     // 🔐 PROTEÇÃO DO CONSOLE
     // =====================================
 
-    preventConsoleManipulation() {
-        // Sobrescrever console methods críticos
+    preventConsoleManipulationSafe() {
+        // Sobrescrever console methods críticos de forma segura
         const originalLog = console.log;
         const originalError = console.error;
         const originalWarn = console.warn;
         const self = this;
 
-        // Salvar referência original para uso no logSecurityEvent
+        // Salvar referências originais para uso seguro
+        this.originalLog = originalLog;
+        this.originalError = originalError;
         this.originalWarn = originalWarn;
 
+        // Flag para evitar loops recursivos
+        this.loggingSecurityEvent = false;
+
+        // Interceptar console.log apenas se não estiver logando evento de segurança
         console.log = (...args) => {
-            self.logSecurityEvent('console_access');
+            if (!self.loggingSecurityEvent) {
+                self.logSecurityEventSafe('console_access');
+            }
             return originalLog.apply(console, args);
         };
 
-        // Detectar tentativas de execução de código no console
+        // Detectar tentativas de modificação do console (sem interceptar acesso de leitura)
+        let consoleAccessCount = 0;
+        const originalConsole = window.console;
+        
         Object.defineProperty(window, 'console', {
             get() {
-                self.logSecurityEvent('console_property_access');
-                return console;
+                consoleAccessCount++;
+                // Log apenas se houver muitos acessos suspeitos (mais de 50 por minuto)
+                if (consoleAccessCount > 50 && !self.loggingSecurityEvent) {
+                    self.logSecurityEventSafe('excessive_console_access');
+                    consoleAccessCount = 0; // Reset counter
+                }
+                return originalConsole;
             },
-            set() {
-                self.logSecurityEvent('console_override_attempt');
+            set(value) {
+                if (!self.loggingSecurityEvent) {
+                    self.logSecurityEventSafe('console_override_attempt');
+                }
+                return value;
             }
         });
+
+        // Reset counter a cada minuto
+        setInterval(() => {
+            consoleAccessCount = 0;
+        }, 60000);
     }
 
     // =====================================
@@ -120,7 +143,7 @@ class SecurityValidator {
         criticalElements.forEach(selector => {
             const elements = document.querySelectorAll(selector);
             if (elements.length === 0) {
-                self.logSecurityEvent('critical_element_missing', { selector });
+                self.logSecurityEventSafe('critical_element_missing', { selector });
             }
         });
 
@@ -136,7 +159,7 @@ class SecurityValidator {
         const forms = document.querySelectorAll('form');
         
         if (paymentButtons.length === 0) {
-            this.logSecurityEvent('payment_buttons_removed');
+            this.logSecurityEventSafe('payment_buttons_removed');
             this.blockUserActions('Elementos críticos foram removidos');
         }
 
@@ -144,7 +167,7 @@ class SecurityValidator {
         const scripts = document.querySelectorAll('script');
         scripts.forEach(script => {
             if (script.src && !this.isAllowedScript(script.src)) {
-                this.logSecurityEvent('unauthorized_script', { src: script.src });
+                this.logSecurityEventSafe('unauthorized_script', { src: script.src });
                 script.remove();
             }
         });
@@ -194,36 +217,57 @@ class SecurityValidator {
     // 👁️ MONITORAMENTO DE MUDANÇAS NO DOM
     // =====================================
 
-    monitorDOMChanges() {
+    monitorDOMChangesSafe() {
         const self = this;
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                // Detectar injeção de scripts maliciosos
-                if (mutation.type === 'childList') {
-                    mutation.addedNodes.forEach((node) => {
-                        if (node.nodeType === Node.ELEMENT_NODE) {
-                            if (node.tagName === 'SCRIPT') {
-                                self.validateAddedScript(node);
-                            }
-                            
-                            // Verificar se há tentativas de modificar formulários
-                            if (node.tagName === 'FORM' || node.querySelector('form')) {
-                                self.logSecurityEvent('form_injection_attempt');
-                            }
-                        }
-                    });
-                }
+        let mutationCount = 0;
+        let lastMutationTime = Date.now();
 
-                // Detectar modificações em atributos críticos
-                if (mutation.type === 'attributes') {
-                    const target = mutation.target;
-                    if (target.classList.contains('payment-option') || 
-                        target.tagName === 'FORM') {
-                        self.logSecurityEvent('critical_attribute_modified', {
-                            element: target.tagName,
-                            attribute: mutation.attributeName
+        const observer = new MutationObserver((mutations) => {
+            const now = Date.now();
+            
+            // Rate limiting: máximo 100 mutações por segundo
+            if (now - lastMutationTime < 1000) {
+                mutationCount += mutations.length;
+                if (mutationCount > 100) {
+                    self.logSecurityEventSafe('excessive_dom_mutations');
+                    return; // Ignorar mutações excessivas
+                }
+            } else {
+                mutationCount = 0;
+                lastMutationTime = now;
+            }
+
+            mutations.forEach((mutation) => {
+                try {
+                    // Detectar injeção de scripts maliciosos
+                    if (mutation.type === 'childList') {
+                        mutation.addedNodes.forEach((node) => {
+                            if (node.nodeType === Node.ELEMENT_NODE) {
+                                if (node.tagName === 'SCRIPT') {
+                                    self.validateAddedScriptSafe(node);
+                                }
+                                
+                                // Verificar se há tentativas de modificar formulários
+                                if (node.tagName === 'FORM' || (node.querySelector && node.querySelector('form'))) {
+                                    self.logSecurityEventSafe('form_injection_attempt');
+                                }
+                            }
                         });
                     }
+
+                    // Detectar modificações em atributos críticos apenas em elementos importantes
+                    if (mutation.type === 'attributes' && mutation.target) {
+                        const target = mutation.target;
+                        if (target.classList && target.classList.contains('payment-option') || 
+                            target.tagName === 'FORM') {
+                            self.logSecurityEventSafe('critical_attribute_modified', {
+                                element: target.tagName,
+                                attribute: mutation.attributeName
+                            });
+                        }
+                    }
+                } catch (error) {
+                    // Silenciar erros para evitar problemas
                 }
             });
         });
@@ -237,28 +281,38 @@ class SecurityValidator {
     }
 
     validateAddedScript(scriptElement) {
-        const src = scriptElement.src;
-        const content = scriptElement.textContent;
+        this.validateAddedScriptSafe(scriptElement);
+    }
 
-        // Verificar se é um script permitido
-        if (src && !this.isAllowedScript(src)) {
-            this.logSecurityEvent('malicious_script_blocked', { src });
-            scriptElement.remove();
-            return;
-        }
+    validateAddedScriptSafe(scriptElement) {
+        try {
+            const src = scriptElement.src;
+            const content = scriptElement.textContent;
 
-        // Verificar conteúdo suspeito
-        const suspiciousPatterns = [
-            /eval\s*\(/i,
-            /document\.write/i,
-            /innerHTML\s*=/i,
-            /window\.location/i,
-            /bitcoin|crypto|wallet/i
-        ];
+            // Verificar se é um script permitido
+            if (src && !this.isAllowedScript(src)) {
+                this.logSecurityEventSafe('malicious_script_blocked', { src });
+                scriptElement.remove();
+                return;
+            }
 
-        if (suspiciousPatterns.some(pattern => pattern.test(content))) {
-            this.logSecurityEvent('suspicious_script_content', { content: content.substring(0, 100) });
-            scriptElement.remove();
+            // Verificar conteúdo suspeito
+            const suspiciousPatterns = [
+                /eval\s*\(/i,
+                /document\.write/i,
+                /innerHTML\s*=/i,
+                /window\.location/i,
+                /bitcoin|crypto|wallet/i
+            ];
+
+            if (content && suspiciousPatterns.some(pattern => pattern.test(content))) {
+                this.logSecurityEventSafe('suspicious_script_content', { 
+                    content: content.substring(0, 100) 
+                });
+                scriptElement.remove();
+            }
+        } catch (error) {
+            // Silenciar erros para evitar problemas
         }
     }
 
@@ -289,7 +343,7 @@ class SecurityValidator {
         }
 
         if (violations.length > 0) {
-            this.logSecurityEvent('form_validation_failed', { violations });
+            this.logSecurityEventSafe('form_validation_failed', { violations });
             return false;
         }
 
@@ -326,30 +380,47 @@ class SecurityValidator {
     // =====================================
 
     logSecurityEvent(eventType, details = {}) {
-        const event = {
-            type: eventType,
-            timestamp: new Date().toISOString(),
-            userAgent: navigator.userAgent,
-            url: window.location.href,
-            details
-        };
+        this.logSecurityEventSafe(eventType, details);
+    }
 
-        // Usar originalWarn para evitar loop recursivo
-        if (this.originalWarn) {
-            this.originalWarn.call(console, '🚨 Evento de Segurança:', event);
+    logSecurityEventSafe(eventType, details = {}) {
+        // Evitar loops recursivos
+        if (this.loggingSecurityEvent) {
+            return;
         }
 
-        // Enviar para servidor (implementar se necessário)
-        // this.sendSecurityEvent(event);
+        this.loggingSecurityEvent = true;
 
-        // Incrementar contador de tentativas suspeitas
-        const key = `${eventType}_${Date.now()}`;
-        this.attempts.set(key, event);
+        try {
+            const event = {
+                type: eventType,
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent,
+                url: window.location.href,
+                details
+            };
 
-        // Limpar eventos antigos
-        setTimeout(() => {
-            this.attempts.delete(key);
-        }, 300000); // 5 minutos
+            // Usar método original do console para evitar interceptação
+            if (this.originalWarn) {
+                this.originalWarn.call(console, '🚨 Evento de Segurança:', event);
+            }
+
+            // Enviar para servidor (implementar se necessário)
+            // this.sendSecurityEvent(event);
+
+            // Incrementar contador de tentativas suspeitas
+            const key = `${eventType}_${Date.now()}`;
+            this.attempts.set(key, event);
+
+            // Limpar eventos antigos
+            setTimeout(() => {
+                this.attempts.delete(key);
+            }, 300000); // 5 minutos
+        } catch (error) {
+            // Silenciar erros para evitar loops
+        } finally {
+            this.loggingSecurityEvent = false;
+        }
     }
 
     blockUserActions(reason) {
@@ -375,7 +446,7 @@ class SecurityValidator {
         
         const count = this.attempts.get(key) || 0;
         if (count >= this.maxAttempts) {
-            this.logSecurityEvent('rate_limit_exceeded', { action });
+            this.logSecurityEventSafe('rate_limit_exceeded', { action });
             return false;
         }
 
@@ -395,7 +466,7 @@ class SecurityValidator {
 
         // Validar dados
         if (this.containsSuspiciousContent(JSON.stringify(paymentData))) {
-            this.logSecurityEvent('payment_data_suspicious');
+            this.logSecurityEventSafe('payment_data_suspicious');
             return { valid: false, reason: 'suspicious_data' };
         }
 
@@ -414,4 +485,6 @@ const securityValidator = new SecurityValidator();
 window.SecurityValidator = SecurityValidator;
 window.securityValidator = securityValidator;
 
-console.log('🔒 Sistema de segurança frontend inicializado'); 
+console.log('🔒 Sistema de segurança frontend inicializado');
+console.log('🛡️ Proteções ativas: DevTools, Console, DOM, CSRF, Rate Limiting');
+console.log('✅ Todas as proteções foram restauradas com melhorias de estabilidade'); 

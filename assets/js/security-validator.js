@@ -35,6 +35,7 @@ class SecurityValidator {
         };
 
         const threshold = 160;
+        const self = this;
 
         setInterval(() => {
             if (window.outerHeight - window.innerHeight > threshold || 
@@ -42,7 +43,7 @@ class SecurityValidator {
                 if (!devtools.open) {
                     devtools.open = true;
                     console.warn('🚨 DevTools detectado - Monitoramento ativo');
-                    this.logSecurityEvent('devtools_opened');
+                    self.logSecurityEvent('devtools_opened');
                 }
             } else {
                 devtools.open = false;
@@ -56,7 +57,7 @@ class SecurityValidator {
                 (e.ctrlKey && e.shiftKey && e.key === 'C') ||
                 (e.ctrlKey && e.key === 'U')) {
                 e.preventDefault();
-                this.logSecurityEvent('devtools_attempt');
+                self.logSecurityEvent('devtools_attempt');
                 return false;
             }
         });
@@ -64,7 +65,7 @@ class SecurityValidator {
         // Bloquear menu de contexto
         document.addEventListener('contextmenu', (e) => {
             e.preventDefault();
-            this.logSecurityEvent('context_menu_attempt');
+            self.logSecurityEvent('context_menu_attempt');
         });
     }
 
@@ -77,20 +78,21 @@ class SecurityValidator {
         const originalLog = console.log;
         const originalError = console.error;
         const originalWarn = console.warn;
+        const self = this;
 
         console.log = (...args) => {
-            this.logSecurityEvent('console_access');
+            self.logSecurityEvent('console_access');
             return originalLog.apply(console, args);
         };
 
         // Detectar tentativas de execução de código no console
         Object.defineProperty(window, 'console', {
             get() {
-                this.logSecurityEvent('console_property_access');
+                self.logSecurityEvent('console_property_access');
                 return console;
             },
             set() {
-                this.logSecurityEvent('console_override_attempt');
+                self.logSecurityEvent('console_override_attempt');
             }
         });
     }
@@ -107,17 +109,18 @@ class SecurityValidator {
             'form#customer-registration-form',
             '.payment-option'
         ];
+        const self = this;
 
         criticalElements.forEach(selector => {
             const elements = document.querySelectorAll(selector);
             if (elements.length === 0) {
-                this.logSecurityEvent('critical_element_missing', { selector });
+                self.logSecurityEvent('critical_element_missing', { selector });
             }
         });
 
         // Verificar integridade do DOM a cada 30 segundos
         setInterval(() => {
-            this.checkDOMIntegrity();
+            self.checkDOMIntegrity();
         }, 30000);
     }
 
@@ -186,6 +189,7 @@ class SecurityValidator {
     // =====================================
 
     monitorDOMChanges() {
+        const self = this;
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 // Detectar injeção de scripts maliciosos
@@ -193,12 +197,12 @@ class SecurityValidator {
                     mutation.addedNodes.forEach((node) => {
                         if (node.nodeType === Node.ELEMENT_NODE) {
                             if (node.tagName === 'SCRIPT') {
-                                this.validateAddedScript(node);
+                                self.validateAddedScript(node);
                             }
                             
                             // Verificar se há tentativas de modificar formulários
                             if (node.tagName === 'FORM' || node.querySelector('form')) {
-                                this.logSecurityEvent('form_injection_attempt');
+                                self.logSecurityEvent('form_injection_attempt');
                             }
                         }
                     });
@@ -209,7 +213,7 @@ class SecurityValidator {
                     const target = mutation.target;
                     if (target.classList.contains('payment-option') || 
                         target.tagName === 'FORM') {
-                        this.logSecurityEvent('critical_attribute_modified', {
+                        self.logSecurityEvent('critical_attribute_modified', {
                             element: target.tagName,
                             attribute: mutation.attributeName
                         });

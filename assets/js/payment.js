@@ -135,6 +135,20 @@ async function processPayment(method) {
         return;
     }
 
+    // ✅ VALIDAÇÃO DE SEGURANÇA ANTES DO PAGAMENTO
+    if (window.securityValidator) {
+        const validationResult = window.securityValidator.validatePaymentAttempt({
+            method,
+            userEmail: state.user.email,
+            timestamp: Date.now()
+        });
+
+        if (!validationResult.valid) {
+            showError(`Pagamento bloqueado: ${validationResult.reason === 'rate_limit' ? 'Muitas tentativas' : 'Dados suspeitos'}`);
+            return;
+        }
+    }
+
     state.processing = true;
     state.selectedMethod = method;
 

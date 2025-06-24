@@ -77,17 +77,22 @@
                             <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;">
                                 Senha *
                             </label>
-                            <input type="password" id="login-password" required minlength="6"
+                            <input type="password" id="login-password" required minlength="8"
                                    style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
-                                   placeholder="Mínimo 6 caracteres">
-                            <small style="color: var(--text-light);">Escolha uma senha segura com pelo menos 6 caracteres</small>
+                                   placeholder="Mínimo 8 caracteres">
+                            <div id="password-requirements" style="margin-top: 0.5rem; font-size: 0.85rem;">
+                                <div id="req-length" style="color: #dc3545;">✗ Mínimo 8 caracteres</div>
+                                <div id="req-uppercase" style="color: #dc3545;">✗ Uma letra maiúscula</div>
+                                <div id="req-number" style="color: #dc3545;">✗ Um número</div>
+                                <div id="req-symbol" style="color: #dc3545;">✗ Um caractere especial</div>
+                            </div>
                         </div>
 
                         <div style="margin-bottom: 1rem;">
                             <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;">
                                 Confirmar Senha *
                             </label>
-                            <input type="password" id="confirm-password" required minlength="6"
+                            <input type="password" id="confirm-password" required minlength="8"
                                    style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
                                    placeholder="Digite a senha novamente">
                         </div>
@@ -147,6 +152,7 @@
     </main>
 
     <!-- Scripts -->
+    <script src="assets/js/security-validator.js"></script>
     <script src="assets/js/firebase.js"></script>
 
     <script>
@@ -159,7 +165,7 @@
             alert('❌ ' + message);
         }
 
-        // Função para validar senhas
+        // Função para validar senhas com novos requisitos
         function validatePasswords() {
             const password = document.getElementById('login-password').value;
             const confirmPassword = document.getElementById('confirm-password').value;
@@ -169,8 +175,24 @@
                 return false;
             }
             
-            if (password.length < 6) {
-                showError('A senha deve ter pelo menos 6 caracteres.');
+            // Validação rigorosa da senha
+            if (password.length < 8) {
+                showError('A senha deve ter pelo menos 8 caracteres.');
+                return false;
+            }
+            
+            if (!/[A-Z]/.test(password)) {
+                showError('A senha deve conter pelo menos uma letra maiúscula.');
+                return false;
+            }
+            
+            if (!/[0-9]/.test(password)) {
+                showError('A senha deve conter pelo menos um número.');
+                return false;
+            }
+            
+            if (!/[:$%#@!*&^()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(password)) {
+                showError('A senha deve conter pelo menos um caractere especial.');
                 return false;
             }
             
@@ -199,7 +221,7 @@
                     case 'auth/invalid-email':
                         throw new Error('Email inválido.');
                     case 'auth/weak-password':
-                        throw new Error('Senha muito fraca. Use pelo menos 6 caracteres.');
+                        throw new Error('Senha muito fraca. Use pelo menos 8 caracteres, 1 maiúscula, 1 número e 1 caractere especial.');
                     default:
                         throw new Error('Erro ao criar conta: ' + error.message);
                 }
@@ -222,7 +244,16 @@
             const company = document.getElementById('customer-company').value.trim();
             const termsAccepted = document.getElementById('terms-accept').checked;
 
-            // Validações
+            // ✅ VALIDAÇÃO DE SEGURANÇA RIGOROSA
+            const formData = { name, email: loginEmail, password: loginPassword, phone, company };
+            
+            // Verificar se há tentativas de injeção ou manipulação
+            if (window.securityValidator && !window.securityValidator.validateRegistrationAttempt(formData)) {
+                showError('Dados inválidos detectados. Por favor, verifique as informações.');
+                return;
+            }
+
+            // Validações básicas
             if (!name || !loginEmail || !loginPassword) {
                 showError('Por favor, preencha todos os campos obrigatórios.');
                 return;
@@ -237,9 +268,9 @@
                 return;
             }
 
-            // Validação básica de email
+            // Validação rigorosa de email
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(loginEmail)) {
+            if (!emailRegex.test(loginEmail) || loginEmail.length > 254) {
                 showError('Por favor, insira um email válido.');
                 return;
             }
@@ -287,6 +318,47 @@
             }
         });
 
+        // Função para atualizar indicadores de requisitos da senha
+        function updatePasswordRequirements(password) {
+            const requirements = {
+                length: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                number: /[0-9]/.test(password),
+                symbol: /[:$%#@!*&^()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(password)
+            };
+
+            // Atualizar indicadores visuais
+            document.getElementById('req-length').innerHTML = requirements.length ? 
+                '<span style="color: #28a745;">✓ Mínimo 8 caracteres</span>' : 
+                '<span style="color: #dc3545;">✗ Mínimo 8 caracteres</span>';
+                
+            document.getElementById('req-uppercase').innerHTML = requirements.uppercase ? 
+                '<span style="color: #28a745;">✓ Uma letra maiúscula</span>' : 
+                '<span style="color: #dc3545;">✗ Uma letra maiúscula</span>';
+                
+            document.getElementById('req-number').innerHTML = requirements.number ? 
+                '<span style="color: #28a745;">✓ Um número</span>' : 
+                '<span style="color: #dc3545;">✗ Um número</span>';
+                
+            document.getElementById('req-symbol').innerHTML = requirements.symbol ? 
+                '<span style="color: #28a745;">✓ Um caractere especial</span>' : 
+                '<span style="color: #dc3545;">✗ Um caractere especial</span>';
+
+            // Alterar cor da borda do campo
+            const passwordField = document.getElementById('login-password');
+            if (password.length > 0) {
+                const allValid = Object.values(requirements).every(req => req);
+                passwordField.style.borderColor = allValid ? '#28a745' : '#dc3545';
+            } else {
+                passwordField.style.borderColor = '#e9ecef';
+            }
+        }
+
+        // Validação em tempo real da senha
+        document.getElementById('login-password').addEventListener('input', function() {
+            updatePasswordRequirements(this.value);
+        });
+
         // Validação em tempo real das senhas
         document.getElementById('confirm-password').addEventListener('input', function() {
             const password = document.getElementById('login-password').value;
@@ -294,6 +366,8 @@
             
             if (confirmPassword && password !== confirmPassword) {
                 this.style.borderColor = '#dc3545';
+            } else if (confirmPassword && password === confirmPassword) {
+                this.style.borderColor = '#28a745';
             } else {
                 this.style.borderColor = '#e9ecef';
             }

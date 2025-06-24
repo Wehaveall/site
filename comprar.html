@@ -206,60 +206,9 @@
 
     <!-- Mercado Pago Integration Script -->
     <script>
-        // Função para logout
-        async function logout() {
-            try {
-                await firebase.auth().signOut();
-                console.log('✅ Logout realizado com sucesso');
-                updateNavMenu(null);
-                alert('Logout realizado com sucesso!');
-                window.location.href = 'index.html';
-            } catch (error) {
-                console.error('❌ Erro no logout:', error);
-                alert('Erro ao fazer logout: ' + error.message);
-            }
-        }
+        // Funções movidas para payment.js para evitar duplicação
 
-        // Função para atualizar o menu baseado no status de autenticação
-        function updateNavMenu(user) {
-            const navRegister = document.getElementById('nav-register');
-            const navLogin = document.getElementById('nav-login');
-            const navDashboard = document.getElementById('nav-dashboard');
-            const navLogout = document.getElementById('nav-logout');
-
-            if (user) {
-                navRegister.style.display = 'none';
-                navLogin.style.display = 'none';
-                navDashboard.style.display = 'block';
-                navLogout.style.display = 'block';
-            } else {
-                navRegister.style.display = 'block';
-                navLogin.style.display = 'block';
-                navDashboard.style.display = 'none';
-                navLogout.style.display = 'none';
-            }
-        }
-
-        // Listener para mudanças no estado de autenticação
-        firebase.auth().onAuthStateChanged(function(user) {
-            updateNavMenu(user);
-            
-            // Mostrar/esconder aviso de autenticação e info do usuário
-            const authWarning = document.getElementById('auth-warning');
-            const userInfo = document.getElementById('user-info');
-            const userEmail = document.getElementById('user-email');
-            
-            if (user) {
-                if (authWarning) authWarning.style.display = 'none';
-                if (userInfo) {
-                    userInfo.style.display = 'block';
-                    if (userEmail) userEmail.textContent = user.email;
-                }
-            } else {
-                if (authWarning) authWarning.style.display = 'block';
-                if (userInfo) userInfo.style.display = 'none';
-            }
-        });
+        // Listener movido para payment.js para evitar conflitos
 
         document.addEventListener('DOMContentLoaded', () => {
             console.log("Página de compra inicializada");

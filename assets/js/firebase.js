@@ -22,6 +22,10 @@ if (!firebase.apps || !firebase.apps.length) {
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+// Expor globalmente para outros scripts
+window.auth = auth;
+window.db = db;
+
 // Configurar persistência de autenticação para SESSION (apenas durante a sessão do navegador)
 auth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
     .then(() => {

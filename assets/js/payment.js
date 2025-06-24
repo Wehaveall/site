@@ -127,12 +127,20 @@ async function processPayment(method) {
     if (state.processing) return;
 
     // ✅ VERIFICAÇÃO DE AUTENTICAÇÃO OBRIGATÓRIA
-    if (!state.user) {
+    const currentUser = window.auth ? window.auth.currentUser : null;
+    if (!state.user && !currentUser) {
+        console.log('❌ Usuário não logado, bloqueando pagamento');
         showError('Você precisa estar logado para fazer um pagamento. Por favor, faça login ou cadastre-se primeiro.');
         setTimeout(() => {
             window.location.href = 'login.html';
         }, 2000);
         return;
+    }
+
+    // Se currentUser existe mas state.user não, atualizar state.user
+    if (currentUser && !state.user) {
+        state.user = currentUser;
+        console.log('🔄 Sincronizando state.user com currentUser');
     }
 
     // ✅ VALIDAÇÃO DE SEGURANÇA ANTES DO PAGAMENTO
@@ -314,12 +322,71 @@ async function registerUser(userData) {
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Página de compra carregada");
 
+    // Aguardar Firebase estar pronto
+    if (!window.auth || !window.db) {
+        console.log('⏳ Firebase não está pronto, aguardando...');
+        setTimeout(() => {
+            location.reload();
+        }, 1000);
+        return;
+    }
+
+    const auth = window.auth;
+    const db = window.db;
+
+    // Função para logout (expor globalmente)
+    window.logout = async function() {
+        try {
+            await auth.signOut();
+            console.log('✅ Logout realizado com sucesso');
+            alert('Logout realizado com sucesso!');
+            window.location.href = 'index.html';
+        } catch (error) {
+            console.error('❌ Erro no logout:', error);
+            alert('Erro ao fazer logout: ' + error.message);
+        }
+    };
+
+    // Função para atualizar o menu baseado no status de autenticação
+    function updateNavMenu(user) {
+        const navRegister = document.getElementById('nav-register');
+        const navLogin = document.getElementById('nav-login');
+        const navDashboard = document.getElementById('nav-dashboard');
+        const navLogout = document.getElementById('nav-logout');
+
+        if (user) {
+            if (navRegister) navRegister.style.display = 'none';
+            if (navLogin) navLogin.style.display = 'none';
+            if (navDashboard) navDashboard.style.display = 'block';
+            if (navLogout) navLogout.style.display = 'block';
+        } else {
+            if (navRegister) navRegister.style.display = 'block';
+            if (navLogin) navLogin.style.display = 'block';
+            if (navDashboard) navDashboard.style.display = 'none';
+            if (navLogout) navLogout.style.display = 'none';
+        }
+    }
+
     // Monitora auth
     auth.onAuthStateChanged((user) => {
         state.user = user;
+        
+        // Atualizar menu
+        updateNavMenu(user);
+        
+        // Mostrar/esconder aviso de autenticação e info do usuário
+        const authWarning = document.getElementById('auth-warning');
+        const userInfo = document.getElementById('user-info');
+        const userEmail = document.getElementById('user-email');
+        
         if (user) {
-            console.log('Usuário autenticado:', user.uid);
-
+            console.log('✅ Usuário autenticado:', user.uid);
+            if (authWarning) authWarning.style.display = 'none';
+            if (userInfo) {
+                userInfo.style.display = 'block';
+                if (userEmail) userEmail.textContent = user.email;
+            }
+            
             // Verificar se o documento existe antes de tentar atualizar
             db.collection('users')
                 .doc(user.uid)
@@ -337,6 +404,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 .catch(error => {
                     console.warn('Erro ao verificar/atualizar último login:', error);
                 });
+        } else {
+            console.log('ℹ️ Usuário não autenticado');
+            if (authWarning) authWarning.style.display = 'block';
+            if (userInfo) userInfo.style.display = 'none';
         }
     });
 

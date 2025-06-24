@@ -92,6 +92,12 @@
                     <!-- Payment Section -->
                     <div class="payment-section">
                         <h2>Formas de Pagamento</h2>
+                        <div id="auth-warning" class="auth-warning" style="display: none; background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; color: #856404;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Atenção:</strong> Você precisa estar logado para fazer um pagamento. 
+                            <a href="login.html" style="color: #856404; text-decoration: underline;">Clique aqui para fazer login</a> ou 
+                            <a href="register.html" style="color: #856404; text-decoration: underline;">cadastre-se</a>.
+                        </div>
                         <div class="payment-grid">
                             <button class="payment-option" data-method="pix">
                                 <i class="fa-solid fa-qrcode"></i>
@@ -114,49 +120,13 @@
                             <!-- Mercado Pago button will be dynamically inserted here -->
                         </div>
 
-                        <!-- Registration Form (Hidden until payment is completed) -->
-                        <form id="register-form" class="hidden">
-                            <h3>Finalize seu cadastro</h3>
-                            <div class="form-group">
-                                <label for="name">Nome</label>
-                                <input type="text" id="name" required />
-                                <div class="error-message" id="name-error"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" id="email" required />
-                                <div class="error-message" id="email-error"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="country">País</label>
-                                <input type="text" id="country" required value="Brasil" />
-                                <div class="error-message" id="country-error"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="password">Senha</label>
-                                <input type="password" id="password" required />
-                                <div class="password-strength">
-                                    <div class="strength-meter">
-                                        <div class="meter-bar"></div>
-                                    </div>
-                                    <div class="strength-text"></div>
-                                </div>
-                                <div class="error-message" id="password-error"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="confirm-password">Confirme a Senha</label>
-                                <input type="password" id="confirm-password" required />
-                                <div class="error-message" id="confirm-password-error"></div>
-                            </div>
-
-                            <button type="submit" class="btn-hero" id="register-btn">
-                                Finalizar cadastro
-                            </button>
-                        </form>
+                        <!-- Informações do usuário logado -->
+                        <div id="user-info" class="user-info" style="display: none; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; padding: 1rem; margin-top: 1rem; color: #155724;">
+                            <i class="fas fa-user-check"></i>
+                            <strong>Logado como:</strong> <span id="user-email"></span>
+                            <br>
+                            <small>Você pode prosseguir com o pagamento.</small>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -272,6 +242,22 @@
         // Listener para mudanças no estado de autenticação
         firebase.auth().onAuthStateChanged(function(user) {
             updateNavMenu(user);
+            
+            // Mostrar/esconder aviso de autenticação e info do usuário
+            const authWarning = document.getElementById('auth-warning');
+            const userInfo = document.getElementById('user-info');
+            const userEmail = document.getElementById('user-email');
+            
+            if (user) {
+                if (authWarning) authWarning.style.display = 'none';
+                if (userInfo) {
+                    userInfo.style.display = 'block';
+                    if (userEmail) userEmail.textContent = user.email;
+                }
+            } else {
+                if (authWarning) authWarning.style.display = 'block';
+                if (userInfo) userInfo.style.display = 'none';
+            }
         });
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -310,65 +296,8 @@
             alert('❌ ' + message);
         }
 
-        // Manipulador do formulário de dados do cliente
-        document.getElementById('customer-data-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            const name = document.getElementById('customer-name').value.trim();
-            const email = document.getElementById('customer-email').value.trim();
-            const phone = document.getElementById('customer-phone').value.trim();
-            const company = document.getElementById('customer-company').value.trim();
-
-            if (!name || !email) {
-                showError('Por favor, preencha pelo menos o nome e email.');
-                return;
-            }
-
-            // Validação básica de email
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                showError('Por favor, insira um email válido.');
-                return;
-            }
-
-            // Salva os dados do cliente
-            const customerData = {
-                name,
-                email,
-                phone: phone || null,
-                company: company || null
-            };
-
-            console.log("💾 Dados do cliente coletados:", customerData);
-            state.customerData = customerData;
-
-            // Desabilita o botão durante o processamento
-            const btn = document.getElementById('proceed-payment-btn');
-            const originalText = btn.textContent;
-            btn.disabled = true;
-            btn.textContent = '⏳ Processando...';
-
-            try {
-                // Abre o modal PIX com os dados do cliente
-                pixModal.show(customerData);
-            } catch (error) {
-                console.error("Erro ao processar pagamento:", error);
-                showError('Erro ao processar pagamento. Tente novamente.');
-            } finally {
-                // Reabilita o botão
-                btn.disabled = false;
-                btn.textContent = originalText;
-            }
-        });
-
-        // Efeito hover no botão
-        document.getElementById('proceed-payment-btn').addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px)';
-        });
-
-        document.getElementById('proceed-payment-btn').addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
+        // Código de inicialização limpo - formulário de cadastro removido
+        // A autenticação é obrigatória antes do pagamento
 
         // Inicialização
         console.log("🚀 Página de compra carregada - Sistema de segurança ativo");

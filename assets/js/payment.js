@@ -126,13 +126,28 @@ function validateForm() {
 async function processPayment(method) {
     if (state.processing) return;
 
+    // ✅ VERIFICAÇÃO DE AUTENTICAÇÃO OBRIGATÓRIA
+    if (!state.user) {
+        showError('Você precisa estar logado para fazer um pagamento. Por favor, faça login ou cadastre-se primeiro.');
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 2000);
+        return;
+    }
+
     state.processing = true;
     state.selectedMethod = method;
 
     try {
         if (method === 'pix') {
             // Abre o modal do PIX que terá a lógica de geração e checagem
-            pixModal.show();
+            // Passa os dados do usuário logado para o PIX
+            const userData = {
+                name: state.user.displayName || 'Usuário',
+                email: state.user.email,
+                uid: state.user.uid
+            };
+            pixModal.show(userData);
         } else if (method === 'cartao') {
             // Implementação com cartão de crédito usando Mercado Pago
             showLoading(`Processando pagamento via cartão...`);
@@ -324,39 +339,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Formulário
-    const registerForm = document.getElementById('register-form');
-    if (registerForm) {
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+    // Formulário de cadastro removido - autenticação obrigatória
 
-            if (!validateForm()) return;
-
-            const formData = {
-                name: document.getElementById('name').value.trim(),
-                email: document.getElementById('email').value.trim(),
-                country: document.getElementById('country').value.trim(),
-                password: document.getElementById('password').value,
-                payMethod: state.selectedMethod
-            };
-            console.log("Dados do formulário:", { ...formData, password: '***' });
-
-            await registerUser(formData);
-        });
-    }
-
-    // Validação em tempo real
-    ['name', 'email', 'password', 'confirm-password'].forEach(fieldId => {
-        const input = document.getElementById(fieldId);
-        if (input) {
-            input.addEventListener('input', () => {
-                clearFieldError(fieldId);
-                if (fieldId === 'password') {
-                    validatePassword(input.value);
-                }
-            });
-        }
-    });
+    // Validação removida - não há mais formulário de cadastro na página
 
     // Fechar modais ao clicar fora deles
     document.querySelectorAll('.modal').forEach(modal => {

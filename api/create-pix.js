@@ -35,10 +35,15 @@ module.exports = async (req, res) => {
     try {
         console.log('🎯 VERCEL: Criando pagamento PIX...');
 
+        // Configurar data de expiração para 20 minutos
+        const expirationDate = new Date();
+        expirationDate.setMinutes(expirationDate.getMinutes() + 20);
+
         const body = {
             transaction_amount: 49.90,
             description: 'Licença Anual do Atalho - Software de Expansão de Texto',
             payment_method_id: 'pix',
+            date_of_expiration: expirationDate.toISOString(),
             payer: {
                 email: 'cliente@atalho.me',
                 first_name: 'Cliente',

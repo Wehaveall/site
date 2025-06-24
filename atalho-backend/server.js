@@ -65,11 +65,16 @@ app.post('/api/create-pix', async (req, res) => {
         const idempotencyKey = generateIdempotencyKey();
         console.log('Idempotency Key gerada:', idempotencyKey);
 
+        // Configurar data de expiração para 20 minutos
+        const expirationDate = new Date();
+        expirationDate.setMinutes(expirationDate.getMinutes() + 20);
+
         // Montando o corpo da requisição para PRODUÇÃO
         const paymentData = {
             transaction_amount: 49.90,
             description: 'Licença Anual do Atalho',
             payment_method_id: 'pix',
+            date_of_expiration: expirationDate.toISOString(),
             payer: {
                 email: req.body.email || 'cliente@email.com',
                 first_name: req.body.firstName || 'Cliente',

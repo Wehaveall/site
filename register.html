@@ -150,8 +150,17 @@
         }
 
         .submit-button:disabled {
-            opacity: 0.7;
+            opacity: 0.5;
             cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 2px 8px rgba(219, 201, 173, 0.2) !important;
+        }
+
+        .required-fields-note {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+            font-style: italic;
         }
 
         .terms-section {
@@ -169,17 +178,21 @@
             align-items: flex-start;
             gap: 0.75rem;
             cursor: pointer;
+            line-height: 1.5;
         }
 
         .terms-checkbox input[type="checkbox"] {
             margin: 0;
+            margin-top: 0.125rem;
             accent-color: var(--primary);
             transform: scale(1.2);
+            flex-shrink: 0;
         }
 
         .terms-text {
             color: var(--text-dark);
             line-height: 1.5;
+            flex: 1;
         }
 
         .terms-text a {
@@ -247,7 +260,7 @@
                     <h3>🔐 Dados de Acesso</h3>
                     
                     <div class="form-group">
-                        <label for="login-email">E-Mail de Login *</label>
+                        <label for="login-email">E-Mail *</label>
                         <input type="email" id="login-email" class="form-input" required placeholder="E-Mail">
                         <div class="input-helper">Este será seu e-mail de login no sistema</div>
                     </div>
@@ -289,18 +302,23 @@
                     </div>
                 </div>
 
+                <!-- Legenda dos Campos Obrigatórios -->
+                <div class="required-fields-note">
+                    <small>* Campos obrigatórios</small>
+                </div>
+
                 <!-- Termos de Uso -->
                 <div class="terms-section">
                     <label class="terms-checkbox">
                         <input type="checkbox" id="terms-accept" required>
-                        <div class="terms-text">
+                        <span class="terms-text">
                             Aceito os <a href="termos-de-uso.html" target="_blank">termos de uso</a> e 
                             <a href="politica-de-privacidade.html" target="_blank">política de privacidade</a>
-                        </div>
+                        </span>
                     </label>
                 </div>
 
-                <button type="submit" id="complete-registration-btn" class="submit-button">
+                <button type="submit" id="complete-registration-btn" class="submit-button" disabled>
                     Criar Conta
                 </button>
             </form>
@@ -383,9 +401,69 @@
             }
         }
 
+        // Função para validar todos os campos e habilitar/desabilitar o botão
+        function validateFormAndToggleButton() {
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const name = document.getElementById('customer-name').value.trim();
+            const termsAccepted = document.getElementById('terms-accept').checked;
+            const submitButton = document.getElementById('complete-registration-btn');
+
+            // Verificar se todos os campos obrigatórios estão preenchidos
+            const requiredFieldsFilled = email && password && confirmPassword && name;
+
+            // Verificar se o email é válido
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const isEmailValid = emailRegex.test(email);
+
+            // Verificar se as senhas coincidem
+            const passwordsMatch = password === confirmPassword && password.length > 0;
+
+            // Verificar se a senha atende aos requisitos
+            const isPasswordStrong = password.length >= 8 &&
+                                   /[A-Z]/.test(password) &&
+                                   /[0-9]/.test(password) &&
+                                   /[:$%#@!*&^()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(password);
+
+            // Habilitar botão apenas se tudo estiver válido
+            const isFormValid = requiredFieldsFilled && isEmailValid && passwordsMatch && isPasswordStrong && termsAccepted;
+
+            submitButton.disabled = !isFormValid;
+            
+            // Feedback visual adicional
+            if (isFormValid) {
+                submitButton.style.opacity = '1';
+                submitButton.title = 'Clique para criar sua conta';
+            } else {
+                submitButton.style.opacity = '0.5';
+                submitButton.title = 'Preencha todos os campos obrigatórios corretamente';
+            }
+        }
+
         // Inicialização da página
         document.addEventListener('DOMContentLoaded', function() {
             console.log('📝 Página de registro carregada');
+            
+            // Adicionar listeners para validação em tempo real
+            const fieldsToWatch = [
+                'login-email',
+                'login-password', 
+                'confirm-password',
+                'customer-name',
+                'terms-accept'
+            ];
+
+            fieldsToWatch.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    const eventType = field.type === 'checkbox' ? 'change' : 'input';
+                    field.addEventListener(eventType, validateFormAndToggleButton);
+                }
+            });
+
+            // Validação inicial
+            validateFormAndToggleButton();
         });
 
         // Manipulador do formulário de registro
@@ -512,6 +590,7 @@
         // Validação em tempo real da senha
         document.getElementById('login-password').addEventListener('input', function() {
             updatePasswordRequirements(this.value);
+            validateFormAndToggleButton();
         });
 
         // Validação em tempo real das senhas
@@ -526,6 +605,7 @@
             } else {
                 this.style.borderColor = 'rgba(219, 201, 173, 0.3)';
             }
+            validateFormAndToggleButton();
         });
 
         console.log("🚀 Página de registro simplificada carregada");

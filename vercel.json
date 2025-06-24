@@ -50,7 +50,18 @@
           "value": "http"
         }
       ],
-      "destination": "https://atalho.me/$1",
+      "destination": "https://www.atalho.me/$1",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "atalho.me"
+        }
+      ],
+      "destination": "https://www.atalho.me/$1",
       "permanent": true
     }
   ]

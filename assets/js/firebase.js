@@ -22,6 +22,9 @@ if (!firebase.apps || !firebase.apps.length) {
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+// Configuração específica para resolver CORS
+auth.useDeviceLanguage();
+
 // Expor globalmente para outros scripts
 window.auth = auth;
 window.db = db;
@@ -35,9 +38,10 @@ auth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
         console.error("❌ Erro ao configurar persistência:", error);
     });
 
-// Configurações do Firestore
+// Configurações do Firestore com merge para evitar warnings
 db.settings({
-    cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
+    cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+    merge: true
 });
 
 // Habilita persistência offline do Firestore

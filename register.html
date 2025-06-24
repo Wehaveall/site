@@ -588,6 +588,7 @@
 
             try {
                 // 1. Cria conta no Firebase Auth
+                console.log('🌐 Tentando criar conta via:', window.location.origin);
                 const firebaseUser = await createFirebaseAccount(loginEmail, loginPassword);
                 
                 // 2. Prepara dados do cliente

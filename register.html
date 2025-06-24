@@ -454,6 +454,11 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('📝 Página de registro carregada');
             
+            // Verificar se security validator está em modo registro
+            if (window.securityValidator && window.securityValidator.isRegistrationPage) {
+                console.log('✅ Security validator em modo registro - proteções mínimas');
+            }
+            
             // Adicionar listeners específicos para validação em tempo real
             const emailField = document.getElementById('login-email');
             const passwordField = document.getElementById('login-password');
@@ -469,12 +474,7 @@
             // Listener especial para senha (inclui atualização de requisitos)
             if (passwordField) {
                 passwordField.addEventListener('input', function() {
-                    // Teste simples sem console.log para evitar interceptação
                     const password = this.value;
-                    
-                    // Teste direto - mudar cor de fundo para verificar se funciona
-                    document.body.style.backgroundColor = password.length > 0 ? '#f0f8ff' : '';
-                    
                     updatePasswordRequirements(password);
                     validateFormAndToggleButton();
                 });

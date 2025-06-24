@@ -21,6 +21,13 @@ class SecurityValidator {
     // =====================================
 
     initializeProtections() {
+        // Modo especial para página de registro - proteções mínimas
+        if (this.isRegistrationPage) {
+            console.log('🔒 Modo registro ativado - proteções mínimas');
+            this.setupCSRFProtection(); // Apenas CSRF
+            return; // Não ativar outras proteções
+        }
+        
         this.preventDevToolsManipulation();
         this.preventConsoleManipulationSafe();
         this.validatePageIntegrity();
@@ -508,7 +515,28 @@ class SecurityValidator {
     }
 
     validateRegistrationAttempt(formData) {
-        return this.validateFormSubmission(formData, 'registration');
+        // Validação simplificada para não interferir com UX
+        if (!formData || typeof formData !== 'object') {
+            return false;
+        }
+        
+        // Verificar apenas padrões muito suspeitos
+        const suspiciousPatterns = [
+            /<script[\s\S]*?>[\s\S]*?<\/script>/gi,
+            /javascript\s*:/gi,
+            /on\w+\s*=\s*["'][^"']*["']/gi,
+            /eval\s*\(/gi
+        ];
+        
+        const allValues = Object.values(formData).join(' ');
+        const hasSuspiciousContent = suspiciousPatterns.some(pattern => pattern.test(allValues));
+        
+        if (hasSuspiciousContent) {
+            this.logSecurityEventSafe('registration_suspicious_content');
+            return false;
+        }
+        
+        return true; // Permitir registro na maioria dos casos
     }
 }
 

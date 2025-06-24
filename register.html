@@ -335,9 +335,9 @@
     </main>
 
     <!-- Scripts -->
-    <!-- Security validator desabilitado temporariamente para página de registro -->
-    <!-- <script src="assets/js/security-validator.js"></script> -->
     <script src="assets/js/firebase.js"></script>
+    <!-- Security validator reativado com configurações específicas -->
+    <script src="assets/js/security-validator.js"></script>
 
     <script>
         // Função para mostrar mensagens
@@ -525,13 +525,11 @@
             const company = document.getElementById('customer-company').value.trim();
             const termsAccepted = document.getElementById('terms-accept').checked;
 
-            // ✅ VALIDAÇÃO BÁSICA (security validator desabilitado temporariamente)
+            // ✅ VALIDAÇÃO DE SEGURANÇA COMPLETA
             const formData = { name, email: loginEmail, password: loginPassword, phone, company };
             
-            // Verificação básica de dados suspeitos
-            const suspiciousPatterns = [/<script/i, /javascript:/i, /on\w+\s*=/i];
-            const allValues = Object.values(formData).join(' ');
-            if (suspiciousPatterns.some(pattern => pattern.test(allValues))) {
+            // Verificar se há tentativas de injeção ou manipulação
+            if (window.securityValidator && !window.securityValidator.validateRegistrationAttempt(formData)) {
                 showError('Dados inválidos detectados. Por favor, verifique as informações.');
                 return;
             }

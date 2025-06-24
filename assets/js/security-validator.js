@@ -8,6 +8,11 @@ class SecurityValidator {
         this.maxAttempts = 5;
         this.attempts = new Map();
         this.blockedIPs = new Set();
+        
+        // Detectar modo da página
+        this.isRegistrationPage = window.location.pathname.includes('register.html');
+        this.isPaymentPage = window.location.pathname.includes('comprar.html');
+        
         this.initializeProtections();
     }
 
@@ -255,6 +260,12 @@ class SecurityValidator {
 
             mutations.forEach((mutation) => {
                 try {
+                    // Ignorar mudanças nos requisitos de senha na página de registro
+                    if (self.isRegistrationPage && mutation.target && mutation.target.id && 
+                        mutation.target.id.startsWith('req-')) {
+                        return; // Permitir mudanças nos requisitos de senha
+                    }
+                    
                     // Detectar injeção de scripts maliciosos
                     if (mutation.type === 'childList') {
                         mutation.addedNodes.forEach((node) => {
@@ -274,6 +285,13 @@ class SecurityValidator {
                     // Detectar modificações em atributos críticos apenas em elementos importantes
                     if (mutation.type === 'attributes' && mutation.target) {
                         const target = mutation.target;
+                        
+                        // Ignorar mudanças nos requisitos de senha na página de registro
+                        if (self.isRegistrationPage && target.id && 
+                            (target.id.startsWith('req-') || target.classList.contains('requirement-item'))) {
+                            return; // Permitir mudanças nos requisitos de senha
+                        }
+                        
                         if (target.classList && target.classList.contains('payment-option') || 
                             target.tagName === 'FORM') {
                             self.logSecurityEventSafe('critical_attribute_modified', {

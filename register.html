@@ -453,22 +453,53 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('📝 Página de registro carregada');
             
-            // Adicionar listeners para validação em tempo real
-            const fieldsToWatch = [
-                'login-email',
-                'login-password', 
-                'confirm-password',
-                'customer-name',
-                'terms-accept'
-            ];
+            // Adicionar listeners específicos para validação em tempo real
+            const emailField = document.getElementById('login-email');
+            const passwordField = document.getElementById('login-password');
+            const confirmPasswordField = document.getElementById('confirm-password');
+            const nameField = document.getElementById('customer-name');
+            const termsField = document.getElementById('terms-accept');
 
-            fieldsToWatch.forEach(fieldId => {
-                const field = document.getElementById(fieldId);
-                if (field) {
-                    const eventType = field.type === 'checkbox' ? 'change' : 'input';
-                    field.addEventListener(eventType, validateFormAndToggleButton);
-                }
-            });
+            // Listener para email
+            if (emailField) {
+                emailField.addEventListener('input', validateFormAndToggleButton);
+            }
+
+            // Listener especial para senha (inclui atualização de requisitos)
+            if (passwordField) {
+                passwordField.addEventListener('input', function() {
+                    console.log('🔑 Senha alterada:', this.value.length, 'caracteres');
+                    updatePasswordRequirements(this.value);
+                    validateFormAndToggleButton();
+                });
+            }
+
+            // Listener para confirmação de senha
+            if (confirmPasswordField) {
+                confirmPasswordField.addEventListener('input', function() {
+                    const password = passwordField.value;
+                    const confirmPassword = this.value;
+                    
+                    if (confirmPassword && password !== confirmPassword) {
+                        this.style.borderColor = '#dc3545';
+                    } else if (confirmPassword && password === confirmPassword) {
+                        this.style.borderColor = '#28a745';
+                    } else {
+                        this.style.borderColor = 'rgba(219, 201, 173, 0.3)';
+                    }
+                    validateFormAndToggleButton();
+                });
+            }
+
+            // Listener para nome
+            if (nameField) {
+                nameField.addEventListener('input', validateFormAndToggleButton);
+            }
+
+            // Listener para termos
+            if (termsField) {
+                termsField.addEventListener('change', validateFormAndToggleButton);
+            }
 
             // Validação inicial
             validateFormAndToggleButton();
@@ -589,8 +620,12 @@
 
         // Função auxiliar para atualizar cada requisito individualmente
         function updateRequirement(elementId, isValid, text) {
+            console.log(`📋 Atualizando ${elementId}: ${isValid ? '✓' : '✗'} ${text}`);
             const element = document.getElementById(elementId);
-            if (!element) return;
+            if (!element) {
+                console.error(`❌ Elemento não encontrado: ${elementId}`);
+                return;
+            }
 
             const icon = isValid ? '✓' : '✗';
             const color = isValid ? '#28a745' : '#dc3545';
@@ -612,26 +647,7 @@
             }
         }
 
-        // Validação em tempo real da senha
-        document.getElementById('login-password').addEventListener('input', function() {
-            updatePasswordRequirements(this.value);
-            validateFormAndToggleButton();
-        });
 
-        // Validação em tempo real das senhas
-        document.getElementById('confirm-password').addEventListener('input', function() {
-            const password = document.getElementById('login-password').value;
-            const confirmPassword = this.value;
-            
-            if (confirmPassword && password !== confirmPassword) {
-                this.style.borderColor = '#dc3545';
-            } else if (confirmPassword && password === confirmPassword) {
-                this.style.borderColor = '#28a745';
-            } else {
-                this.style.borderColor = 'rgba(219, 201, 173, 0.3)';
-            }
-            validateFormAndToggleButton();
-        });
 
         console.log("🚀 Página de registro simplificada carregada");
     </script>

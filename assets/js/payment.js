@@ -30,6 +30,111 @@ function showError(message) {
     document.getElementById('error-message').textContent = message;
 }
 
+function showAuthRequiredModal() {
+    // Criar modal personalizado se não existir
+    let authModal = document.getElementById('auth-required-modal');
+    if (!authModal) {
+        authModal = createAuthRequiredModal();
+        document.body.appendChild(authModal);
+    }
+    
+    // Mostrar o modal
+    authModal.classList.remove('hidden');
+    
+    // Adicionar efeito de fade-in
+    setTimeout(() => {
+        authModal.style.opacity = '1';
+    }, 10);
+    
+    // Adicionar listener para tecla ESC
+    const escListener = (e) => {
+        if (e.key === 'Escape') {
+            closeAuthRequiredModal();
+            document.removeEventListener('keydown', escListener);
+        }
+    };
+    document.addEventListener('keydown', escListener);
+}
+
+function createAuthRequiredModal() {
+    const modal = document.createElement('div');
+    modal.id = 'auth-required-modal';
+    modal.className = 'auth-modal hidden';
+    modal.style.opacity = '0';
+    modal.style.transition = 'opacity 0.3s ease';
+    
+    modal.innerHTML = `
+        <div class="auth-modal-content">
+            <div class="auth-modal-header">
+                <i class="fas fa-user-lock auth-modal-icon"></i>
+                <h3>Login Necessário</h3>
+                <button class="auth-modal-close" onclick="closeAuthRequiredModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="auth-modal-body">
+                <p>Para fazer um pagamento, você precisa estar logado em sua conta.</p>
+                <p>Faça login ou crie uma conta para continuar com sua compra.</p>
+            </div>
+            <div class="auth-modal-footer">
+                <a href="login.html" class="auth-btn auth-btn-primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Fazer Login
+                </a>
+                <a href="register.html" class="auth-btn auth-btn-secondary">
+                    <i class="fas fa-user-plus"></i>
+                    Criar Conta
+                </a>
+            </div>
+        </div>
+    `;
+    
+    // Fechar modal ao clicar fora
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeAuthRequiredModal();
+        }
+    });
+    
+    return modal;
+}
+
+function closeAuthRequiredModal() {
+    const authModal = document.getElementById('auth-required-modal');
+    if (authModal) {
+        // Fade out
+        authModal.style.opacity = '0';
+        setTimeout(() => {
+            authModal.classList.add('hidden');
+            highlightAuthMenus();
+        }, 300);
+    }
+}
+
+function highlightAuthMenus() {
+    // Destacar menus de login e cadastro
+    const loginLink = document.getElementById('nav-login');
+    const registerLink = document.getElementById('nav-register');
+    
+    if (loginLink) {
+        loginLink.classList.add('highlight-auth');
+        setTimeout(() => {
+            loginLink.classList.remove('highlight-auth');
+        }, 3000);
+    }
+    
+    if (registerLink) {
+        registerLink.classList.add('highlight-auth');
+        setTimeout(() => {
+            registerLink.classList.remove('highlight-auth');
+        }, 3000);
+    }
+}
+
+// Expor funções globalmente para uso no onclick
+window.closeAuthRequiredModal = closeAuthRequiredModal;
+window.showAuthRequiredModal = showAuthRequiredModal;
+
 function showFieldError(fieldId, message) {
     const errorElement = document.getElementById(`${fieldId}-error`);
     if (errorElement) {
@@ -130,10 +235,7 @@ async function processPayment(method) {
     const currentUser = window.auth ? window.auth.currentUser : null;
     if (!state.user && !currentUser) {
         console.log('❌ Usuário não logado, bloqueando pagamento');
-        showError('Você precisa estar logado para fazer um pagamento. Por favor, faça login ou cadastre-se primeiro.');
-        setTimeout(() => {
-            window.location.href = 'login.html';
-        }, 2000);
+        showAuthRequiredModal();
         return;
     }
 

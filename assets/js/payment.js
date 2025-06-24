@@ -488,7 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 userInfo.style.display = 'block';
                 if (userEmail) userEmail.textContent = user.email;
             }
-            
+
             // Verificar se o documento existe antes de tentar atualizar
             db.collection('users')
                 .doc(user.uid)

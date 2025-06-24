@@ -50,7 +50,7 @@ class SecurityValidator {
             } else {
                 devtools.open = false;
             }
-        }, 500);
+        }, 2000);
 
         // Bloquear F12, Ctrl+Shift+I, etc.
         document.addEventListener('keydown', (e) => {
@@ -91,8 +91,10 @@ class SecurityValidator {
         this.loggingSecurityEvent = false;
 
         // Interceptar console.log apenas se não estiver logando evento de segurança
+        // Modo menos agressivo para desenvolvimento
         console.log = (...args) => {
-            if (!self.loggingSecurityEvent) {
+            if (!self.loggingSecurityEvent && Math.random() < 0.1) {
+                // Log apenas 10% das tentativas para reduzir spam
                 self.logSecurityEventSafe('console_access');
             }
             return originalLog.apply(console, args);
@@ -147,20 +149,34 @@ class SecurityValidator {
             }
         });
 
-        // Verificar integridade do DOM a cada 30 segundos
+        // Verificar integridade do DOM a cada 2 minutos (menos agressivo)
         setInterval(() => {
             self.checkDOMIntegrity();
-        }, 30000);
+        }, 120000);
     }
 
     checkDOMIntegrity() {
-        // Verificar se elementos críticos ainda existem
-        const paymentButtons = document.querySelectorAll('.payment-option');
-        const forms = document.querySelectorAll('form');
+        // Detectar que tipo de página estamos
+        const isPaymentPage = window.location.pathname.includes('comprar.html');
+        const isRegistrationPage = window.location.pathname.includes('register.html');
         
-        if (paymentButtons.length === 0) {
-            this.logSecurityEventSafe('payment_buttons_removed');
-            this.blockUserActions('Elementos críticos foram removidos');
+        // Verificar elementos críticos baseados na página
+        if (isPaymentPage) {
+            const paymentButtons = document.querySelectorAll('.payment-option');
+            if (paymentButtons.length === 0) {
+                this.logSecurityEventSafe('payment_buttons_removed');
+                this.blockUserActions('Elementos críticos foram removidos');
+                return;
+            }
+        }
+        
+        if (isRegistrationPage) {
+            const registrationForm = document.querySelector('#customer-registration-form');
+            if (!registrationForm) {
+                this.logSecurityEventSafe('registration_form_removed');
+                this.blockUserActions('Formulário de registro foi removido');
+                return;
+            }
         }
 
         // Verificar se há scripts maliciosos injetados

@@ -9,20 +9,208 @@
     
     <style>
         /* Estilos específicos para a página de registro */
-        #login-email:focus, #login-password:focus, #confirm-password:focus,
-        #customer-name:focus, #customer-phone:focus, #customer-company:focus {
+        body {
+            background: linear-gradient(135deg, #f0e9df 0%, #f7f3ed 25%, #ffffff 50%, #f7f3ed 75%, #f0e9df 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .registration-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .registration-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: rgba(255, 255, 255, 0.9);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .registration-header h2 {
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .registration-header p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .form-section {
+            background: rgba(255, 255, 255, 0.8);
+            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(15px);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .form-section h3 {
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(219, 201, 173, 0.3);
+            border-radius: 12px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus {
             border-color: var(--primary) !important;
             outline: none;
             box-shadow: 0 0 0 3px rgba(219, 201, 173, 0.2);
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-1px);
         }
-        
-        #complete-registration-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+
+        .form-input:hover {
+            border-color: rgba(219, 201, 173, 0.5);
         }
-        
-        a[href="#"]:hover {
-            color: var(--primary) !important;
+
+        .input-helper {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        .password-requirements {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            background: rgba(248, 245, 240, 0.8);
+            padding: 0.75rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .requirement-item {
+            margin: 0.25rem 0;
+            transition: color 0.2s ease;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--text-dark);
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(219, 201, 173, 0.4);
+            margin-top: 1rem;
+        }
+
+        .submit-button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(219, 201, 173, 0.6);
+        }
+
+        .submit-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .terms-section {
+            background: rgba(255, 255, 255, 0.9);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(219, 201, 173, 0.3);
+        }
+
+        .terms-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        .terms-checkbox input[type="checkbox"] {
+            margin: 0;
+            accent-color: var(--primary);
+            transform: scale(1.2);
+        }
+
+        .terms-text {
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        .terms-text a {
+            color: var(--primary-dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .terms-text a:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .registration-container {
+                padding: 1rem;
+            }
+            
+            .form-section {
+                padding: 1.5rem;
+            }
+            
+            .registration-header {
+                padding: 1.5rem;
+            }
         }
     </style>
     
@@ -46,107 +234,79 @@
     </header>
 
     <!-- Main Content -->
-    <main style="padding-top: 100px; min-height: 100vh; background: linear-gradient(120deg, #f0e9df 0%, #f7f3ed 20%, white 50%);">
-        <div class="container" style="max-width: 600px; margin: 0 auto; padding: 2rem;">
+    <main style="padding-top: 100px; min-height: 100vh;">
+        <div class="registration-container">
 
-            <!-- Formulário de Cadastro -->
-            <div id="registration-form" style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow-lg);">
-                <h2 style="color: var(--text-dark); margin-bottom: 1rem; text-align: center;">
-                    Crie sua Conta do Atalho
-                </h2>
-                <p style="color: var(--text-light); text-align: center; margin-bottom: 2rem;">
-                    Complete seu cadastro para começar a usar o Atalho
-                </p>
-
-                <form id="customer-registration-form">
-                    <!-- Seção de Login -->
-                    <div style="background: #faf8f5; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid var(--primary-dark);">
-                        <h3 style="color: var(--text-dark); margin-bottom: 1rem; font-size: 1.1rem;">🔐 Dados de Acesso</h3>
-                        
-                        <div style="margin-bottom: 1.5rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;">
-                                Email de Login *
-                            </label>
-                            <input type="email" id="login-email" required
-                                   style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
-                                   placeholder="seu@email.com">
-                            <small style="color: var(--text-light);">Este será seu email de login no sistema</small>
-                        </div>
-
-                        <div style="margin-bottom: 1.5rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;">
-                                Senha *
-                            </label>
-                            <input type="password" id="login-password" required minlength="8"
-                                   style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
-                                   placeholder="Mínimo 8 caracteres">
-                            <div id="password-requirements" style="margin-top: 0.5rem; font-size: 0.85rem;">
-                                <div id="req-length" style="color: #dc3545;">✗ Mínimo 8 caracteres</div>
-                                <div id="req-uppercase" style="color: #dc3545;">✗ Uma letra maiúscula</div>
-                                <div id="req-number" style="color: #dc3545;">✗ Um número</div>
-                                <div id="req-symbol" style="color: #dc3545;">✗ Um caractere especial</div>
-                            </div>
-                        </div>
-
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;">
-                                Confirmar Senha *
-                            </label>
-                            <input type="password" id="confirm-password" required minlength="8"
-                                   style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
-                                   placeholder="Digite a senha novamente">
-                        </div>
-                    </div>
-
-                    <!-- Seção de Dados Pessoais -->
-                    <div style="background: #faf8f5; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid var(--primary-dark);">
-                        <h3 style="color: var(--text-dark); margin-bottom: 1rem; font-size: 1.1rem;">👤 Dados Pessoais</h3>
-                        
-                        <div style="margin-bottom: 1.5rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;">
-                                Nome Completo *
-                            </label>
-                            <input type="text" id="customer-name" required
-                                   style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
-                                   placeholder="Seu nome completo">
-                        </div>
-
-                        <div style="margin-bottom: 1.5rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;">
-                                Telefone (opcional)
-                            </label>
-                            <input type="tel" id="customer-phone"
-                                   style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
-                                   placeholder="(11) 99999-9999">
-                        </div>
-
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;">
-                                Empresa (opcional)
-                            </label>
-                            <input type="text" id="customer-company"
-                                   style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
-                                   placeholder="Nome da sua empresa">
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom: 2rem;">
-                        <label style="display: flex; align-items: center; cursor: pointer;">
-                            <input type="checkbox" id="terms-accept" required style="margin-right: 0.5rem;">
-                            <span style="color: var(--text-dark);">
-                                Aceito os <a href="termos-de-uso.html" style="color: var(--primary-dark); transition: color 0.2s ease;">termos de uso</a> e 
-                                <a href="politica-de-privacidade.html" style="color: var(--primary-dark); transition: color 0.2s ease;">política de privacidade</a>
-                            </span>
-                        </label>
-                    </div>
-
-                    <button type="submit" id="complete-registration-btn"
-                            style="width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: var(--text-dark); border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">
-                        Criar Conta
-                    </button>
-                </form>
+            <!-- Header da Página -->
+            <div class="registration-header">
+                <h2>Crie sua Conta do Atalho</h2>
+                <p>Complete seu cadastro para começar a usar o Atalho</p>
             </div>
 
+            <!-- Formulário de Cadastro -->
+            <form id="customer-registration-form">
+                <!-- Seção de Login -->
+                <div class="form-section">
+                    <h3>🔐 Dados de Acesso</h3>
+                    
+                    <div class="form-group">
+                        <label for="login-email">E-Mail de Login *</label>
+                        <input type="email" id="login-email" class="form-input" required placeholder="E-Mail">
+                        <div class="input-helper">Este será seu e-mail de login no sistema</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-password">Senha *</label>
+                        <input type="password" id="login-password" class="form-input" required minlength="8" placeholder="Senha">
+                        <div class="password-requirements">
+                            <div id="req-length" class="requirement-item">✗ Mínimo 8 caracteres</div>
+                            <div id="req-uppercase" class="requirement-item">✗ Uma letra maiúscula</div>
+                            <div id="req-number" class="requirement-item">✗ Um número</div>
+                            <div id="req-symbol" class="requirement-item">✗ Um caractere especial</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm-password">Confirmar Senha *</label>
+                        <input type="password" id="confirm-password" class="form-input" required minlength="8" placeholder="Digite a senha novamente">
+                    </div>
+                </div>
+
+                <!-- Seção de Dados Pessoais -->
+                <div class="form-section">
+                    <h3>👤 Dados Pessoais</h3>
+                    
+                    <div class="form-group">
+                        <label for="customer-name">Nome Completo *</label>
+                        <input type="text" id="customer-name" class="form-input" required placeholder="Seu nome completo">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customer-phone">Telefone (opcional)</label>
+                        <input type="tel" id="customer-phone" class="form-input" placeholder="(11) 99999-9999">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customer-company">Empresa (opcional)</label>
+                        <input type="text" id="customer-company" class="form-input" placeholder="Nome da sua empresa">
+                    </div>
+                </div>
+
+                <!-- Termos de Uso -->
+                <div class="terms-section">
+                    <label class="terms-checkbox">
+                        <input type="checkbox" id="terms-accept" required>
+                        <div class="terms-text">
+                            Aceito os <a href="termos-de-uso.html" target="_blank">termos de uso</a> e 
+                            <a href="politica-de-privacidade.html" target="_blank">política de privacidade</a>
+                        </div>
+                    </label>
+                </div>
+
+                <button type="submit" id="complete-registration-btn" class="submit-button">
+                    Criar Conta
+                </button>
+            </form>
 
         </div>
     </main>
@@ -199,8 +359,6 @@
             return true;
         }
 
-
-
         // Função para criar conta Firebase Auth
         async function createFirebaseAccount(email, password) {
             try {
@@ -217,9 +375,9 @@
                 // Traduz erros comuns do Firebase
                 switch (error.code) {
                     case 'auth/email-already-in-use':
-                        throw new Error('Este email já está em uso. Tente fazer login ou use outro email.');
+                        throw new Error('Este e-mail já está em uso. Tente fazer login ou use outro e-mail.');
                     case 'auth/invalid-email':
-                        throw new Error('Email inválido.');
+                        throw new Error('E-mail inválido.');
                     case 'auth/weak-password':
                         throw new Error('Senha muito fraca. Use pelo menos 8 caracteres, 1 maiúscula, 1 número e 1 caractere especial.');
                     default:
@@ -271,7 +429,7 @@
             // Validação rigorosa de email
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(loginEmail) || loginEmail.length > 254) {
-                showError('Por favor, insira um email válido.');
+                showError('Por favor, insira um e-mail válido.');
                 return;
             }
 
@@ -350,7 +508,7 @@
                 const allValid = Object.values(requirements).every(req => req);
                 passwordField.style.borderColor = allValid ? '#28a745' : '#dc3545';
             } else {
-                passwordField.style.borderColor = '#e9ecef';
+                passwordField.style.borderColor = 'rgba(219, 201, 173, 0.3)';
             }
         }
 
@@ -369,19 +527,8 @@
             } else if (confirmPassword && password === confirmPassword) {
                 this.style.borderColor = '#28a745';
             } else {
-                this.style.borderColor = '#e9ecef';
+                this.style.borderColor = 'rgba(219, 201, 173, 0.3)';
             }
-        });
-
-        // Efeito hover no botão
-        document.getElementById('complete-registration-btn').addEventListener('mouseenter', function() {
-            if (!this.disabled) {
-                this.style.transform = 'translateY(-2px)';
-            }
-        });
-
-        document.getElementById('complete-registration-btn').addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
         });
 
         console.log("🚀 Página de registro simplificada carregada");

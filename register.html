@@ -572,9 +572,23 @@
                     email: loginEmail,
                     phone: phone || null,
                     company: company || null,
+                    country: "Brasil", // Campo padrão
                     terms_accepted: true,
                     terms_accepted_at: new Date().toISOString(),
-                    created_at: firebase.firestore.FieldValue.serverTimestamp()
+                    created_at: firebase.firestore.FieldValue.serverTimestamp(),
+                    
+                    // Campos de licença - iniciam vazios até o pagamento
+                    license_active: false,
+                    license_type: null,
+                    payment_status: 'pending',
+                    pay_method: null,
+                    sub_start: null,
+                    sub_end: null,
+                    last_payment_date: null,
+                    
+                    // Campos técnicos
+                    active_machines: 0,
+                    id: null // Será definido depois se necessário
                 };
 
                 // 3. Salva dados do usuário no Firestore

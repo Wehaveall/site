@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualizar Estrutura de Usuários - Atalho</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .button {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .button:hover {
+            background: #45a049;
+        }
+        .danger {
+            background: #f44336;
+        }
+        .danger:hover {
+            background: #da190b;
+        }
+        .info {
+            background: #2196F3;
+        }
+        .info:hover {
+            background: #0b7dda;
+        }
+        .log {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Atualizar Estrutura de Usuários</h1>
+        
+        <div class="warning">
+            <strong>⚠️ ATENÇÃO:</strong> Este script irá atualizar TODOS os usuários existentes na coleção 'users' 
+            adicionando os novos campos necessários. Execute apenas uma vez!
+        </div>
+
+        <h3>📋 Campos que serão adicionados/atualizados:</h3>
+        <ul>
+            <li><strong>company:</strong> null (se não existir)</li>
+            <li><strong>license_active:</strong> false</li>
+            <li><strong>sub_start:</strong> null</li>
+            <li><strong>sub_end:</strong> null</li>
+            <li><strong>payment_status:</strong> 'pending'</li>
+            <li><strong>license_type:</strong> null</li>
+            <li><strong>last_payment_date:</strong> null</li>
+        </ul>
+
+        <div>
+            <button class="button info" onclick="previewChanges()">👁️ Visualizar Usuários</button>
+            <button class="button" onclick="updateUsersStructure()">🚀 Atualizar Estrutura</button>
+            <button class="button danger" onclick="clearLog()">🗑️ Limpar Log</button>
+        </div>
+
+        <div id="log" class="log"></div>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="assets/js/firebase.js"></script>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log').textContent = '';
+        }
+
+        async function previewChanges() {
+            log('🔍 Visualizando usuários existentes...');
+            
+            try {
+                const usersSnapshot = await db.collection('users').get();
+                
+                if (usersSnapshot.empty) {
+                    log('❌ Nenhum usuário encontrado na coleção.');
+                    return;
+                }
+
+                log(`📊 Encontrados ${usersSnapshot.size} usuários:`);
+                log('');
+
+                usersSnapshot.forEach((doc) => {
+                    const userData = doc.data();
+                    log(`👤 ID: ${doc.id}`);
+                    log(`   Nome: ${userData.name || 'N/A'}`);
+                    log(`   Email: ${userData.email || 'N/A'}`);
+                    log(`   Company: ${userData.company || 'NÃO EXISTE'}`);
+                    log(`   License Active: ${userData.license_active || 'NÃO EXISTE'}`);
+                    log(`   Sub Start: ${userData.sub_start || 'NÃO EXISTE'}`);
+                    log(`   Sub End: ${userData.sub_end || 'NÃO EXISTE'}`);
+                    log('   ---');
+                });
+
+            } catch (error) {
+                log(`❌ Erro ao buscar usuários: ${error.message}`);
+            }
+        }
+
+        async function updateUsersStructure() {
+            log('🚀 Iniciando atualização da estrutura de usuários...');
+            
+            try {
+                const usersSnapshot = await db.collection('users').get();
+                
+                if (usersSnapshot.empty) {
+                    log('❌ Nenhum usuário encontrado na coleção.');
+                    return;
+                }
+
+                log(`📊 Processando ${usersSnapshot.size} usuários...`);
+                log('');
+
+                let updatedCount = 0;
+                let skippedCount = 0;
+
+                for (const doc of usersSnapshot.docs) {
+                    const userData = doc.data();
+                    const userId = doc.id;
+                    
+                    // Preparar dados de atualização
+                    const updateData = {};
+                    let needsUpdate = false;
+
+                    // Verificar e adicionar campos faltantes
+                    if (!userData.hasOwnProperty('company')) {
+                        updateData.company = null;
+                        needsUpdate = true;
+                    }
+
+                    if (!userData.hasOwnProperty('license_active')) {
+                        updateData.license_active = false;
+                        needsUpdate = true;
+                    }
+
+                    if (!userData.hasOwnProperty('sub_start')) {
+                        updateData.sub_start = null;
+                        needsUpdate = true;
+                    }
+
+                    if (!userData.hasOwnProperty('sub_end')) {
+                        updateData.sub_end = null;
+                        needsUpdate = true;
+                    }
+
+                    if (!userData.hasOwnProperty('payment_status')) {
+                        updateData.payment_status = 'pending';
+                        needsUpdate = true;
+                    }
+
+                    if (!userData.hasOwnProperty('license_type')) {
+                        updateData.license_type = null;
+                        needsUpdate = true;
+                    }
+
+                    if (!userData.hasOwnProperty('last_payment_date')) {
+                        updateData.last_payment_date = null;
+                        needsUpdate = true;
+                    }
+
+                    if (needsUpdate) {
+                        try {
+                            await db.collection('users').doc(userId).update(updateData);
+                            log(`✅ Usuário ${userData.name || userData.email} atualizado`);
+                            updatedCount++;
+                        } catch (error) {
+                            log(`❌ Erro ao atualizar usuário ${userId}: ${error.message}`);
+                        }
+                    } else {
+                        log(`⏭️ Usuário ${userData.name || userData.email} já possui todos os campos`);
+                        skippedCount++;
+                    }
+                }
+
+                log('');
+                log('🎉 ATUALIZAÇÃO CONCLUÍDA!');
+                log(`✅ Usuários atualizados: ${updatedCount}`);
+                log(`⏭️ Usuários já atualizados: ${skippedCount}`);
+                log(`📊 Total processado: ${updatedCount + skippedCount}`);
+
+            } catch (error) {
+                log(`❌ Erro geral na atualização: ${error.message}`);
+            }
+        }
+
+        // Inicialização
+        window.addEventListener('load', function() {
+            log('🔧 Script de atualização carregado');
+            log('👆 Clique em "Visualizar Usuários" para ver a estrutura atual');
+            log('');
+        });
+    </script>
+</body>
+</html> 

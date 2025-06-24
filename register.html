@@ -2,315 +2,127 @@
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complete seu Cadastro - Atalho</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    
-    <style>
-        /* Estilos específicos para a página de registro */
-        #login-email:focus, #login-password:focus, #confirm-password:focus,
-        #customer-name:focus, #customer-phone:focus, #customer-company:focus {
-            border-color: var(--primary) !important;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(219, 201, 173, 0.2);
-        }
-        
-        #complete-registration-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-        
-        a[href="#"]:hover {
-            color: var(--primary) !important;
-        }
-    </style>
-    
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro - Atalho</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CSS principal -->
+    <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 
-<body>
-    <!-- Header -->
-    <header class="header">
-        <div class="navbar">
-            <div class="logo">
+<body class="light-theme">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="card-header">
                 <a href="index.html" class="logo-link">
                     <img src="assets/img/Atalho.png" alt="Logo Atalho" class="logo-img" />
                     <span class="logo-text">Atalho</span>
                 </a>
+                <h2>Crie sua conta do Atalho</h2>
+                <p>Junte-se a nós e otimize sua produtividade.</p>
+            </div>
+            <form id="register-form" class="auth-form">
+                <!-- Dados Pessoais -->
+                <fieldset class="form-section">
+                    <legend><i class="fa-solid fa-user"></i> Dados Pessoais</legend>
+                    <div class="input-group">
+                        <label for="name">Nome Completo</label>
+                        <input type="text" id="name" name="name" required placeholder="Seu nome completo">
+                    </div>
+                    <div class="input-group">
+                        <label for="cpf">CPF</label>
+                        <input type="text" id="cpf" name="cpf" required placeholder="000.000.000-00">
+                    </div>
+                </fieldset>
+
+                <!-- Dados de Acesso -->
+                <fieldset class="form-section">
+                    <legend><i class="fa-solid fa-key"></i> Dados de Acesso</legend>
+                    <div class="input-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" required placeholder="seu@email.com">
+                    </div>
+                    <div class="input-group">
+                        <label for="password">Senha</label>
+                        <input type="password" id="password" name="password" required minlength="6"
+                            placeholder="Mínimo 6 caracteres">
+                    </div>
+                    <div class="input-group">
+                        <label for="confirm-password">Confirmar Senha</label>
+                        <input type="password" id="confirm-password" name="confirm-password" required
+                            placeholder="Repita a senha">
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="btn-auth">
+                    Criar Conta
+                </button>
+            </form>
+            <div class="form-footer">
+                <p>Já tem uma conta? <a href="login.html">Faça login</a></p>
             </div>
         </div>
-    </header>
+    </div>
 
-    <!-- Main Content -->
-    <main style="padding-top: 100px; min-height: 100vh; background: linear-gradient(120deg, #f0e9df 0%, #f7f3ed 20%, white 50%);">
-        <div class="container" style="max-width: 600px; margin: 0 auto; padding: 2rem;">
-
-            <!-- Formulário de Cadastro -->
-            <div id="registration-form" style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow-lg);">
-                <h2 style="color: var(--text-dark); margin-bottom: 1rem; text-align: center;">
-                    📝 Crie sua Conta do Atalho
-                </h2>
-                <p style="color: var(--text-light); text-align: center; margin-bottom: 2rem;">
-                    Complete seu cadastro para começar a usar o Atalho
-                </p>
-
-                <form id="customer-registration-form">
-                    <!-- Seção de Login -->
-                    <div style="background: var(--background-alt); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid var(--primary);">
-                        <h3 style="color: var(--primary-dark); margin-bottom: 1rem; font-size: 1.1rem;">🔐 Dados de Acesso</h3>
-                        
-                        <div style="margin-bottom: 1.5rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;">
-                                Email de Login *
-                            </label>
-                            <input type="email" id="login-email" required
-                                   style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
-                                   placeholder="seu@email.com">
-                            <small style="color: var(--text-light);">Este será seu email de login no sistema</small>
-                        </div>
-
-                        <div style="margin-bottom: 1.5rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;">
-                                Senha *
-                            </label>
-                            <input type="password" id="login-password" required minlength="6"
-                                   style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
-                                   placeholder="Mínimo 6 caracteres">
-                            <small style="color: var(--text-light);">Escolha uma senha segura com pelo menos 6 caracteres</small>
-                        </div>
-
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;">
-                                Confirmar Senha *
-                            </label>
-                            <input type="password" id="confirm-password" required minlength="6"
-                                   style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
-                                   placeholder="Digite a senha novamente">
-                        </div>
-                    </div>
-
-                    <!-- Seção de Dados Pessoais -->
-                    <div style="background: var(--primary-light); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid var(--primary-dark);">
-                        <h3 style="color: var(--text-dark); margin-bottom: 1rem; font-size: 1.1rem;">👤 Dados Pessoais</h3>
-                        
-                        <div style="margin-bottom: 1.5rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;">
-                                Nome Completo *
-                            </label>
-                            <input type="text" id="customer-name" required
-                                   style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
-                                   placeholder="Seu nome completo">
-                        </div>
-
-                        <div style="margin-bottom: 1.5rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;">
-                                Telefone (opcional)
-                            </label>
-                            <input type="tel" id="customer-phone"
-                                   style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
-                                   placeholder="(11) 99999-9999">
-                        </div>
-
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;">
-                                Empresa (opcional)
-                            </label>
-                            <input type="text" id="customer-company"
-                                   style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
-                                   placeholder="Nome da sua empresa">
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom: 2rem;">
-                        <label style="display: flex; align-items: center; cursor: pointer;">
-                            <input type="checkbox" id="terms-accept" required style="margin-right: 0.5rem;">
-                            <span style="color: var(--text-dark);">
-                                Aceito os <a href="#" style="color: var(--primary-dark); transition: color 0.2s ease;">termos de uso</a> e 
-                                <a href="#" style="color: var(--primary-dark); transition: color 0.2s ease;">política de privacidade</a>
-                            </span>
-                        </label>
-                    </div>
-
-                    <button type="submit" id="complete-registration-btn"
-                            style="width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: var(--text-dark); border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">
-                        🚀 Criar Conta
-                    </button>
-                </form>
-            </div>
-
-
-        </div>
-    </main>
-
-    <!-- Scripts -->
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="assets/js/firebase.js"></script>
 
     <script>
-        // Função para mostrar mensagens
-        function showSuccess(message) {
-            alert('✅ ' + message);
-        }
+        document.getElementById('register-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
 
-        function showError(message) {
-            alert('❌ ' + message);
-        }
-
-        // Função para validar senhas
-        function validatePasswords() {
-            const password = document.getElementById('login-password').value;
+            const name = document.getElementById('name').value;
+            const cpf = document.getElementById('cpf').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm-password').value;
-            
+
             if (password !== confirmPassword) {
-                showError('As senhas não coincidem.');
-                return false;
+                alert('As senhas não coincidem!');
+                return;
             }
-            
-            if (password.length < 6) {
-                showError('A senha deve ter pelo menos 6 caracteres.');
-                return false;
-            }
-            
-            return true;
-        }
 
-
-
-        // Função para criar conta Firebase Auth
-        async function createFirebaseAccount(email, password) {
             try {
-                console.log('🔐 Criando conta Firebase Auth...');
-                
+                // 1. Criar usuário no Firebase Authentication
                 const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
                 const user = userCredential.user;
-                
-                console.log('✅ Conta Firebase criada:', user.uid);
-                return user;
-            } catch (error) {
-                console.error('❌ Erro ao criar conta Firebase:', error);
-                
-                // Traduz erros comuns do Firebase
-                switch (error.code) {
-                    case 'auth/email-already-in-use':
-                        throw new Error('Este email já está em uso. Tente fazer login ou use outro email.');
-                    case 'auth/invalid-email':
-                        throw new Error('Email inválido.');
-                    case 'auth/weak-password':
-                        throw new Error('Senha muito fraca. Use pelo menos 6 caracteres.');
-                    default:
-                        throw new Error('Erro ao criar conta: ' + error.message);
-                }
-            }
-        }
+                console.log('✅ Usuário criado no Auth:', user.uid);
 
-        // Inicialização da página
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('📝 Página de registro carregada');
-        });
+                // 2. Salvar informações adicionais no Firestore
+                await db.collection('users').doc(user.uid).set({
+                    name: name,
+                    cpf: cpf,
+                    email: email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                console.log('✅ Dados do usuário salvos no Firestore');
 
-        // Manipulador do formulário de registro
-        document.getElementById('customer-registration-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const loginEmail = document.getElementById('login-email').value.trim();
-            const loginPassword = document.getElementById('login-password').value;
-            const name = document.getElementById('customer-name').value.trim();
-            const phone = document.getElementById('customer-phone').value.trim();
-            const company = document.getElementById('customer-company').value.trim();
-            const termsAccepted = document.getElementById('terms-accept').checked;
-
-            // Validações
-            if (!name || !loginEmail || !loginPassword) {
-                showError('Por favor, preencha todos os campos obrigatórios.');
-                return;
-            }
-
-            if (!validatePasswords()) {
-                return;
-            }
-
-            if (!termsAccepted) {
-                showError('Por favor, aceite os termos de uso.');
-                return;
-            }
-
-            // Validação básica de email
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(loginEmail)) {
-                showError('Por favor, insira um email válido.');
-                return;
-            }
-
-            // Desabilita o botão durante o processamento
-            const btn = document.getElementById('complete-registration-btn');
-            const originalText = btn.textContent;
-            btn.disabled = true;
-            btn.textContent = '⏳ Criando conta...';
-
-            try {
-                // 1. Cria conta no Firebase Auth
-                const firebaseUser = await createFirebaseAccount(loginEmail, loginPassword);
-                
-                // 2. Prepara dados do cliente
-                const customerData = {
-                    name,
-                    email: loginEmail,
-                    phone: phone || null,
-                    company: company || null,
-                    terms_accepted: true,
-                    terms_accepted_at: new Date().toISOString(),
-                    created_at: firebase.firestore.FieldValue.serverTimestamp()
-                };
-
-                // 3. Salva dados do usuário no Firestore
-                const userRef = db.collection('users').doc(firebaseUser.uid);
-                await userRef.set(customerData);
-                
-                // 4. Sucesso!
-                showSuccess('🎉 Conta criada com sucesso!');
-                
-                // 5. Redireciona para página de dashboard
-                setTimeout(() => {
-                    window.location.href = `dashboard.html`;
-                }, 2000);
+                alert('Conta criada com sucesso! Você será redirecionado.');
+                // Redirecionar para o dashboard ou página de login
+                window.location.href = 'dashboard.html';
 
             } catch (error) {
-                console.error("Erro ao completar registro:", error);
-                showError('Erro: ' + error.message);
-            } finally {
-                // Reabilita o botão
-                btn.disabled = false;
-                btn.textContent = originalText;
+                console.error('❌ Erro ao criar conta:', error);
+                alert('Erro ao criar conta: ' + error.message);
             }
         });
 
-        // Validação em tempo real das senhas
-        document.getElementById('confirm-password').addEventListener('input', function() {
-            const password = document.getElementById('login-password').value;
-            const confirmPassword = this.value;
-            
-            if (confirmPassword && password !== confirmPassword) {
-                this.style.borderColor = '#dc3545';
-            } else {
-                this.style.borderColor = '#e9ecef';
-            }
+        // Máscara de CPF (simples)
+        document.getElementById('cpf').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            e.target.value = value;
         });
-
-        // Efeito hover no botão
-        document.getElementById('complete-registration-btn').addEventListener('mouseenter', function() {
-            if (!this.disabled) {
-                this.style.transform = 'translateY(-2px)';
-            }
-        });
-
-        document.getElementById('complete-registration-btn').addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-
-        console.log("🚀 Página de registro simplificada carregada");
     </script>
 </body>
 

@@ -229,26 +229,8 @@
     </script>
 
     <script>
-        // Estado global da aplicação
-        const state = {
-            selectedMethod: null,
-            completed: false,
-            paymentId: null,
-            customerData: null
-        };
-
-        // Função para mostrar mensagens
-        function showSuccess(message) {
-            alert('✅ ' + message);
-        }
-
-        function showError(message) {
-            alert('❌ ' + message);
-        }
-
-        // Código de inicialização limpo - formulário de cadastro removido
-        // A autenticação é obrigatória antes do pagamento
-
+        // Estado e funções movidas para payment.js para evitar duplicação
+        
         // Inicialização
         console.log("🚀 Página de compra carregada - Sistema de segurança ativo");
     </script>

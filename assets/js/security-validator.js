@@ -16,11 +16,14 @@ class SecurityValidator {
     // =====================================
 
     initializeProtections() {
-        this.preventDevToolsManipulation();
-        this.preventConsoleManipulation();
+        // Temporariamente desabilitando proteções que causam problemas
+        // this.preventDevToolsManipulation();
+        // this.preventConsoleManipulation();
         this.validatePageIntegrity();
         this.setupCSRFProtection();
-        this.monitorDOMChanges();
+        // this.monitorDOMChanges();
+        
+        console.log('🔒 Proteções de segurança ativadas (modo simplificado)');
     }
 
     // =====================================
@@ -79,6 +82,9 @@ class SecurityValidator {
         const originalError = console.error;
         const originalWarn = console.warn;
         const self = this;
+
+        // Salvar referência original para uso no logSecurityEvent
+        this.originalWarn = originalWarn;
 
         console.log = (...args) => {
             self.logSecurityEvent('console_access');
@@ -328,7 +334,10 @@ class SecurityValidator {
             details
         };
 
-        console.warn('🚨 Evento de Segurança:', event);
+        // Usar originalWarn para evitar loop recursivo
+        if (this.originalWarn) {
+            this.originalWarn.call(console, '🚨 Evento de Segurança:', event);
+        }
 
         // Enviar para servidor (implementar se necessário)
         // this.sendSecurityEvent(event);

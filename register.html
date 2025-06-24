@@ -468,8 +468,13 @@
             // Listener especial para senha (inclui atualização de requisitos)
             if (passwordField) {
                 passwordField.addEventListener('input', function() {
-                    console.log('🔑 Senha alterada:', this.value.length, 'caracteres');
-                    updatePasswordRequirements(this.value);
+                    // Teste simples sem console.log para evitar interceptação
+                    const password = this.value;
+                    
+                    // Teste direto - mudar cor de fundo para verificar se funciona
+                    document.body.style.backgroundColor = password.length > 0 ? '#f0f8ff' : '';
+                    
+                    updatePasswordRequirements(password);
                     validateFormAndToggleButton();
                 });
             }
@@ -595,57 +600,69 @@
 
         // Função para atualizar indicadores de requisitos da senha
         function updatePasswordRequirements(password) {
-            const requirements = {
-                length: password.length >= 8,
-                uppercase: /[A-Z]/.test(password),
-                number: /[0-9]/.test(password),
-                symbol: /[:$%#@!*&^()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(password)
-            };
+            // Verificar cada requisito
+            const hasLength = password.length >= 8;
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const hasSymbol = /[:$%#@!*&^()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(password);
 
-            // Atualizar indicadores visuais com animação
-            updateRequirement('req-length', requirements.length, 'Mínimo 8 caracteres');
-            updateRequirement('req-uppercase', requirements.uppercase, 'Uma letra maiúscula');
-            updateRequirement('req-number', requirements.number, 'Um número');
-            updateRequirement('req-symbol', requirements.symbol, 'Um caractere especial');
+            // Atualizar cada elemento diretamente
+            const lengthEl = document.getElementById('req-length');
+            const uppercaseEl = document.getElementById('req-uppercase');
+            const numberEl = document.getElementById('req-number');
+            const symbolEl = document.getElementById('req-symbol');
+
+            if (lengthEl) {
+                lengthEl.innerHTML = hasLength ? 
+                    '<span style="color: #28a745; font-weight: bold;">✓ Mínimo 8 caracteres</span>' : 
+                    '<span style="color: #dc3545; font-weight: bold;">✗ Mínimo 8 caracteres</span>';
+                lengthEl.style.backgroundColor = hasLength ? 'rgba(40, 167, 69, 0.1)' : 'rgba(220, 53, 69, 0.1)';
+                lengthEl.style.padding = '0.25rem 0.5rem';
+                lengthEl.style.borderRadius = '4px';
+                lengthEl.style.margin = '0.25rem 0';
+            }
+
+            if (uppercaseEl) {
+                uppercaseEl.innerHTML = hasUppercase ? 
+                    '<span style="color: #28a745; font-weight: bold;">✓ Uma letra maiúscula</span>' : 
+                    '<span style="color: #dc3545; font-weight: bold;">✗ Uma letra maiúscula</span>';
+                uppercaseEl.style.backgroundColor = hasUppercase ? 'rgba(40, 167, 69, 0.1)' : 'rgba(220, 53, 69, 0.1)';
+                uppercaseEl.style.padding = '0.25rem 0.5rem';
+                uppercaseEl.style.borderRadius = '4px';
+                uppercaseEl.style.margin = '0.25rem 0';
+            }
+
+            if (numberEl) {
+                numberEl.innerHTML = hasNumber ? 
+                    '<span style="color: #28a745; font-weight: bold;">✓ Um número</span>' : 
+                    '<span style="color: #dc3545; font-weight: bold;">✗ Um número</span>';
+                numberEl.style.backgroundColor = hasNumber ? 'rgba(40, 167, 69, 0.1)' : 'rgba(220, 53, 69, 0.1)';
+                numberEl.style.padding = '0.25rem 0.5rem';
+                numberEl.style.borderRadius = '4px';
+                numberEl.style.margin = '0.25rem 0';
+            }
+
+            if (symbolEl) {
+                symbolEl.innerHTML = hasSymbol ? 
+                    '<span style="color: #28a745; font-weight: bold;">✓ Um caractere especial</span>' : 
+                    '<span style="color: #dc3545; font-weight: bold;">✗ Um caractere especial</span>';
+                symbolEl.style.backgroundColor = hasSymbol ? 'rgba(40, 167, 69, 0.1)' : 'rgba(220, 53, 69, 0.1)';
+                symbolEl.style.padding = '0.25rem 0.5rem';
+                symbolEl.style.borderRadius = '4px';
+                symbolEl.style.margin = '0.25rem 0';
+            }
 
             // Alterar cor da borda do campo
             const passwordField = document.getElementById('login-password');
-            if (password.length > 0) {
-                const allValid = Object.values(requirements).every(req => req);
+            if (passwordField && password.length > 0) {
+                const allValid = hasLength && hasUppercase && hasNumber && hasSymbol;
                 passwordField.style.borderColor = allValid ? '#28a745' : '#dc3545';
-            } else {
+            } else if (passwordField) {
                 passwordField.style.borderColor = 'rgba(219, 201, 173, 0.3)';
             }
         }
 
-        // Função auxiliar para atualizar cada requisito individualmente
-        function updateRequirement(elementId, isValid, text) {
-            console.log(`📋 Atualizando ${elementId}: ${isValid ? '✓' : '✗'} ${text}`);
-            const element = document.getElementById(elementId);
-            if (!element) {
-                console.error(`❌ Elemento não encontrado: ${elementId}`);
-                return;
-            }
 
-            const icon = isValid ? '✓' : '✗';
-            const color = isValid ? '#28a745' : '#dc3545';
-            const bgColor = isValid ? 'rgba(40, 167, 69, 0.1)' : 'rgba(220, 53, 69, 0.1)';
-            
-            element.innerHTML = `<span style="color: ${color}; transition: all 0.3s ease;">${icon} ${text}</span>`;
-            element.style.backgroundColor = bgColor;
-            element.style.borderRadius = '4px';
-            element.style.padding = '0.25rem 0.5rem';
-            element.style.transition = 'all 0.3s ease';
-            
-            // Adicionar pequena animação quando muda de estado
-            if (element.dataset.previousState !== isValid.toString()) {
-                element.style.transform = 'scale(1.05)';
-                setTimeout(() => {
-                    element.style.transform = 'scale(1)';
-                }, 150);
-                element.dataset.previousState = isValid.toString();
-            }
-        }
 
 
 

@@ -37,15 +37,17 @@ export default async function handler(req, res) {
 
   try {
     console.log(`[API] Recebida solicitação para criar usuário: ${email}`);
+    console.log(`[API] Dados recebidos:`, { email, name, phone: phone || 'não informado', company: company || 'não informado' });
     
     // 1. Cria o usuário no Firebase Authentication
+    console.log(`[API] Tentando criar usuário no Firebase Auth...`);
     const userRecord = await adminInstance.auth().createUser({
       email: email,
       password: password,
       displayName: name,
     });
 
-    console.log(`[API] Usuário criado no Auth com UID: ${userRecord.uid}`);
+    console.log(`[API] ✅ Usuário criado no Auth com UID: ${userRecord.uid}`);
 
     // 2. Prepara os dados para salvar no Firestore
     const customerData = {
@@ -69,14 +71,20 @@ export default async function handler(req, res) {
     };
 
     // 3. Salva os dados no Firestore usando o UID como ID do documento
+    console.log(`[API] Tentando salvar dados no Firestore...`);
+    console.log(`[API] Dados a serem salvos:`, customerData);
     await db.collection('users').doc(userRecord.uid).set(customerData);
-    console.log(`[API] Dados do usuário salvos no Firestore.`);
+    console.log(`[API] ✅ Dados do usuário salvos no Firestore.`);
 
     // 4. Responde ao cliente com sucesso
+    console.log(`[API] ✅ Processo concluído com sucesso para UID: ${userRecord.uid}`);
     return res.status(201).json({ success: true, uid: userRecord.uid });
 
   } catch (error) {
-    console.error('[API] Erro ao criar usuário:', error);
+    console.error('[API] ❌ Erro ao criar usuário:', error);
+    console.error('[API] ❌ Código do erro:', error.code);
+    console.error('[API] ❌ Mensagem do erro:', error.message);
+    console.error('[API] ❌ Stack trace:', error.stack);
     
     // Traduz os erros do Firebase para mensagens amigáveis
     let friendlyMessage = 'Ocorreu um erro inesperado ao criar sua conta.';

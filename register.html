@@ -420,6 +420,34 @@
             } catch (error) {
                 console.error('❌ Erro ao criar conta Firebase:', error);
                 
+                // Se for erro de CORS/network, tentar via domínio oficial
+                if (error.code === 'auth/network-request-failed') {
+                    console.log('🔄 Tentando via domínio oficial do Firebase...');
+                    
+                    // Redirecionar para domínio oficial do Firebase para autenticação
+                    const authUrl = `https://shortcut-6256b.firebaseapp.com/register.html?email=${encodeURIComponent(email)}&redirect=${encodeURIComponent(window.location.href)}`;
+                    
+                    // Salvar dados temporariamente no localStorage para recuperar depois
+                    const tempData = {
+                        email: email,
+                        password: password,
+                        name: document.getElementById('customer-name').value,
+                        phone: document.getElementById('customer-phone').value,
+                        company: document.getElementById('customer-company').value,
+                        timestamp: Date.now()
+                    };
+                    localStorage.setItem('atalho_temp_registration', JSON.stringify(tempData));
+                    
+                    alert('⚠️ Redirecionando para completar o cadastro...\n\nVocê será redirecionado para uma página segura do Firebase para concluir seu cadastro.');
+                    
+                    // Redirecionar após 2 segundos
+                    setTimeout(() => {
+                        window.location.href = authUrl;
+                    }, 2000);
+                    
+                    return null; // Não continuar com o processo atual
+                }
+                
                 // Traduz erros comuns do Firebase
                 switch (error.code) {
                     case 'auth/email-already-in-use':
@@ -481,6 +509,39 @@
             // Verificar se security validator está em modo registro
             if (window.securityValidator && window.securityValidator.isRegistrationPage) {
                 console.log('✅ Security validator em modo registro - proteções mínimas');
+            }
+            
+            // Verificar se veio de redirecionamento do domínio principal
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectEmail = urlParams.get('email');
+            const redirectUrl = urlParams.get('redirect');
+            
+            if (redirectEmail && redirectUrl) {
+                console.log('🔄 Detectado redirecionamento do domínio principal');
+                
+                // Recuperar dados temporários
+                const tempData = localStorage.getItem('atalho_temp_registration');
+                if (tempData) {
+                    const data = JSON.parse(tempData);
+                    
+                    // Verificar se os dados não são muito antigos (máximo 10 minutos)
+                    if (Date.now() - data.timestamp < 600000) {
+                        // Preencher formulário com dados salvos
+                        document.getElementById('login-email').value = data.email;
+                        document.getElementById('login-password').value = data.password;
+                        document.getElementById('customer-name').value = data.name;
+                        document.getElementById('customer-phone').value = data.phone || '';
+                        document.getElementById('customer-company').value = data.company || '';
+                        
+                        console.log('✅ Dados recuperados do domínio principal');
+                        
+                        // Limpar dados temporários
+                        localStorage.removeItem('atalho_temp_registration');
+                        
+                        // Mostrar mensagem explicativa
+                        alert('✅ Dados recuperados!\n\nSeus dados foram preenchidos automaticamente. Clique em "Criar Conta" para concluir o cadastro.');
+                    }
+                }
             }
             
             // Adicionar listeners específicos para validação em tempo real
@@ -591,6 +652,11 @@
                 console.log('🌐 Tentando criar conta via:', window.location.origin);
                 const firebaseUser = await createFirebaseAccount(loginEmail, loginPassword);
                 
+                // Se redirecionou para Firebase oficial, parar aqui
+                if (firebaseUser === null) {
+                    return;
+                }
+                
                 // 2. Prepara dados do cliente
                 const customerData = {
                     name,
@@ -623,10 +689,21 @@
                 // 4. Sucesso!
                 showSuccess('🎉 Conta criada com sucesso!');
                 
-                // 5. Redireciona para página de dashboard
-                setTimeout(() => {
-                    window.location.href = `dashboard.html`;
-                }, 2000);
+                // 5. Verificar se deve redirecionar de volta para o domínio principal
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirectUrl = urlParams.get('redirect');
+                
+                if (redirectUrl && redirectUrl.includes('atalho.me')) {
+                    // Redirecionar de volta para o domínio principal
+                    setTimeout(() => {
+                        window.location.href = redirectUrl.replace('register.html', 'dashboard.html');
+                    }, 2000);
+                } else {
+                    // Redirecionar para dashboard local
+                    setTimeout(() => {
+                        window.location.href = `dashboard.html`;
+                    }, 2000);
+                }
 
             } catch (error) {
                 console.error("Erro ao completar registro:", error);
@@ -731,10 +808,6 @@
                 passwordField.style.borderColor = 'rgba(219, 201, 173, 0.3)';
             }
         }
-
-
-
-
 
         console.log("🚀 Página de registro simplificada carregada");
     </script>

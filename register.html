@@ -776,100 +776,24 @@
                 
                 // Passo 1: Enviar dados para nossa API de backend
                 console.log('Enviando dados para a API de criação de usuário...');
-                const response = await fetch('/api/create-user', {
+                const response = await fetch('/api/create-user.js', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({
+                        nome: name,
                         email: loginEmail,
-                        password: loginPassword,
-                        name,
-                        phone,
-                        company
-                    }),
+                        password: loginPassword
+                    })
                 });
 
                 const result = await response.json();
 
-                if (!response.ok) {
-                    throw new Error(result.error || 'Falha ao criar a conta no servidor.');
-                }
-
-                console.log('✅ Usuário criado no backend com sucesso!');
-                
-                // Inicializar flag de controle
-                window.emailSentSuccessfully = false;
-                
-                // Passo 2: Verificar se precisa fazer login temporário (fallback)
-                if (result.sendEmailOnFrontend && !result.emailSent) {
-                    console.log('🔄 INICIANDO PROCESSO AUTOMÁTICO DE ENVIO DE EMAIL...');
-                    console.log('📧 Fazendo login temporário INVISÍVEL para o usuário...');
+                if (response.ok) {
+                    console.log('✅ Usuário criado com sucesso:', result);
                     
-                    // Atualizar botão para mostrar progresso
-                    btn.textContent = '📧 Enviando email...';
-                    
-                    try {
-                        // Adicionar delay para evitar problemas de timing
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-                        
-                        console.log('🔐 Fazendo login automático com:', loginEmail);
-                        console.log('⚠️ USUÁRIO NÃO PRECISA FAZER NADA - PROCESSO AUTOMÁTICO!');
-                        
-                        // Login temporário AUTOMÁTICO
-                        const userCredential = await firebase.auth().signInWithEmailAndPassword(loginEmail, loginPassword);
-                        const user = userCredential.user;
-                        
-                        console.log('✅ Login automático realizado com sucesso:', user.uid);
-                        console.log('👤 Usuário logado temporariamente:', user.email);
-                        
-                        // Enviar email de verificação AUTOMATICAMENTE
-                        console.log('📧 Enviando email de verificação automaticamente...');
-                        await user.sendEmailVerification({
-                            url: 'https://www.atalho.me/login.html?verified=true',
-                            handleCodeInApp: false
-                        });
-                        
-                        console.log('✅ EMAIL DE VERIFICAÇÃO ENVIADO COM SUCESSO!');
-                        console.log('📬 Email enviado para:', user.email);
-                        
-                        // Marcar como sucesso
-                        window.emailSentSuccessfully = true;
-                        
-                        // Logout automático IMEDIATO
-                        await firebase.auth().signOut();
-                        console.log('🚪 Logout automático realizado - usuário deslogado');
-                        console.log('✅ PROCESSO COMPLETO! Usuário pode verificar o email.');
-                        
-                    } catch (emailError) {
-                        console.error('❌ ERRO NO PROCESSO AUTOMÁTICO:', emailError);
-                        console.error('❌ Código do erro:', emailError.code);
-                        console.error('❌ Mensagem do erro:', emailError.message);
-                        
-                        // Mensagem específica para o usuário
-                        if (emailError.code === 'auth/network-request-failed') {
-                            console.log('⚠️ PROBLEMA DE REDE - Email não foi enviado automaticamente');
-                            console.log('⚠️ Usuário precisará verificar manualmente ou tentar novamente');
-                        } else if (emailError.code === 'auth/too-many-requests') {
-                            console.log('⚠️ MUITAS TENTATIVAS - Aguardar antes de tentar novamente');
-                        }
-                        
-                        // Continua mesmo se o email falhar
-                        console.log('⚠️ Continuando processo mesmo com erro no email...');
-                        
-                        // Flag já definida como false na inicialização
-                    }
-                } else if (result.emailSent) {
-                    console.log('✅ Email enviado com sucesso via SendGrid!');
-                    window.emailSentSuccessfully = true;
-                } else {
-                    console.log('ℹ️ API não solicitou envio de email pelo frontend');
-                    // Flag já definida como false na inicialização
-                }
-                
-                // Passo 3: Mostrar mensagem de sucesso (dinâmica baseada no resultado)
-                const emailSent = window.emailSentSuccessfully !== false;
-                
-                if (emailSent) {
-                    // Email enviado com sucesso
+                    // Mostrar mensagem de sucesso
                     showSuccessWithRedirect(`
                         🎉 <strong>Conta criada com sucesso!</strong><br><br>
                         
@@ -893,43 +817,20 @@
                         
                         <small>💡 Não achou o email? Verifique a pasta de spam/lixo eletrônico</small>
                     `, loginEmail);
-                } else {
-                    // Problema no envio automático
-                    showSuccessWithRedirect(`
-                        🎉 <strong>Conta criada com sucesso!</strong><br><br>
-                        
-                        ⚠️ <strong>Problema no envio automático do email</strong><br><br>
-                        
-                        📧 <strong>Para receber o email de verificação:</strong><br>
-                        1. 🔐 Vá para a tela de login<br>
-                        2. 📝 Digite seu email e senha<br>
-                        3. 🔄 Tente fazer login<br>
-                        4. 📧 O sistema enviará o email automaticamente<br><br>
-                        
-                        <div style="background: #fff3cd; padding: 10px; border-radius: 6px; margin: 10px 0;">
-                            <strong>⚠️ IMPORTANTE:</strong> Sua conta só funciona após verificar o email!
-                        </div>
-                        
-                        <div style="background: #f8d7da; padding: 10px; border-radius: 6px; margin: 10px 0; border: 1px solid #f5c6cb;">
-                            <strong>🔧 Problema técnico:</strong> O email não foi enviado automaticamente.<br>
-                            Tente fazer login para receber o email de verificação.
-                        </div>
-                    `, loginEmail);
-                }
-                
-                // Se estiver em desenvolvimento, mostrar o link
-                if (result.verificationLink) {
-                    console.log('🔗 Link de verificação (desenvolvimento):', result.verificationLink);
+                    
+                    // Limpar formulário
+                    document.getElementById('customer-registration-form').reset();
+                    
+                    // Opcional: redirecionar para login após alguns segundos
                     setTimeout(() => {
-                        if (confirm('MODO DESENVOLVIMENTO: Deseja abrir o link de verificação agora?')) {
-                            window.open(result.verificationLink, '_blank');
-                        }
-                    }, 2000);
+                        window.location.href = 'login.html?message=verify-email';
+                    }, 3000);
+                    
+                } else {
+                    console.error('❌ Erro ao criar usuário:', result);
+                    showError('❌ Erro ao criar conta: ' + (result.error || 'Erro desconhecido'));
                 }
                 
-                // Passo 3: Usuário pode ir para login quando quiser
-                console.log('✅ Conta criada! Usuário pode clicar no botão para ir ao login.');
-
             } catch (error) {
                 console.error("❌ Erro no processo de registro:", error);
                 console.error("❌ Stack trace:", error.stack);

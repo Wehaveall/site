@@ -800,12 +800,20 @@
 
                  if (response.ok) {
                     console.log('✅ Usuário criado com sucesso:', result);
+                    console.log('📧 Dados completos da resposta:', JSON.stringify(result, null, 2));
+                    console.log('🔗 UID do usuário:', result.uid);
+                    console.log('📨 Email de destino:', result.email);
+                    console.log('📧 Status do email na resposta:', result.emailSent || 'não informado');
+                    console.log('🌩️ Cloud Function chamada:', result.cloudFunctionCalled || 'não informado');
                     
-                    // Mostrar mensagem de sucesso
+                    // Limpar formulário
+                    document.getElementById('customer-registration-form').reset();
+                    
+                    // Mostrar mensagem de sucesso (SEM timeout automático)
                     showSuccessWithRedirect(`
                         🎉 <strong>Conta criada com sucesso!</strong><br><br>
                         
-                        📧 <strong>Email de verificação enviado automaticamente para:</strong><br>
+                        📧 <strong>Email de verificação enviado para:</strong><br>
                         <strong style="color: #dbc9ad;">${loginEmail}</strong><br><br>
                         
                         ✅ <strong>Para ativar sua conta:</strong><br>
@@ -815,27 +823,26 @@
                         4. 🔐 Volte aqui e faça login normalmente<br><br>
                         
                         <div style="background: #d4edda; padding: 10px; border-radius: 6px; margin: 10px 0; border: 1px solid #c3e6cb;">
-                            <strong>✅ PRONTO!</strong> O email já foi enviado automaticamente.<br>
-                            <strong>NÃO precisa fazer login agora</strong> - apenas verificar o email primeiro.
+                            <strong>✅ PROCESSO AUTOMÁTICO CONCLUÍDO!</strong><br>
+                            O email foi enviado automaticamente via Cloud Function.<br>
+                            <strong>Usuário ID:</strong> ${result.uid || 'N/A'}
                         </div>
                         
                         <div style="background: #fff3cd; padding: 10px; border-radius: 6px; margin: 10px 0;">
                             <strong>⚠️ IMPORTANTE:</strong> Sua conta só funciona após clicar no link do email!
                         </div>
                         
+                        <div style="background: #f8d7da; padding: 8px; border-radius: 6px; margin: 10px 0; font-size: 0.9em;">
+                            <strong>🔍 DEBUG:</strong> Se o email não chegar, verifique os logs do console (F12)
+                        </div>
+                        
                         <small>💡 Não achou o email? Verifique a pasta de spam/lixo eletrônico</small>
                     `, loginEmail);
                     
-                    // Limpar formulário
-                    document.getElementById('customer-registration-form').reset();
-                    
-                    // Opcional: redirecionar para login após alguns segundos
-                    setTimeout(() => {
-                        window.location.href = 'login.html?message=verify-email';
-                    }, 3000);
-                    
                 } else {
                     console.error('❌ Erro ao criar usuário:', result);
+                    console.error('❌ Status da resposta:', response.status);
+                    console.error('❌ Headers da resposta:', response.headers);
                     showError('❌ Erro ao criar conta: ' + (result.error || 'Erro desconhecido'));
                 }
                 

@@ -93,8 +93,16 @@ export default async function handler(req, res) {
     console.log(`[API] ✅ Dados do usuário salvos no Firestore.`);
 
     // 4. Chamar Cloud Function para enviar email de verificação
+    let emailSent = false;
+    let cloudFunctionResult = null;
+    let emailError = null;
+    
     try {
       const cloudFunctionUrl = 'https://us-central1-shortcut-6256b.cloudfunctions.net/sendVerificationEmailOnSignup';
+      
+      console.log(`[API] 📧 Chamando Cloud Function para envio de email...`);
+      console.log(`[API] 🔗 URL da Cloud Function: ${cloudFunctionUrl}`);
+      console.log(`[API] 📨 Dados enviados:`, { uid: userRecord.uid, email: email });
       
       const response = await fetch(cloudFunctionUrl, {
         method: 'POST',
@@ -107,35 +115,59 @@ export default async function handler(req, res) {
         })
       });
 
+      console.log(`[API] 📡 Status da resposta Cloud Function: ${response.status}`);
+      console.log(`[API] 📡 Status text: ${response.statusText}`);
+      
       const result = await response.json();
+      cloudFunctionResult = result;
+      
+      console.log(`[API] 📧 Resposta completa da Cloud Function:`, JSON.stringify(result, null, 2));
       
       if (response.ok) {
-        console.log('✅ Email de verificação enviado via Cloud Function');
+        console.log('✅ [API] Email de verificação enviado via Cloud Function com sucesso!');
+        emailSent = true;
         
         // Se estiver em desenvolvimento, mostrar o link
         if (result.verificationLink) {
-          console.log('🔗 Link de verificação (DEV):', result.verificationLink);
+          console.log('🔗 [API] Link de verificação (DEV):', result.verificationLink);
         }
       } else {
-        console.error('❌ Erro ao enviar email via Cloud Function:', result);
+        console.error('❌ [API] Erro ao enviar email via Cloud Function:', result);
+        emailError = result.error || 'Erro desconhecido na Cloud Function';
       }
       
-    } catch (emailError) {
-      console.error('❌ Erro ao chamar Cloud Function:', emailError);
+    } catch (fetchError) {
+      console.error('❌ [API] Erro ao chamar Cloud Function:', fetchError);
+      console.error('❌ [API] Stack trace:', fetchError.stack);
+      emailError = fetchError.message;
       // Não falha o cadastro se o email não for enviado
     }
 
-    // 5. Responde ao cliente com sucesso - frontend enviará o email
+    // 5. Responde ao cliente com sucesso com informações detalhadas
     console.log(`[API] ✅ Processo concluído com sucesso para UID: ${userRecord.uid}`);
+    console.log(`[API] 📧 Status final do email: ${emailSent ? 'ENVIADO' : 'FALHOU'}`);
+    
     return res.status(201).json({ 
       success: true, 
       uid: userRecord.uid,
       email: email,
       name: name,
-      message: 'Conta criada com sucesso! Enviando email de verificação...',
+      message: emailSent ? 
+        'Conta criada com sucesso! Email de verificação enviado.' : 
+        'Conta criada com sucesso! Erro ao enviar email de verificação.',
       requiresEmailVerification: true,
-      // Indica que o frontend deve enviar o email
-      sendEmailOnFrontend: true
+      // Informações detalhadas sobre o processo de email
+      emailSent: emailSent,
+      cloudFunctionCalled: true,
+      cloudFunctionResult: cloudFunctionResult,
+      emailError: emailError,
+      // Debug info
+      debug: {
+        timestamp: new Date().toISOString(),
+        userCreated: true,
+        firestoreDocumentCreated: true,
+        cloudFunctionUrl: 'https://us-central1-shortcut-6256b.cloudfunctions.net/sendVerificationEmailOnSignup'
+      }
     });
 
   } catch (error) {

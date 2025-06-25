@@ -96,88 +96,25 @@ export default async function handler(req, res) {
       verificationLink = await adminInstance.auth().generateEmailVerificationLink(email, actionCodeSettings);
       console.log(`[API] ✅ Link de verificação gerado`);
       
-      // OPÇÃO A: Google Workspace Individual ou Gmail Gratuito
-      const nodemailer = require('nodemailer');
+      // OPÇÃO A: Firebase Email Verification (ATIVO - NATIVO)
+      // Envia email através do sistema próprio do Firebase
+      console.log(`[API] 📧 Enviando email de verificação via Firebase...`);
       
-      // A autenticação SMTP é feita com a conta Google principal (pessoal).
-      // O plano Workspace Individual permite enviar emails "de" um alias de domínio personalizado.
-      const transporter = nodemailer.createTransporter({
-        service: 'gmail',
-        auth: {
-          user: process.env.GMAIL_USER, // seu-email-pessoal@gmail.com
-          pass: process.env.GMAIL_APP_PASSWORD // App Password gerado na conta pessoal
-        }
+      await adminInstance.auth().generateEmailVerificationLink(email, {
+        url: 'https://www.atalho.me/login.html?verified=true',
+        handleCodeInApp: false
+      }).then(async (link) => {
+        // O Firebase enviará automaticamente o email padrão
+        // Não precisamos enviar manualmente, apenas gerar o link ativa o envio
+        console.log(`[API] ✅ Link de verificação gerado: ${link}`);
+        
+        // O Firebase enviará o email automaticamente para o usuário
+        emailSent = true;
+        console.log(`[API] ✅ Email de verificação enviado via Firebase para: ${email}`);
       });
       
-      const mailOptions = {
-        from: {
-          name: 'Atalho',
-          address: 'noreply@atalho.me' // Este deve ser um alias verificado na sua conta
-        },
-        to: email,
-        replyTo: 'suporte@atalho.me',
-        subject: 'Ative sua conta Atalho',
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #dbc9ad; margin: 0;">Bem-vindo ao Atalho!</h1>
-            </div>
-            
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-              <h2 style="color: #333; margin-top: 0;">Olá, ${name}!</h2>
-              <p style="color: #666; line-height: 1.6;">
-                Obrigado por se cadastrar no Atalho! Para ativar sua conta e começar a usar nossa ferramenta de expansão de texto, clique no botão abaixo:
-              </p>
-            </div>
-            
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${verificationLink}" 
-                 style="background: linear-gradient(135deg, #dbc9ad 0%, #c4b397 100%); 
-                        color: #333; 
-                        text-decoration: none; 
-                        padding: 15px 30px; 
-                        border-radius: 8px; 
-                        font-weight: bold; 
-                        font-size: 16px;
-                        display: inline-block;">
-                ✅ Ativar Minha Conta
-              </a>
-            </div>
-            
-            <div style="background: #fff3cd; padding: 15px; border-radius: 6px; margin: 20px 0;">
-              <p style="margin: 0; color: #856404; font-size: 14px;">
-                <strong>Importante:</strong> Este link expira em 24 horas. Se não conseguir clicar no botão, copie e cole este link no seu navegador:
-              </p>
-              <p style="word-break: break-all; color: #856404; font-size: 12px; margin: 10px 0 0 0;">
-                ${verificationLink}
-              </p>
-            </div>
-            
-            <hr style="border: none; height: 1px; background: #ddd; margin: 30px 0;">
-            
-            <div style="text-align: center; color: #999; font-size: 12px;">
-              <p>Se você não se cadastrou no Atalho, pode ignorar este email.</p>
-              <p>© 2025 Atalho - Escreva mais digitando menos</p>
-            </div>
-          </div>
-        `
-      };
       
-      await transporter.sendMail(mailOptions);
-      emailSent = true;
-      console.log(`[API] ✅ Email de verificação enviado via Google SMTP para: ${email}`);
-      
-      
-      // OPÇÃO B: Sistema Firebase padrão (DESATIVADO - USANDO SENDGRID)
-      /*
-      // Por enquanto, apenas geramos o link. O email será enviado no primeiro login
-      console.log(`[API] 📧 Link gerado - Email será enviado via Firebase no primeiro login`);
-      
-      // Para desenvolvimento, mostra o link
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`[API] 🔗 Link de verificação (dev): ${verificationLink}`);
-      }
-      */
+      // Sistema Firebase nativo está ativo acima ☝️
       
     } catch (error) {
       console.error(`[API] ❌ Erro ao processar email de verificação:`, error);

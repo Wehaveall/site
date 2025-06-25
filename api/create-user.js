@@ -96,17 +96,17 @@ export default async function handler(req, res) {
       verificationLink = await adminInstance.auth().generateEmailVerificationLink(email, actionCodeSettings);
       console.log(`[API] ✅ Link de verificação gerado`);
       
-      // OPÇÃO A: SendGrid (RECOMENDADO PARA PRODUÇÃO)
-      /*
+      // OPÇÃO A: SendGrid (ATIVO - PRODUÇÃO)
       const sgMail = require('@sendgrid/mail');
       sgMail.setApiKey(process.env.SENDGRID_API_KEY);
       
       const msg = {
         to: email,
         from: {
-          email: 'noreply@atalho.me', // Precisa ser verificado no SendGrid
+          email: 'noreply@atalho.me', // Usando seu domínio próprio!
           name: 'Atalho'
         },
+        replyTo: 'suporte@atalho.me', // Respostas vão para suporte
         subject: 'Ative sua conta Atalho',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -157,9 +157,10 @@ export default async function handler(req, res) {
       await sgMail.send(msg);
       emailSent = true;
       console.log(`[API] ✅ Email de verificação enviado via SendGrid para: ${email}`);
-      */
       
-      // OPÇÃO B: Sistema Firebase padrão (ATUAL - TEMPORÁRIO)
+      
+      // OPÇÃO B: Sistema Firebase padrão (DESATIVADO - USANDO SENDGRID)
+      /*
       // Por enquanto, apenas geramos o link. O email será enviado no primeiro login
       console.log(`[API] 📧 Link gerado - Email será enviado via Firebase no primeiro login`);
       
@@ -167,6 +168,7 @@ export default async function handler(req, res) {
       if (process.env.NODE_ENV === 'development') {
         console.log(`[API] 🔗 Link de verificação (dev): ${verificationLink}`);
       }
+      */
       
     } catch (error) {
       console.error(`[API] ❌ Erro ao processar email de verificação:`, error);

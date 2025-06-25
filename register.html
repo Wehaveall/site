@@ -364,6 +364,102 @@
     <script src="assets/js/security-validator.js"></script>
 
     <script>
+        // Função para mostrar mensagens de sucesso com redirecionamento
+        function showSuccessWithRedirect(message, email) {
+            // Remove popup anterior se existir
+            const existingPopup = document.getElementById('success-popup');
+            if (existingPopup) {
+                existingPopup.remove();
+            }
+            
+            // Cria popup customizado
+            const popup = document.createElement('div');
+            popup.id = 'success-popup';
+            popup.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+                animation: fadeIn 0.3s ease;
+            `;
+            
+            popup.innerHTML = `
+                <div style="
+                    background: white;
+                    border-radius: 12px;
+                    padding: 2rem;
+                    max-width: 500px;
+                    margin: 1rem;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                    text-align: center;
+                    position: relative;
+                    animation: slideIn 0.3s ease;
+                ">
+                    <div style="color: #28a745; font-size: 3rem; margin-bottom: 1rem;">
+                        🎉
+                    </div>
+                    <div style="color: #333; line-height: 1.6; margin-bottom: 2rem;">
+                        ${message}
+                    </div>
+                    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                        <button onclick="window.location.href='login.html?message=account-created&email=${encodeURIComponent(email)}'" 
+                                style="
+                                    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                                    color: white;
+                                    border: none;
+                                    padding: 0.75rem 1.5rem;
+                                    border-radius: 8px;
+                                    font-size: 1rem;
+                                    font-weight: 600;
+                                    cursor: pointer;
+                                    transition: transform 0.2s ease;
+                                "
+                                onmouseover="this.style.transform='scale(1.05)'"
+                                onmouseout="this.style.transform='scale(1)'">
+                            🔐 Ir para Login
+                        </button>
+                        <button onclick="document.getElementById('success-popup').remove()" 
+                                style="
+                                    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+                                    color: white;
+                                    border: none;
+                                    padding: 0.75rem 1.5rem;
+                                    border-radius: 8px;
+                                    font-size: 1rem;
+                                    font-weight: 600;
+                                    cursor: pointer;
+                                    transition: transform 0.2s ease;
+                                "
+                                onmouseover="this.style.transform='scale(1.05)'"
+                                onmouseout="this.style.transform='scale(1)'">
+                            ✅ Entendi
+                        </button>
+                    </div>
+                </div>
+                
+                <style>
+                    @keyframes fadeIn {
+                        from { opacity: 0; }
+                        to { opacity: 1; }
+                    }
+                    @keyframes slideIn {
+                        from { transform: translateY(-50px); opacity: 0; }
+                        to { transform: translateY(0); opacity: 1; }
+                    }
+                </style>
+            `;
+            
+            document.body.appendChild(popup);
+            
+            // Não remove automaticamente - usuário precisa clicar no botão
+        }
+
         // Função para mostrar mensagens
         function showSuccess(message) {
             // Remove popup anterior se existir
@@ -439,12 +535,7 @@
             
             document.body.appendChild(popup);
             
-            // Remove automaticamente após 15 segundos
-            setTimeout(() => {
-                if (document.getElementById('success-popup')) {
-                    document.getElementById('success-popup').remove();
-                }
-            }, 15000);
+            // Não remove automaticamente - usuário precisa clicar no botão
         }
 
         function showError(message) {
@@ -510,12 +601,7 @@
             
             document.body.appendChild(popup);
             
-            // Remove automaticamente após 10 segundos
-            setTimeout(() => {
-                if (document.getElementById('error-popup')) {
-                    document.getElementById('error-popup').remove();
-                }
-            }, 10000);
+            // Não remove automaticamente - usuário precisa clicar no botão
         }
 
         // Função para validar senhas com novos requisitos
@@ -708,7 +794,7 @@
                 // Passo 2: Mostrar mensagem CLARA e SIMPLES
                 console.log('📧 Conta criada, email de verificação enviado');
                 
-                showSuccess(`
+                showSuccessWithRedirect(`
                     🎉 <strong>Conta criada com sucesso!</strong><br><br>
                     
                     📧 <strong>Email de verificação enviado para:</strong><br>
@@ -725,7 +811,7 @@
                     </div>
                     
                     <small>💡 Não achou o email? Verifique a pasta de spam/lixo eletrônico</small>
-                `);
+                `, loginEmail);
                 
                 // Se estiver em desenvolvimento, mostrar o link
                 if (result.verificationLink) {
@@ -737,10 +823,8 @@
                     }, 2000);
                 }
                 
-                // Passo 3: Redirecionar para login após alguns segundos
-                setTimeout(() => {
-                    window.location.href = `login.html?message=account-created&email=${encodeURIComponent(loginEmail)}`;
-                }, 8000); // Mais tempo para ler a mensagem
+                // Passo 3: Usuário pode ir para login quando quiser
+                console.log('✅ Conta criada! Usuário pode clicar no botão para ir ao login.');
 
             } catch (error) {
                 console.error("Erro no processo de registro:", error);

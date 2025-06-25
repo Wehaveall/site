@@ -92,44 +92,17 @@ export default async function handler(req, res) {
     await db.collection('users').doc(userRecord.uid).set(customerData);
     console.log(`[API] ✅ Dados do usuário salvos no Firestore.`);
 
-    // 4. Envia email de verificação IMEDIATAMENTE
-    console.log(`[API] Preparando envio de email de verificação...`);
-    
-    let emailSent = false;
-    let verificationLink = null;
-    
-    try {
-      // Gera o link de verificação usando Firebase Admin SDK
-      verificationLink = await adminInstance.auth().generateEmailVerificationLink(email, {
-        url: 'https://www.atalho.me/login.html?verified=true',
-        handleCodeInApp: false
-      });
-      console.log(`[API] ✅ Link de verificação gerado: ${verificationLink}`);
-      
-      // IMPORTANTE: O Firebase Admin SDK apenas GERA o link
-      // O email deve ser enviado via serviço externo (SendGrid, etc.)
-      // Por enquanto, retornamos o link para o frontend processar
-      
-      emailSent = true; // Consideramos enviado pois o link foi gerado
-      console.log(`[API] ✅ Email de verificação processado para: ${email}`);
-      
-    } catch (error) {
-      console.error(`[API] ❌ Erro ao gerar link de verificação:`, error);
-      emailSent = false;
-    }
-
-    // 5. Responde ao cliente
+    // 4. Responde ao cliente com sucesso - frontend enviará o email
     console.log(`[API] ✅ Processo concluído com sucesso para UID: ${userRecord.uid}`);
     return res.status(201).json({ 
       success: true, 
       uid: userRecord.uid,
       email: email,
       name: name,
-      message: 'Conta criada com sucesso! Email de verificação será enviado.',
+      message: 'Conta criada com sucesso! Enviando email de verificação...',
       requiresEmailVerification: true,
-      emailSent: emailSent,
-      // Para desenvolvimento/teste, incluímos o link (remover em produção)
-      verificationLink: process.env.NODE_ENV === 'development' ? verificationLink : undefined
+      // Indica que o frontend deve enviar o email
+      sendEmailOnFrontend: true
     });
 
   } catch (error) {

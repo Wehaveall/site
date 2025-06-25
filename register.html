@@ -769,6 +769,11 @@
             btn.textContent = '⏳ Criando conta...';
 
             try {
+                // DEBUG: Testar conectividade Firebase
+                console.log('🔍 Testando conectividade Firebase...');
+                console.log('🔍 Firebase Auth:', firebase.auth());
+                console.log('🔍 Domínio atual:', window.location.hostname);
+                
                 // Passo 1: Enviar dados para nossa API de backend
                 console.log('Enviando dados para a API de criação de usuário...');
                 const response = await fetch('/api/create-user', {
@@ -791,28 +796,48 @@
 
                 console.log('✅ Usuário criado no backend com sucesso!');
                 
-                // Passo 2: Criar usuário no Firebase Auth e enviar email de verificação
-                console.log('🔐 Criando usuário no Firebase Auth...');
+                // Passo 2: Fazer login temporário para enviar email de verificação
+                if (result.sendEmailOnFrontend) {
+                    console.log('📧 Fazendo login temporário para enviar email de verificação...');
+                    
+                    try {
+                        // Adicionar delay para evitar problemas de timing
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        
+                        console.log('🔐 Tentando fazer login com:', loginEmail);
+                        
+                        // Login temporário
+                        const userCredential = await firebase.auth().signInWithEmailAndPassword(loginEmail, loginPassword);
+                        const user = userCredential.user;
+                        
+                        console.log('✅ Login temporário realizado:', user.uid);
+                        
+                        // Enviar email de verificação
+                        console.log('📧 Enviando email de verificação...');
+                        await user.sendEmailVerification({
+                            url: 'https://www.atalho.me/login.html?verified=true',
+                            handleCodeInApp: false
+                        });
+                        
+                        console.log('✅ Email de verificação enviado!');
+                        
+                        // Logout imediato
+                        await firebase.auth().signOut();
+                        console.log('🚪 Logout automático realizado');
+                        
+                    } catch (emailError) {
+                        console.error('❌ Erro ao enviar email de verificação:', emailError);
+                        console.error('❌ Código do erro:', emailError.code);
+                        console.error('❌ Mensagem do erro:', emailError.message);
+                        
+                        // Continua mesmo se o email falhar, mas informa o usuário
+                        if (emailError.code === 'auth/network-request-failed') {
+                            console.log('⚠️ Problema de rede detectado - continuando sem email automático');
+                        }
+                    }
+                }
                 
-                const userCredential = await firebase.auth().createUserWithEmailAndPassword(loginEmail, loginPassword);
-                const user = userCredential.user;
-                
-                console.log('✅ Usuário criado no Firebase Auth:', user.uid);
-                
-                // Passo 3: Enviar email de verificação IMEDIATAMENTE
-                console.log('📧 Enviando email de verificação...');
-                await user.sendEmailVerification({
-                    url: 'https://www.atalho.me/login.html?verified=true',
-                    handleCodeInApp: false
-                });
-                
-                console.log('✅ Email de verificação enviado!');
-                
-                // Passo 4: Fazer logout imediatamente para forçar verificação
-                await firebase.auth().signOut();
-                console.log('🚪 Logout automático realizado');
-                
-                // Passo 5: Mostrar mensagem CLARA e SIMPLES
+                // Passo 3: Mostrar mensagem de sucesso
                 showSuccessWithRedirect(`
                     🎉 <strong>Conta criada com sucesso!</strong><br><br>
                     
@@ -846,8 +871,21 @@
                 console.log('✅ Conta criada! Usuário pode clicar no botão para ir ao login.');
 
             } catch (error) {
-                console.error("Erro no processo de registro:", error);
-                showError('Erro: ' + error.message);
+                console.error("❌ Erro no processo de registro:", error);
+                console.error("❌ Stack trace:", error.stack);
+                
+                // Mensagens de erro mais específicas
+                let errorMessage = 'Erro: ' + error.message;
+                
+                if (error.message.includes('network')) {
+                    errorMessage = 'Erro de conexão. Verifique sua internet e tente novamente.';
+                } else if (error.message.includes('CORS')) {
+                    errorMessage = 'Erro de configuração. Tente novamente em alguns minutos.';
+                } else if (error.code === 'auth/email-already-exists') {
+                    errorMessage = 'Este email já está cadastrado. Tente fazer login.';
+                }
+                
+                showError(errorMessage);
             } finally {
                 btn.disabled = false;
                 btn.textContent = originalText;

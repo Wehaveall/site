@@ -79,25 +79,113 @@ export default async function handler(req, res) {
     await db.collection('users').doc(userRecord.uid).set(customerData);
     console.log(`[API] ✅ Dados do usuário salvos no Firestore.`);
 
-    // 4. Gera link de verificação de email
-    console.log(`[API] Gerando link de verificação de email...`);
-    const verificationLink = await adminInstance.auth().generateEmailVerificationLink(email, {
-      url: 'https://www.atalho.me/login.html?verified=true', // URL de retorno após verificação
-      handleCodeInApp: false
-    });
-    console.log(`[API] ✅ Link de verificação gerado`);
+    // 4. Envia email de verificação IMEDIATAMENTE via serviço de email
+    console.log(`[API] Preparando envio de email de verificação...`);
+    
+    let emailSent = false;
+    let verificationLink = null;
+    
+    try {
+      // Configurações do email de verificação
+      const actionCodeSettings = {
+        url: 'https://www.atalho.me/login.html?verified=true',
+        handleCodeInApp: false
+      };
+      
+      // Gera o link de verificação usando Firebase Admin SDK
+      verificationLink = await adminInstance.auth().generateEmailVerificationLink(email, actionCodeSettings);
+      console.log(`[API] ✅ Link de verificação gerado`);
+      
+      // OPÇÃO A: SendGrid (RECOMENDADO PARA PRODUÇÃO)
+      /*
+      const sgMail = require('@sendgrid/mail');
+      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+      
+      const msg = {
+        to: email,
+        from: {
+          email: 'noreply@atalho.me', // Precisa ser verificado no SendGrid
+          name: 'Atalho'
+        },
+        subject: 'Ative sua conta Atalho',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #dbc9ad; margin: 0;">Bem-vindo ao Atalho!</h1>
+            </div>
+            
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+              <h2 style="color: #333; margin-top: 0;">Olá, ${name}!</h2>
+              <p style="color: #666; line-height: 1.6;">
+                Obrigado por se cadastrar no Atalho! Para ativar sua conta e começar a usar nossa ferramenta de expansão de texto, clique no botão abaixo:
+              </p>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${verificationLink}" 
+                 style="background: linear-gradient(135deg, #dbc9ad 0%, #c4b397 100%); 
+                        color: #333; 
+                        text-decoration: none; 
+                        padding: 15px 30px; 
+                        border-radius: 8px; 
+                        font-weight: bold; 
+                        font-size: 16px;
+                        display: inline-block;">
+                ✅ Ativar Minha Conta
+              </a>
+            </div>
+            
+            <div style="background: #fff3cd; padding: 15px; border-radius: 6px; margin: 20px 0;">
+              <p style="margin: 0; color: #856404; font-size: 14px;">
+                <strong>Importante:</strong> Este link expira em 24 horas. Se não conseguir clicar no botão, copie e cole este link no seu navegador:
+              </p>
+              <p style="word-break: break-all; color: #856404; font-size: 12px; margin: 10px 0 0 0;">
+                ${verificationLink}
+              </p>
+            </div>
+            
+            <hr style="border: none; height: 1px; background: #ddd; margin: 30px 0;">
+            
+            <div style="text-align: center; color: #999; font-size: 12px;">
+              <p>Se você não se cadastrou no Atalho, pode ignorar este email.</p>
+              <p>© 2025 Atalho - Escreva mais digitando menos</p>
+            </div>
+          </div>
+        `
+      };
+      
+      await sgMail.send(msg);
+      emailSent = true;
+      console.log(`[API] ✅ Email de verificação enviado via SendGrid para: ${email}`);
+      */
+      
+      // OPÇÃO B: Sistema Firebase padrão (ATUAL - TEMPORÁRIO)
+      // Por enquanto, apenas geramos o link. O email será enviado no primeiro login
+      console.log(`[API] 📧 Link gerado - Email será enviado via Firebase no primeiro login`);
+      
+      // Para desenvolvimento, mostra o link
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[API] 🔗 Link de verificação (dev): ${verificationLink}`);
+      }
+      
+    } catch (error) {
+      console.error(`[API] ❌ Erro ao processar email de verificação:`, error);
+      // Não falha o cadastro por causa do email
+    }
 
-    // 5. Aqui você pode implementar o envio do email
-    // Por enquanto, vamos simular que o email foi "enviado"
-    console.log(`[API] 📧 Link de verificação que seria enviado: ${verificationLink}`);
-
-    // 6. Responde ao cliente com sucesso
+    // 5. Responde ao cliente com informações sobre o email
     console.log(`[API] ✅ Processo concluído com sucesso para UID: ${userRecord.uid}`);
     return res.status(201).json({ 
       success: true, 
       uid: userRecord.uid,
-      message: 'Conta criada com sucesso! Verifique seu email para ativá-la.',
+      email: email,
+      name: name,
+      message: emailSent ? 
+        'Conta criada com sucesso! Email de verificação enviado.' : 
+        'Conta criada com sucesso! Email será enviado no primeiro login.',
       requiresEmailVerification: true,
+      emailSent: emailSent, // Indica se o email foi enviado pelo backend
+      sendVerificationOnLogin: !emailSent, // Se true, frontend deve enviar no login
       // Para desenvolvimento/teste, incluímos o link (remover em produção)
       verificationLink: process.env.NODE_ENV === 'development' ? verificationLink : undefined
     });

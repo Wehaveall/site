@@ -96,15 +96,15 @@ export default async function handler(req, res) {
       verificationLink = await adminInstance.auth().generateEmailVerificationLink(email, actionCodeSettings);
       console.log(`[API] ✅ Link de verificação gerado`);
       
-      // OPÇÃO A: Google Workspace SMTP (ATIVO - PRODUÇÃO)
+      // OPÇÃO A: Gmail Gratuito com Alias (TEMPORÁRIO)
       const nodemailer = require('nodemailer');
       
-      // Configuração SMTP do Google Workspace
+      // Configuração SMTP do Gmail gratuito (temporário até Google Workspace)
       const transporter = nodemailer.createTransporter({
         service: 'gmail',
         auth: {
-          user: process.env.GMAIL_USER, // suporte@atalho.me
-          pass: process.env.GMAIL_APP_PASSWORD // App Password gerado no Google
+          user: process.env.GMAIL_USER, // seu-email-pessoal@gmail.com
+          pass: process.env.GMAIL_APP_PASSWORD // App Password gerado no Gmail pessoal
         }
       });
       

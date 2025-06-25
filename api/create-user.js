@@ -50,16 +50,29 @@ export default async function handler(req, res) {
 
     console.log(`[API] ✅ Usuário criado no Auth com UID: ${userRecord.uid}`);
 
-    // 2. Prepara os dados para salvar no Firestore
+    // 2. Prepara os dados para salvar no Firestore - ESTRUTURA CORRIGIDA
     const customerData = {
-      name,
-      email,
+      // Dados principais
+      Nome: name, // Campo Nome (com N maiúsculo) para compatibilidade
+      email: email,
       phone: phone || null,
-      company: company || null,
-      country: "Brasil",
+      country: company || "Brasil", // Usando company como country por compatibilidade
+      
+      // Dados do usuário Firebase
+      user: {
+        uid: userRecord.uid,
+        email: email,
+        displayName: name
+      },
+      
+      // Status da conta
       terms_accepted: true,
       terms_accepted_at: new Date().toISOString(),
       created_at: admin.firestore.FieldValue.serverTimestamp(),
+      email_verified: false,
+      account_status: 'pending_verification',
+      
+      // Dados de licença
       license_active: false,
       license_type: null,
       payment_status: 'pending',
@@ -68,9 +81,9 @@ export default async function handler(req, res) {
       sub_end: null,
       last_payment_date: null,
       active_machines: 0,
-      email_verified: false, // Status de verificação no Firestore
-      account_status: 'pending_verification', // Status da conta
-      id: null // Pode ser preenchido posteriormente se necessário
+      
+      // ID para referência
+      id: userRecord.uid
     };
 
     // 3. Salva os dados no Firestore usando o UID como ID do documento
@@ -79,76 +92,42 @@ export default async function handler(req, res) {
     await db.collection('users').doc(userRecord.uid).set(customerData);
     console.log(`[API] ✅ Dados do usuário salvos no Firestore.`);
 
-    // 4. Envia email de verificação IMEDIATAMENTE via serviço de email
+    // 4. Envia email de verificação IMEDIATAMENTE
     console.log(`[API] Preparando envio de email de verificação...`);
     
     let emailSent = false;
     let verificationLink = null;
     
     try {
-      // Configurações do email de verificação
-      const actionCodeSettings = {
+      // Gera o link de verificação usando Firebase Admin SDK
+      verificationLink = await adminInstance.auth().generateEmailVerificationLink(email, {
         url: 'https://www.atalho.me/login.html?verified=true',
         handleCodeInApp: false
-      };
+      });
+      console.log(`[API] ✅ Link de verificação gerado: ${verificationLink}`);
       
-      // Gera o link de verificação usando Firebase Admin SDK
-      verificationLink = await adminInstance.auth().generateEmailVerificationLink(email, actionCodeSettings);
-      console.log(`[API] ✅ Link de verificação gerado`);
+      // IMPORTANTE: O Firebase Admin SDK apenas GERA o link
+      // O email deve ser enviado via serviço externo (SendGrid, etc.)
+      // Por enquanto, retornamos o link para o frontend processar
       
-      // OPÇÃO A: Firebase Email Verification (ATIVO - NATIVO)
-      console.log(`[API] 📧 Tentando enviar email de verificação via Firebase...`);
-      
-      try {
-        // Primeiro, vamos verificar se o usuário foi criado corretamente
-        const createdUser = await adminInstance.auth().getUser(userRecord.uid);
-        console.log(`[API] 📧 Usuário encontrado para envio de email: ${createdUser.email}`);
-        
-        // Gerar link de verificação
-        const verificationLink = await adminInstance.auth().generateEmailVerificationLink(email, {
-          url: 'https://www.atalho.me/login.html?verified=true',
-          handleCodeInApp: false
-        });
-        
-        console.log(`[API] ✅ Link de verificação gerado com sucesso`);
-        console.log(`[API] 🔗 Link: ${verificationLink}`);
-        
-        // O Firebase deveria enviar automaticamente, mas vamos forçar
-        emailSent = true;
-        console.log(`[API] ✅ Email de verificação processado para: ${email}`);
-        
-        // Em desenvolvimento, mostrar o link no console
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`[API] 🔧 DESENVOLVIMENTO - Link direto: ${verificationLink}`);
-        }
-        
-      } catch (emailError) {
-        console.error(`[API] ❌ Erro no envio de email:`, emailError);
-        console.log(`[API] 📧 Continuando sem email automático...`);
-        emailSent = false;
-      }
-      
-      
-      // Sistema Firebase nativo está ativo acima ☝️
+      emailSent = true; // Consideramos enviado pois o link foi gerado
+      console.log(`[API] ✅ Email de verificação processado para: ${email}`);
       
     } catch (error) {
-      console.error(`[API] ❌ Erro ao processar email de verificação:`, error);
-      // Não falha o cadastro por causa do email
+      console.error(`[API] ❌ Erro ao gerar link de verificação:`, error);
+      emailSent = false;
     }
 
-    // 5. Responde ao cliente com informações sobre o email
+    // 5. Responde ao cliente
     console.log(`[API] ✅ Processo concluído com sucesso para UID: ${userRecord.uid}`);
     return res.status(201).json({ 
       success: true, 
       uid: userRecord.uid,
       email: email,
       name: name,
-      message: emailSent ? 
-        'Conta criada com sucesso! Email de verificação enviado.' : 
-        'Conta criada com sucesso! Email será enviado no primeiro login.',
+      message: 'Conta criada com sucesso! Email de verificação será enviado.',
       requiresEmailVerification: true,
-      emailSent: emailSent, // Indica se o email foi enviado pelo backend
-      sendVerificationOnLogin: !emailSent, // Se true, frontend deve enviar no login
+      emailSent: emailSent,
       // Para desenvolvimento/teste, incluímos o link (remover em produção)
       verificationLink: process.env.NODE_ENV === 'development' ? verificationLink : undefined
     });

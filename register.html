@@ -303,7 +303,7 @@
                             <div id="req-length" class="requirement-item">✗ Mínimo 8 caracteres</div>
                             <div id="req-uppercase" class="requirement-item">✗ Uma letra maiúscula</div>
                             <div id="req-number" class="requirement-item">✗ Um número</div>
-                            <div id="req-symbol" class="requirement-item">✗ Um caractere especial</div>
+                            <div id="req-symbol" class="requirement-item">✗ Um símbolo (:$%#@!* etc.)</div>
                         </div>
                     </div>
 
@@ -791,9 +791,28 @@
 
                 console.log('✅ Usuário criado no backend com sucesso!');
                 
-                // Passo 2: Mostrar mensagem CLARA e SIMPLES
-                console.log('📧 Conta criada, email de verificação enviado');
+                // Passo 2: Criar usuário no Firebase Auth e enviar email de verificação
+                console.log('🔐 Criando usuário no Firebase Auth...');
                 
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(loginEmail, loginPassword);
+                const user = userCredential.user;
+                
+                console.log('✅ Usuário criado no Firebase Auth:', user.uid);
+                
+                // Passo 3: Enviar email de verificação IMEDIATAMENTE
+                console.log('📧 Enviando email de verificação...');
+                await user.sendEmailVerification({
+                    url: 'https://www.atalho.me/login.html?verified=true',
+                    handleCodeInApp: false
+                });
+                
+                console.log('✅ Email de verificação enviado!');
+                
+                // Passo 4: Fazer logout imediatamente para forçar verificação
+                await firebase.auth().signOut();
+                console.log('🚪 Logout automático realizado');
+                
+                // Passo 5: Mostrar mensagem CLARA e SIMPLES
                 showSuccessWithRedirect(`
                     🎉 <strong>Conta criada com sucesso!</strong><br><br>
                     
@@ -910,8 +929,8 @@
 
             if (symbolEl) {
                 symbolEl.innerHTML = hasSymbol ? 
-                    '<span style="color: #28a745 !important; font-weight: bold !important;">✓ Um caractere especial</span>' : 
-                    '<span style="color: #dc3545 !important; font-weight: bold !important;">✗ Um caractere especial</span>';
+                    '<span style="color: #28a745 !important; font-weight: bold !important;">✓ Um símbolo (:$%#@!* etc.)</span>' : 
+                    '<span style="color: #dc3545 !important; font-weight: bold !important;">✗ Um símbolo (:$%#@!* etc.)</span>';
                 symbolEl.style.setProperty('background-color', hasSymbol ? 'rgba(40, 167, 69, 0.2)' : 'rgba(220, 53, 69, 0.2)', 'important');
                 symbolEl.style.setProperty('padding', '0.25rem 0.5rem', 'important');
                 symbolEl.style.setProperty('border-radius', '4px', 'important');

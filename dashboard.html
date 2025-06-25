@@ -224,7 +224,35 @@
                 console.log('📊 === INÍCIO DO CARREGAMENTO DE DADOS ===');
                 console.log('🔍 UID do usuário:', uid);
                 
-                // Busca na coleção 'users' pelo campo user.uid (não pelo ID do documento)
+                // PRIMEIRO: Buscar diretamente pelo ID do documento (mais eficiente)
+                try {
+                    console.log('🔍 Buscando documento pelo ID:', uid);
+                    const userDoc = await db.collection('users').doc(uid).get();
+                    
+                    if (userDoc.exists) {
+                        customerData = userDoc.data();
+                        
+                        console.log('✅ DADOS ENCONTRADOS pelo ID do documento:');
+                        console.log('📋 ID do documento:', userDoc.id);
+                        console.log('📄 Dados completos:', JSON.stringify(customerData, null, 2));
+                        console.log('📝 Campo Nome:', customerData.Nome);
+                        console.log('📧 Campo email:', customerData.email);
+                        console.log('📱 Campo phone:', customerData.phone);
+                        console.log('🌍 Campo country:', customerData.country);
+                        console.log('🆔 Campo id:', customerData.id);
+                        console.log('📅 Campo sub_start:', customerData.sub_start);
+                        console.log('📅 Campo sub_end:', customerData.sub_end);
+                        
+                        updateUI();
+                        return;
+                    } else {
+                        console.log('❌ Documento não encontrado pelo ID:', uid);
+                    }
+                } catch (docError) {
+                    console.error('❌ Erro ao buscar documento pelo ID:', docError);
+                }
+                
+                // SEGUNDO: Buscar por user.uid (caso a estrutura seja diferente)
                 try {
                     console.log('🔍 Buscando por user.uid =', uid);
                     
@@ -240,23 +268,16 @@
                         const userDoc = querySnapshot.docs[0];
                         customerData = userDoc.data();
                         
-                        console.log('✅ DADOS ENCONTRADOS na coleção users:');
+                        console.log('✅ DADOS ENCONTRADOS por user.uid:');
                         console.log('📋 ID do documento:', userDoc.id);
                         console.log('📄 Dados completos:', JSON.stringify(customerData, null, 2));
-                        console.log('📝 Campo Nome:', customerData.Nome);
-                        console.log('📧 Campo email:', customerData.email);
-                        console.log('📱 Campo phone:', customerData.phone);
-                        console.log('🌍 Campo country:', customerData.country);
-                        console.log('🆔 Campo id:', customerData.id);
-                        console.log('📅 Campo sub_start:', customerData.sub_start);
-                        console.log('📅 Campo sub_end:', customerData.sub_end);
                         
                         updateUI();
                         return;
                     } else {
                         console.log('❌ Nenhum documento encontrado com user.uid =', uid);
                         
-                        // TESTE ALTERNATIVO: Buscar por email
+                        // TERCEIRO: Buscar por email
                         console.log('🔄 Tentativa alternativa: buscar por email =', currentUser.email);
                         const emailQuery = db.collection('users')
                             .where('email', '==', currentUser.email)
@@ -377,11 +398,46 @@
             console.log('📥 Download do software solicitado');
         }
 
+        // Função para sincronizar status de verificação de email
+        async function syncEmailVerificationStatus(user) {
+            try {
+                console.log('🔄 Sincronizando status de verificação de email...');
+                console.log('📧 Email verificado no Auth:', user.emailVerified);
+                
+                // Atualiza o status no Firestore se necessário
+                const userDocRef = db.collection('users').doc(user.uid);
+                const userDoc = await userDocRef.get();
+                
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    
+                    // Se o email foi verificado no Auth mas não no Firestore, atualiza
+                    if (user.emailVerified && !userData.email_verified) {
+                        console.log('✅ Atualizando status de verificação no Firestore...');
+                        await userDocRef.update({
+                            email_verified: true,
+                            account_status: 'active',
+                            email_verified_at: new Date().toISOString()
+                        });
+                        console.log('✅ Status de verificação atualizado no Firestore');
+                    }
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao sincronizar status de verificação:', error);
+            }
+        }
+
         // Verificação de autenticação
         firebase.auth().onAuthStateChanged(async function(user) {
             if (user) {
                 console.log('✅ Usuário autenticado:', user.uid);
                 console.log('📧 Email do usuário:', user.email);
+                console.log('✅ Email verificado:', user.emailVerified);
+                
+                // Sincroniza status de verificação
+                await syncEmailVerificationStatus(user);
+                
                 console.log('🔗 Testando conexão com Firestore...');
                 
                 // Teste básico de conexão com Firestore

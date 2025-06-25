@@ -107,16 +107,7 @@
                         </a>
                     </div>
 
-                    <!-- Área para reenvio de verificação -->
-                    <div id="resend-verification-area" style="display: none; text-align: center; margin-top: 1.5rem; padding: 1rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
-                        <p style="color: var(--text-dark); margin-bottom: 1rem; font-size: 0.9rem;">
-                            📧 Não recebeu o email de verificação?
-                        </p>
-                        <button id="resend-verification-btn" onclick="resendVerificationEmail()" 
-                                style="padding: 0.5rem 1rem; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
-                            📬 Reenviar Email de Verificação
-                        </button>
-                    </div>
+
                 </form>
             </div>
 
@@ -149,29 +140,17 @@
                 if (!user.emailVerified) {
                     console.warn('⚠️ Email não verificado para:', user.email);
                     
-                    // Envia email de verificação automaticamente
-                    try {
-                        console.log('📧 Enviando email de verificação automaticamente...');
-                        await user.sendEmailVerification({
-                            url: 'https://www.atalho.me/login.html?verified=true',
-                            handleCodeInApp: false
-                        });
-                        console.log('✅ Email de verificação enviado!');
-                    } catch (emailError) {
-                        console.error('❌ Erro ao enviar email:', emailError);
-                    }
-                    
                     // Faz logout imediatamente
                     await firebase.auth().signOut();
                     
                     throw new Error(`
                         Email não verificado! 
                         
-                        📧 Acabamos de enviar um email de verificação para: ${user.email}
+                        📧 Você precisa verificar seu email antes de fazer login.
                         
-                        ✅ Verifique sua caixa de entrada (e spam) e clique no link de verificação.
+                        ✅ Verifique sua caixa de entrada (e spam) e clique no link de verificação que foi enviado quando você criou sua conta.
                         
-                        ⏰ Pode levar alguns minutos para chegar.
+                        💡 Se não encontrar o email, verifique a pasta de spam/lixo eletrônico.
                     `);
                 }
                 
@@ -351,14 +330,6 @@
             } catch (error) {
                 console.error("Erro no login:", error);
                 showError(error.message);
-                
-                // Se foi erro de email não verificado, mostra opção de reenvio
-                if (error.message.includes('Email não verificado')) {
-                    lastEmailWithVerificationError = email;
-                    document.getElementById('resend-verification-area').style.display = 'block';
-                } else {
-                    document.getElementById('resend-verification-area').style.display = 'none';
-                }
             } finally {
                 // Reabilita o botão
                 btn.disabled = false;
@@ -460,76 +431,7 @@
             document.getElementById('login-email').focus();
         });
 
-        // Função para reenviar email de verificação
-        async function resendVerificationEmail() {
-            const email = document.getElementById('login-email').value.trim();
-            
-            if (!email) {
-                showError('Por favor, digite seu email no campo acima primeiro.');
-                return;
-            }
 
-            const btn = document.getElementById('resend-verification-btn');
-            const originalText = btn.textContent;
-            btn.disabled = true;
-            btn.textContent = '⏳ Enviando...';
-
-            try {
-                console.log('📧 Reenviando email de verificação para:', email);
-                
-                // Primeiro tenta fazer login temporário para acessar o usuário
-                const password = document.getElementById('login-password').value;
-                if (!password) {
-                    throw new Error('Por favor, digite sua senha para reenviar o email de verificação.');
-                }
-
-                const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
-                const user = userCredential.user;
-
-                if (user.emailVerified) {
-                    showSuccess('Seu email já está verificado! Tente fazer login novamente.');
-                    return;
-                }
-
-                // Envia email de verificação
-                await user.sendEmailVerification({
-                    url: 'https://www.atalho.me/login.html?verified=true',
-                    handleCodeInApp: false
-                });
-
-                // Faz logout após enviar
-                await firebase.auth().signOut();
-
-                showSuccess('✅ Email de verificação enviado! Verifique sua caixa de entrada e spam.');
-                
-                // Esconde a área de reenvio por alguns segundos
-                document.getElementById('resend-verification-area').style.display = 'none';
-                setTimeout(() => {
-                    document.getElementById('resend-verification-area').style.display = 'block';
-                }, 30000); // 30 segundos
-
-            } catch (error) {
-                console.error('❌ Erro ao reenviar email:', error);
-                
-                if (error.message.includes('digite sua senha')) {
-                    showError(error.message);
-                } else if (error.code === 'auth/too-many-requests') {
-                    showError('Muitos emails enviados. Aguarde um pouco antes de tentar novamente.');
-                } else if (error.code === 'auth/user-not-found') {
-                    showError('Email não encontrado. Verifique se você tem uma conta.');
-                } else if (error.code === 'auth/wrong-password') {
-                    showError('Senha incorreta. Digite a senha correta para reenviar o email.');
-                } else {
-                    showError('Erro ao reenviar email: ' + error.message);
-                }
-            } finally {
-                btn.disabled = false;
-                btn.textContent = originalText;
-            }
-        }
-
-        // Variável global para controlar o email que teve erro
-        let lastEmailWithVerificationError = null;
 
         console.log("🚀 Página de login carregada");
     </script>

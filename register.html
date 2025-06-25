@@ -796,66 +796,123 @@
 
                 console.log('✅ Usuário criado no backend com sucesso!');
                 
-                // Passo 2: Fazer login temporário para enviar email de verificação
+                // Inicializar flag de controle
+                window.emailSentSuccessfully = false;
+                
+                // Passo 2: Fazer login temporário AUTOMÁTICO para enviar email de verificação
                 if (result.sendEmailOnFrontend) {
-                    console.log('📧 Fazendo login temporário para enviar email de verificação...');
+                    console.log('🔄 INICIANDO PROCESSO AUTOMÁTICO DE ENVIO DE EMAIL...');
+                    console.log('📧 Fazendo login temporário INVISÍVEL para o usuário...');
+                    
+                    // Atualizar botão para mostrar progresso
+                    btn.textContent = '📧 Enviando email...';
                     
                     try {
                         // Adicionar delay para evitar problemas de timing
                         await new Promise(resolve => setTimeout(resolve, 1000));
                         
-                        console.log('🔐 Tentando fazer login com:', loginEmail);
+                        console.log('🔐 Fazendo login automático com:', loginEmail);
+                        console.log('⚠️ USUÁRIO NÃO PRECISA FAZER NADA - PROCESSO AUTOMÁTICO!');
                         
-                        // Login temporário
+                        // Login temporário AUTOMÁTICO
                         const userCredential = await firebase.auth().signInWithEmailAndPassword(loginEmail, loginPassword);
                         const user = userCredential.user;
                         
-                        console.log('✅ Login temporário realizado:', user.uid);
+                        console.log('✅ Login automático realizado com sucesso:', user.uid);
+                        console.log('👤 Usuário logado temporariamente:', user.email);
                         
-                        // Enviar email de verificação
-                        console.log('📧 Enviando email de verificação...');
+                        // Enviar email de verificação AUTOMATICAMENTE
+                        console.log('📧 Enviando email de verificação automaticamente...');
                         await user.sendEmailVerification({
                             url: 'https://www.atalho.me/login.html?verified=true',
                             handleCodeInApp: false
                         });
                         
-                        console.log('✅ Email de verificação enviado!');
+                        console.log('✅ EMAIL DE VERIFICAÇÃO ENVIADO COM SUCESSO!');
+                        console.log('📬 Email enviado para:', user.email);
                         
-                        // Logout imediato
+                        // Marcar como sucesso
+                        window.emailSentSuccessfully = true;
+                        
+                        // Logout automático IMEDIATO
                         await firebase.auth().signOut();
-                        console.log('🚪 Logout automático realizado');
+                        console.log('🚪 Logout automático realizado - usuário deslogado');
+                        console.log('✅ PROCESSO COMPLETO! Usuário pode verificar o email.');
                         
                     } catch (emailError) {
-                        console.error('❌ Erro ao enviar email de verificação:', emailError);
+                        console.error('❌ ERRO NO PROCESSO AUTOMÁTICO:', emailError);
                         console.error('❌ Código do erro:', emailError.code);
                         console.error('❌ Mensagem do erro:', emailError.message);
                         
-                        // Continua mesmo se o email falhar, mas informa o usuário
+                        // Mensagem específica para o usuário
                         if (emailError.code === 'auth/network-request-failed') {
-                            console.log('⚠️ Problema de rede detectado - continuando sem email automático');
+                            console.log('⚠️ PROBLEMA DE REDE - Email não foi enviado automaticamente');
+                            console.log('⚠️ Usuário precisará verificar manualmente ou tentar novamente');
+                        } else if (emailError.code === 'auth/too-many-requests') {
+                            console.log('⚠️ MUITAS TENTATIVAS - Aguardar antes de tentar novamente');
                         }
+                        
+                        // Continua mesmo se o email falhar
+                        console.log('⚠️ Continuando processo mesmo com erro no email...');
+                        
+                        // Flag já definida como false na inicialização
                     }
+                } else {
+                    console.log('ℹ️ API não solicitou envio de email pelo frontend');
+                    // Flag já definida como false na inicialização
                 }
                 
-                // Passo 3: Mostrar mensagem de sucesso
-                showSuccessWithRedirect(`
-                    🎉 <strong>Conta criada com sucesso!</strong><br><br>
-                    
-                    📧 <strong>Email de verificação enviado para:</strong><br>
-                    <strong style="color: #dbc9ad;">${loginEmail}</strong><br><br>
-                    
-                    ✅ <strong>Para ativar sua conta:</strong><br>
-                    1. 📥 Verifique sua caixa de entrada<br>
-                    2. 📧 Abra o email do Atalho<br>
-                    3. 🔗 Clique no link de ativação<br>
-                    4. 🔐 Volte aqui e faça login<br><br>
-                    
-                    <div style="background: #fff3cd; padding: 10px; border-radius: 6px; margin: 10px 0;">
-                        <strong>⚠️ IMPORTANTE:</strong> Sua conta só funciona após clicar no link do email!
-                    </div>
-                    
-                    <small>💡 Não achou o email? Verifique a pasta de spam/lixo eletrônico</small>
-                `, loginEmail);
+                // Passo 3: Mostrar mensagem de sucesso (dinâmica baseada no resultado)
+                const emailSent = window.emailSentSuccessfully !== false;
+                
+                if (emailSent) {
+                    // Email enviado com sucesso
+                    showSuccessWithRedirect(`
+                        🎉 <strong>Conta criada com sucesso!</strong><br><br>
+                        
+                        📧 <strong>Email de verificação enviado automaticamente para:</strong><br>
+                        <strong style="color: #dbc9ad;">${loginEmail}</strong><br><br>
+                        
+                        ✅ <strong>Para ativar sua conta:</strong><br>
+                        1. 📥 Verifique sua caixa de entrada (pode levar alguns minutos)<br>
+                        2. 📧 Abra o email do Atalho<br>
+                        3. 🔗 Clique no link de ativação<br>
+                        4. 🔐 Volte aqui e faça login normalmente<br><br>
+                        
+                        <div style="background: #d4edda; padding: 10px; border-radius: 6px; margin: 10px 0; border: 1px solid #c3e6cb;">
+                            <strong>✅ PRONTO!</strong> O email já foi enviado automaticamente.<br>
+                            <strong>NÃO precisa fazer login agora</strong> - apenas verificar o email primeiro.
+                        </div>
+                        
+                        <div style="background: #fff3cd; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                            <strong>⚠️ IMPORTANTE:</strong> Sua conta só funciona após clicar no link do email!
+                        </div>
+                        
+                        <small>💡 Não achou o email? Verifique a pasta de spam/lixo eletrônico</small>
+                    `, loginEmail);
+                } else {
+                    // Problema no envio automático
+                    showSuccessWithRedirect(`
+                        🎉 <strong>Conta criada com sucesso!</strong><br><br>
+                        
+                        ⚠️ <strong>Problema no envio automático do email</strong><br><br>
+                        
+                        📧 <strong>Para receber o email de verificação:</strong><br>
+                        1. 🔐 Vá para a tela de login<br>
+                        2. 📝 Digite seu email e senha<br>
+                        3. 🔄 Tente fazer login<br>
+                        4. 📧 O sistema enviará o email automaticamente<br><br>
+                        
+                        <div style="background: #fff3cd; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                            <strong>⚠️ IMPORTANTE:</strong> Sua conta só funciona após verificar o email!
+                        </div>
+                        
+                        <div style="background: #f8d7da; padding: 10px; border-radius: 6px; margin: 10px 0; border: 1px solid #f5c6cb;">
+                            <strong>🔧 Problema técnico:</strong> O email não foi enviado automaticamente.<br>
+                            Tente fazer login para receber o email de verificação.
+                        </div>
+                    `, loginEmail);
+                }
                 
                 // Se estiver em desenvolvimento, mostrar o link
                 if (result.verificationLink) {

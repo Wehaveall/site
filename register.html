@@ -799,8 +799,8 @@
                 // Inicializar flag de controle
                 window.emailSentSuccessfully = false;
                 
-                // Passo 2: Fazer login temporário AUTOMÁTICO para enviar email de verificação
-                if (result.sendEmailOnFrontend) {
+                // Passo 2: Verificar se precisa fazer login temporário (fallback)
+                if (result.sendEmailOnFrontend && !result.emailSent) {
                     console.log('🔄 INICIANDO PROCESSO AUTOMÁTICO DE ENVIO DE EMAIL...');
                     console.log('📧 Fazendo login temporário INVISÍVEL para o usuário...');
                     
@@ -857,6 +857,9 @@
                         
                         // Flag já definida como false na inicialização
                     }
+                } else if (result.emailSent) {
+                    console.log('✅ Email enviado com sucesso via SendGrid!');
+                    window.emailSentSuccessfully = true;
                 } else {
                     console.log('ℹ️ API não solicitou envio de email pelo frontend');
                     // Flag já definida como false na inicialização

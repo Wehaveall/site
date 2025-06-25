@@ -96,22 +96,23 @@ export default async function handler(req, res) {
       verificationLink = await adminInstance.auth().generateEmailVerificationLink(email, actionCodeSettings);
       console.log(`[API] ✅ Link de verificação gerado`);
       
-      // OPÇÃO A: Gmail Gratuito com Alias (TEMPORÁRIO)
+      // OPÇÃO A: Google Workspace Individual ou Gmail Gratuito
       const nodemailer = require('nodemailer');
       
-      // Configuração SMTP do Gmail gratuito (temporário até Google Workspace)
+      // A autenticação SMTP é feita com a conta Google principal (pessoal).
+      // O plano Workspace Individual permite enviar emails "de" um alias de domínio personalizado.
       const transporter = nodemailer.createTransporter({
         service: 'gmail',
         auth: {
           user: process.env.GMAIL_USER, // seu-email-pessoal@gmail.com
-          pass: process.env.GMAIL_APP_PASSWORD // App Password gerado no Gmail pessoal
+          pass: process.env.GMAIL_APP_PASSWORD // App Password gerado na conta pessoal
         }
       });
       
       const mailOptions = {
         from: {
           name: 'Atalho',
-          address: 'noreply@atalho.me' // Precisa ser um alias do suporte@atalho.me
+          address: 'noreply@atalho.me' // Este deve ser um alias verificado na sua conta
         },
         to: email,
         replyTo: 'suporte@atalho.me',
@@ -164,7 +165,7 @@ export default async function handler(req, res) {
       
       await transporter.sendMail(mailOptions);
       emailSent = true;
-      console.log(`[API] ✅ Email de verificação enviado via Google Workspace para: ${email}`);
+      console.log(`[API] ✅ Email de verificação enviado via Google SMTP para: ${email}`);
       
       
       // OPÇÃO B: Sistema Firebase padrão (DESATIVADO - USANDO SENDGRID)

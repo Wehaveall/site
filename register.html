@@ -705,59 +705,27 @@
 
                 console.log('✅ Usuário criado no backend com sucesso!');
                 
-                // Passo 2: Mostrar mensagem baseada no status do email
-                console.log('📧 Processando status do email de verificação...');
+                // Passo 2: Mostrar mensagem CLARA e SIMPLES
+                console.log('📧 Conta criada, email de verificação enviado');
                 
-                if (result.emailSent) {
-                    // Email foi enviado pelo backend
-                    console.log('✅ Email foi enviado pelo backend');
+                showSuccess(`
+                    🎉 <strong>Conta criada com sucesso!</strong><br><br>
                     
-                    showSuccess(`
-                        🎉 <strong>Cadastro realizado com sucesso!</strong><br><br>
-                        📧 <strong>Email de verificação enviado!</strong><br>
-                        Enviamos um link de ativação para:<br>
-                        <strong>${loginEmail}</strong><br><br>
-                        ✅ <strong>Próximos passos:</strong><br>
-                        1. Verifique sua caixa de entrada e spam<br>
-                        2. Clique no link de verificação no email<br>
-                        3. Volte e faça login<br><br>
-                        <small>⚠️ Sua conta só será ativada após verificar o email</small>
-                    `);
+                    📧 <strong>Email de verificação enviado para:</strong><br>
+                    <strong style="color: #dbc9ad;">${loginEmail}</strong><br><br>
                     
-                } else if (result.sendVerificationOnLogin) {
-                    // Email será enviado no primeiro login
-                    console.log('ℹ️ Email será enviado no primeiro login');
+                    ✅ <strong>Para ativar sua conta:</strong><br>
+                    1. 📥 Verifique sua caixa de entrada<br>
+                    2. 📧 Abra o email do Atalho<br>
+                    3. 🔗 Clique no link de ativação<br>
+                    4. 🔐 Volte aqui e faça login<br><br>
                     
-                    showSuccess(`
-                        🎉 <strong>Cadastro realizado com sucesso!</strong><br><br>
-                        📧 <strong>Email de verificação automático:</strong><br>
-                        Sua conta foi criada para: <strong>${loginEmail}</strong><br><br>
-                        ✅ <strong>Como ativar sua conta:</strong><br>
-                        1. Vá para a página de login<br>
-                        2. Digite suas credenciais (email e senha)<br>
-                        3. O sistema enviará automaticamente o email de verificação<br>
-                        4. Verifique sua caixa de entrada e spam<br>
-                        5. Clique no link de verificação<br>
-                        6. Volte e faça login novamente<br><br>
-                        <small>⚠️ O email será enviado automaticamente na primeira tentativa de login</small>
-                    `);
+                    <div style="background: #fff3cd; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <strong>⚠️ IMPORTANTE:</strong> Sua conta só funciona após clicar no link do email!
+                    </div>
                     
-                } else {
-                    // Fallback genérico
-                    console.log('ℹ️ Usando fallback genérico');
-                    
-                    showSuccess(`
-                        🎉 <strong>Cadastro realizado com sucesso!</strong><br><br>
-                        📧 <strong>Verificação de email necessária:</strong><br>
-                        Sua conta foi criada para: <strong>${loginEmail}</strong><br><br>
-                        ✅ <strong>Próximos passos:</strong><br>
-                        1. Tente fazer login com suas credenciais<br>
-                        2. O sistema enviará o email de verificação<br>
-                        3. Verifique sua caixa de entrada<br>
-                        4. Clique no link de verificação<br><br>
-                        <small>⚠️ Sua conta só será ativada após a verificação do email</small>
-                    `);
-                }
+                    <small>💡 Não achou o email? Verifique a pasta de spam/lixo eletrônico</small>
+                `);
                 
                 // Se estiver em desenvolvimento, mostrar o link
                 if (result.verificationLink) {

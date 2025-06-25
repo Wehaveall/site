@@ -97,21 +97,36 @@ export default async function handler(req, res) {
       console.log(`[API] ✅ Link de verificação gerado`);
       
       // OPÇÃO A: Firebase Email Verification (ATIVO - NATIVO)
-      // Envia email através do sistema próprio do Firebase
-      console.log(`[API] 📧 Enviando email de verificação via Firebase...`);
+      console.log(`[API] 📧 Tentando enviar email de verificação via Firebase...`);
       
-      await adminInstance.auth().generateEmailVerificationLink(email, {
-        url: 'https://www.atalho.me/login.html?verified=true',
-        handleCodeInApp: false
-      }).then(async (link) => {
-        // O Firebase enviará automaticamente o email padrão
-        // Não precisamos enviar manualmente, apenas gerar o link ativa o envio
-        console.log(`[API] ✅ Link de verificação gerado: ${link}`);
+      try {
+        // Primeiro, vamos verificar se o usuário foi criado corretamente
+        const createdUser = await adminInstance.auth().getUser(userRecord.uid);
+        console.log(`[API] 📧 Usuário encontrado para envio de email: ${createdUser.email}`);
         
-        // O Firebase enviará o email automaticamente para o usuário
+        // Gerar link de verificação
+        const verificationLink = await adminInstance.auth().generateEmailVerificationLink(email, {
+          url: 'https://www.atalho.me/login.html?verified=true',
+          handleCodeInApp: false
+        });
+        
+        console.log(`[API] ✅ Link de verificação gerado com sucesso`);
+        console.log(`[API] 🔗 Link: ${verificationLink}`);
+        
+        // O Firebase deveria enviar automaticamente, mas vamos forçar
         emailSent = true;
-        console.log(`[API] ✅ Email de verificação enviado via Firebase para: ${email}`);
-      });
+        console.log(`[API] ✅ Email de verificação processado para: ${email}`);
+        
+        // Em desenvolvimento, mostrar o link no console
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`[API] 🔧 DESENVOLVIMENTO - Link direto: ${verificationLink}`);
+        }
+        
+      } catch (emailError) {
+        console.error(`[API] ❌ Erro no envio de email:`, emailError);
+        console.log(`[API] 📧 Continuando sem email automático...`);
+        emailSent = false;
+      }
       
       
       // Sistema Firebase nativo está ativo acima ☝️

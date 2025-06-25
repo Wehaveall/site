@@ -1,5 +1,13 @@
 {
   "projects": {
     "default": "shortcut-6256b"
+  },
+  "targets": {},
+  "etags": {
+    "shortcut-6256b": {
+      "extensionInstances": {
+        "firestore-send-email": "7139908c7a953dd407a2941dfb25278b97e58cbe861ee7fd768ccb86caa13c1c"
+      }
+    }
   }
 }

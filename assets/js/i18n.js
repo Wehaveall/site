@@ -180,7 +180,7 @@ class AtalhoI18n {
         }
 
         try {
-            const response = await fetch(`/translations/${this.currentLanguage}.json`);
+            const response = await fetch(`/assets/translations/${this.currentLanguage}.json`);
             
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);

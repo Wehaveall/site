@@ -24,10 +24,6 @@
       "destination": "/public/emailHandler.html"
     },
     {
-      "source": "/teste-email.html", 
-      "destination": "/public/teste-email.html"
-    },
-    {
       "source": "/translations/(.*)",
       "destination": "/translations/$1"
     }
@@ -61,31 +57,6 @@
           "value": "strict-origin-when-cross-origin"
         }
       ]
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "header",
-          "key": "x-forwarded-proto",
-          "value": "http"
-        }
-      ],
-      "destination": "https://www.atalho.me/$1",
-      "permanent": true
-    },
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "atalho.me"
-        }
-      ],
-      "destination": "https://www.atalho.me/$1",
-      "permanent": true
     }
   ]
 } 

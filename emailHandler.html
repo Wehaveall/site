@@ -155,14 +155,22 @@
         const auth = firebase.auth();
         const functions = firebase.functions();
         
-        // Função para forçar sincronização imediata
-        async function forceSyncVerification() {
+        // Função para forçar sincronização imediata usando oobCode
+        async function forceSyncVerification(oobCode) {
             try {
-                console.log('🔄 Forçando sincronização do status de verificação...');
-                const forceSyncFunction = functions.httpsCallable('forceSyncEmailVerification');
-                const result = await forceSyncFunction();
-                console.log('✅ Sincronização concluída:', result.data);
-                return result.data;
+                console.log('🔄 Forçando sincronização via oobCode...');
+                
+                const response = await fetch('https://us-east1-shortcut-6256b.cloudfunctions.net/syncEmailVerificationPublic', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ oobCode })
+                });
+
+                const result = await response.json();
+                console.log('✅ Sincronização concluída:', result);
+                return result;
             } catch (error) {
                 console.error('❌ Erro na sincronização:', error);
                 return null;
@@ -243,7 +251,7 @@
                     
                     // Aguardar 2 segundos e forçar sincronização
                     setTimeout(async () => {
-                        const syncResult = await forceSyncVerification();
+                        const syncResult = await forceSyncVerification(oobCode);
                         
                         if (syncResult && syncResult.success) {
                             showStatus('success', `

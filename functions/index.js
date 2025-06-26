@@ -4,6 +4,7 @@ const {getFirestore} = require("firebase-admin/firestore");
 const {getAuth} = require("firebase-admin/auth");
 const logger = require("firebase-functions/logger");
 const {onDocumentUpdated} = require("firebase-functions/v2/firestore");
+const {onRequest} = require("firebase-functions/v2/https");
 
 // Inicializar Firebase Admin
 initializeApp();
@@ -261,5 +262,91 @@ exports.forceSyncEmailVerification = onCall({
   } catch (error) {
     logger.error("[Manual Sync] Erro na sincronização:", error);
     throw new Error("Erro interno na sincronização");
+  }
+});
+
+/**
+ * SINCRONIZAÇÃO PÚBLICA: Usa oobCode para sincronizar sem autenticação
+ * Chamada após verificação de email no emailHandler.html
+ */
+exports.syncEmailVerificationPublic = onRequest({
+  region: "us-east1",
+  cors: true,
+}, async (request, response) => {
+  try {
+    const {oobCode} = request.body;
+
+    if (!oobCode) {
+      throw new Error("oobCode é obrigatório");
+    }
+
+    logger.info(`[Public Sync] Sincronizando via oobCode: ${oobCode}`);
+
+    // Verificar e obter informações do oobCode
+    const auth = getAuth();
+    const actionCodeInfo = await auth.checkActionCode(oobCode);
+
+    logger.info(`[Public Sync] Código válido para: ${
+      actionCodeInfo.data.email}`);
+
+    // Buscar usuário pelo email
+    const userRecord = await auth.getUserByEmail(actionCodeInfo.data.email);
+
+    logger.info(`[Public Sync] Usuário encontrado: ${userRecord.uid}`);
+
+    // Verificar se email já foi verificado
+    if (userRecord.emailVerified) {
+      const db = getFirestore();
+      const userRef = db.collection("users").doc(userRecord.uid);
+
+      // Verificar se documento existe
+      const userDoc = await userRef.get();
+
+      if (userDoc.exists) {
+        // Atualizar documento existente
+        await userRef.update({
+          email_verified: true,
+          account_status: "active",
+          email_verified_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          sync_method: "public_oobcode",
+        });
+
+        logger.info(`[Public Sync] Documento atualizado para ${
+          userRecord.email}`);
+      } else {
+        // Criar documento se não existir
+        await userRef.set({
+          uid: userRecord.uid,
+          email: userRecord.email,
+          email_verified: true,
+          account_status: "active",
+          created_at: new Date().toISOString(),
+          email_verified_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          sync_method: "public_oobcode",
+        });
+
+        logger.info(`[Public Sync] Documento criado para ${
+          userRecord.email}`);
+      }
+
+      response.json({
+        success: true,
+        uid: userRecord.uid,
+        email: userRecord.email,
+        account_status: "active",
+        email_verified: true,
+        sync_method: "public_oobcode",
+      });
+    } else {
+      throw new Error("Email ainda não foi verificado no Firebase Auth");
+    }
+  } catch (error) {
+    logger.error("[Public Sync] Erro na sincronização:", error);
+    response.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
 });

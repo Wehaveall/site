@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description"
-        content="Atalho - A ferramenta que otimiza sua digitação com expansão automática de texto" />
+    <meta name="description" content="Atalho - A ferramenta que otimiza sua digitação com expansão automática de texto" />
     <title>Atalho - Escreva mais digitando menos</title>
 
     <!-- Font Awesome -->
@@ -18,6 +17,9 @@
 
     <!-- CSS principal -->
     <link rel="stylesheet" href="assets/css/style.css" />
+    
+    <!-- I18n System -->
+    <script src="assets/js/i18n.js" defer></script>
 </head>
 
 <body class="light-theme">
@@ -32,27 +34,27 @@
             </div>
             <nav class="nav-menu">
                 <ul class="nav-links" id="nav-links">
-                    <li><a href="#features" class="nav-link">Recursos</a></li>
-                    <li><a href="tutoriais.html" class="nav-link">Tutoriais</a></li>
-                    <li><a href="#downloads" class="nav-link">Downloads de Bibliotecas</a></li>
+                    <li><a href="#features" class="nav-link" data-i18n="header.features">Recursos</a></li>
+                    <li><a href="tutoriais.html" class="nav-link" data-i18n="header.tutorials">Tutoriais</a></li>
+                    <li><a href="#downloads" class="nav-link" data-i18n="header.downloads">Downloads de Bibliotecas</a></li>
                     <!-- Links dinâmicos baseados na autenticação -->
-                    <li id="nav-register"><a href="register.html" class="nav-link">Cadastro</a></li>
-                    <li id="nav-login"><a href="login.html" class="nav-link">Entrar</a></li>
-                    <li id="nav-dashboard" style="display: none;"><a href="dashboard.html" class="nav-link">Dashboard</a></li>
-                    <li id="nav-logout" style="display: none;"><a href="#" class="nav-link" onclick="logout()">Sair</a></li>
-                    <li><a href="comprar.html" class="nav-link btn-primary">Comprar</a></li>
+                    <li id="nav-register"><a href="register.html" class="nav-link" data-i18n="header.register">Cadastro</a></li>
+                    <li id="nav-login"><a href="login.html" class="nav-link" data-i18n="header.login">Entrar</a></li>
+                    <li id="nav-dashboard" style="display: none;"><a href="dashboard.html" class="nav-link" data-i18n="header.dashboard">Dashboard</a></li>
+                    <li id="nav-logout" style="display: none;"><a href="#" class="nav-link" onclick="logout()" data-i18n="header.logout">Sair</a></li>
+                    <li><a href="comprar.html" class="nav-link btn-primary" data-i18n="header.buy">Comprar</a></li>
                 </ul>
             </nav>
-            
         </div>
     </header>
+
     <!-- Hero Section com Background Gradiente -->
     <section class="hero">
         <div class="hero-container">
             <div class="hero-content-centered">
                 <h1 class="hero-title">
-                    Atalho
-                    <span class="hero-subtitle">O caminho mais curto entre o que você pensa e o que digita.</span>
+                    <span data-i18n="hero.title">Atalho</span>
+                    <span class="hero-subtitle" data-i18n="hero.subtitle">O caminho mais curto entre o que você pensa e o que digita.</span>
                 </h1>
     
                 <div class="video-showcase">
@@ -65,7 +67,7 @@
                     </div>
                 </div>
     
-                <p class="hero-description">
+                <p class="hero-description" data-i18n="hero.description">
                     Transforme sua forma de escrever com expansão automática de texto.
                     Padronize documentos e aumente sua produtividade em segundos!
                 </p>
@@ -77,8 +79,8 @@
     <section id="features" class="features">
         <div class="section-container">
             <div class="section-header">
-                <h2>Recursos Principais</h2>
-                <p>Descubra como o Atalho pode revolucionar sua forma de trabalhar</p>
+                <h2 data-i18n="features.title">Recursos Principais</h2>
+                <p data-i18n="features.subtitle">Descubra como o Atalho pode revolucionar sua forma de trabalhar</p>
             </div>
 
             <div class="features-grid">
@@ -86,51 +88,45 @@
                     <div class="feature-icon">
                         <i class="fa-solid fa-bolt"></i>
                     </div>
-                    <h3>Expansão Automática</h3>
-                    <p>Transforme pequenos atalhos em textos completos instantaneamente, economizando tempo precioso em
-                        cada digitação.</p>
+                    <h3 data-i18n="features.expansion.title">Expansão Automática</h3>
+                    <p data-i18n="features.expansion.description">Transforme pequenos atalhos em textos completos instantaneamente, economizando tempo precioso em cada digitação.</p>
                 </div>
 
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fa-solid fa-database"></i>
                     </div>
-                    <h3>Bancos Personalizados</h3>
-                    <p>Crie suas próprias bibliotecas de frases e termos técnicos, adaptando o Atalho ao seu fluxo de
-                        trabalho.</p>
+                    <h3 data-i18n="features.database.title">Bancos Personalizados</h3>
+                    <p data-i18n="features.database.description">Crie suas próprias bibliotecas de frases e termos técnicos, adaptando o Atalho ao seu fluxo de trabalho.</p>
                 </div>
 
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fa-solid fa-file-lines"></i>
                     </div>
-                    <h3>Formatação Avançada</h3>
-                    <p>Use tags inteligentes para formatar seus textos automaticamente com negrito, itálico e muito
-                        mais.</p>
+                    <h3 data-i18n="features.formatting.title">Formatação Avançada</h3>
+                    <p data-i18n="features.formatting.description">Use tags inteligentes para formatar seus textos automaticamente com negrito, itálico e muito mais.</p>
                 </div>
 
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fa-solid fa-file-word"></i>
                     </div>
-                    <h3>Integração Office</h3>
-                    <p>Compatibilidade total com Microsoft Word e outros editores, mantendo sua experiência familiar.
-                    </p>
+                    <h3 data-i18n="features.integration.title">Integração Office</h3>
+                    <p data-i18n="features.integration.description">Compatibilidade total com Microsoft Word e outros editores, mantendo sua experiência familiar.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    
-
     <!-- Seção CTA Moderna -->
     <section class="cta">
         <div class="cta-container">
-            <h2>Pronto para aumentar sua produtividade?</h2>
-            <p>Junte-se a milhares de profissionais que já otimizaram seu fluxo de trabalho</p>
+            <h2 data-i18n="cta.title">Pronto para aumentar sua produtividade?</h2>
+            <p data-i18n="cta.subtitle">Junte-se a milhares de profissionais que já otimizaram seu fluxo de trabalho</p>
             <div class="cta-buttons">
-                <a href="comprar.html" class="btn-cta">Começar Agora</a>
-                <a href="#features" class="btn-cta-secondary">Saiba Mais</a>
+                <a href="comprar.html" class="btn-cta" data-i18n="cta.start">Começar Agora</a>
+                <a href="#features" class="btn-cta-secondary" data-i18n="cta.learn">Saiba Mais</a>
             </div>
         </div>
     </section>
@@ -139,7 +135,7 @@
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-brand">
-                <p>© 2025 Atalho App. Todos os direitos reservados.</p>
+                <p data-i18n="footer.rights">© 2025 Atalho App. Todos os direitos reservados.</p>
             </div>
 
             <div class="footer-social">
@@ -159,10 +155,10 @@
 
             <div class="footer-links">
                 <nav class="footer-nav">
-                    <a href="politica-de-privacidade.html">Política de Privacidade</a>
-                    <a href="termos-de-uso.html">Termos de Uso</a>
-                    <a href="#">FAQ</a>
-                    <a href="#">Contato</a>
+                    <a href="politica-de-privacidade.html" data-i18n="footer.privacy">Política de Privacidade</a>
+                    <a href="termos-de-uso.html" data-i18n="footer.terms">Termos de Uso</a>
+                    <a href="#" data-i18n="footer.faq">FAQ</a>
+                    <a href="#" data-i18n="footer.contact">Contato</a>
                 </nav>
             </div>
         </div>
@@ -176,17 +172,33 @@
     <script src="assets/js/firebase.js"></script>
     
     <script>
+        // 🌍 INTEGRAÇÃO COM SISTEMA I18N
+        
+        // Aguardar carregamento do sistema i18n
+        window.addEventListener('DOMContentLoaded', () => {
+            // O sistema i18n já está inicializado automaticamente
+            console.log('🌍 Página multilíngue carregada');
+        });
+
+        // Escutar mudanças de idioma
+        window.addEventListener('languageChanged', (event) => {
+            console.log('🔄 Idioma alterado para:', event.detail.language);
+            
+            // Aqui você pode executar código específico quando o idioma muda
+            // Por exemplo, recarregar dados do servidor no novo idioma
+        });
+
         // Função para logout
         async function logout() {
             try {
                 await firebase.auth().signOut();
                 console.log('✅ Logout realizado com sucesso');
                 updateNavMenu(null); // Atualiza menu para usuário deslogado
-                // Opcional: redirecionar ou mostrar mensagem
-                alert('Logout realizado com sucesso!');
+                // Usar tradução dinâmica para a mensagem
+                alert(t('auth.logoutSuccess', { fallback: 'Logout realizado com sucesso!' }));
             } catch (error) {
                 console.error('❌ Erro no logout:', error);
-                alert('Erro ao fazer logout: ' + error.message);
+                alert(t('common.error', { fallback: 'Erro' }) + ': ' + error.message);
             }
         }
 
@@ -242,7 +254,21 @@
                 header.classList.remove('header-scrolled');
             }
         });
+
+        // 🎮 FUNÇÕES DE TESTE PARA O CONSOLE
+        window.testI18n = {
+            changeToEnglish: () => changeLanguage('en'),
+            changeToSpanish: () => changeLanguage('es'),
+            changeToFrench: () => changeLanguage('fr'),
+            changeToGerman: () => changeLanguage('de'),
+            changeToItalian: () => changeLanguage('it'),
+            changeToPortuguese: () => changeLanguage('pt-br'),
+            getCurrentLanguage: () => getCurrentLanguage(),
+            getStats: () => window.atalhoI18n.getTranslationStats()
+        };
+
+        console.log('🎮 Use testI18n.changeToEnglish() para testar idiomas no console!');
     </script>
 </body>
 
-</html>
+</html> 

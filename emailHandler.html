@@ -163,7 +163,24 @@
                 const url = 'https://syncemailverificationpublic-lj2of3bbgq-ue.a.run.app';
                 console.log('🌐 URL da função:', url);
                 
-                const body = JSON.stringify({ oobCode });
+                // Tentar extrair email do usuário atual ou da URL
+                let userEmail = null;
+                try {
+                    const currentUser = auth.currentUser;
+                    if (currentUser) {
+                        userEmail = currentUser.email;
+                        console.log('📧 Email do usuário atual:', userEmail);
+                    }
+                } catch (e) {
+                    console.log('⚠️ Não foi possível obter usuário atual:', e.message);
+                }
+                
+                const payload = { 
+                    oobCode,
+                    email: userEmail 
+                };
+                
+                const body = JSON.stringify(payload);
                 console.log('📤 Payload:', body);
                 
                 const response = await fetch(url, {

@@ -26,6 +26,10 @@
     {
       "source": "/teste-email.html", 
       "destination": "/public/teste-email.html"
+    },
+    {
+      "source": "/translations/(.*)",
+      "destination": "/translations/$1"
     }
   ],
   "headers": [

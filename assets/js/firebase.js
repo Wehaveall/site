@@ -22,6 +22,9 @@ if (!firebase.apps || !firebase.apps.length) {
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+// Para Firebase v8 (compat), as funções são métodos do auth
+// Vamos criar referências para facilitar o uso
+
 // Configuração específica para resolver CORS
 auth.useDeviceLanguage();
 
@@ -108,6 +111,10 @@ auth.onAuthStateChanged(async (user) => {
 // Expor para uso global (mas NÃO executar automaticamente)
 window.ensureAuthentication = ensureAuthentication;
 window.syncEmailVerificationStatus = syncEmailVerificationStatus;
+window.registerWithAutoLanguage = registerWithAutoLanguage;
+window.detectUserLanguage = detectUserLanguage;
+window.setFirebaseLanguage = setFirebaseLanguage;
+window.resendVerificationWithLanguage = resendVerificationWithLanguage;
 
 console.log("🚀 Firebase configurado - Login manual ativado");
 
@@ -254,14 +261,14 @@ async function registerWithAutoLanguage(email, password) {
         // 2. Configurar Firebase para o idioma detectado
         await setFirebaseLanguage(detectedLanguage);
         
-        // 3. Criar usuário
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        // 3. Criar usuário (Firebase v8 compat)
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
         
         console.log(`✅ Usuário criado: ${user.email} (idioma: ${detectedLanguage})`);
         
         // 4. Enviar email de verificação (já no idioma correto)
-        await sendEmailVerification(user, {
+        await user.sendEmailVerification({
             url: `https://atalho.me/emailHandler.html?lang=${detectedLanguage}`,
             handleCodeInApp: false
         });
@@ -286,8 +293,8 @@ async function registerWithAutoLanguage(email, password) {
 // Função para salvar preferência de idioma
 async function saveUserLanguagePreference(uid, language) {
     try {
-        const userRef = doc(db, 'users', uid);
-        await setDoc(userRef, {
+        const userRef = db.collection('users').doc(uid);
+        await userRef.set({
             preferred_language: language,
             language_detected_at: new Date().toISOString(),
             created_at: new Date().toISOString()
@@ -309,7 +316,7 @@ async function resendVerificationWithLanguage(language) {
         await setFirebaseLanguage(language);
         
         // Reenviar
-        await sendEmailVerification(user, {
+        await user.sendEmailVerification({
             url: `https://atalho.me/emailHandler.html?lang=${language}`,
             handleCodeInApp: false
         });

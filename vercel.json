@@ -1,8 +1,13 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": ".",
-  "installCommand": "npm install",
+  "version": 2,
+  "public": true,
+  "github": {
+    "silent": true
+  },
   "functions": {
+    "public/**/*.html": {
+      "maxDuration": 10
+    },
     "api/create-pix.js": {
       "maxDuration": 30
     },
@@ -16,15 +21,48 @@
       "maxDuration": 30
     }
   },
+  "routes": [
+    {
+      "src": "/emailHandler.html",
+      "dest": "/public/emailHandler.html"
+    },
+    {
+      "src": "/teste-email.html", 
+      "dest": "/public/teste-email.html"
+    },
+    {
+      "src": "/",
+      "dest": "/public/index.html"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https: http: data:; style-src 'self' 'unsafe-inline' https: http: data:; font-src 'self' https: http: data:; img-src 'self' data: https: http:; connect-src 'self' https: http: data: ws: wss:; frame-src 'self' https: http:; object-src 'none'; base-uri 'self';" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" },
-        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Content-Security-Policy", 
+          "value": "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https: http: data:; style-src 'self' 'unsafe-inline' https: http: data:; font-src 'self' https: http: data:; img-src 'self' data: https: http:; connect-src 'self' https: http: data: ws: wss:; frame-src 'self' https: http:; object-src 'none'; base-uri 'self';"
+        },
+        {
+          "key": "Strict-Transport-Security", 
+          "value": "max-age=31536000; includeSubDomains"
+        },
+        {
+          "key": "Referrer-Policy", 
+          "value": "strict-origin-when-cross-origin"
+        }
       ]
     }
   ],

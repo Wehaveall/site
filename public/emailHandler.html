@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="pageTitle">Verificação de Email</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .success {
+      color: #4caf50;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .error {
+      color: #f44336;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .btn {
+      background: #667eea;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+    .btn:hover {
+      background: #5a6fd8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="loading">
+      <h2>Verificando seu email...</h2>
+      <div class="spinner"></div>
+      <p>Por favor, aguarde enquanto processamos sua verificação.</p>
+    </div>
+    
+    <div id="success" style="display: none;">
+      <div class="success">✅</div>
+      <h2>Email verificado com sucesso!</h2>
+      <p>Seu email foi verificado e sua conta está ativa.</p>
+      <button class="btn" onclick="redirectToApp()">Continuar para o App</button>
+    </div>
+    
+    <div id="error" style="display: none;">
+      <div class="error">❌</div>
+      <h2>Erro na verificação</h2>
+      <p id="errorMessage">Link inválido ou expirado.</p>
+      <button class="btn" onclick="location.reload()">Tentar Novamente</button>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+    import { getAuth, applyActionCode, checkActionCode } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+    import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+
+    // Configuração do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCsIbyCkHx_E5VHQXnHZYmoZSrpnuPrPUQ",
+      authDomain: "shortcut-6256b.firebaseapp.com",
+      databaseURL: "https://shortcut-6256b-default-rtdb.firebaseio.com",
+      projectId: "shortcut-6256b",
+      storageBucket: "shortcut-6256b.appspot.com",
+      messagingSenderId: "526680485333",
+      appId: "1:526680485333:web:a5434dd5b6da2fda9ee15c",
+      measurementId: "G-PZ2EHV9YR6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Traduções para múltiplos idiomas
+    const translations = {
+      'pt-br': {
+        title: 'Verificação de Email',
+        verifying: 'Verificando seu email...',
+        wait: 'Por favor, aguarde enquanto processamos sua verificação.',
+        success: 'Email verificado com sucesso!',
+        successMsg: 'Seu email foi verificado e sua conta está ativa.',
+        continue: 'Continuar para o App',
+        error: 'Erro na verificação',
+        errorDefault: 'Link inválido ou expirado.',
+        errorUsed: 'Este link de verificação já foi usado ou expirou.',
+        errorExpired: 'Este link de verificação expirou. Solicite um novo.',
+        tryAgain: 'Tentar Novamente',
+        close: 'Você pode fechar esta janela.'
+      },
+      'es': {
+        title: 'Verificación de Email',
+        verifying: 'Verificando tu email...',
+        wait: 'Por favor, espera mientras procesamos tu verificación.',
+        success: '¡Email verificado con éxito!',
+        successMsg: 'Tu email ha sido verificado y tu cuenta está activa.',
+        continue: 'Continuar a la App',
+        error: 'Error en la verificación',
+        errorDefault: 'Enlace inválido o expirado.',
+        errorUsed: 'Este enlace de verificación ya fue usado o expiró.',
+        errorExpired: 'Este enlace de verificación expiró. Solicita uno nuevo.',
+        tryAgain: 'Intentar de Nuevo',
+        close: 'Puedes cerrar esta ventana.'
+      },
+      'fr': {
+        title: 'Vérification Email',
+        verifying: 'Vérification de votre email...',
+        wait: 'Veuillez patienter pendant que nous traitons votre vérification.',
+        success: 'Email vérifié avec succès !',
+        successMsg: 'Votre email a été vérifié et votre compte est actif.',
+        continue: 'Continuer vers l\'App',
+        error: 'Erreur de vérification',
+        errorDefault: 'Lien invalide ou expiré.',
+        errorUsed: 'Ce lien de vérification a déjà été utilisé ou a expiré.',
+        errorExpired: 'Ce lien de vérification a expiré. Demandez-en un nouveau.',
+        tryAgain: 'Réessayer',
+        close: 'Vous pouvez fermer cette fenêtre.'
+      },
+      'en': {
+        title: 'Email Verification',
+        verifying: 'Verifying your email...',
+        wait: 'Please wait while we process your verification.',
+        success: 'Email verified successfully!',
+        successMsg: 'Your email has been verified and your account is active.',
+        continue: 'Continue to App',
+        error: 'Verification Error',
+        errorDefault: 'Invalid or expired link.',
+        errorUsed: 'This verification link has already been used or expired.',
+        errorExpired: 'This verification link has expired. Request a new one.',
+        tryAgain: 'Try Again',
+        close: 'You can close this window.'
+      },
+      'de': {
+        title: 'E-Mail Bestätigung',
+        verifying: 'E-Mail wird bestätigt...',
+        wait: 'Bitte warten Sie, während wir Ihre Bestätigung verarbeiten.',
+        success: 'E-Mail erfolgreich bestätigt!',
+        successMsg: 'Ihre E-Mail wurde bestätigt und Ihr Konto ist aktiv.',
+        continue: 'Zur App',
+        error: 'Bestätigungsfehler',
+        errorDefault: 'Ungültiger oder abgelaufener Link.',
+        errorUsed: 'Dieser Bestätigungslink wurde bereits verwendet oder ist abgelaufen.',
+        errorExpired: 'Dieser Bestätigungslink ist abgelaufen. Fordern Sie einen neuen an.',
+        tryAgain: 'Erneut versuchen',
+        close: 'Sie können dieses Fenster schließen.'
+      },
+      'it': {
+        title: 'Verifica Email',
+        verifying: 'Verificando la tua email...',
+        wait: 'Attendi mentre elaboriamo la tua verifica.',
+        success: 'Email verificata con successo!',
+        successMsg: 'La tua email è stata verificata e il tuo account è attivo.',
+        continue: 'Continua all\'App',
+        error: 'Errore di Verifica',
+        errorDefault: 'Link non valido o scaduto.',
+        errorUsed: 'Questo link di verifica è già stato usato o è scaduto.',
+        errorExpired: 'Questo link di verifica è scaduto. Richiedine uno nuovo.',
+        tryAgain: 'Riprova',
+        close: 'Puoi chiudere questa finestra.'
+      }
+    };
+
+    // Detectar idioma da URL ou usar padrão
+    function getLanguage() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const lang = urlParams.get('lang') || 'pt-br';
+      return translations[lang] ? lang : 'pt-br';
+    }
+
+    // Aplicar traduções
+    function applyTranslations(lang) {
+      const t = translations[lang];
+      document.getElementById('pageTitle').textContent = t.title;
+      document.querySelector('#loading h2').textContent = t.verifying;
+      document.querySelector('#loading p').textContent = t.wait;
+      document.querySelector('#success h2').textContent = t.success;
+      document.querySelector('#success p').textContent = t.successMsg;
+      document.querySelector('#success button').textContent = t.continue;
+      document.querySelector('#error h2').textContent = t.error;
+      document.querySelector('#error button').textContent = t.tryAgain;
+    }
+
+    // Processar verificação quando a página carrega
+    window.addEventListener('DOMContentLoaded', async () => {
+      // Aplicar traduções primeiro
+      const currentLang = getLanguage();
+      applyTranslations(currentLang);
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      const mode = urlParams.get('mode');
+      const actionCode = urlParams.get('oobCode');
+      const continueUrl = urlParams.get('continueUrl');
+      
+      if (mode === 'verifyEmail' && actionCode) {
+        await handleEmailVerification(actionCode, continueUrl, currentLang);
+      } else {
+        showError(translations[currentLang].errorDefault);
+      }
+    });
+
+    async function handleEmailVerification(actionCode, continueUrl, lang) {
+      try {
+        const t = translations[lang];
+        
+        // Primeiro, verificar as informações do código
+        const info = await checkActionCode(auth, actionCode);
+        const email = info.data.email;
+        
+        // Aplicar o código de verificação
+        await applyActionCode(auth, actionCode);
+        
+        // 🎯 SINCRONIZAÇÃO AUTOMÁTICA COM FIRESTORE
+        await syncEmailVerificationToFirestore(email);
+        
+        // Mostrar sucesso
+        showSuccess(continueUrl);
+        
+      } catch (error) {
+        console.error('Erro na verificação:', error);
+        const t = translations[lang];
+        let errorMessage = t.errorDefault;
+        
+        if (error.code === 'auth/invalid-action-code') {
+          errorMessage = t.errorUsed;
+        } else if (error.code === 'auth/expired-action-code') {
+          errorMessage = t.errorExpired;
+        }
+        
+        showError(errorMessage);
+      }
+    }
+
+    async function syncEmailVerificationToFirestore(email) {
+      try {
+        console.log('🔄 Sincronizando verificação para:', email);
+        
+        // Buscar usuário no Firestore pelo email
+        const usersRef = collection(db, 'users');
+        const q = query(usersRef, where('email', '==', email));
+        const querySnapshot = await getDocs(q);
+        
+        if (!querySnapshot.empty) {
+          const updates = [];
+          
+          querySnapshot.forEach(async (docSnap) => {
+            const userRef = doc(db, 'users', docSnap.id);
+            updates.push(
+              updateDoc(userRef, {
+                email_verified: true,
+                email_verified_at: new Date(),
+                verification_method: 'custom_email_handler',
+                last_updated: new Date()
+              })
+            );
+          });
+          
+          await Promise.all(updates);
+          console.log('✅ Verificação sincronizada com Firestore!');
+          
+        } else {
+          console.warn('⚠️ Usuário não encontrado no Firestore:', email);
+        }
+        
+      } catch (error) {
+        console.error('❌ Erro ao sincronizar com Firestore:', error);
+        // Não falhar a verificação por erro de sincronização
+      }
+    }
+
+    function showSuccess(continueUrl) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('success').style.display = 'block';
+      
+      // Configurar redirecionamento
+      window.continueUrl = continueUrl;
+    }
+
+    function showError(message) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('error').style.display = 'block';
+      document.getElementById('errorMessage').textContent = message;
+    }
+
+    // Função global para redirecionamento
+    window.redirectToApp = function() {
+      if (window.continueUrl) {
+        window.location.href = window.continueUrl;
+      } else {
+        // URL padrão do seu app
+        window.location.href = '/';
+      }
+    };
+  </script>
+</body>
+</html> 

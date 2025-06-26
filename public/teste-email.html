@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌍 Teste de Detecção Automática de Idioma - Atalho</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: linear-gradient(135deg, #f0e9df 0%, #f7f3ed 50%, #ffffff 100%);
+      min-height: 100vh;
+    }
+    
+    .container {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    h1 {
+      color: #8B4513;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2rem;
+    }
+    
+    .test-section {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      border-left: 4px solid #dbc9ad;
+    }
+    
+    .test-input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #dbc9ad;
+      border-radius: 8px;
+      font-size: 16px;
+      margin: 10px 0;
+      box-sizing: border-box;
+    }
+    
+    .test-button {
+      background: linear-gradient(135deg, #dbc9ad, #c8b299);
+      color: #333;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      margin: 5px;
+      transition: all 0.3s ease;
+    }
+    
+    .test-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(219, 201, 173, 0.4);
+    }
+    
+    .result {
+      background: #e8f5e8;
+      border: 1px solid #c3e6cb;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    
+    .error {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+    
+    .info-box {
+      background: #d1ecf1;
+      border: 1px solid #b8daff;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    
+    .language-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+    
+    .language-card {
+      background: white;
+      border: 1px solid #dbc9ad;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .language-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .flag {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+    
+    .stats {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 20px 0;
+    }
+    
+    code {
+      background: #f1f3f4;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .detection-log {
+      background: #2d3748;
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: 15px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      margin: 15px 0;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌍 Sistema de Detecção Automática de Idioma</h1>
+    
+    <div class="info-box">
+      <h3>🎯 Como funciona a detecção:</h3>
+      <p><strong>Prioridade de detecção:</strong></p>
+      <ol>
+        <li><strong>Domínio do email</strong> (gmail.com.br → pt-br)</li>
+        <li><strong>Timezone/País</strong> (America/Sao_Paulo → BR → pt-br)</li>
+        <li><strong>Idioma do navegador</strong> (navigator.language)</li>
+        <li><strong>Padrão</strong> (pt-br)</li>
+      </ol>
+    </div>
+
+    <!-- Seção de teste manual -->
+    <div class="test-section">
+      <h3>🧪 Teste a Detecção de Idioma</h3>
+      <p>Digite um email para ver qual idioma seria detectado:</p>
+      
+      <input type="email" 
+             id="test-email" 
+             class="test-input" 
+             placeholder="exemplo@gmail.com.br"
+             value="">
+      
+      <div>
+        <button class="test-button" onclick="testLanguageDetection()">
+          🔍 Detectar Idioma
+        </button>
+        <button class="test-button" onclick="showBrowserInfo()">
+          🌐 Info do Navegador
+        </button>
+        <button class="test-button" onclick="clearResults()">
+          🧹 Limpar
+        </button>
+      </div>
+      
+      <div id="detection-result"></div>
+    </div>
+
+    <!-- Exemplos pré-definidos -->
+    <div class="test-section">
+      <h3>🎯 Exemplos de Detecção</h3>
+      <p>Clique para testar diferentes tipos de email:</p>
+      
+      <div class="language-grid">
+        <div class="language-card">
+          <div class="flag">🇧🇷</div>
+          <strong>Português (Brasil)</strong>
+          <div>
+            <button class="test-button" onclick="testEmail('usuario@gmail.com.br')">gmail.com.br</button>
+            <button class="test-button" onclick="testEmail('teste@uol.com.br')">uol.com.br</button>
+          </div>
+        </div>
+        
+        <div class="language-card">
+          <div class="flag">🇪🇸</div>
+          <strong>Español</strong>
+          <div>
+            <button class="test-button" onclick="testEmail('usuario@gmail.es')">gmail.es</button>
+            <button class="test-button" onclick="testEmail('test@yahoo.es')">yahoo.es</button>
+          </div>
+        </div>
+        
+        <div class="language-card">
+          <div class="flag">🇫🇷</div>
+          <strong>Français</strong>
+          <div>
+            <button class="test-button" onclick="testEmail('utilisateur@gmail.fr')">gmail.fr</button>
+            <button class="test-button" onclick="testEmail('test@hotmail.fr')">hotmail.fr</button>
+          </div>
+        </div>
+        
+        <div class="language-card">
+          <div class="flag">🇩🇪</div>
+          <strong>Deutsch</strong>
+          <div>
+            <button class="test-button" onclick="testEmail('benutzer@gmail.de')">gmail.de</button>
+            <button class="test-button" onclick="testEmail('test@yahoo.de')">yahoo.de</button>
+          </div>
+        </div>
+        
+        <div class="language-card">
+          <div class="flag">🇮🇹</div>
+          <strong>Italiano</strong>
+          <div>
+            <button class="test-button" onclick="testEmail('utente@gmail.it')">gmail.it</button>
+            <button class="test-button" onclick="testEmail('test@hotmail.it')">hotmail.it</button>
+          </div>
+        </div>
+        
+        <div class="language-card">
+          <div class="flag">🇺🇸</div>
+          <strong>English (fallback)</strong>
+          <div>
+            <button class="test-button" onclick="testEmail('user@gmail.com')">gmail.com</button>
+            <button class="test-button" onclick="testEmail('test@yahoo.com')">yahoo.com</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estatísticas do sistema -->
+    <div class="stats">
+      <h3>📊 Informações do Sistema</h3>
+      <div id="system-stats">
+        <p><strong>Seu navegador:</strong> <span id="browser-lang">Carregando...</span></p>
+        <p><strong>Timezone:</strong> <span id="timezone">Carregando...</span></p>
+        <p><strong>País estimado:</strong> <span id="estimated-country">Carregando...</span></p>
+      </div>
+    </div>
+
+    <!-- Log de detecção -->
+    <div class="test-section">
+      <h3>📋 Log de Detecção</h3>
+      <div id="detection-log" class="detection-log">
+        Aguardando testes...<br>
+      </div>
+    </div>
+
+    <!-- Teste completo de registro -->
+    <div class="test-section">
+      <h3>🚀 Teste Completo de Registro</h3>
+      <p>Este teste simula o processo completo de registro com detecção automática:</p>
+      
+      <input type="email" 
+             id="full-test-email" 
+             class="test-input" 
+             placeholder="seu-email@exemplo.com"
+             value="">
+      
+      <button class="test-button" onclick="simulateFullRegistration()">
+        🎯 Simular Registro Completo
+      </button>
+      
+      <div id="full-test-result"></div>
+    </div>
+  </div>
+
+  <script>
+    // Função principal de detecção de idioma (cópia da implementação)
+    function detectUserLanguage(email) {
+      try {
+        // Detectar informações do navegador
+        const browserLanguage = navigator.language || navigator.userLanguage;
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        
+        // Tentar detectar país pelo timezone
+        let country = null;
+        const timezoneCountryMap = {
+          'America/Sao_Paulo': 'BR',
+          'America/Argentina/Buenos_Aires': 'AR',
+          'Europe/Madrid': 'ES',
+          'Europe/Paris': 'FR',
+          'Europe/Berlin': 'DE',
+          'Europe/Rome': 'IT',
+          'Europe/London': 'GB',
+          'America/New_York': 'US',
+          'America/Los_Angeles': 'US'
+        };
+        
+        if (timezoneCountryMap[timezone]) {
+          country = timezoneCountryMap[timezone];
+        }
+
+        // Estratégias de detecção
+        const emailDomain = email.split('@')[1];
+        const domainLanguages = {
+          'gmail.com.br': 'pt-br',
+          'yahoo.com.br': 'pt-br',
+          'hotmail.com.br': 'pt-br',
+          'outlook.com.br': 'pt-br',
+          'uol.com.br': 'pt-br',
+          'terra.com.br': 'pt-br',
+          'gmail.es': 'es',
+          'yahoo.es': 'es',
+          'hotmail.es': 'es',
+          'gmail.fr': 'fr',
+          'yahoo.fr': 'fr',
+          'hotmail.fr': 'fr',
+          'gmail.de': 'de',
+          'yahoo.de': 'de',
+          'hotmail.de': 'de',
+          'gmail.it': 'it',
+          'yahoo.it': 'it',
+          'hotmail.it': 'it'
+        };
+
+        const countryLanguages = {
+          'BR': 'pt-br',
+          'ES': 'es',
+          'FR': 'fr',
+          'DE': 'de',
+          'IT': 'it',
+          'US': 'en',
+          'GB': 'en',
+          'AU': 'en',
+          'CA': 'en'
+        };
+
+        const browserLangMap = {
+          'pt': 'pt-br',
+          'pt-BR': 'pt-br',
+          'pt-PT': 'pt-br',
+          'es': 'es',
+          'es-ES': 'es',
+          'es-MX': 'es',
+          'fr': 'fr',
+          'fr-FR': 'fr',
+          'fr-CA': 'fr',
+          'en': 'en',
+          'en-US': 'en',
+          'en-GB': 'en',
+          'de': 'de',
+          'de-DE': 'de',
+          'it': 'it',
+          'it-IT': 'it'
+        };
+
+        // Prioridade: domínio > país > navegador > padrão
+        let detectedLanguage = 'pt-br';
+        let reason = 'padrão';
+
+        if (domainLanguages[emailDomain]) {
+          detectedLanguage = domainLanguages[emailDomain];
+          reason = `domínio (${emailDomain})`;
+        } else if (country && countryLanguages[country]) {
+          detectedLanguage = countryLanguages[country];
+          reason = `país/timezone (${country})`;
+        } else if (browserLanguage && browserLangMap[browserLanguage]) {
+          detectedLanguage = browserLangMap[browserLanguage];
+          reason = `navegador (${browserLanguage})`;
+        }
+
+        return {
+          language: detectedLanguage,
+          reason: reason,
+          details: {
+            email: email,
+            domain: emailDomain,
+            country: country,
+            browser: browserLanguage,
+            timezone: timezone
+          }
+        };
+
+      } catch (error) {
+        console.error('Erro na detecção de idioma:', error);
+        return {
+          language: 'pt-br',
+          reason: 'erro (fallback)',
+          error: error.message
+        };
+      }
+    }
+
+    // Função para testar detecção
+    function testLanguageDetection() {
+      const email = document.getElementById('test-email').value.trim();
+      
+      if (!email) {
+        showResult('❌ Por favor, digite um email para testar.', 'error');
+        return;
+      }
+
+      if (!email.includes('@')) {
+        showResult('❌ Por favor, digite um email válido.', 'error');
+        return;
+      }
+
+      const result = detectUserLanguage(email);
+      logDetection(`Teste: ${email}`, result);
+      
+      const languageNames = {
+        'pt-br': '🇧🇷 Português (Brasil)',
+        'es': '🇪🇸 Español',
+        'fr': '🇫🇷 Français',
+        'en': '🇺🇸 English',
+        'de': '🇩🇪 Deutsch',
+        'it': '🇮�� Italiano'
+      };
+
+      showResult(`
+        <strong>✅ Resultado da Detecção:</strong><br><br>
+        <strong>Email:</strong> ${result.details.email}<br>
+        <strong>Idioma detectado:</strong> ${languageNames[result.language] || result.language}<br>
+        <strong>Motivo:</strong> ${result.reason}<br><br>
+        
+        <strong>📋 Detalhes técnicos:</strong><br>
+        • Domínio: ${result.details.domain}<br>
+        • País estimado: ${result.details.country || 'não detectado'}<br>
+        • Idioma do navegador: ${result.details.browser}<br>
+        • Timezone: ${result.details.timezone}
+      `);
+    }
+
+    // Função para testar email específico
+    function testEmail(email) {
+      document.getElementById('test-email').value = email;
+      testLanguageDetection();
+    }
+
+    // Função para mostrar info do navegador
+    function showBrowserInfo() {
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const language = navigator.language || navigator.userLanguage;
+      const languages = navigator.languages || [language];
+      
+      showResult(`
+        <strong>🌐 Informações do seu navegador:</strong><br><br>
+        <strong>Idioma principal:</strong> ${language}<br>
+        <strong>Idiomas aceitos:</strong> ${languages.join(', ')}<br>
+        <strong>Timezone:</strong> ${timezone}<br>
+        <strong>User Agent:</strong> ${navigator.userAgent.substring(0, 100)}...
+      `);
+    }
+
+    // Função para mostrar resultado
+    function showResult(content, type = 'result') {
+      const resultDiv = document.getElementById('detection-result');
+      resultDiv.innerHTML = `<div class="${type}">${content}</div>`;
+    }
+
+    // Função para limpar resultados
+    function clearResults() {
+      document.getElementById('detection-result').innerHTML = '';
+      document.getElementById('test-email').value = '';
+    }
+
+    // Função para log de detecção
+    function logDetection(action, result) {
+      const log = document.getElementById('detection-log');
+      const timestamp = new Date().toLocaleTimeString();
+      
+      log.innerHTML += `[${timestamp}] ${action}<br>`;
+      log.innerHTML += `  → Idioma: ${result.language} (${result.reason})<br>`;
+      if (result.error) {
+        log.innerHTML += `  → Erro: ${result.error}<br>`;
+      }
+      log.innerHTML += `<br>`;
+      log.scrollTop = log.scrollHeight;
+    }
+
+    // Função para simular registro completo
+    function simulateFullRegistration() {
+      const email = document.getElementById('full-test-email').value.trim();
+      
+      if (!email || !email.includes('@')) {
+        document.getElementById('full-test-result').innerHTML = 
+          '<div class="error">❌ Por favor, digite um email válido.</div>';
+        return;
+      }
+
+      // Simular o processo completo
+      const result = detectUserLanguage(email);
+      logDetection(`Registro simulado: ${email}`, result);
+      
+      const languageNames = {
+        'pt-br': 'Português (Brasil)',
+        'es': 'Español',
+        'fr': 'Français',
+        'en': 'English',
+        'de': 'Deutsch',
+        'it': 'Italiano'
+      };
+
+      // Simular configuração do Firebase
+      const firebaseLanguageMap = {
+        'pt-br': 'pt',
+        'es': 'es',
+        'fr': 'fr',
+        'en': 'en',
+        'de': 'de',
+        'it': 'it'
+      };
+
+      const firebaseLang = firebaseLanguageMap[result.language] || 'pt';
+
+      document.getElementById('full-test-result').innerHTML = `
+        <div class="result">
+          <strong>🎉 Simulação de Registro Completa!</strong><br><br>
+          
+          <strong>📧 Email:</strong> ${email}<br>
+          <strong>🌍 Idioma detectado:</strong> ${languageNames[result.language]}<br>
+          <strong>🔧 Firebase configurado para:</strong> ${firebaseLang}<br>
+          <strong>📋 Motivo da detecção:</strong> ${result.reason}<br><br>
+          
+          <strong>✅ Processo que seria executado:</strong><br>
+          1. ✅ Detecção automática de idioma concluída<br>
+          2. ✅ Firebase Auth configurado para "${firebaseLang}"<br>
+          3. ✅ Usuário seria criado com createUserWithEmailAndPassword()<br>
+          4. ✅ Email de verificação seria enviado em ${languageNames[result.language]}<br>
+          5. ✅ URL do email: https://atalho.me/emailHandler.html?lang=${result.language}<br>
+          6. ✅ Preferência salva no Firestore<br><br>
+          
+          <strong>🎯 Resultado:</strong> O usuário receberia todos os emails futuros em ${languageNames[result.language]}!
+        </div>
+      `;
+    }
+
+    // Inicializar informações do sistema
+    function initSystemInfo() {
+      document.getElementById('browser-lang').textContent = 
+        navigator.language || navigator.userLanguage;
+      
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      document.getElementById('timezone').textContent = timezone;
+      
+      // Estimar país pelo timezone
+      const timezoneCountryMap = {
+        'America/Sao_Paulo': 'Brasil 🇧🇷',
+        'America/Argentina/Buenos_Aires': 'Argentina 🇦🇷',
+        'Europe/Madrid': 'Espanha 🇪🇸',
+        'Europe/Paris': 'França 🇫🇷',
+        'Europe/Berlin': 'Alemanha 🇩🇪',
+        'Europe/Rome': 'Itália 🇮🇹',
+        'Europe/London': 'Reino Unido 🇬🇧',
+        'America/New_York': 'Estados Unidos 🇺🇸',
+        'America/Los_Angeles': 'Estados Unidos 🇺🇸'
+      };
+      
+      const estimatedCountry = timezoneCountryMap[timezone] || 'Não identificado';
+      document.getElementById('estimated-country').textContent = estimatedCountry;
+    }
+
+    // Inicializar página
+    document.addEventListener('DOMContentLoaded', function() {
+      initSystemInfo();
+      console.log('🌍 Página de teste de detecção automática de idioma carregada');
+    });
+  </script>
+</body>
+</html> 

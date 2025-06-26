@@ -1,158 +1,173 @@
-const {setGlobalOptions} = require("firebase-functions");
 const {onCall} = require("firebase-functions/v2/https");
-const {beforeUserSignedIn} = require("firebase-functions/v2/identity");
 const {initializeApp} = require("firebase-admin/app");
-const {getAuth} = require("firebase-admin/auth");
 const {getFirestore} = require("firebase-admin/firestore");
+const {getAuth} = require("firebase-admin/auth");
 const logger = require("firebase-functions/logger");
-
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
-setGlobalOptions({maxInstances: 10});
-
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
-
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
 
 // Inicializar Firebase Admin
 initializeApp();
 
-// As funções sendVerificationEmailOnSignup e onUserCreate foram removidas
-// porque a extensão firestore-send-email agora cuida do envio de emails.
-
-// ✨ NOVA FUNÇÃO: Sincronização INSTANTÂNEA quando email é verificado
-// Esta função é disparada automaticamente quando o emailVerified muda no Auth
-// Funciona imediatamente quando o usuário clica no link de ativação!
-exports.onEmailVerificationChange = beforeUserSignedIn({
-  region: "us-east1",
-}, async (event) => {
-  try {
-    const user = event.data;
-
-    // Só processa se o email foi verificado
-    if (!user.emailVerified) {
-      return;
-    }
-
-    logger.info(`🔥 TRIGGER: Email verificado para ${user.email} ` +
-      `(${user.uid})`);
-
-    const db = getFirestore();
-
-    // Buscar documento no Firestore
-    const userDocRef = db.collection("users").doc(user.uid);
-    const userDoc = await userDocRef.get();
-
-    if (!userDoc.exists) {
-      logger.warn(`⚠️ Documento não encontrado para UID: ${user.uid}`);
-      return;
-    }
-
-    const userData = userDoc.data();
-    const currentEmailVerified = userData.email_verified || false;
-
-    // Só atualiza se ainda não foi verificado no Firestore
-    if (!currentEmailVerified) {
-      await userDocRef.update({
-        email_verified: true,
-        account_status: "active",
-        email_verification_synced_at: new Date().toISOString(),
-        email_verified_trigger_at: new Date().toISOString(),
-      });
-
-      logger.info(`🎉 SUCESSO: Email instantaneamente sincronizado ` +
-        `para ${user.email}`);
-    } else {
-      logger.info(`ℹ️ Email já estava verificado no Firestore ` +
-        `para ${user.email}`);
-    }
-  } catch (error) {
-    logger.error("❌ Erro na sincronização instantânea:", error);
-    // Não lança erro para não interromper o processo de login
-  }
-});
-
-// ✨ NOVA FUNÇÃO: Sincronização automática no login
-// Esta função é disparada automaticamente quando um usuário faz login
-// e verifica se o status de verificação de email precisa ser sincronizado
-exports.syncEmailOnLogin = onCall({
-  region: "us-east1",
-}, async (request) => {
+/**
+ * Função para sincronizar login do usuário
+ */
+exports.syncEmailOnLogin = onCall({region: "us-east1"}, async (request) => {
   try {
     const {uid} = request.auth;
+    if (!uid) throw new Error("Usuário não autenticado");
 
-    if (!uid) {
-      throw new Error("Usuário não autenticado");
-    }
-
-    logger.info(`🔄 Sincronizando status de email para UID: ${uid}`);
-
+    logger.info(`Sincronizando login para UID: ${uid}`);
     const db = getFirestore();
-    const auth = getAuth();
-
-    // Buscar dados do usuário no Authentication
-    const userAuth = await auth.getUser(uid);
-
-    // Buscar documento no Firestore
     const userDocRef = db.collection("users").doc(uid);
     const userDoc = await userDocRef.get();
 
     if (!userDoc.exists) {
-      logger.warn(`⚠️ Documento não encontrado para UID: ${uid}`);
-      return {
-        success: false,
-        message: "Documento do usuário não encontrado",
-      };
-    }
-
-    const userData = userDoc.data();
-    const currentEmailVerified = userData.email_verified || false;
-    const authEmailVerified = userAuth.emailVerified || false;
-
-    // Só atualiza se houver diferença
-    if (currentEmailVerified !== authEmailVerified) {
-      await userDocRef.update({
-        email_verified: authEmailVerified,
-        account_status: authEmailVerified ?
-          "active" : "pending_verification",
-        email_verification_synced_at: new Date().toISOString(),
+      await userDocRef.set({
+        uid: uid,
+        created_at: new Date().toISOString(),
         last_login: new Date().toISOString(),
       });
-
-      logger.info(`✅ Email sincronizado para ${userAuth.email}: ` +
-        `${currentEmailVerified} → ${authEmailVerified}`);
-
-      return {
-        success: true,
-        message: "Status de email sincronizado com sucesso",
-        emailVerified: authEmailVerified,
-      };
+      logger.info(`Criado documento para UID: ${uid}`);
+    } else {
+      await userDocRef.update({
+        last_login: new Date().toISOString(),
+      });
     }
 
-    // Apenas atualiza o last_login se não houve mudança no email
-    await userDocRef.update({
-      last_login: new Date().toISOString(),
-    });
+    logger.info(`Login atualizado para ${uid}`);
+    return {success: true, message: "Login atualizado com sucesso"};
+  } catch (error) {
+    logger.error("Erro na sincronização de login:", error);
+    throw new Error("Erro interno na sincronização de login");
+  }
+});
+
+/**
+ * Função para detectar idioma do usuário
+ */
+exports.detectUserLanguage = onCall({region: "us-east1"}, async (request) => {
+  try {
+    const {email, browserLanguage, country} = request.data;
+
+    // 1. Por domínio do email
+    const emailDomain = email.split("@")[1];
+    const domainLanguages = {
+      "gmail.com.br": "pt-br",
+      "yahoo.com.br": "pt-br",
+      "hotmail.com.br": "pt-br",
+      "outlook.com.br": "pt-br",
+      "uol.com.br": "pt-br",
+      "terra.com.br": "pt-br",
+      "gmail.es": "es",
+      "yahoo.es": "es",
+      "hotmail.es": "es",
+      "gmail.fr": "fr",
+      "yahoo.fr": "fr",
+      "hotmail.fr": "fr",
+      "gmail.de": "de",
+      "yahoo.de": "de",
+      "hotmail.de": "de",
+      "gmail.it": "it",
+      "yahoo.it": "it",
+      "hotmail.it": "it",
+    };
+
+    // 2. Por país/região
+    const countryLanguages = {
+      "BR": "pt-br",
+      "ES": "es",
+      "FR": "fr",
+      "DE": "de",
+      "IT": "it",
+      "US": "en",
+      "GB": "en",
+      "AU": "en",
+      "CA": "en",
+    };
+
+    // 3. Por idioma do navegador
+    const browserLangMap = {
+      "pt": "pt-br",
+      "pt-BR": "pt-br",
+      "pt-PT": "pt-br",
+      "es": "es",
+      "es-ES": "es",
+      "es-MX": "es",
+      "fr": "fr",
+      "fr-FR": "fr",
+      "fr-CA": "fr",
+      "en": "en",
+      "en-US": "en",
+      "en-GB": "en",
+      "de": "de",
+      "de-DE": "de",
+      "it": "it",
+      "it-IT": "it",
+    };
+
+    // Prioridade: domínio > país > navegador > padrão
+    let detectedLanguage = "pt-br"; // padrão
+
+    if (domainLanguages[emailDomain]) {
+      detectedLanguage = domainLanguages[emailDomain];
+    } else if (country && countryLanguages[country]) {
+      detectedLanguage = countryLanguages[country];
+    } else if (browserLanguage && browserLangMap[browserLanguage]) {
+      detectedLanguage = browserLangMap[browserLanguage];
+    }
+
+    logger.info(`Idioma detectado: ${detectedLanguage} para ${email}`);
+
+    return {
+      detectedLanguage,
+      reasons: {
+        emailDomain: domainLanguages[emailDomain] || null,
+        country: countryLanguages[country] || null,
+        browser: browserLangMap[browserLanguage] || null,
+      },
+    };
+  } catch (error) {
+    logger.error("Erro ao detectar idioma:", error);
+    return {detectedLanguage: "pt-br"};
+  }
+});
+
+/**
+ * Função para enviar email de verificação localizado
+ */
+exports.sendLocalizedEmailVerification = onCall({
+  region: "us-east1",
+}, async (request) => {
+  try {
+    const {language = "pt-br", continueUrl} = request.data;
+    const uid = request.auth.uid;
+
+    if (!uid) throw new Error("Usuário não autenticado");
+
+    const auth = getAuth();
+    const userRecord = await auth.getUser(uid);
+
+    // Configurações por idioma
+    const actionCodeSettings = {
+      url: continueUrl || `https://atalho.me/emailHandler.html?lang=${language}`,
+      handleCodeInApp: false,
+    };
+
+    // Gerar link de verificação
+    const verificationLink = await auth.generateEmailVerificationLink(
+        userRecord.email,
+        actionCodeSettings,
+    );
+
+    logger.info(`Link gerado para ${userRecord.email} em ${language}`);
 
     return {
       success: true,
-      message: "Status já sincronizado",
-      emailVerified: authEmailVerified,
+      language,
+      verificationLink,
+      email: userRecord.email,
     };
   } catch (error) {
-    logger.error("❌ Erro na sincronização automática:", error);
-    throw new Error("Erro interno na sincronização");
+    logger.error("Erro ao enviar email localizado:", error);
+    throw new Error("Erro interno");
   }
 });

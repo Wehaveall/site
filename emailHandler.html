@@ -131,6 +131,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
 
     <script>
         // Configuração Firebase direta
@@ -152,6 +153,21 @@
         }
 
         const auth = firebase.auth();
+        const functions = firebase.functions();
+        
+        // Função para forçar sincronização imediata
+        async function forceSyncVerification() {
+            try {
+                console.log('🔄 Forçando sincronização do status de verificação...');
+                const forceSyncFunction = functions.httpsCallable('forceSyncEmailVerification');
+                const result = await forceSyncFunction();
+                console.log('✅ Sincronização concluída:', result.data);
+                return result.data;
+            } catch (error) {
+                console.error('❌ Erro na sincronização:', error);
+                return null;
+            }
+        }
 
         // Função para obter parâmetros da URL
         function getUrlParameter(name) {
@@ -216,19 +232,44 @@
                     
                     console.log('✅ Email verificado com sucesso!');
                     
+                    // Aguardar um pouco para o Firebase Auth processar
                     showStatus('success', `
-                        <div style="font-size: 3rem; margin-bottom: 15px;">✅</div>
+                        <div style="font-size: 2rem; margin-bottom: 10px;">✅</div>
                         <div><strong>Email verificado com sucesso!</strong></div>
                         <div style="margin-top: 10px; font-size: 0.9rem;">
-                            Sua conta foi ativada. Agora você pode fazer login normalmente.
+                            Sincronizando dados da conta...
                         </div>
                     `);
+                    
+                    // Aguardar 2 segundos e forçar sincronização
+                    setTimeout(async () => {
+                        const syncResult = await forceSyncVerification();
+                        
+                        if (syncResult && syncResult.success) {
+                            showStatus('success', `
+                                <div style="font-size: 3rem; margin-bottom: 15px;">🎉</div>
+                                <div><strong>Conta ativada com sucesso!</strong></div>
+                                <div style="margin-top: 10px; font-size: 0.9rem;">
+                                    Status: ${syncResult.account_status === 'active' ? 'Ativo' : 'Pendente'}<br>
+                                    Agora você pode fazer login normalmente.
+                                </div>
+                            `);
+                        } else {
+                            showStatus('success', `
+                                <div style="font-size: 3rem; margin-bottom: 15px;">✅</div>
+                                <div><strong>Email verificado com sucesso!</strong></div>
+                                <div style="margin-top: 10px; font-size: 0.9rem;">
+                                    Sua conta foi ativada. Agora você pode fazer login normalmente.
+                                </div>
+                            `);
+                        }
+                    }, 2000);
 
-                    // Redirecionar automaticamente após 3 segundos
+                    // Redirecionar automaticamente após 6 segundos (tempo para sincronização)
                     setTimeout(() => {
                         const redirectUrl = continueUrl || 'login.html?verified=true';
                         window.location.href = decodeURIComponent(redirectUrl);
-                    }, 3000);
+                    }, 6000);
 
                 } else if (mode === 'resetPassword') {
                     // Redirecionar para página de reset de senha

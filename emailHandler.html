@@ -156,22 +156,17 @@
         const functions = firebase.functions();
         
         // Função para forçar sincronização imediata usando oobCode
-        async function forceSyncVerification(oobCode) {
+        async function forceSyncVerification(oobCode, userEmail = null) {
             try {
                 console.log('🔄 Forçando sincronização via oobCode...', oobCode);
+                console.log('📧 Email recebido como parâmetro:', userEmail);
                 
                 const url = 'https://syncemailverificationpublic-lj2of3bbgq-ue.a.run.app';
                 console.log('🌐 URL da função:', url);
                 
-                // Extrair email do oobCode usando checkActionCode
-                let userEmail = null;
-                try {
-                    console.log('🔍 Verificando oobCode para extrair email...');
-                    const actionCodeInfo = await auth.checkActionCode(oobCode);
-                    userEmail = actionCodeInfo.data.email;
-                    console.log('📧 Email extraído do oobCode:', userEmail);
-                } catch (e) {
-                    console.log('⚠️ Não foi possível extrair email do oobCode:', e.message);
+                // Se não recebeu email como parâmetro, tentar fallbacks
+                if (!userEmail) {
+                    console.log('⚠️ Email não fornecido, tentando fallbacks...');
                     
                     // Fallback: tentar usuário atual
                     try {
@@ -180,8 +175,8 @@
                             userEmail = currentUser.email;
                             console.log('📧 Email do usuário atual (fallback):', userEmail);
                         }
-                    } catch (e2) {
-                        console.log('⚠️ Não foi possível obter usuário atual:', e2.message);
+                    } catch (e) {
+                        console.log('⚠️ Não foi possível obter usuário atual:', e.message);
                     }
                 }
                 
@@ -278,7 +273,18 @@
                 if (mode === 'verifyEmail') {
                     console.log('📧 Verificando email...');
                     
-                    // Aplicar código de verificação
+                    // PRIMEIRO: Extrair email do oobCode ANTES de aplicá-lo
+                    let userEmail = null;
+                    try {
+                        console.log('🔍 Extraindo email do oobCode antes de aplicar...');
+                        const actionCodeInfo = await auth.checkActionCode(oobCode);
+                        userEmail = actionCodeInfo.data.email;
+                        console.log('📧 Email extraído:', userEmail);
+                    } catch (e) {
+                        console.log('⚠️ Não foi possível extrair email:', e.message);
+                    }
+                    
+                    // SEGUNDO: Aplicar código de verificação
                     await auth.applyActionCode(oobCode);
                     
                     console.log('✅ Email verificado com sucesso!');
@@ -294,7 +300,7 @@
                     
                     // Aguardar 2 segundos e forçar sincronização
                     setTimeout(async () => {
-                        const syncResult = await forceSyncVerification(oobCode);
+                        const syncResult = await forceSyncVerification(oobCode, userEmail);
                         
                         if (syncResult && syncResult.success) {
                             showStatus('success', `

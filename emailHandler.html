@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificação de Email - Atalho</title>
+    <link rel="icon" type="image/png" href="assets/img/logo.svg">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #dbc9ad 0%, #c8b298 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+
+        .status {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 1.1rem;
+        }
+
+        .loading {
+            background: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #bbdefb;
+        }
+
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #dbc9ad 0%, #c8b298 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #1976d2;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🚀</div>
+        <h1>Atalho</h1>
+        <p>Verificação de Email</p>
+
+        <div id="status" class="status loading">
+            <div class="spinner"></div>
+            <div>Verificando seu email...</div>
+        </div>
+
+        <div id="actions" style="display: none;">
+            <a href="login.html" class="btn">Ir para Login</a>
+        </div>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="assets/js/firebase.js"></script>
+
+    <script>
+        // Função para obter parâmetros da URL
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Função para mostrar status
+        function showStatus(type, message) {
+            const statusDiv = document.getElementById('status');
+            const actionsDiv = document.getElementById('actions');
+            
+            statusDiv.className = `status ${type}`;
+            statusDiv.innerHTML = message;
+            
+            if (type === 'success' || type === 'error') {
+                actionsDiv.style.display = 'block';
+            }
+        }
+
+        // Processar verificação de email
+        async function handleEmailVerification() {
+            try {
+                const mode = getUrlParameter('mode');
+                const oobCode = getUrlParameter('oobCode');
+                const continueUrl = getUrlParameter('continueUrl');
+
+                console.log('🔍 Parâmetros recebidos:', { mode, oobCode, continueUrl });
+
+                if (!mode || !oobCode) {
+                    throw new Error('Parâmetros de verificação inválidos');
+                }
+
+                if (mode === 'verifyEmail') {
+                    console.log('📧 Verificando email...');
+                    
+                    // Aplicar código de verificação
+                    await firebase.auth().applyActionCode(oobCode);
+                    
+                    console.log('✅ Email verificado com sucesso!');
+                    
+                    showStatus('success', `
+                        <div style="font-size: 3rem; margin-bottom: 15px;">✅</div>
+                        <div><strong>Email verificado com sucesso!</strong></div>
+                        <div style="margin-top: 10px; font-size: 0.9rem;">
+                            Sua conta foi ativada. Agora você pode fazer login normalmente.
+                        </div>
+                    `);
+
+                    // Redirecionar automaticamente após 3 segundos
+                    setTimeout(() => {
+                        const redirectUrl = continueUrl || 'login.html?verified=true';
+                        window.location.href = decodeURIComponent(redirectUrl);
+                    }, 3000);
+
+                } else if (mode === 'resetPassword') {
+                    // Redirecionar para página de reset de senha
+                    window.location.href = `reset-password.html?oobCode=${oobCode}`;
+                    
+                } else {
+                    throw new Error(`Modo não suportado: ${mode}`);
+                }
+
+            } catch (error) {
+                console.error('❌ Erro na verificação:', error);
+                
+                let errorMessage = 'Ocorreu um erro na verificação do email.';
+                
+                if (error.code === 'auth/invalid-action-code') {
+                    errorMessage = 'Link de verificação inválido ou expirado. Solicite um novo email de verificação.';
+                } else if (error.code === 'auth/expired-action-code') {
+                    errorMessage = 'Link de verificação expirado. Solicite um novo email de verificação.';
+                } else if (error.code === 'auth/user-disabled') {
+                    errorMessage = 'Esta conta foi desabilitada. Entre em contato com o suporte.';
+                }
+
+                showStatus('error', `
+                    <div style="font-size: 3rem; margin-bottom: 15px;">❌</div>
+                    <div><strong>Erro na Verificação</strong></div>
+                    <div style="margin-top: 10px; font-size: 0.9rem;">
+                        ${errorMessage}
+                    </div>
+                `);
+            }
+        }
+
+        // Aguardar Firebase carregar e processar
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📱 Página de verificação carregada');
+            
+            // Aguardar Firebase inicializar
+            setTimeout(() => {
+                handleEmailVerification();
+            }, 1000);
+        });
+    </script>
+</body>
+</html> 

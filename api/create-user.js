@@ -96,7 +96,7 @@ export default async function handler(req, res) {
     // 4. Gerar o link de verificação de email
     console.log(`[API] 🔗 Gerando link de verificação...`);
     const verificationLink = await adminInstance.auth().generateEmailVerificationLink(email, {
-        url: 'https://www.atalho.me/login.html?verified=true',
+        url: 'https://atalho.me/emailHandler.html',
     });
     console.log(`[API] ✅ Link de verificação gerado.`);
 

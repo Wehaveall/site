@@ -15,7 +15,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f5f5f5;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -130,9 +130,29 @@
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="assets/js/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <script>
+        // Configuração Firebase direta
+        const firebaseConfig = {
+            apiKey: "AIzaSyCsIbyCkHx_E5VHQXnHZYmoZSrpnuPrPUQ",
+            authDomain: "shortcut-6256b.firebaseapp.com",
+            databaseURL: "https://shortcut-6256b-default-rtdb.firebaseio.com",
+            projectId: "shortcut-6256b",
+            storageBucket: "shortcut-6256b.appspot.com",
+            messagingSenderId: "526680485333",
+            appId: "1:526680485333:web:a5434dd5b6da2fda9ee15c",
+            measurementId: "G-PZ2EHV9YR6"
+        };
+
+        // Inicializar Firebase
+        if (!firebase.apps || !firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+            console.log("✅ Firebase inicializado para verificação de email");
+        }
+
+        const auth = firebase.auth();
+
         // Função para obter parâmetros da URL
         function getUrlParameter(name) {
             const urlParams = new URLSearchParams(window.location.search);
@@ -160,16 +180,22 @@
                 const continueUrl = getUrlParameter('continueUrl');
 
                 console.log('🔍 Parâmetros recebidos:', { mode, oobCode, continueUrl });
+                console.log('🔍 URL completa:', window.location.href);
+                console.log('🔍 Search params:', window.location.search);
 
-                if (!mode || !oobCode) {
-                    throw new Error('Parâmetros de verificação inválidos');
+                if (!mode) {
+                    throw new Error('Parâmetro "mode" não encontrado na URL');
+                }
+                
+                if (!oobCode) {
+                    throw new Error('Parâmetro "oobCode" não encontrado na URL');
                 }
 
                 if (mode === 'verifyEmail') {
                     console.log('📧 Verificando email...');
                     
                     // Aplicar código de verificação
-                    await firebase.auth().applyActionCode(oobCode);
+                    await auth.applyActionCode(oobCode);
                     
                     console.log('✅ Email verificado com sucesso!');
                     

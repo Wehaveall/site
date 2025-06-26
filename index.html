@@ -175,9 +175,14 @@
         // 🌍 INTEGRAÇÃO COM SISTEMA I18N
         
         // Aguardar carregamento do sistema i18n
-        window.addEventListener('DOMContentLoaded', () => {
-            // O sistema i18n já está inicializado automaticamente
-            console.log('🌍 Página multilíngue carregada');
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Inicializar sistema i18n
+            if (typeof AtalhoI18n !== 'undefined') {
+                window.atalhoI18n = new AtalhoI18n();
+                console.log('🌍 Sistema I18n inicializado!');
+            } else {
+                console.error('❌ AtalhoI18n não encontrado!');
+            }
         });
 
         // Escutar mudanças de idioma
@@ -195,10 +200,10 @@
                 console.log('✅ Logout realizado com sucesso');
                 updateNavMenu(null); // Atualiza menu para usuário deslogado
                 // Usar tradução dinâmica para a mensagem
-                alert(t('auth.logoutSuccess', { fallback: 'Logout realizado com sucesso!' }));
+                alert(window.atalhoI18n?.t('auth.logoutSuccess') || 'Logout realizado com sucesso!');
             } catch (error) {
                 console.error('❌ Erro no logout:', error);
-                alert(t('common.error', { fallback: 'Erro' }) + ': ' + error.message);
+                alert((window.atalhoI18n?.t('common.error') || 'Erro') + ': ' + error.message);
             }
         }
 
@@ -257,14 +262,14 @@
 
         // 🎮 FUNÇÕES DE TESTE PARA O CONSOLE
         window.testI18n = {
-            changeToEnglish: () => changeLanguage('en'),
-            changeToSpanish: () => changeLanguage('es'),
-            changeToFrench: () => changeLanguage('fr'),
-            changeToGerman: () => changeLanguage('de'),
-            changeToItalian: () => changeLanguage('it'),
-            changeToPortuguese: () => changeLanguage('pt-br'),
-            getCurrentLanguage: () => getCurrentLanguage(),
-            getStats: () => window.atalhoI18n.getTranslationStats()
+            changeToEnglish: () => window.atalhoI18n?.changeLanguage('en'),
+            changeToSpanish: () => window.atalhoI18n?.changeLanguage('es'),
+            changeToFrench: () => window.atalhoI18n?.changeLanguage('fr'),
+            changeToGerman: () => window.atalhoI18n?.changeLanguage('de'),
+            changeToItalian: () => window.atalhoI18n?.changeLanguage('it'),
+            changeToPortuguese: () => window.atalhoI18n?.changeLanguage('pt-br'),
+            getCurrentLanguage: () => window.atalhoI18n?.getCurrentLanguage(),
+            getStats: () => window.atalhoI18n?.getTranslationStats()
         };
 
         console.log('🎮 Use testI18n.changeToEnglish() para testar idiomas no console!');

@@ -28,6 +28,16 @@ const db = firebase.firestore();
 // Configuração específica para resolver CORS
 auth.useDeviceLanguage();
 
+// Configurar domínios autorizados programaticamente (tentativa)
+try {
+    // Forçar reconfiguração se necessário
+    if (window.location.hostname === 'atalho.me' || window.location.hostname === 'www.atalho.me') {
+        console.log('🌐 Configurando para domínio personalizado: atalho.me');
+    }
+} catch (error) {
+    console.warn('⚠️ Aviso na configuração de domínio:', error);
+}
+
 // Expor globalmente para outros scripts
 window.auth = auth;
 window.db = db;

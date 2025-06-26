@@ -1,0 +1,23 @@
+# Development files
+node_modules/
+.git/
+.firebase/
+.vercel/
+
+# Documentation
+*.md
+!README.md
+
+# Config files
+.firebaserc
+firebase.json
+package-lock.json
+
+# Backup files
+index-i18n.html
+
+# Extensions
+extensions/
+
+# Firebase keys
+*firebase-adminsdk* 

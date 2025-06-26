@@ -1358,7 +1358,8 @@ body {
 .language-selector {
     position: relative;
     display: inline-block;
-    margin-left: 15px;
+    margin-left: 10px;
+    flex-shrink: 0;
 }
 
 .language-dropdown {
@@ -1366,15 +1367,17 @@ body {
     align-items: center;
     background: white;
     border: 2px solid #e1e5e9;
-    border-radius: 8px;
-    padding: 8px 12px;
+    border-radius: 6px;
+    padding: 6px 10px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     color: #2c3e50;
     transition: all 0.3s ease;
-    min-width: 120px;
+    min-width: 100px;
+    max-width: 130px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    white-space: nowrap;
 }
 
 .language-dropdown:hover {
@@ -1395,17 +1398,23 @@ body {
 }
 
 .flag-icon {
-    width: 20px;
-    height: 15px;
-    margin-right: 8px;
+    width: 18px;
+    height: 13px;
+    margin-right: 6px;
     border-radius: 2px;
     object-fit: cover;
     box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    flex-shrink: 0;
 }
 
 .language-name {
     font-weight: 500;
     color: #2c3e50;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
 }
 
 .dropdown-arrow {
@@ -1434,8 +1443,7 @@ body {
     visibility: hidden;
     transform: translateY(-10px);
     transition: all 0.3s ease;
-    max-height: 300px;
-    overflow-y: auto;
+    overflow: visible;
 }
 
 .language-options.show {
@@ -1447,11 +1455,12 @@ body {
 .language-option {
     display: flex;
     align-items: center;
-    padding: 12px 15px;
+    padding: 10px 12px;
     cursor: pointer;
     transition: background-color 0.2s ease;
-    font-size: 14px;
+    font-size: 13px;
     border-bottom: 1px solid #f8f9fa;
+    white-space: nowrap;
 }
 
 .language-option:last-child {
@@ -1469,7 +1478,7 @@ body {
 }
 
 .language-option .flag-icon {
-    margin-right: 12px;
+    margin-right: 8px;
 }
 
 .language-code {
@@ -1482,17 +1491,28 @@ body {
 /* Responsive */
 @media (max-width: 768px) {
     .language-selector {
-        margin-left: 10px;
+        margin-left: 5px;
     }
     
     .language-dropdown {
-        min-width: 100px;
-        padding: 6px 10px;
-        font-size: 13px;
+        min-width: 80px;
+        max-width: 100px;
+        padding: 5px 8px;
+        font-size: 12px;
     }
     
     .flag-icon {
-        width: 18px;
-        height: 13px;
+        width: 16px;
+        height: 12px;
+        margin-right: 4px;
+    }
+    
+    .language-name {
+        font-size: 12px;
+    }
+    
+    .language-option {
+        padding: 8px 10px;
+        font-size: 12px;
     }
 }

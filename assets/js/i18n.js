@@ -376,7 +376,7 @@ class AtalhoI18n {
      * 🌍 CONFIGURAR SELETOR DE IDIOMA COM BANDEIRAS
      */
     setupLanguageSelector() {
-        // Dados dos idiomas com bandeiras
+        // Dados dos idiomas com bandeiras (nomes curtos)
         this.languageData = {
             'pt-br': { 
                 name: 'Português', 

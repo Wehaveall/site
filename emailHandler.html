@@ -183,6 +183,23 @@
                 console.log('🔍 URL completa:', window.location.href);
                 console.log('🔍 Search params:', window.location.search);
 
+                // Se não há parâmetros, significa que foi uma verificação automática
+                if (!mode && !oobCode && window.location.search === '') {
+                    console.log('🔄 Verificação automática detectada - redirecionando para login');
+                    showStatus('success', `
+                        <div style="font-size: 3rem; margin-bottom: 15px;">✅</div>
+                        <div><strong>Email verificado automaticamente!</strong></div>
+                        <div style="margin-top: 10px; font-size: 0.9rem;">
+                            Sua conta foi ativada com sucesso. Redirecionando para login...
+                        </div>
+                    `);
+                    
+                    setTimeout(() => {
+                        window.location.href = 'login.html?verified=true';
+                    }, 2000);
+                    return;
+                }
+
                 if (!mode) {
                     throw new Error('Parâmetro "mode" não encontrado na URL');
                 }

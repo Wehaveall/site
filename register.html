@@ -360,6 +360,8 @@
 
     <!-- Scripts -->
     <script src="assets/js/firebase.js"></script>
+    <!-- API Simples de Registro (sem CORS) -->
+    <script src="assets/js/simple-register.js"></script>
     <!-- Security validator reativado com configurações específicas -->
     <script src="assets/js/security-validator.js"></script>
 
@@ -807,27 +809,31 @@
 
                 btn.textContent = '⏳ Criando conta...';
 
-                // ✨ NOVO: Usar o novo método de registro com detecção automática
-                if (typeof registerWithAutoLanguage === 'function') {
-                    console.log('🚀 Usando método de registro com detecção automática...');
-                    const result = await registerWithAutoLanguage(loginEmail, loginPassword);
+                // ✨ NOVO: Usar API própria de registro (sem CORS)
+                if (typeof registerUserSimple === 'function') {
+                    console.log('🚀 Usando API própria de registro (sem CORS)...');
+                    const result = await registerUserSimple(loginEmail, loginPassword, detectedLanguage);
                     
-                    console.log('✅ Usuário criado com detecção automática:', result);
+                    console.log('✅ Usuário criado via API própria:', result);
                     
-                    // Salvar dados extras no Firestore
-                    if (result.user) {
-                        btn.textContent = '💾 Salvando dados...';
-                        await saveUserLanguagePreference(result.user.uid, result.language);
-                        
-                        // Salvar dados do perfil se disponível
-                        if (name || phone || company) {
-                            const userRef = doc(db, 'users', result.user.uid);
-                            await setDoc(userRef, {
-                                name: name,
-                                phone: phone,
-                                company: company,
-                                updated_at: new Date().toISOString()
-                            }, { merge: true });
+                    // Salvar dados extras no Firestore (via API se necessário)
+                    if (result.uid && (name || phone || company)) {
+                        btn.textContent = '💾 Salvando dados extras...';
+                        try {
+                            // Salvar dados extras via API
+                            await fetch('/api/update-user-profile', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    uid: result.uid,
+                                    name: name,
+                                    phone: phone,
+                                    company: company
+                                })
+                            });
+                        } catch (profileError) {
+                            console.warn('⚠️ Erro ao salvar dados extras:', profileError);
+                            // Não falhar o registro por causa disso
                         }
                     }
                     
@@ -848,7 +854,7 @@
                         🎉 <strong>Conta criada com sucesso!</strong><br><br>
                         
                         🌍 <strong>Idioma detectado automaticamente:</strong><br>
-                        <strong style="color: #dbc9ad;">${languageNames[result.language] || result.language}</strong><br><br>
+                        <strong style="color: #dbc9ad;">${languageNames[detectedLanguage] || detectedLanguage}</strong><br><br>
                         
                         📧 <strong>Email de verificação enviado para:</strong><br>
                         <strong style="color: #dbc9ad;">${loginEmail}</strong><br><br>
@@ -861,8 +867,8 @@
                         
                         <div style="background: #d4edda; padding: 10px; border-radius: 6px; margin: 10px 0; border: 1px solid #c3e6cb;">
                             <strong>✅ DETECÇÃO AUTOMÁTICA ATIVADA!</strong><br>
-                            O sistema detectou automaticamente que você prefere receber emails em <strong>${languageNames[result.language]}</strong>.<br>
-                            <strong>Usuário ID:</strong> ${result.user?.uid || 'N/A'}
+                            O sistema detectou automaticamente que você prefere receber emails em <strong>${languageNames[detectedLanguage]}</strong>.<br>
+                            <strong>Usuário ID:</strong> ${result.uid || 'N/A'}
                         </div>
                         
                         <div style="background: #fff3cd; padding: 10px; border-radius: 6px; margin: 10px 0;">
@@ -873,29 +879,7 @@
                     `, loginEmail);
                     
                 } else {
-                    // Fallback para método antigo caso a nova função não esteja disponível
-                    console.warn('⚠️ Função registerWithAutoLanguage não encontrada, usando método antigo');
-                    
-                    const response = await fetch('/api/create-user', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            name: name,
-                            email: loginEmail,
-                            password: loginPassword,
-                            language: detectedLanguage // incluir idioma detectado
-                        })
-                    });
-
-                    const result = await response.json();
-                    
-                    if (response.ok) {
-                        console.log('✅ Usuário criado com API:', result);
-                        document.getElementById('customer-registration-form').reset();
-                        showSuccessWithRedirect(`Email de verificação enviado para ${loginEmail}`, loginEmail);
-                    } else {
-                        throw new Error(result.error || 'Erro ao criar conta');
-                    }
+                    throw new Error('Sistema de registro não disponível. Tente novamente em alguns minutos.');
                 }
                 
             } catch (error) {

@@ -2,23 +2,6 @@
   "version": 2,
   "buildCommand": "echo 'Static site build'",
   "outputDirectory": ".",
-  "rewrites": [
-    {
-      "source": "/translations/(.*)",
-      "destination": "/public/translations/$1"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/translations/(.*)",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/json"
-        }
-      ]
-    }
-  ],
   "functions": {
     "api/create-pix.js": {
       "maxDuration": 30

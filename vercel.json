@@ -4,6 +4,7 @@
   "github": {
     "silent": true
   },
+  "outputDirectory": "public",
   "functions": {
     "api/create-pix.js": {
       "maxDuration": 30
@@ -21,7 +22,7 @@
   "rewrites": [
     {
       "source": "/emailHandler.html",
-      "destination": "/public/emailHandler.html"
+      "destination": "/emailHandler.html"
     },
     {
       "source": "/translations/(.*)",

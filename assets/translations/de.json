@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "title": "Atalho - Schreiben Sie mehr mit weniger Tippen",
+    "description": "Atalho - Das Tool, das Ihr Tippen mit automatischer Texterweiterung optimiert"
+  },
+  "header": {
+    "home": "Startseite",
+    "features": "Funktionen",
+    "tutorials": "Tutorials", 
+    "downloads": "Bibliothek Downloads",
+    "register": "Registrieren",
+    "login": "Anmelden",
+    "dashboard": "Dashboard",
+    "logout": "Abmelden",
+    "buy": "Kaufen"
+  },
+  "hero": {
+    "title": "Atalho",
+    "subtitle": "Der kürzeste Weg zwischen dem, was Sie denken, und dem, was Sie tippen.",
+    "description": "Verwandeln Sie Ihre Art zu schreiben mit automatischer Texterweiterung. Standardisieren Sie Dokumente und steigern Sie Ihre Produktivität in Sekunden!"
+  },
+  "features": {
+    "title": "Hauptfunktionen",
+    "subtitle": "Entdecken Sie, wie Atalho Ihren Arbeitsablauf revolutionieren kann",
+    "expansion": {
+      "title": "Automatische Erweiterung",
+      "description": "Verwandeln Sie kleine Kürzel sofort in vollständige Texte und sparen Sie wertvolle Zeit bei jedem Tastendruck."
+    },
+    "database": {
+      "title": "Benutzerdefinierte Bibliotheken", 
+      "description": "Erstellen Sie Ihre eigenen Bibliotheken mit Phrasen und Fachbegriffen und passen Sie Atalho an Ihren Arbeitsablauf an."
+    },
+    "formatting": {
+      "title": "Erweiterte Formatierung",
+      "description": "Verwenden Sie intelligente Tags, um Ihre Texte automatisch mit Fett, Kursiv und vielem mehr zu formatieren."
+    },
+    "integration": {
+      "title": "Office-Integration",
+      "description": "Vollständige Kompatibilität mit Microsoft Word und anderen Editoren, wobei Ihre vertraute Erfahrung erhalten bleibt."
+    }
+  },
+  "cta": {
+    "title": "Bereit, Ihre Produktivität zu steigern?",
+    "subtitle": "Schließen Sie sich Tausenden von Fachleuten an, die bereits ihren Arbeitsablauf optimiert haben",
+    "start": "Jetzt Starten",
+    "learn": "Mehr Erfahren"
+  },
+  "footer": {
+    "rights": "© 2025 Atalho App. Alle Rechte vorbehalten.",
+    "privacy": "Datenschutzrichtlinie",
+    "terms": "Nutzungsbedingungen",
+    "faq": "FAQ",
+    "contact": "Kontakt"
+  },
+  "auth": {
+    "welcomeBack": "Willkommen zurück!",
+    "signIn": "Anmelden",
+    "signUp": "Registrieren",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "name": "Name",
+    "phone": "Telefon",
+    "company": "Unternehmen",
+    "acceptTerms": "Ich akzeptiere die Nutzungsbedingungen",
+    "alreadyAccount": "Haben Sie bereits ein Konto?",
+    "noAccount": "Sie haben noch kein Konto?",
+    "forgotPassword": "Passwort vergessen?"
+  },
+  "common": {
+    "loading": "Laden...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "continue": "Weiter",
+    "back": "Zurück",
+    "next": "Weiter",
+    "close": "Schließen"
+  }
+} 

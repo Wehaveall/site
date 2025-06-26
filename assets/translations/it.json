@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "title": "Atalho - Scrivi di più digitando di meno",
+    "description": "Atalho - Lo strumento che ottimizza la tua digitazione con l'espansione automatica del testo"
+  },
+  "header": {
+    "home": "Home",
+    "features": "Caratteristiche",
+    "tutorials": "Tutorial", 
+    "downloads": "Download Librerie",
+    "register": "Registrati",
+    "login": "Accedi",
+    "dashboard": "Dashboard",
+    "logout": "Esci",
+    "buy": "Acquista"
+  },
+  "hero": {
+    "title": "Atalho",
+    "subtitle": "Il percorso più breve tra quello che pensi e quello che digiti.",
+    "description": "Trasforma il tuo modo di scrivere con l'espansione automatica del testo. Standardizza i documenti e aumenta la tua produttività in pochi secondi!"
+  },
+  "features": {
+    "title": "Caratteristiche Principali",
+    "subtitle": "Scopri come Atalho può rivoluzionare il tuo flusso di lavoro",
+    "expansion": {
+      "title": "Espansione Automatica",
+      "description": "Trasforma piccole scorciatoie in testi completi istantaneamente, risparmiando tempo prezioso ad ogni digitazione."
+    },
+    "database": {
+      "title": "Librerie Personalizzate", 
+      "description": "Crea le tue librerie di frasi e termini tecnici, adattando Atalho al tuo flusso di lavoro."
+    },
+    "formatting": {
+      "title": "Formattazione Avanzata",
+      "description": "Usa tag intelligenti per formattare automaticamente i tuoi testi con grassetto, corsivo e molto altro."
+    },
+    "integration": {
+      "title": "Integrazione Office",
+      "description": "Compatibilità totale con Microsoft Word e altri editor, mantenendo la tua esperienza familiare."
+    }
+  },
+  "cta": {
+    "title": "Pronto ad aumentare la tua produttività?",
+    "subtitle": "Unisciti a migliaia di professionisti che hanno già ottimizzato il loro flusso di lavoro",
+    "start": "Inizia Ora",
+    "learn": "Scopri di Più"
+  },
+  "footer": {
+    "rights": "© 2025 Atalho App. Tutti i diritti riservati.",
+    "privacy": "Politica della Privacy",
+    "terms": "Termini di Utilizzo",
+    "faq": "FAQ",
+    "contact": "Contatto"
+  },
+  "auth": {
+    "welcomeBack": "Bentornato!",
+    "signIn": "Accedi",
+    "signUp": "Registrati",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Conferma Password",
+    "name": "Nome",
+    "phone": "Telefono",
+    "company": "Azienda",
+    "acceptTerms": "Accetto i termini di utilizzo",
+    "alreadyAccount": "Hai già un account?",
+    "noAccount": "Non hai un account?",
+    "forgotPassword": "Password dimenticata?"
+  },
+  "common": {
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "success": "Successo",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "continue": "Continua",
+    "back": "Indietro",
+    "next": "Avanti",
+    "close": "Chiudi"
+  }
+} 

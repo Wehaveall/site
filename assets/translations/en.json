@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "title": "Atalho - Write more by typing less",
+    "description": "Atalho - The tool that optimizes your typing with automatic text expansion"
+  },
+  "header": {
+    "home": "Home",
+    "features": "Features",
+    "tutorials": "Tutorials", 
+    "downloads": "Library Downloads",
+    "register": "Sign Up",
+    "login": "Sign In",
+    "dashboard": "Dashboard",
+    "logout": "Sign Out",
+    "buy": "Buy"
+  },
+  "hero": {
+    "title": "Atalho",
+    "subtitle": "The shortest path between what you think and what you type.",
+    "description": "Transform your writing with automatic text expansion. Standardize documents and boost your productivity in seconds!"
+  },
+  "features": {
+    "title": "Main Features",
+    "subtitle": "Discover how Atalho can revolutionize your workflow",
+    "expansion": {
+      "title": "Automatic Expansion",
+      "description": "Transform small shortcuts into complete texts instantly, saving precious time with every keystroke."
+    },
+    "database": {
+      "title": "Custom Libraries", 
+      "description": "Create your own libraries of phrases and technical terms, adapting Atalho to your workflow."
+    },
+    "formatting": {
+      "title": "Advanced Formatting",
+      "description": "Use smart tags to automatically format your texts with bold, italic and much more."
+    },
+    "integration": {
+      "title": "Office Integration",
+      "description": "Full compatibility with Microsoft Word and other editors, maintaining your familiar experience."
+    }
+  },
+  "cta": {
+    "title": "Ready to boost your productivity?",
+    "subtitle": "Join thousands of professionals who have already optimized their workflow",
+    "start": "Get Started",
+    "learn": "Learn More"
+  },
+  "footer": {
+    "rights": "© 2025 Atalho App. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use",
+    "faq": "FAQ",
+    "contact": "Contact"
+  },
+  "auth": {
+    "welcomeBack": "Welcome back!",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "name": "Name",
+    "phone": "Phone",
+    "company": "Company",
+    "acceptTerms": "I accept the terms of use",
+    "alreadyAccount": "Already have an account?",
+    "noAccount": "Don't have an account?",
+    "forgotPassword": "Forgot password?"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "back": "Back",
+    "next": "Next",
+    "close": "Close"
+  }
+} 

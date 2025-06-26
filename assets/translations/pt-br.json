@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "title": "Atalho - Escreva mais digitando menos",
+    "description": "Atalho - A ferramenta que otimiza sua digitação com expansão automática de texto"
+  },
+  "header": {
+    "home": "Início",
+    "features": "Recursos",
+    "tutorials": "Tutoriais", 
+    "downloads": "Downloads de Bibliotecas",
+    "register": "Cadastro",
+    "login": "Entrar",
+    "dashboard": "Dashboard",
+    "logout": "Sair",
+    "buy": "Comprar"
+  },
+  "hero": {
+    "title": "Atalho",
+    "subtitle": "O caminho mais curto entre o que você pensa e o que digita.",
+    "description": "Transforme sua forma de escrever com expansão automática de texto. Padronize documentos e aumente sua produtividade em segundos!"
+  },
+  "features": {
+    "title": "Recursos Principais",
+    "subtitle": "Descubra como o Atalho pode revolucionar sua forma de trabalhar",
+    "expansion": {
+      "title": "Expansão Automática",
+      "description": "Transforme pequenos atalhos em textos completos instantaneamente, economizando tempo precioso em cada digitação."
+    },
+    "database": {
+      "title": "Bancos Personalizados", 
+      "description": "Crie suas próprias bibliotecas de frases e termos técnicos, adaptando o Atalho ao seu fluxo de trabalho."
+    },
+    "formatting": {
+      "title": "Formatação Avançada",
+      "description": "Use tags inteligentes para formatar seus textos automaticamente com negrito, itálico e muito mais."
+    },
+    "integration": {
+      "title": "Integração Office",
+      "description": "Compatibilidade total com Microsoft Word e outros editores, mantendo sua experiência familiar."
+    }
+  },
+  "cta": {
+    "title": "Pronto para aumentar sua produtividade?",
+    "subtitle": "Junte-se a milhares de profissionais que já otimizaram seu fluxo de trabalho",
+    "start": "Começar Agora",
+    "learn": "Saiba Mais"
+  },
+  "footer": {
+    "rights": "© 2025 Atalho App. Todos os direitos reservados.",
+    "privacy": "Política de Privacidade",
+    "terms": "Termos de Uso",
+    "faq": "FAQ",
+    "contact": "Contato"
+  },
+  "auth": {
+    "welcomeBack": "Bem-vindo de volta!",
+    "signIn": "Entrar",
+    "signUp": "Cadastrar",
+    "email": "Email",
+    "password": "Senha",
+    "confirmPassword": "Confirmar Senha",
+    "name": "Nome",
+    "phone": "Telefone",
+    "company": "Empresa",
+    "acceptTerms": "Aceito os termos de uso",
+    "alreadyAccount": "Já tem uma conta?",
+    "noAccount": "Não tem uma conta?",
+    "forgotPassword": "Esqueceu a senha?"
+  },
+  "common": {
+    "loading": "Carregando...",
+    "error": "Erro",
+    "success": "Sucesso",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "continue": "Continuar",
+    "back": "Voltar",
+    "next": "Próximo",
+    "close": "Fechar"
+  }
+} 

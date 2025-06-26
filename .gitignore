@@ -11,6 +11,12 @@ firebase-debug.log
 *.jsonc
 secrets.js
 
+# Permitir arquivos de tradução
+!assets/translations/*.json
+!firebase.json
+!vercel.json
+!package.json
+
 # Sistema
 .DS_Store
 Thumbs.db

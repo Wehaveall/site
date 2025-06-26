@@ -359,6 +359,11 @@ class AtalhoI18n {
         url.searchParams.set('lang', newLang);
         window.history.replaceState({}, '', url);
 
+        // Atualizar seletor visual se existir
+        if (document.querySelector('#language-selector')) {
+            this.updateLanguageSelector();
+        }
+
         // Disparar evento customizado
         window.dispatchEvent(new CustomEvent('languageChanged', {
             detail: { language: newLang }
@@ -368,54 +373,176 @@ class AtalhoI18n {
     }
 
     /**
-     * 🎛️ CONFIGURAR SELETOR DE IDIOMA (DESABILITADO - AUTOMÁTICO APENAS)
+     * 🌍 CONFIGURAR SELETOR DE IDIOMA COM BANDEIRAS
      */
     setupLanguageSelector() {
-        // Seletor desabilitado para funcionamento 100% automático
-        console.log('🎯 Sistema i18n funcionando automaticamente - sem seletor visual');
+        // Dados dos idiomas com bandeiras
+        this.languageData = {
+            'pt-br': { 
+                name: 'Português', 
+                flag: 'https://flagcdn.com/w40/br.png',
+                country: 'Brasil'
+            },
+            'en': { 
+                name: 'English', 
+                flag: 'https://flagcdn.com/w40/us.png',
+                country: 'United States'
+            },
+            'es': { 
+                name: 'Español', 
+                flag: 'https://flagcdn.com/w40/es.png',
+                country: 'España'
+            },
+            'fr': { 
+                name: 'Français', 
+                flag: 'https://flagcdn.com/w40/fr.png',
+                country: 'France'
+            },
+            'de': { 
+                name: 'Deutsch', 
+                flag: 'https://flagcdn.com/w40/de.png',
+                country: 'Deutschland'
+            },
+            'it': { 
+                name: 'Italiano', 
+                flag: 'https://flagcdn.com/w40/it.png',
+                country: 'Italia'
+            }
+        };
+
+        this.createLanguageSelector();
+        console.log('🌍 Seletor de idioma com bandeiras criado');
     }
 
     createLanguageSelector() {
-        const languageNames = {
-            'pt-br': '🇧🇷 Português',
-            'en': '🇺🇸 English',
-            'es': '🇪🇸 Español',
-            'fr': '🇫🇷 Français',
-            'de': '🇩🇪 Deutsch',
-            'it': '🇮🇹 Italiano'
-        };
+        // Procurar onde inserir o seletor (no header)
+        const targetElement = document.querySelector('nav ul') || 
+                             document.querySelector('header') || 
+                             document.querySelector('.header') ||
+                             document.body;
 
-        const selector = document.createElement('select');
-        selector.id = 'language-selector';
-        selector.className = 'language-selector';
+        // Criar container do seletor
+        const selectorContainer = document.createElement('div');
+        selectorContainer.className = 'language-selector';
+        selectorContainer.id = 'language-selector';
+
+        // Dropdown principal
+        const dropdown = document.createElement('div');
+        dropdown.className = 'language-dropdown';
+        
+        // Idioma atual
+        const currentLang = document.createElement('div');
+        currentLang.className = 'current-language';
+        
+        const currentFlag = document.createElement('img');
+        currentFlag.className = 'flag-icon';
+        currentFlag.src = this.languageData[this.currentLanguage].flag;
+        currentFlag.alt = this.languageData[this.currentLanguage].country;
+        
+        const currentName = document.createElement('span');
+        currentName.className = 'language-name';
+        currentName.textContent = this.languageData[this.currentLanguage].name;
+        
+        const arrow = document.createElement('span');
+        arrow.className = 'dropdown-arrow';
+        arrow.innerHTML = '▼';
+        
+        currentLang.appendChild(currentFlag);
+        currentLang.appendChild(currentName);
+        dropdown.appendChild(currentLang);
+        dropdown.appendChild(arrow);
+        
+        // Lista de opções
+        const options = document.createElement('div');
+        options.className = 'language-options';
         
         this.supportedLanguages.forEach(lang => {
-            const option = document.createElement('option');
-            option.value = lang;
-            option.textContent = languageNames[lang] || lang.toUpperCase();
-            selector.appendChild(option);
-        });
-
-        // Adicionar CSS básico
-        const style = document.createElement('style');
-        style.textContent = `
-            .language-selector {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 8px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                background: white;
-                font-size: 14px;
-                z-index: 1000;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            const option = document.createElement('div');
+            option.className = 'language-option';
+            option.dataset.lang = lang;
+            
+            if (lang === this.currentLanguage) {
+                option.classList.add('selected');
             }
-        `;
-        document.head.appendChild(style);
+            
+            const flag = document.createElement('img');
+            flag.className = 'flag-icon';
+            flag.src = this.languageData[lang].flag;
+            flag.alt = this.languageData[lang].country;
+            
+            const name = document.createElement('span');
+            name.textContent = this.languageData[lang].name;
+            
+            const code = document.createElement('span');
+            code.className = 'language-code';
+            code.textContent = lang.toUpperCase();
+            
+            option.appendChild(flag);
+            option.appendChild(name);
+            option.appendChild(code);
+            
+            // Event listener para mudança de idioma
+            option.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const selectedLang = option.dataset.lang;
+                
+                if (selectedLang !== this.currentLanguage) {
+                    await this.changeLanguage(selectedLang);
+                    this.updateLanguageSelector();
+                }
+                
+                // Fechar dropdown
+                dropdown.classList.remove('active');
+                options.classList.remove('show');
+            });
+            
+            options.appendChild(option);
+        });
+        
+        // Event listeners para abrir/fechar dropdown
+        dropdown.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('active');
+            options.classList.toggle('show');
+        });
+        
+        // Fechar dropdown ao clicar fora
+        document.addEventListener('click', () => {
+            dropdown.classList.remove('active');
+            options.classList.remove('show');
+        });
+        
+        // Montar estrutura
+        selectorContainer.appendChild(dropdown);
+        selectorContainer.appendChild(options);
+        
+        // Inserir no DOM
+        if (targetElement.tagName === 'UL') {
+            // Se for uma lista de navegação, criar um item de lista
+            const li = document.createElement('li');
+            li.appendChild(selectorContainer);
+            targetElement.appendChild(li);
+        } else {
+            targetElement.appendChild(selectorContainer);
+        }
+        
+        console.log('🌍 Dropdown de idiomas inserido no DOM');
+    }
 
-        // Adicionar ao corpo da página
-        document.body.appendChild(selector);
+    updateLanguageSelector() {
+        const currentFlag = document.querySelector('.language-dropdown .flag-icon');
+        const currentName = document.querySelector('.language-dropdown .language-name');
+        
+        if (currentFlag && currentName) {
+            currentFlag.src = this.languageData[this.currentLanguage].flag;
+            currentFlag.alt = this.languageData[this.currentLanguage].country;
+            currentName.textContent = this.languageData[this.currentLanguage].name;
+        }
+        
+        // Atualizar opções selecionadas
+        document.querySelectorAll('.language-option').forEach(option => {
+            option.classList.toggle('selected', option.dataset.lang === this.currentLanguage);
+        });
     }
 
     /**

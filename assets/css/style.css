@@ -1353,3 +1353,146 @@ body {
         font-size: 1.25rem;
     }
 }
+
+/* 🌍 LANGUAGE SELECTOR WITH FLAGS */
+.language-selector {
+    position: relative;
+    display: inline-block;
+    margin-left: 15px;
+}
+
+.language-dropdown {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #2c3e50;
+    transition: all 0.3s ease;
+    min-width: 120px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.language-dropdown:hover {
+    border-color: #3498db;
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2);
+    transform: translateY(-1px);
+}
+
+.language-dropdown.active {
+    border-color: #3498db;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.current-language {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.flag-icon {
+    width: 20px;
+    height: 15px;
+    margin-right: 8px;
+    border-radius: 2px;
+    object-fit: cover;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.language-name {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.dropdown-arrow {
+    margin-left: 8px;
+    font-size: 12px;
+    color: #7f8c8d;
+    transition: transform 0.3s ease;
+}
+
+.language-dropdown.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.language-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #e1e5e9;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.language-options.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.language-option {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 14px;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.language-option:last-child {
+    border-bottom: none;
+}
+
+.language-option:hover {
+    background-color: #f8f9fa;
+}
+
+.language-option.selected {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    font-weight: 600;
+}
+
+.language-option .flag-icon {
+    margin-right: 12px;
+}
+
+.language-code {
+    margin-left: auto;
+    font-size: 11px;
+    color: #95a5a6;
+    font-weight: 400;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .language-selector {
+        margin-left: 10px;
+    }
+    
+    .language-dropdown {
+        min-width: 100px;
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+    
+    .flag-icon {
+        width: 18px;
+        height: 13px;
+    }
+}

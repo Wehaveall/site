@@ -21,7 +21,7 @@
   "rewrites": [
     {
       "source": "/emailHandler.html",
-      "destination": "/public/emailHandler.html"
+      "destination": "/emailHandler.html"
     },
     {
       "source": "/translations/(.*)",

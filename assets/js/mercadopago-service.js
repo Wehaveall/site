@@ -3,17 +3,20 @@
 class MercadoPagoService {
     constructor() {
         // IMPORTANTE: Log de inicialização para confirmar que estamos usando a versão correta
-        console.log('Inicializando MercadoPagoService - VERSÃO CORRIGIDA');
+        console.log('🔒 Inicializando MercadoPagoService - VERSÃO SEGURA');
 
-        // Apontando para as Serverless Functions do Vercel
-        this.apiBaseUrl = '/api';
+        // Verificar se a configuração segura está disponível
+        if (!window.secureConfig) {
+            throw new Error('SecureConfig não foi carregado! Inclua config.js antes deste arquivo.');
+        }
 
-        // Credenciais de PRODUÇÃO (apenas para referência, o backend usa o Access Token)
-        this.publicKey = 'APP_USR-eb7579bb-3460-43d1-83eb-1010a62d1bd2';
-        this.accessToken = 'APP_USR-7601417945820618-013008-5b2554be4b9451d02eaed17ed992b76b-231065568';
+        // Usar configuração segura
+        this.config = window.secureConfig;
+        this.apiBaseUrl = this.config.getApiBaseUrl();
 
-        // Log para confirmar URL base
-        console.log('API Base URL:', this.apiBaseUrl);
+        // Log para confirmar URL base (sem expor credenciais)
+        console.log('🔗 API Base URL:', this.apiBaseUrl);
+        console.log('🛡️ Configuração segura carregada');
     }
 
     async createPaymentPreference() {

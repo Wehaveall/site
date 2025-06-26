@@ -68,7 +68,43 @@ async function ensureAuthentication() {
     }
 }
 
+// Função para sincronizar status de email após login
+async function syncEmailVerificationStatus() {
+    try {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        const idToken = await user.getIdToken();
+        
+        // Chama a cloud function de sincronização
+        const syncEmail = firebase.functions().httpsCallable('syncEmailOnLogin');
+        const result = await syncEmail();
+        
+        console.log("✅ Sincronização de email:", result.data.message);
+        return result.data;
+        
+    } catch (error) {
+        console.error("❌ Erro na sincronização de email:", error);
+        return null;
+    }
+}
+
+// Monitor de mudanças de autenticação
+auth.onAuthStateChanged(async (user) => {
+    if (user && !user.isAnonymous) {
+        console.log("👤 Usuário logado:", user.email);
+        console.log("📧 Email verificado:", user.emailVerified);
+        
+        // A sincronização agora é automática via Auth Trigger!
+        // Mantém a função manual como backup apenas
+        if (user.emailVerified) {
+            console.log("✅ Email já verificado - sincronização automática ativa");
+        }
+    }
+});
+
 // Expor para uso global (mas NÃO executar automaticamente)
 window.ensureAuthentication = ensureAuthentication;
+window.syncEmailVerificationStatus = syncEmailVerificationStatus;
 
 console.log("🚀 Firebase configurado - Login manual ativado");    

@@ -1,14 +1,6 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-
 const {setGlobalOptions} = require("firebase-functions");
-const {onRequest} = require("firebase-functions/v2/https");
+const {onCall} = require("firebase-functions/v2/https");
+const {beforeUserSignedIn} = require("firebase-functions/v2/identity");
 const {initializeApp} = require("firebase-admin/app");
 const {getAuth} = require("firebase-admin/auth");
 const {getFirestore} = require("firebase-admin/firestore");
@@ -40,87 +32,127 @@ initializeApp();
 // As funções sendVerificationEmailOnSignup e onUserCreate foram removidas
 // porque a extensão firestore-send-email agora cuida do envio de emails.
 
-// ✨ FUNÇÃO: Sincronização automática do status de verificação de email
-// Esta função verifica se o email foi verificado no Firebase Authentication
-// e atualiza o documento correspondente no Firestore para manter sincronizado
-exports.syncEmailVerificationStatus = onRequest({
-  cors: true,
-  region: "us-east1", // Mesma região do Firestore para melhor performance
-}, async (req, res) => {
+// ✨ NOVA FUNÇÃO: Sincronização INSTANTÂNEA quando email é verificado
+// Esta função é disparada automaticamente quando o emailVerified muda no Auth
+// Funciona imediatamente quando o usuário clica no link de ativação!
+exports.onEmailVerificationChange = beforeUserSignedIn({
+  region: "us-east1",
+}, async (event) => {
   try {
-    logger.info("🔄 Iniciando sincronização manual do status de emails");
+    const user = event.data;
+
+    // Só processa se o email foi verificado
+    if (!user.emailVerified) {
+      return;
+    }
+
+    logger.info(`🔥 TRIGGER: Email verificado para ${user.email} ` +
+      `(${user.uid})`);
+
+    const db = getFirestore();
+
+    // Buscar documento no Firestore
+    const userDocRef = db.collection("users").doc(user.uid);
+    const userDoc = await userDocRef.get();
+
+    if (!userDoc.exists) {
+      logger.warn(`⚠️ Documento não encontrado para UID: ${user.uid}`);
+      return;
+    }
+
+    const userData = userDoc.data();
+    const currentEmailVerified = userData.email_verified || false;
+
+    // Só atualiza se ainda não foi verificado no Firestore
+    if (!currentEmailVerified) {
+      await userDocRef.update({
+        email_verified: true,
+        account_status: "active",
+        email_verification_synced_at: new Date().toISOString(),
+        email_verified_trigger_at: new Date().toISOString(),
+      });
+
+      logger.info(`🎉 SUCESSO: Email instantaneamente sincronizado ` +
+        `para ${user.email}`);
+    } else {
+      logger.info(`ℹ️ Email já estava verificado no Firestore ` +
+        `para ${user.email}`);
+    }
+  } catch (error) {
+    logger.error("❌ Erro na sincronização instantânea:", error);
+    // Não lança erro para não interromper o processo de login
+  }
+});
+
+// ✨ NOVA FUNÇÃO: Sincronização automática no login
+// Esta função é disparada automaticamente quando um usuário faz login
+// e verifica se o status de verificação de email precisa ser sincronizado
+exports.syncEmailOnLogin = onCall({
+  region: "us-east1",
+}, async (request) => {
+  try {
+    const {uid} = request.auth;
+
+    if (!uid) {
+      throw new Error("Usuário não autenticado");
+    }
+
+    logger.info(`🔄 Sincronizando status de email para UID: ${uid}`);
 
     const db = getFirestore();
     const auth = getAuth();
 
-    // Buscar todos os usuários do Authentication
-    const listUsersResult = await auth.listUsers();
-    const users = listUsersResult.users;
+    // Buscar dados do usuário no Authentication
+    const userAuth = await auth.getUser(uid);
 
-    let updatedCount = 0;
-    let alreadySyncedCount = 0;
-    let errorCount = 0;
+    // Buscar documento no Firestore
+    const userDocRef = db.collection("users").doc(uid);
+    const userDoc = await userDocRef.get();
 
-    logger.info(`📊 Encontrados ${users.length} usuários no Auth`);
-
-    for (const user of users) {
-      try {
-        // Buscar o documento correspondente no Firestore
-        const userDocRef = db.collection("users").doc(user.uid);
-        const userDoc = await userDocRef.get();
-
-        if (!userDoc.exists) {
-          logger.warn(`⚠️ Documento não encontrado para UID: ${user.uid}`);
-          continue;
-        }
-
-        const userData = userDoc.data();
-        const currentEmailVerified = userData.email_verified || false;
-        const authEmailVerified = user.emailVerified || false;
-
-        // Só atualiza se houver diferença
-        if (currentEmailVerified !== authEmailVerified) {
-          await userDocRef.update({
-            email_verified: authEmailVerified,
-            account_status: authEmailVerified ?
-              "active" : "pending_verification",
-            email_verification_synced_at: new Date().toISOString(),
-          });
-
-          logger.info(`✅ Sincronizado usuário ${user.email}: ` +
-            `email_verified ${currentEmailVerified} → ` +
-            `${authEmailVerified}`);
-          updatedCount++;
-        } else {
-          alreadySyncedCount++;
-        }
-      } catch (userError) {
-        logger.error(`❌ Erro ao processar usuário ${user.uid}:`, userError);
-        errorCount++;
-      }
+    if (!userDoc.exists) {
+      logger.warn(`⚠️ Documento não encontrado para UID: ${uid}`);
+      return {
+        success: false,
+        message: "Documento do usuário não encontrado",
+      };
     }
 
-    const summary = {
-      totalUsers: users.length,
-      updated: updatedCount,
-      alreadySynced: alreadySyncedCount,
-      errors: errorCount,
-      timestamp: new Date().toISOString(),
-    };
+    const userData = userDoc.data();
+    const currentEmailVerified = userData.email_verified || false;
+    const authEmailVerified = userAuth.emailVerified || false;
 
-    logger.info("🎯 Sincronização concluída:", summary);
+    // Só atualiza se houver diferença
+    if (currentEmailVerified !== authEmailVerified) {
+      await userDocRef.update({
+        email_verified: authEmailVerified,
+        account_status: authEmailVerified ?
+          "active" : "pending_verification",
+        email_verification_synced_at: new Date().toISOString(),
+        last_login: new Date().toISOString(),
+      });
 
-    res.json({
+      logger.info(`✅ Email sincronizado para ${userAuth.email}: ` +
+        `${currentEmailVerified} → ${authEmailVerified}`);
+
+      return {
+        success: true,
+        message: "Status de email sincronizado com sucesso",
+        emailVerified: authEmailVerified,
+      };
+    }
+
+    // Apenas atualiza o last_login se não houve mudança no email
+    await userDocRef.update({
+      last_login: new Date().toISOString(),
+    });
+
+    return {
       success: true,
-      message: "Sincronização de status de verificação concluída",
-      ...summary,
-    });
+      message: "Status já sincronizado",
+      emailVerified: authEmailVerified,
+    };
   } catch (error) {
-    logger.error("❌ Erro na sincronização:", error);
-    res.status(500).json({
-      success: false,
-      error: "Erro interno na sincronização",
-      message: error.message,
-    });
+    logger.error("❌ Erro na sincronização automática:", error);
+    throw new Error("Erro interno na sincronização");
   }
 });

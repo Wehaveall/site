@@ -13,9 +13,6 @@ node_modules/
 firebase.json
 package-lock.json
 
-# Backup files
-index-i18n.html
-
 # Extensions
 extensions/
 

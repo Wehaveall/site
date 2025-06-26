@@ -163,16 +163,26 @@
                 const url = 'https://syncemailverificationpublic-lj2of3bbgq-ue.a.run.app';
                 console.log('🌐 URL da função:', url);
                 
-                // Tentar extrair email do usuário atual ou da URL
+                // Extrair email do oobCode usando checkActionCode
                 let userEmail = null;
                 try {
-                    const currentUser = auth.currentUser;
-                    if (currentUser) {
-                        userEmail = currentUser.email;
-                        console.log('📧 Email do usuário atual:', userEmail);
-                    }
+                    console.log('🔍 Verificando oobCode para extrair email...');
+                    const actionCodeInfo = await auth.checkActionCode(oobCode);
+                    userEmail = actionCodeInfo.data.email;
+                    console.log('📧 Email extraído do oobCode:', userEmail);
                 } catch (e) {
-                    console.log('⚠️ Não foi possível obter usuário atual:', e.message);
+                    console.log('⚠️ Não foi possível extrair email do oobCode:', e.message);
+                    
+                    // Fallback: tentar usuário atual
+                    try {
+                        const currentUser = auth.currentUser;
+                        if (currentUser) {
+                            userEmail = currentUser.email;
+                            console.log('📧 Email do usuário atual (fallback):', userEmail);
+                        }
+                    } catch (e2) {
+                        console.log('⚠️ Não foi possível obter usuário atual:', e2.message);
+                    }
                 }
                 
                 const payload = { 

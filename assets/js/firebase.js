@@ -1,7 +1,7 @@
 // firebase.js - versão corrigida
 const firebaseConfig = {
     apiKey: "AIzaSyCsIbyCkHx_E5VHQXnHZYmoZSrpnuPrPUQ",
-    authDomain: "atalho.me", // Usar domínio personalizado para resolver CORS
+    authDomain: "shortcut-6256b.firebaseapp.com", // Voltar ao padrão
     databaseURL: "https://shortcut-6256b-default-rtdb.firebaseio.com",
     projectId: "shortcut-6256b",
     storageBucket: "shortcut-6256b.appspot.com",

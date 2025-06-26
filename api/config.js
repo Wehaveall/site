@@ -8,8 +8,8 @@ export default function handler(req, res) {
     try {
         // Retornar apenas configurações públicas
         const publicConfig = {
-            // Public Key do MercadoPago (pode ser exposta no frontend)
-            publicKey: process.env.MERCADOPAGO_PUBLIC_KEY || 'APP_USR-eb7579bb-3460-43d1-83eb-1010a62d1bd2',
+            // Public Key do MercadoPago (APENAS de variáveis de ambiente)
+            publicKey: process.env.MERCADOPAGO_PUBLIC_KEY || null,
             
             // Configurações gerais
             environment: process.env.NODE_ENV || 'production',
@@ -19,7 +19,11 @@ export default function handler(req, res) {
             allowedOrigins: [
                 'https://atalho.me',
                 'https://www.atalho.me'
-            ]
+            ],
+            
+            // Status das configurações
+            hasPublicKey: !!process.env.MERCADOPAGO_PUBLIC_KEY,
+            configSource: 'environment_variables'
         };
 
         // Headers de segurança

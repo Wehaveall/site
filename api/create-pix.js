@@ -2,11 +2,16 @@
 const { MercadoPagoConfig, Payment } = require('mercadopago');
 
 // ✅ CONFIGURAÇÃO SEGURA - Token via variável de ambiente
+const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
+
+if (!accessToken) {
+    throw new Error('MERCADOPAGO_ACCESS_TOKEN não está definido nas variáveis de ambiente.');
+}
+
 const client = new MercadoPagoConfig({
-    accessToken: process.env.MP_ACCESS_TOKEN || 'APP_USR-7601417945820618-013008-5b2554be4b9451d02eaed17ed992b76b-231065568',
+    accessToken: accessToken,
     options: {
-        timeout: 10000,
-        idempotencyKey: 'abc'
+        timeout: 10000
     }
 });
 

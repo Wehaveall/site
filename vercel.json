@@ -16,6 +16,16 @@
       "maxDuration": 30
     }
   },
+  "rewrites": [
+    {
+      "source": "/__/auth/(.*)",
+      "destination": "https://shortcut-6256b.firebaseapp.com/__/auth/$1"
+    },
+    {
+      "source": "/__/firebase/(.*)",
+      "destination": "https://shortcut-6256b.firebaseapp.com/__/firebase/$1"
+    }
+  ],
   "headers": [
     {
       "source": "/assets/translations/(.*)",

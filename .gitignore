@@ -11,6 +11,13 @@ firebase-debug.log
 *.jsonc
 secrets.js
 
+# Firebase Admin SDK (CRÍTICO)
+*firebase-adminsdk*.json
+shortcut-*-firebase-adminsdk-*.json
+
+# Pasta de credenciais (NUNCA COMMITAR)
+credentials/
+
 # Arquivos de configuração sensível
 assets/js/config.js
 

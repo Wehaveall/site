@@ -812,7 +812,7 @@
                 // ✨ NOVO: Usar API própria de registro (sem CORS)
                 if (typeof registerUserSimple === 'function') {
                     console.log('🚀 Usando API própria de registro (sem CORS)...');
-                    const result = await registerUserSimple(loginEmail, loginPassword, detectedLanguage);
+                    const result = await registerUserSimple(loginEmail, loginPassword, detectedLanguage, name);
                     
                     console.log('✅ Usuário criado via API própria:', result);
                     

@@ -1,6 +1,6 @@
 // simple-register.js - Registro simples via API (sem CORS)
 
-async function registerUserSimple(email, password, language = 'pt-br') {
+async function registerUserSimple(email, password, language = 'pt-br', name = null) {
     try {
         console.log('🚀 Registrando usuário via API...');
         
@@ -12,7 +12,7 @@ async function registerUserSimple(email, password, language = 'pt-br') {
             body: JSON.stringify({
                 email: email,
                 password: password,
-                name: 'Usuário', // Nome padrão se não fornecido
+                name: name || 'Usuário', // Nome real ou padrão
                 language: language
             })
         });

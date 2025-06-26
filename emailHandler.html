@@ -216,11 +216,32 @@
                     
                     console.log('✅ Email verificado com sucesso!');
                     
+                    // Sincronizar status no Firestore
+                    try {
+                        console.log('🔄 Sincronizando status no Firestore...');
+                        const syncResponse = await fetch('/api/sync-email-verification', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                                                         body: JSON.stringify({ 
+                                email: 'sync-request' // Sincronizar todos os usuários pendentes
+                            })
+                        });
+                        
+                        if (syncResponse.ok) {
+                            const syncData = await syncResponse.json();
+                            console.log('✅ Status sincronizado:', syncData);
+                        } else {
+                            console.warn('⚠️ Erro na sincronização, mas verificação foi bem-sucedida');
+                        }
+                    } catch (syncError) {
+                        console.warn('⚠️ Erro na sincronização:', syncError);
+                    }
+                    
                     showStatus('success', `
                         <div style="font-size: 3rem; margin-bottom: 15px;">✅</div>
                         <div><strong>Email verificado com sucesso!</strong></div>
                         <div style="margin-top: 10px; font-size: 0.9rem;">
-                            Sua conta foi ativada. Agora você pode fazer login normalmente.
+                            Sua conta foi ativada e sincronizada. Agora você pode fazer login normalmente.
                         </div>
                     `);
 

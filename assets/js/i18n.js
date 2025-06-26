@@ -49,35 +49,48 @@ class AtalhoI18n {
      * Prioridade: URL → localStorage → navegador → geolocalização → padrão
      */
     detectLanguage() {
-        // 1. Verificar URL (ex: ?lang=es)
+        // 1. Verificar URL (ex: ?lang=es) - PRIORIDADE MÁXIMA
         const urlParams = new URLSearchParams(window.location.search);
         const urlLang = urlParams.get('lang');
         if (urlLang && this.supportedLanguages.includes(urlLang)) {
             localStorage.setItem('atalho_language', urlLang);
+            console.log(`🔗 Idioma detectado via URL: ${urlLang}`);
             return urlLang;
         }
 
-        // 2. Verificar localStorage (preferência salva)
-        const savedLang = localStorage.getItem('atalho_language');
-        if (savedLang && this.supportedLanguages.includes(savedLang)) {
-            return savedLang;
-        }
-
-        // 3. Detectar idioma do navegador
+        // 2. Detectar idioma do navegador - PRIORIDADE ALTA
         const browserLang = this.detectBrowserLanguage();
         if (browserLang) {
+            console.log(`🌐 Idioma detectado via navegador: ${browserLang}`);
+            
+            // Só usar localStorage se for igual ao navegador
+            const savedLang = localStorage.getItem('atalho_language');
+            if (savedLang === browserLang) {
+                return savedLang;
+            }
+            
+            // Atualizar localStorage com idioma do navegador
             localStorage.setItem('atalho_language', browserLang);
             return browserLang;
+        }
+
+        // 3. Verificar localStorage (apenas se navegador não detectado)
+        const savedLang = localStorage.getItem('atalho_language');
+        if (savedLang && this.supportedLanguages.includes(savedLang)) {
+            console.log(`💾 Idioma detectado via localStorage: ${savedLang}`);
+            return savedLang;
         }
 
         // 4. Detectar por timezone/país (aproximação)
         const geoLang = this.detectByTimezone();
         if (geoLang) {
+            console.log(`🌍 Idioma detectado via timezone: ${geoLang}`);
             localStorage.setItem('atalho_language', geoLang);
             return geoLang;
         }
 
         // 5. Padrão
+        console.log(`🔄 Usando idioma padrão: ${this.fallbackLanguage}`);
         return this.fallbackLanguage;
     }
 

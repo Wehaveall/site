@@ -444,16 +444,16 @@ class AtalhoI18n {
         currentFlag.src = this.languageData[this.currentLanguage].flag;
         currentFlag.alt = this.languageData[this.currentLanguage].country;
         
-        const currentName = document.createElement('span');
-        currentName.className = 'language-name';
-        currentName.textContent = this.languageData[this.currentLanguage].name;
+        const currentCode = document.createElement('span');
+        currentCode.className = 'language-code';
+        currentCode.textContent = this.currentLanguage.toUpperCase();
         
         const arrow = document.createElement('span');
         arrow.className = 'dropdown-arrow';
         arrow.innerHTML = '▼';
         
         currentLang.appendChild(currentFlag);
-        currentLang.appendChild(currentName);
+        currentLang.appendChild(currentCode);
         dropdown.appendChild(currentLang);
         dropdown.appendChild(arrow);
         
@@ -475,15 +475,11 @@ class AtalhoI18n {
             flag.src = this.languageData[lang].flag;
             flag.alt = this.languageData[lang].country;
             
-            const name = document.createElement('span');
-            name.textContent = this.languageData[lang].name;
-            
             const code = document.createElement('span');
             code.className = 'language-code';
             code.textContent = lang.toUpperCase();
             
             option.appendChild(flag);
-            option.appendChild(name);
             option.appendChild(code);
             
             // Event listener para mudança de idioma
@@ -536,12 +532,12 @@ class AtalhoI18n {
 
     updateLanguageSelector() {
         const currentFlag = document.querySelector('.language-dropdown .flag-icon');
-        const currentName = document.querySelector('.language-dropdown .language-name');
+        const currentCode = document.querySelector('.language-dropdown .language-code');
         
-        if (currentFlag && currentName) {
+        if (currentFlag && currentCode) {
             currentFlag.src = this.languageData[this.currentLanguage].flag;
             currentFlag.alt = this.languageData[this.currentLanguage].country;
-            currentName.textContent = this.languageData[this.currentLanguage].name;
+            currentCode.textContent = this.currentLanguage.toUpperCase();
         }
         
         // Atualizar opções selecionadas

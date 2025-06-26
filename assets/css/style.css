@@ -176,6 +176,10 @@ body {
     transition: all 0.2s ease;
     padding: 0.5rem 0;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
 
 .nav-link::after {
@@ -1452,12 +1456,14 @@ body {
 .language-option {
     display: flex;
     align-items: center;
-    padding: 10px 12px;
+    justify-content: space-between;
+    padding: 8px 10px;
     cursor: pointer;
     transition: background-color 0.2s ease;
-    font-size: 13px;
+    font-size: 12px;
     border-bottom: 1px solid #f8f9fa;
     white-space: nowrap;
+    gap: 6px;
 }
 
 .language-option:last-child {

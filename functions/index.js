@@ -171,3 +171,39 @@ exports.sendLocalizedEmailVerification = onCall({
     throw new Error("Erro interno");
   }
 });
+
+/**
+ * ATUALIZAÇÃO AUTOMÁTICA: Sincroniza o status de verificação de email.
+ * Gatilho: Quando um usuário do Firebase Authentication é atualizado.
+ */
+const functions = require("firebase-functions");
+
+exports.syncVerificationStatus = functions.region("us-east1").auth.user().onUpdate(async (change) => {
+  const after = change.after; // O estado do usuário *após* a atualização
+  const before = change.before; // O estado do usuário *antes* da atualização
+
+  // Condição: Só executar se o emailVerified mudou de 'false' para 'true'
+  if (before.emailVerified === false && after.emailVerified === true) {
+    logger.info(`[Auto Sync] Verificação de email detectada para UID: ${after.uid}, Email: ${after.email}`);
+
+    const db = getFirestore();
+    const userRef = db.collection("users").doc(after.uid);
+
+    try {
+      await userRef.update({
+        email_verified: true,
+        account_status: "active",
+        email_verified_at: new Date().toISOString(), // Adiciona timestamp da verificação
+        updated_at: new Date().toISOString(),
+      });
+      logger.info(`[Auto Sync] Firestore atualizado para ${after.email}. Status: active.`);
+      return { success: true };
+    } catch (error) {
+      logger.error(`[Auto Sync] Falha ao atualizar Firestore para UID: ${after.uid}`, error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  logger.info(`[Auto Sync] Nenhuma mudança de verificação para UID: ${after.uid}. Saindo.`);
+  return null;
+});

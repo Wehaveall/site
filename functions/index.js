@@ -284,13 +284,13 @@ exports.syncEmailVerificationPublic = onRequest({
 
     // Verificar e obter informações do oobCode
     const auth = getAuth();
-    const actionCodeInfo = await auth.checkActionCode(oobCode);
+    const actionCodeInfo = await auth.verifyActionCode(oobCode);
 
     logger.info(`[Public Sync] Código válido para: ${
-      actionCodeInfo.data.email}`);
+      actionCodeInfo.email}`);
 
     // Buscar usuário pelo email
-    const userRecord = await auth.getUserByEmail(actionCodeInfo.data.email);
+    const userRecord = await auth.getUserByEmail(actionCodeInfo.email);
 
     logger.info(`[Public Sync] Usuário encontrado: ${userRecord.uid}`);
 

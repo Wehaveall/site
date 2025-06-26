@@ -4,7 +4,7 @@ async function registerUserSimple(email, password, language = 'pt-br') {
     try {
         console.log('🚀 Registrando usuário via API...');
         
-        const response = await fetch('/api/register-user', {
+        const response = await fetch('/api/create-user', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -12,6 +12,7 @@ async function registerUserSimple(email, password, language = 'pt-br') {
             body: JSON.stringify({
                 email: email,
                 password: password,
+                name: 'Usuário', // Nome padrão se não fornecido
                 language: language
             })
         });

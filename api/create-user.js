@@ -28,7 +28,7 @@ export default async function handler(req, res) {
   const adminInstance = initializeFirebaseAdmin();
   const db = adminInstance.firestore();
 
-  const { email, password, name, phone, company } = req.body;
+  const { email, password, name, phone, company, language = 'pt-br' } = req.body;
 
   // Validação básica dos dados recebidos
   if (!email || !password || !name) {
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
 
   try {
     console.log(`[API] Recebida solicitação para criar usuário: ${email}`);
-    console.log(`[API] Dados recebidos:`, { email, name, phone: phone || 'não informado', company: company || 'não informado' });
+    console.log(`[API] Dados recebidos:`, { email, name, phone: phone || 'não informado', company: company || 'não informado', language });
     
     // 1. Cria o usuário no Firebase Authentication com email não verificado
     console.log(`[API] Tentando criar usuário no Firebase Auth...`);
@@ -71,6 +71,7 @@ export default async function handler(req, res) {
       created_at: admin.firestore.FieldValue.serverTimestamp(),
       email_verified: false,
       account_status: 'pending_verification',
+      preferred_language: language,
       
       // Dados de licença
       license_active: false,

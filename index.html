@@ -176,13 +176,8 @@
         
         // Aguardar carregamento do sistema i18n
         window.addEventListener('DOMContentLoaded', async () => {
-            // Inicializar sistema i18n
-            if (typeof AtalhoI18n !== 'undefined') {
-                window.atalhoI18n = new AtalhoI18n();
-                console.log('🌍 Sistema I18n inicializado!');
-            } else {
-                console.error('❌ AtalhoI18n não encontrado!');
-            }
+            // Sistema i18n já é inicializado automaticamente pelo i18n.js
+            console.log('🌍 Página carregada - i18n ativo automaticamente!');
         });
 
         // Escutar mudanças de idioma

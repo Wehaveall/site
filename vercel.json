@@ -2,6 +2,12 @@
   "version": 2,
   "buildCommand": "echo 'Static site build'",
   "outputDirectory": ".",
+  "rewrites": [
+    {
+      "source": "/translations/(.*)",
+      "destination": "/translations/$1"
+    }
+  ],
   "functions": {
     "api/create-pix.js": {
       "maxDuration": 30

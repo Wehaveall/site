@@ -355,22 +355,11 @@ class AtalhoI18n {
     }
 
     /**
-     * 🎛️ CONFIGURAR SELETOR DE IDIOMA
+     * 🎛️ CONFIGURAR SELETOR DE IDIOMA (DESABILITADO - AUTOMÁTICO APENAS)
      */
     setupLanguageSelector() {
-        // Criar seletor se não existir
-        if (!document.getElementById('language-selector')) {
-            this.createLanguageSelector();
-        }
-
-        // Configurar eventos
-        const selector = document.getElementById('language-selector');
-        if (selector) {
-            selector.value = this.currentLanguage;
-            selector.addEventListener('change', (e) => {
-                this.changeLanguage(e.target.value);
-            });
-        }
+        // Seletor desabilitado para funcionamento 100% automático
+        console.log('🎯 Sistema i18n funcionando automaticamente - sem seletor visual');
     }
 
     createLanguageSelector() {

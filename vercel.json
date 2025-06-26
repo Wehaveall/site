@@ -5,7 +5,18 @@
   "rewrites": [
     {
       "source": "/translations/(.*)",
-      "destination": "/translations/$1"
+      "destination": "/public/translations/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/translations/(.*)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ]
     }
   ],
   "functions": {

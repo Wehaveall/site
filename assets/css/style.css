@@ -165,6 +165,7 @@ body {
     list-style: none;
     align-items: center;
     margin-left: auto;
+    height: 100%;
 }
 
 .nav-link {
@@ -1374,8 +1375,8 @@ body {
     font-weight: 500;
     color: #2c3e50;
     transition: all 0.3s ease;
-    min-width: 110px;
-    max-width: 140px;
+    min-width: 70px;
+    max-width: 85px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     white-space: nowrap;
 }
@@ -1395,6 +1396,8 @@ body {
     display: flex;
     align-items: center;
     flex: 1;
+    justify-content: center;
+    gap: 4px;
 }
 
 .flag-icon {
@@ -1408,13 +1411,7 @@ body {
 }
 
 .language-name {
-    font-weight: 500;
-    color: #2c3e50;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    flex: 1;
-    min-width: 0;
+    display: none; /* Ocultar nomes das línguas - só bandeiras + códigos */
 }
 
 .dropdown-arrow {
@@ -1478,16 +1475,20 @@ body {
 }
 
 .language-option .flag-icon {
-    margin-right: 8px;
+    margin-right: 6px;
+}
+
+.language-option .language-name {
+    display: none; /* Ocultar nomes também nas opções */
 }
 
 .language-code {
-    margin-left: auto;
-    font-size: 10px;
-    color: #95a5a6;
-    font-weight: 400;
-    min-width: 25px;
-    text-align: right;
+    margin-left: 4px;
+    font-size: 11px;
+    color: #2c3e50;
+    font-weight: 600;
+    min-width: 20px;
+    text-align: center;
     flex-shrink: 0;
 }
 
@@ -1498,8 +1499,8 @@ body {
     text-align: center;
     max-width: 100px;
     word-wrap: break-word;
-    -webkit-hyphens: auto;
-    hyphens: auto;
+    -webkit-hyphens: none;
+    hyphens: none;
 }
 
 /* Aumentar altura do header para acomodar quebras de linha */
@@ -1510,16 +1511,22 @@ header {
 .header-container {
     min-height: 80px;
     align-items: center;
+    display: flex;
+    justify-content: space-between;
 }
 
 .nav-links {
     align-items: center;
+    display: flex;
+    height: 100%;
 }
 
 .nav-links li {
     display: flex;
     align-items: center;
+    justify-content: center;
     min-height: 50px;
+    height: 100%;
 }
 
 /* Responsive */
@@ -1529,10 +1536,10 @@ header {
     }
     
     .language-dropdown {
-        min-width: 90px;
-        max-width: 110px;
-        padding: 5px 8px;
-        font-size: 12px;
+        min-width: 60px;
+        max-width: 75px;
+        padding: 4px 6px;
+        font-size: 11px;
     }
     
     .nav-link-multiline {
@@ -1550,8 +1557,9 @@ header {
         margin-right: 4px;
     }
     
-    .language-name {
-        font-size: 12px;
+    .language-code {
+        font-size: 10px;
+        min-width: 18px;
     }
     
     .language-option {

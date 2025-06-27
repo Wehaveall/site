@@ -420,7 +420,7 @@
                     i18nSystem = new AtalhoI18n();
                     console.log('🌍 Sistema de tradução inicializado na página de registro');
                     
-                    // Configurar seletor de idioma
+                    // NÃO configurar seletor automático - usar o manual existente
                     setupLanguageSelector();
                 } else {
                     console.warn('⚠️ Sistema de tradução não encontrado');
@@ -430,7 +430,7 @@
             }
         });
 
-        // Configurar seletor de idioma
+        // Configurar seletor de idioma EXISTENTE (não criar novo)
         function setupLanguageSelector() {
             const languageSelect = document.getElementById('language-select');
             if (!languageSelect || !i18nSystem) return;
@@ -446,11 +446,17 @@
                 try {
                     await i18nSystem.changeLanguage(newLanguage);
                     
-                    // Atualizar placeholders específicos da página
-                    updateFormPlaceholders();
-                    
-                    // Atualizar mensagens dinâmicas se existirem
-                    updatePasswordRequirements();
+                    // Aguardar um pouco para garantir que as traduções foram carregadas
+                    setTimeout(() => {
+                        // Atualizar placeholders específicos da página
+                        updateFormPlaceholders();
+                        
+                        // Atualizar mensagens dinâmicas se existirem
+                        updatePasswordRequirements();
+                        
+                        // Forçar re-aplicação de todas as traduções
+                        i18nSystem.applyTranslations();
+                    }, 100);
                     
                     console.log(`✅ Idioma alterado para: ${newLanguage}`);
                 } catch (error) {
@@ -492,10 +498,17 @@
                     const span = element.querySelector('span[data-i18n]');
                     if (span) {
                         const translation = i18nSystem.t(key);
-                        if (translation) {
+                        if (translation && translation !== key) {
                             span.textContent = translation;
+                            console.log(`✅ Traduzido ${id}: ${translation}`);
+                        } else {
+                            console.warn(`⚠️ Tradução não encontrada para: ${key}`);
                         }
+                    } else {
+                        console.warn(`⚠️ Span não encontrado em: ${id}`);
                     }
+                } else {
+                    console.warn(`⚠️ Elemento não encontrado: ${id}`);
                 }
             });
         }

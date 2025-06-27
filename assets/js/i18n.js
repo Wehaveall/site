@@ -41,8 +41,12 @@ class AtalhoI18n {
             // 4. Atualizar meta tags
             this.updateMetaTags();
             
-            // 5. Configurar seletor de idioma
-            this.setupLanguageSelector();
+            // 5. Configurar seletor de idioma (apenas se não existir um manual)
+            if (!document.getElementById('language-select')) {
+                this.setupLanguageSelector();
+            } else {
+                console.log('🌍 Seletor de idioma manual detectado, não criando automático');
+            }
             
             console.log(`🌍 Atalho I18n inicializado em: ${this.currentLanguage}`);
             

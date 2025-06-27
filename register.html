@@ -340,10 +340,10 @@
                         <label for="login-password" data-i18n="register.password">Senha *</label>
                         <input type="password" id="login-password" class="form-input" required minlength="8" data-i18n-placeholder="register.password">
                         <div class="password-requirements">
-                            <div id="req-length" class="requirement-item">✗ <span data-i18n="register.passwordRequirements.length">Mínimo 8 caracteres</span></div>
-                            <div id="req-uppercase" class="requirement-item">✗ <span data-i18n="register.passwordRequirements.uppercase">Uma letra maiúscula</span></div>
-                            <div id="req-number" class="requirement-item">✗ <span data-i18n="register.passwordRequirements.number">Um número</span></div>
-                            <div id="req-symbol" class="requirement-item">✗ <span data-i18n="register.passwordRequirements.symbol">Um símbolo (:$%#@!* etc.)</span></div>
+                            <div id="req-length" class="requirement-item">✗ <span id="req-length-text" data-i18n="register.passwordRequirements.length">Mínimo 8 caracteres</span></div>
+                            <div id="req-uppercase" class="requirement-item">✗ <span id="req-uppercase-text" data-i18n="register.passwordRequirements.uppercase">Uma letra maiúscula</span></div>
+                            <div id="req-number" class="requirement-item">✗ <span id="req-number-text" data-i18n="register.passwordRequirements.number">Um número</span></div>
+                            <div id="req-symbol" class="requirement-item">✗ <span id="req-symbol-text" data-i18n="register.passwordRequirements.symbol">Um símbolo (:$%#@!* etc.)</span></div>
                         </div>
                     </div>
 
@@ -417,10 +417,21 @@
             try {
                 // Aguardar o sistema i18n carregar
                 if (typeof AtalhoI18n !== 'undefined') {
-                    i18nSystem = new AtalhoI18n();
-                    console.log('🌍 Sistema de tradução inicializado na página de registro');
+                    // Criar instância SEM inicializar automaticamente
+                    i18nSystem = Object.create(AtalhoI18n.prototype);
+                    i18nSystem.currentLanguage = 'pt-br';
+                    i18nSystem.translations = {};
+                    i18nSystem.supportedLanguages = ['pt-br', 'en', 'es', 'fr', 'de', 'it'];
+                    i18nSystem.fallbackLanguage = 'pt-br';
+                    i18nSystem.translationCache = new Map();
                     
-                    // NÃO configurar seletor automático - usar o manual existente
+                    // Carregar traduções manualmente SEM criar UI
+                    await i18nSystem.loadTranslations(true);
+                    i18nSystem.applyTranslations();
+                    
+                    console.log('🌍 Sistema de tradução inicializado na página de registro (modo manual)');
+                    
+                    // Configurar APENAS o seletor existente
                     setupLanguageSelector();
                 } else {
                     console.warn('⚠️ Sistema de tradução não encontrado');
@@ -486,26 +497,21 @@
             if (!i18nSystem) return;
 
             const requirements = {
-                'req-length': 'register.passwordRequirements.length',
-                'req-uppercase': 'register.passwordRequirements.uppercase',
-                'req-number': 'register.passwordRequirements.number',
-                'req-symbol': 'register.passwordRequirements.symbol'
+                'req-length-text': 'register.passwordRequirements.length',
+                'req-uppercase-text': 'register.passwordRequirements.uppercase',
+                'req-number-text': 'register.passwordRequirements.number',
+                'req-symbol-text': 'register.passwordRequirements.symbol'
             };
 
             Object.entries(requirements).forEach(([id, key]) => {
                 const element = document.getElementById(id);
                 if (element) {
-                    const span = element.querySelector('span[data-i18n]');
-                    if (span) {
-                        const translation = i18nSystem.t(key);
-                        if (translation && translation !== key) {
-                            span.textContent = translation;
-                            console.log(`✅ Traduzido ${id}: ${translation}`);
-                        } else {
-                            console.warn(`⚠️ Tradução não encontrada para: ${key}`);
-                        }
+                    const translation = i18nSystem.t(key);
+                    if (translation && translation !== key) {
+                        element.textContent = translation;
+                        console.log(`✅ Traduzido ${id}: ${translation}`);
                     } else {
-                        console.warn(`⚠️ Span não encontrado em: ${id}`);
+                        console.warn(`⚠️ Tradução não encontrada para: ${key}`);
                     }
                 } else {
                     console.warn(`⚠️ Elemento não encontrado: ${id}`);
@@ -1096,6 +1102,12 @@
             const hasNumber = /[0-9]/.test(password);
             const hasSymbol = /[:$%#@!*&^()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(password);
 
+            // Obter traduções
+            const lengthText = i18nSystem ? i18nSystem.t('register.passwordRequirements.length') : 'Mínimo 8 caracteres';
+            const uppercaseText = i18nSystem ? i18nSystem.t('register.passwordRequirements.uppercase') : 'Uma letra maiúscula';
+            const numberText = i18nSystem ? i18nSystem.t('register.passwordRequirements.number') : 'Um número';
+            const symbolText = i18nSystem ? i18nSystem.t('register.passwordRequirements.symbol') : 'Um símbolo (:$%#@!* etc.)';
+
             // Atualizar cada elemento diretamente
             const lengthEl = document.getElementById('req-length');
             const uppercaseEl = document.getElementById('req-uppercase');
@@ -1104,8 +1116,8 @@
 
             if (lengthEl) {
                 lengthEl.innerHTML = hasLength ? 
-                    '<span style="color: #28a745 !important; font-weight: bold !important;">✓ Mínimo 8 caracteres</span>' : 
-                    '<span style="color: #dc3545 !important; font-weight: bold !important;">✗ Mínimo 8 caracteres</span>';
+                    `<span style="color: #28a745 !important; font-weight: bold !important;">✓ ${lengthText}</span>` : 
+                    `<span style="color: #dc3545 !important; font-weight: bold !important;">✗ ${lengthText}</span>`;
                 lengthEl.style.setProperty('background-color', hasLength ? 'rgba(40, 167, 69, 0.2)' : 'rgba(220, 53, 69, 0.2)', 'important');
                 lengthEl.style.setProperty('padding', '0.25rem 0.5rem', 'important');
                 lengthEl.style.setProperty('border-radius', '4px', 'important');
@@ -1115,8 +1127,8 @@
 
             if (uppercaseEl) {
                 uppercaseEl.innerHTML = hasUppercase ? 
-                    '<span style="color: #28a745 !important; font-weight: bold !important;">✓ Uma letra maiúscula</span>' : 
-                    '<span style="color: #dc3545 !important; font-weight: bold !important;">✗ Uma letra maiúscula</span>';
+                    `<span style="color: #28a745 !important; font-weight: bold !important;">✓ ${uppercaseText}</span>` : 
+                    `<span style="color: #dc3545 !important; font-weight: bold !important;">✗ ${uppercaseText}</span>`;
                 uppercaseEl.style.setProperty('background-color', hasUppercase ? 'rgba(40, 167, 69, 0.2)' : 'rgba(220, 53, 69, 0.2)', 'important');
                 uppercaseEl.style.setProperty('padding', '0.25rem 0.5rem', 'important');
                 uppercaseEl.style.setProperty('border-radius', '4px', 'important');
@@ -1126,8 +1138,8 @@
 
             if (numberEl) {
                 numberEl.innerHTML = hasNumber ? 
-                    '<span style="color: #28a745 !important; font-weight: bold !important;">✓ Um número</span>' : 
-                    '<span style="color: #dc3545 !important; font-weight: bold !important;">✗ Um número</span>';
+                    `<span style="color: #28a745 !important; font-weight: bold !important;">✓ ${numberText}</span>` : 
+                    `<span style="color: #dc3545 !important; font-weight: bold !important;">✗ ${numberText}</span>`;
                 numberEl.style.setProperty('background-color', hasNumber ? 'rgba(40, 167, 69, 0.2)' : 'rgba(220, 53, 69, 0.2)', 'important');
                 numberEl.style.setProperty('padding', '0.25rem 0.5rem', 'important');
                 numberEl.style.setProperty('border-radius', '4px', 'important');
@@ -1137,8 +1149,8 @@
 
             if (symbolEl) {
                 symbolEl.innerHTML = hasSymbol ? 
-                    '<span style="color: #28a745 !important; font-weight: bold !important;">✓ Um símbolo (:$%#@!* etc.)</span>' : 
-                    '<span style="color: #dc3545 !important; font-weight: bold !important;">✗ Um símbolo (:$%#@!* etc.)</span>';
+                    `<span style="color: #28a745 !important; font-weight: bold !important;">✓ ${symbolText}</span>` : 
+                    `<span style="color: #dc3545 !important; font-weight: bold !important;">✗ ${symbolText}</span>`;
                 symbolEl.style.setProperty('background-color', hasSymbol ? 'rgba(40, 167, 69, 0.2)' : 'rgba(220, 53, 69, 0.2)', 'important');
                 symbolEl.style.setProperty('padding', '0.25rem 0.5rem', 'important');
                 symbolEl.style.setProperty('border-radius', '4px', 'important');

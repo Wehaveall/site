@@ -132,44 +132,29 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
+    <script src="assets/js/firebase.js"></script>
 
     <script>
-        // Função para buscar a configuração do Firebase
-        async function getFirebaseConfig() {
-            try {
-                const response = await fetch('/api/firebase-config');
-                if (!response.ok) {
-                    throw new Error('Não foi possível carregar a configuração do Firebase.');
-                }
-                return await response.json();
-            } catch (error) {
-                console.error('Erro ao buscar configuração do Firebase:', error);
-                showStatus('error', 'Erro crítico na inicialização. Não foi possível carregar a configuração.');
-                return null;
-            }
-        }
+
 
         // Função principal de inicialização
         async function initializeApp() {
-            const firebaseConfig = await getFirebaseConfig();
-
-            if (firebaseConfig) {
-                // Inicializar Firebase
-                if (!firebase.apps || !firebase.apps.length) {
-                    firebase.initializeApp(firebaseConfig);
-                    console.log("✅ Firebase inicializado para verificação de email");
-                }
+            try {
+                // Usar a mesma abordagem assíncrona dos outros arquivos
+                const { auth } = await getFirebaseServices();
+                
+                console.log("✅ Firebase inicializado para verificação de email");
                 
                 // Processar a verificação de email após a inicialização
-                handleEmailVerification();
+                handleEmailVerification(auth);
+            } catch (error) {
+                console.error("❌ Erro ao inicializar Firebase:", error);
+                showStatus('error', 'Erro crítico na inicialização. Não foi possível carregar a configuração.');
             }
         }
 
-        const auth = firebase.auth();
-        const functions = firebase.functions();
-        
         // Função para forçar sincronização imediata usando oobCode
-        async function forceSyncVerification(oobCode, userEmail = null) {
+        async function forceSyncVerification(oobCode, userEmail = null, auth = null) {
             try {
                 console.log('🔄 Forçando sincronização via oobCode...', oobCode);
                 console.log('📧 Email recebido como parâmetro:', userEmail);
@@ -178,7 +163,7 @@
                 console.log('🌐 URL da função:', url);
                 
                 // Se não recebeu email como parâmetro, tentar fallbacks
-                if (!userEmail) {
+                if (!userEmail && auth) {
                     console.log('⚠️ Email não fornecido, tentando fallbacks...');
                     
                     // Fallback: tentar usuário atual
@@ -248,7 +233,7 @@
         }
 
         // Processar verificação de email
-        async function handleEmailVerification() {
+        async function handleEmailVerification(auth) {
             try {
                 const mode = getUrlParameter('mode');
                 const oobCode = getUrlParameter('oobCode');
@@ -313,7 +298,7 @@
                     
                     // Aguardar 2 segundos e forçar sincronização
                     setTimeout(async () => {
-                        const syncResult = await forceSyncVerification(oobCode, userEmail);
+                        const syncResult = await forceSyncVerification(oobCode, userEmail, auth);
                         
                         if (syncResult && syncResult.success) {
                             showStatus('success', `

@@ -5,9 +5,24 @@ const {getAuth} = require("firebase-admin/auth");
 const logger = require("firebase-functions/logger");
 const {onDocumentUpdated} = require("firebase-functions/v2/firestore");
 const {onRequest} = require("firebase-functions/v2/https");
+const functions = require("firebase-functions");
+const nodemailer = require("nodemailer");
 
 // Inicializar Firebase Admin
 initializeApp();
+
+// Configurar transporter do Zoho SMTP
+const createZohoTransporter = () => {
+  return nodemailer.createTransporter({
+    host: "smtp.zoho.com",
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: "contact@atalho.me",
+      pass: functions.config().zoho.email_password,
+    },
+  });
+};
 
 /**
  * Função para sincronizar login do usuário
@@ -365,5 +380,66 @@ exports.syncEmailVerificationPublic = onRequest({
       error: error.message,
       timestamp: new Date().toISOString(),
     });
+  }
+});
+
+/**
+ * Função para enviar email de verificação customizado via Zoho
+ */
+exports.sendCustomEmailVerification = onCall({
+  region: "us-east1",
+}, async (request) => {
+  try {
+    const {uid, language = "pt-br"} = request.data;
+
+    if (!uid) throw new Error("UID é obrigatório");
+
+    const auth = getAuth();
+    const userRecord = await auth.getUser(uid);
+
+    if (!userRecord.email) throw new Error("Usuário não possui email");
+
+    // Gerar link de verificação personalizado
+    const actionCodeSettings = {
+      url: "https://atalho.me/emailHandler.html?verified=true",
+      handleCodeInApp: false,
+    };
+
+    const verificationLink = await auth.generateEmailVerificationLink(
+        userRecord.email,
+        actionCodeSettings,
+    );
+
+    // Configurar email
+    const transporter = createZohoTransporter();
+
+    const emailTemplate = {
+      "pt-br": {
+        subject: "🚀 Atalho - Confirme seu email para ativar sua conta",
+        html: `<div>Email de verificação do Atalho</div>
+               <p>Clique no link: ${verificationLink}</p>`,
+      },
+    };
+
+    const template = emailTemplate[language] || emailTemplate["pt-br"];
+
+    // Enviar email
+    await transporter.sendMail({
+      from: "\"Atalho\" <contact@atalho.me>",
+      to: userRecord.email,
+      subject: template.subject,
+      html: template.html,
+    });
+
+    logger.info(`Email enviado para ${userRecord.email}`);
+
+    return {
+      success: true,
+      email: userRecord.email,
+      message: "Email de verificação enviado com sucesso",
+    };
+  } catch (error) {
+    logger.error("Erro ao enviar email customizado:", error);
+    throw new Error("Erro interno ao enviar email de verificação");
   }
 });

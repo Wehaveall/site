@@ -681,7 +681,8 @@
         }
 
         // Inicialização da página
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', () => {
+            // Funcionalidades que não dependem do Firebase podem ser executadas imediatamente
             console.log('📝 Página de registro carregada');
             
             // Verificar se security validator está em modo registro
@@ -742,163 +743,172 @@
             
             // Inicializar indicadores de senha
             updatePasswordRequirements('');
-        });
 
-        // Manipulador do formulário de registro com DETECÇÃO AUTOMÁTICA DE IDIOMA
-        document.getElementById('customer-registration-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const loginEmail = document.getElementById('login-email').value.trim();
-            const loginPassword = document.getElementById('login-password').value;
-            const name = document.getElementById('customer-name').value.trim();
-            const phone = document.getElementById('customer-phone').value.trim();
-            const company = document.getElementById('customer-company').value.trim();
-            const termsAccepted = document.getElementById('terms-accept').checked;
+            // Agora inicializar Firebase e adicionar listener do formulário
+            getFirebaseServices().then(({ auth, db, functions }) => {
+                console.log("✅ Serviços do Firebase prontos para o registro.");
 
-            // Validações de segurança e de campos (existentes)
-            if (window.securityValidator && !window.securityValidator.validateRegistrationAttempt({ name, email: loginEmail, password: loginPassword, phone, company })) {
-                showError('Dados inválidos detectados. Por favor, verifique as informações.');
-                return;
-            }
-            if (!name || !loginEmail || !loginPassword || !validatePasswords() || !termsAccepted) {
-                showError('Por favor, preencha todos os campos obrigatórios corretamente e aceite os termos.');
-                return;
-            }
+                // Toda a lógica que depende do Firebase agora está dentro desta função
+                document.getElementById('customer-registration-form').addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const loginEmail = document.getElementById('login-email').value.trim();
+                    const loginPassword = document.getElementById('login-password').value;
+                    const name = document.getElementById('customer-name').value.trim();
+                    const phone = document.getElementById('customer-phone').value.trim();
+                    const company = document.getElementById('customer-company').value.trim();
+                    const termsAccepted = document.getElementById('terms-accept').checked;
 
-            const btn = document.getElementById('complete-registration-btn');
-            const originalText = btn.textContent;
-            btn.disabled = true;
-            btn.textContent = '🌍 Detectando idioma...';
-
-            try {
-                // ✨ NOVO: Detecção automática de idioma
-                console.log('🌍 Iniciando detecção automática de idioma...');
-                let detectedLanguage = 'pt-br';
-                
-                // Verificar se temos a função de detecção disponível
-                if (typeof detectUserLanguage === 'function') {
-                    detectedLanguage = await detectUserLanguage(loginEmail);
-                    console.log(`🎯 Idioma detectado automaticamente: ${detectedLanguage}`);
-                } else {
-                    console.warn('⚠️ Função detectUserLanguage não encontrada, usando fallback local');
-                    // Fallback básico local
-                    const emailDomain = loginEmail.split('@')[1];
-                    if (emailDomain.includes('.br')) detectedLanguage = 'pt-br';
-                    else if (emailDomain.includes('.es')) detectedLanguage = 'es';
-                    else if (emailDomain.includes('.fr')) detectedLanguage = 'fr';
-                    else if (emailDomain.includes('.de')) detectedLanguage = 'de';
-                    else if (emailDomain.includes('.it')) detectedLanguage = 'it';
-                    else {
-                        const browserLang = (navigator.language || navigator.userLanguage).toLowerCase();
-                        if (browserLang.includes('pt')) detectedLanguage = 'pt-br';
-                        else if (browserLang.includes('es')) detectedLanguage = 'es';
-                        else if (browserLang.includes('fr')) detectedLanguage = 'fr';
-                        else if (browserLang.includes('de')) detectedLanguage = 'de';
-                        else if (browserLang.includes('it')) detectedLanguage = 'it';
-                        else detectedLanguage = 'en';
+                    // Validações de segurança e de campos (existentes)
+                    if (window.securityValidator && !window.securityValidator.validateRegistrationAttempt({ name, email: loginEmail, password: loginPassword, phone, company })) {
+                        showError('Dados inválidos detectados. Por favor, verifique as informações.');
+                        return;
                     }
-                }
+                    if (!name || !loginEmail || !loginPassword || !validatePasswords() || !termsAccepted) {
+                        showError('Por favor, preencha todos os campos obrigatórios corretamente e aceite os termos.');
+                        return;
+                    }
 
-                btn.textContent = '🔧 Configurando Firebase...';
+                    const btn = document.getElementById('complete-registration-btn');
+                    const originalText = btn.textContent;
+                    btn.disabled = true;
+                    btn.textContent = '🌍 Detectando idioma...';
 
-                // ✨ NOVO: Configurar idioma do Firebase Auth
-                if (typeof setFirebaseLanguage === 'function') {
-                    await setFirebaseLanguage(detectedLanguage);
-                    console.log(`🔧 Firebase configurado para: ${detectedLanguage}`);
-                }
-
-                btn.textContent = '⏳ Criando conta...';
-
-                // ✨ NOVO: Usar API própria de registro (sem CORS)
-                if (typeof registerUserSimple === 'function') {
-                    console.log('🚀 Usando API própria de registro (sem CORS)...');
-                    const result = await registerUserSimple(loginEmail, loginPassword, detectedLanguage, name);
-                    
-                    console.log('✅ Usuário criado via API própria:', result);
-                    
-                    // Salvar dados extras no Firestore (via API se necessário)
-                    if (result.uid && (name || phone || company)) {
-                        btn.textContent = '💾 Salvando dados extras...';
-                        try {
-                            // Salvar dados extras via API
-                            await fetch('/api/update-user-profile', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    uid: result.uid,
-                                    name: name,
-                                    phone: phone,
-                                    company: company
-                                })
-                            });
-                        } catch (profileError) {
-                            console.warn('⚠️ Erro ao salvar dados extras:', profileError);
-                            // Não falhar o registro por causa disso
+                    try {
+                        // ✨ NOVO: Detecção automática de idioma
+                        console.log('🌍 Iniciando detecção automática de idioma...');
+                        let detectedLanguage = 'pt-br';
+                        
+                        // Verificar se temos a função de detecção disponível
+                        if (typeof detectUserLanguage === 'function') {
+                            detectedLanguage = await detectUserLanguage(loginEmail);
+                            console.log(`🎯 Idioma detectado automaticamente: ${detectedLanguage}`);
+                        } else {
+                            console.warn('⚠️ Função detectUserLanguage não encontrada, usando fallback local');
+                            // Fallback básico local
+                            const emailDomain = loginEmail.split('@')[1];
+                            if (emailDomain.includes('.br')) detectedLanguage = 'pt-br';
+                            else if (emailDomain.includes('.es')) detectedLanguage = 'es';
+                            else if (emailDomain.includes('.fr')) detectedLanguage = 'fr';
+                            else if (emailDomain.includes('.de')) detectedLanguage = 'de';
+                            else if (emailDomain.includes('.it')) detectedLanguage = 'it';
+                            else {
+                                const browserLang = (navigator.language || navigator.userLanguage).toLowerCase();
+                                if (browserLang.includes('pt')) detectedLanguage = 'pt-br';
+                                else if (browserLang.includes('es')) detectedLanguage = 'es';
+                                else if (browserLang.includes('fr')) detectedLanguage = 'fr';
+                                else if (browserLang.includes('de')) detectedLanguage = 'de';
+                                else if (browserLang.includes('it')) detectedLanguage = 'it';
+                                else detectedLanguage = 'en';
+                            }
                         }
+
+                        btn.textContent = '🔧 Configurando Firebase...';
+
+                        // ✨ NOVO: Configurar idioma do Firebase Auth
+                        if (typeof setFirebaseLanguage === 'function') {
+                            await setFirebaseLanguage(detectedLanguage);
+                            console.log(`🔧 Firebase configurado para: ${detectedLanguage}`);
+                        }
+
+                        btn.textContent = '⏳ Criando conta...';
+
+                        // ✨ NOVO: Usar API própria de registro (sem CORS)
+                        if (typeof registerUserSimple === 'function') {
+                            console.log('🚀 Usando API própria de registro (sem CORS)...');
+                            const result = await registerUserSimple(loginEmail, loginPassword, detectedLanguage, name);
+                            
+                            console.log('✅ Usuário criado via API própria:', result);
+                            
+                            // Salvar dados extras no Firestore (via API se necessário)
+                            if (result.uid && (name || phone || company)) {
+                                btn.textContent = '💾 Salvando dados extras...';
+                                try {
+                                    // Salvar dados extras via API
+                                    await fetch('/api/update-user-profile', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            uid: result.uid,
+                                            name: name,
+                                            phone: phone,
+                                            company: company
+                                        })
+                                    });
+                                } catch (profileError) {
+                                    console.warn('⚠️ Erro ao salvar dados extras:', profileError);
+                                    // Não falhar o registro por causa disso
+                                }
+                            }
+                            
+                            // Limpar formulário
+                            document.getElementById('customer-registration-form').reset();
+                            
+                            // Mensagem de sucesso com informações do idioma detectado
+                            const languageNames = {
+                                'pt-br': 'Português (Brasil)',
+                                'es': 'Español',
+                                'fr': 'Français',
+                                'en': 'English',
+                                'de': 'Deutsch',
+                                'it': 'Italiano'
+                            };
+                            
+                            showSuccessWithRedirect(`
+                                🎉 <strong>Conta criada com sucesso!</strong><br><br>
+                                
+                                🌍 <strong>Idioma detectado automaticamente:</strong><br>
+                                <strong style="color: #dbc9ad;">${languageNames[detectedLanguage] || detectedLanguage}</strong><br><br>
+                                
+                                📧 <strong>Email de verificação enviado para:</strong><br>
+                                <strong style="color: #dbc9ad;">${loginEmail}</strong><br><br>
+                                
+                                ✅ <strong>Para ativar sua conta:</strong><br>
+                                1. 📥 Verifique sua caixa de entrada (pode levar alguns minutos)<br>
+                                2. 📧 Abra o email do Atalho<br>
+                                3. 🔗 Clique no link de ativação<br>
+                                4. 🔐 Volte aqui e faça login normalmente<br><br>
+                                
+                                <div style="background: #d4edda; padding: 10px; border-radius: 6px; margin: 10px 0; border: 1px solid #c3e6cb;">
+                                    <strong>✅ DETECÇÃO AUTOMÁTICA ATIVADA!</strong><br>
+                                    O sistema detectou automaticamente que você prefere receber emails em <strong>${languageNames[detectedLanguage]}</strong>.<br>
+                                    <strong>Usuário ID:</strong> ${result.uid || 'N/A'}
+                                </div>
+                                
+                                <div style="background: #fff3cd; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                                    <strong>⚠️ IMPORTANTE:</strong> Sua conta só funciona após clicar no link do email!
+                                </div>
+                                
+                                <small>💡 Não achou o email? Verifique a pasta de spam/lixo eletrônico</small>
+                            `, loginEmail);
+                            
+                        } else {
+                            throw new Error('Sistema de registro não disponível. Tente novamente em alguns minutos.');
+                        }
+                        
+                    } catch (error) {
+                        console.error("❌ Erro no processo de registro:", error);
+                        
+                        let errorMessage = 'Erro: ' + error.message;
+                        if (error.message.includes('network')) {
+                            errorMessage = 'Erro de conexão. Verifique sua internet e tente novamente.';
+                        } else if (error.message.includes('CORS')) {
+                            errorMessage = 'Erro de configuração. Tente novamente em alguns minutos.';
+                        } else if (error.code === 'auth/email-already-exists') {
+                            errorMessage = 'Este email já está cadastrado. Tente fazer login.';
+                        }
+                        
+                        showError(errorMessage);
+                    } finally {
+                        btn.disabled = false;
+                        btn.textContent = originalText;
                     }
-                    
-                    // Limpar formulário
-                    document.getElementById('customer-registration-form').reset();
-                    
-                    // Mensagem de sucesso com informações do idioma detectado
-                    const languageNames = {
-                        'pt-br': 'Português (Brasil)',
-                        'es': 'Español',
-                        'fr': 'Français',
-                        'en': 'English',
-                        'de': 'Deutsch',
-                        'it': 'Italiano'
-                    };
-                    
-                    showSuccessWithRedirect(`
-                        🎉 <strong>Conta criada com sucesso!</strong><br><br>
-                        
-                        🌍 <strong>Idioma detectado automaticamente:</strong><br>
-                        <strong style="color: #dbc9ad;">${languageNames[detectedLanguage] || detectedLanguage}</strong><br><br>
-                        
-                        📧 <strong>Email de verificação enviado para:</strong><br>
-                        <strong style="color: #dbc9ad;">${loginEmail}</strong><br><br>
-                        
-                        ✅ <strong>Para ativar sua conta:</strong><br>
-                        1. 📥 Verifique sua caixa de entrada (pode levar alguns minutos)<br>
-                        2. 📧 Abra o email do Atalho<br>
-                        3. 🔗 Clique no link de ativação<br>
-                        4. 🔐 Volte aqui e faça login normalmente<br><br>
-                        
-                        <div style="background: #d4edda; padding: 10px; border-radius: 6px; margin: 10px 0; border: 1px solid #c3e6cb;">
-                            <strong>✅ DETECÇÃO AUTOMÁTICA ATIVADA!</strong><br>
-                            O sistema detectou automaticamente que você prefere receber emails em <strong>${languageNames[detectedLanguage]}</strong>.<br>
-                            <strong>Usuário ID:</strong> ${result.uid || 'N/A'}
-                        </div>
-                        
-                        <div style="background: #fff3cd; padding: 10px; border-radius: 6px; margin: 10px 0;">
-                            <strong>⚠️ IMPORTANTE:</strong> Sua conta só funciona após clicar no link do email!
-                        </div>
-                        
-                        <small>💡 Não achou o email? Verifique a pasta de spam/lixo eletrônico</small>
-                    `, loginEmail);
-                    
-                } else {
-                    throw new Error('Sistema de registro não disponível. Tente novamente em alguns minutos.');
-                }
-                
-            } catch (error) {
-                console.error("❌ Erro no processo de registro:", error);
-                
-                let errorMessage = 'Erro: ' + error.message;
-                if (error.message.includes('network')) {
-                    errorMessage = 'Erro de conexão. Verifique sua internet e tente novamente.';
-                } else if (error.message.includes('CORS')) {
-                    errorMessage = 'Erro de configuração. Tente novamente em alguns minutos.';
-                } else if (error.code === 'auth/email-already-exists') {
-                    errorMessage = 'Este email já está cadastrado. Tente fazer login.';
-                }
-                
-                showError(errorMessage);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = originalText;
-            }
+                });
+
+            }).catch(error => {
+                console.error("❌ Falha crítica na inicialização do Firebase:", error);
+                showError("Erro ao conectar com nossos servidores. Tente recarregar a página.");
+            });
         });
 
         // Função para atualizar feedback de confirmação de senha
@@ -995,7 +1005,7 @@
             }
         }
 
-        console.log("🚀 Página de registro simplificada carregada");
+        console.log("🚀 Página de registro simplificada carregada e aguardando Firebase...");
     </script>
 </body>
 

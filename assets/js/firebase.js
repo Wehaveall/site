@@ -1,26 +1,56 @@
-// firebase.js - versão corrigida
-const firebaseConfig = {
-    apiKey: "AIzaSyCsIbyCkHx_E5VHQXnHZYmoZSrpnuPrPUQ",
-    authDomain: "shortcut-6256b.firebaseapp.com", // Voltar ao padrão
-    databaseURL: "https://shortcut-6256b-default-rtdb.firebaseio.com",
-    projectId: "shortcut-6256b",
-    storageBucket: "shortcut-6256b.appspot.com",
-    messagingSenderId: "526680485333",
-    appId: "1:526680485333:web:a5434dd5b6da2fda9ee15c",
-    measurementId: "G-PZ2EHV9YR6"
-};
+// Variável para armazenar a promessa de inicialização do Firebase
+let firebaseInitializationPromise = null;
 
-// Verificar se já foi inicializado
-if (!firebase.apps || !firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-    console.log("Firebase inicializado com sucesso");
-} else {
-    console.log("Firebase já estava inicializado");
+// Função para buscar a configuração e inicializar o Firebase
+async function initializeFirebase() {
+    try {
+        console.log("🔥 Buscando configuração do Firebase...");
+        const response = await fetch('/api/firebase-config');
+        if (!response.ok) {
+            throw new Error(`Erro na rede: ${response.statusText}`);
+        }
+        const firebaseConfig = await response.json();
+
+        if (!firebaseConfig.apiKey) {
+            throw new Error("Configuração do Firebase recebida é inválida.");
+        }
+
+        if (!firebase.apps.length) {
+            console.log("🚀 Inicializando Firebase...");
+            firebase.initializeApp(firebaseConfig);
+        } else {
+            console.log("✅ Firebase já inicializado.");
+        }
+        
+        // Retorna as instâncias dos serviços para uso
+        return {
+            auth: firebase.auth(),
+            db: firebase.firestore(),
+            functions: firebase.functions()
+        };
+
+    } catch (error) {
+        console.error("❌ Erro crítico ao inicializar o Firebase:", error);
+        // Rejeita a promessa com o erro
+        return Promise.reject(error);
+    }
 }
 
-// Exporta as instâncias do Firebase
-const auth = firebase.auth();
-const db = firebase.firestore();
+// Função para garantir que o Firebase seja inicializado apenas uma vez
+function getFirebaseServices() {
+    if (!firebaseInitializationPromise) {
+        firebaseInitializationPromise = initializeFirebase();
+    }
+    return firebaseInitializationPromise;
+}
+
+// Exemplo de como usar (outros scripts podem chamar isso)
+// getFirebaseServices().then(({ auth, db, functions }) => {
+//     console.log("Serviços do Firebase prontos para uso!");
+//     // Coloque seu código que depende do Firebase aqui
+// }).catch(error => {
+//     console.error("Falha ao obter serviços do Firebase:", error);
+// });
 
 // Para Firebase v8 (compat), as funções são métodos do auth
 // Vamos criar referências para facilitar o uso

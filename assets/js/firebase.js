@@ -5,13 +5,36 @@ let firebaseInitializationPromise = null;
 async function initializeFirebase() {
     try {
         console.log("🔥 Buscando configuração do Firebase...");
-        const response = await fetch('/api/firebase-config');
-        if (!response.ok) {
-            throw new Error(`Erro na rede: ${response.statusText}`);
+        
+        let firebaseConfig = null;
+        
+        // Primeiro, tentar a API principal (segura)
+        try {
+            const response = await fetch('/api/firebase-config');
+            if (response.ok) {
+                firebaseConfig = await response.json();
+                console.log("✅ Configuração obtida da API principal (segura)");
+            } else {
+                throw new Error(`API principal falhou: ${response.status}`);
+            }
+        } catch (primaryError) {
+            console.warn("⚠️ API principal falhou, tentando fallback:", primaryError.message);
+            
+            // Fallback: tentar API temporária
+            try {
+                const fallbackResponse = await fetch('/api/firebase-config-fallback');
+                if (fallbackResponse.ok) {
+                    firebaseConfig = await fallbackResponse.json();
+                    console.log("⚠️ Usando configuração de fallback (TEMPORÁRIA)");
+                } else {
+                    throw new Error(`Fallback também falhou: ${fallbackResponse.status}`);
+                }
+            } catch (fallbackError) {
+                throw new Error(`Ambas as APIs falharam. Principal: ${primaryError.message}, Fallback: ${fallbackError.message}`);
+            }
         }
-        const firebaseConfig = await response.json();
 
-        if (!firebaseConfig.apiKey) {
+        if (!firebaseConfig || !firebaseConfig.apiKey) {
             throw new Error("Configuração do Firebase recebida é inválida.");
         }
 
@@ -23,15 +46,65 @@ async function initializeFirebase() {
         }
         
         // Retorna as instâncias dos serviços para uso
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const functions = firebase.functions();
+
+        // Configurações do Firebase após inicialização
+        console.log("🔧 Aplicando configurações do Firebase...");
+        
+        // Configurar persistência de autenticação para SESSION
+        try {
+            await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+            console.log("✅ Persistência configurada para SESSION");
+        } catch (error) {
+            console.error("❌ Erro ao configurar persistência:", error);
+        }
+
+        // Configurações do Firestore
+        db.settings({
+            cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+            merge: true
+        });
+
+        // Habilita persistência offline do Firestore
+        try {
+            await db.enablePersistence();
+            console.log("✅ Persistência offline do Firestore habilitada");
+        } catch (err) {
+            if (err.code == 'failed-precondition') {
+                console.log('Persistência do Firestore falhou: múltiplas abas abertas');
+            } else if (err.code == 'unimplemented') {
+                console.log('O navegador não suporta persistência do Firestore');
+            }
+        }
+
+        // Configurar idioma padrão
+        auth.useDeviceLanguage();
+
+        // Expor globalmente para uso em outros scripts
+        window.auth = auth;
+        window.db = db;
+        window.functions = functions;
+
+        // Expor funções utilitárias
+        window.detectUserLanguage = detectUserLanguage;
+        window.setFirebaseLanguage = setFirebaseLanguage;
+        window.registerWithAutoLanguage = registerWithAutoLanguage;
+        window.resendVerificationWithLanguage = resendVerificationWithLanguage;
+        window.syncEmailVerificationStatus = syncEmailVerificationStatus;
+        window.ensureAuthentication = ensureAuthentication;
+
+        console.log("🚀 Firebase configurado completamente");
+
         return {
-            auth: firebase.auth(),
-            db: firebase.firestore(),
-            functions: firebase.functions()
+            auth: auth,
+            db: db,
+            functions: functions
         };
 
     } catch (error) {
         console.error("❌ Erro crítico ao inicializar o Firebase:", error);
-        // Rejeita a promessa com o erro
         return Promise.reject(error);
     }
 }
@@ -44,128 +117,12 @@ function getFirebaseServices() {
     return firebaseInitializationPromise;
 }
 
-// Exemplo de como usar (outros scripts podem chamar isso)
-// getFirebaseServices().then(({ auth, db, functions }) => {
-//     console.log("Serviços do Firebase prontos para uso!");
-//     // Coloque seu código que depende do Firebase aqui
-// }).catch(error => {
-//     console.error("Falha ao obter serviços do Firebase:", error);
-// });
-
-// Para Firebase v8 (compat), as funções são métodos do auth
-// Vamos criar referências para facilitar o uso
-
-// Configuração específica para resolver CORS
-auth.useDeviceLanguage();
-
-// Configurar domínios autorizados programaticamente (tentativa)
-try {
-    // Forçar reconfiguração se necessário
-    if (window.location.hostname === 'atalho.me' || window.location.hostname === 'www.atalho.me') {
-        console.log('🌐 Configurando para domínio personalizado: atalho.me');
-    }
-} catch (error) {
-    console.warn('⚠️ Aviso na configuração de domínio:', error);
-}
-
-// Expor globalmente para outros scripts
-window.auth = auth;
-window.db = db;
-
-// Configurar persistência de autenticação para SESSION (apenas durante a sessão do navegador)
-auth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
-    .then(() => {
-        console.log("✅ Persistência configurada para SESSION (não mantém login após fechar navegador)");
-    })
-    .catch((error) => {
-        console.error("❌ Erro ao configurar persistência:", error);
-    });
-
-// Configurações do Firestore com merge para evitar warnings
-db.settings({
-    cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-    merge: true
-});
-
-// Habilita persistência offline do Firestore
-db.enablePersistence()
-    .catch((err) => {
-        if (err.code == 'failed-precondition') {
-            console.log('Persistência do Firestore falhou: múltiplas abas abertas');
-        } else if (err.code == 'unimplemented') {
-            console.log('O navegador não suporta persistência do Firestore');
-        }
-    });
-
-// Função para garantir autenticação anônima APENAS quando necessário para pagamentos
-async function ensureAuthentication() {
-    // Só faz autenticação anônima se não houver usuário E for necessário para pagamentos
-    if (!auth.currentUser) {
-        try {
-            console.log("Realizando autenticação anônima para operações de pagamento...");
-            await auth.signInAnonymously();
-            console.log("Autenticação anônima bem-sucedida para pagamento");
-        } catch (error) {
-            console.error("Erro na autenticação anônima:", error);
-        }
-    }
-}
-
-// Função para sincronizar status de email após login
-async function syncEmailVerificationStatus() {
-    try {
-        const user = auth.currentUser;
-        if (!user) return;
-
-        const idToken = await user.getIdToken();
-        
-        // Chama a cloud function de sincronização
-        const syncEmail = firebase.functions().httpsCallable('syncEmailOnLogin');
-        const result = await syncEmail();
-        
-        console.log("✅ Sincronização de email:", result.data.message);
-        return result.data;
-        
-    } catch (error) {
-        console.error("❌ Erro na sincronização de email:", error);
-        return null;
-    }
-}
-
-// Monitor de mudanças de autenticação
-auth.onAuthStateChanged(async (user) => {
-    if (user && !user.isAnonymous) {
-        console.log("👤 Usuário logado:", user.email);
-        console.log("📧 Email verificado:", user.emailVerified);
-        
-        // Sincroniza automaticamente após login bem-sucedido
-        setTimeout(async () => {
-            const result = await syncEmailVerificationStatus();
-            if (result && result.emailVerified) {
-                console.log("✅ Email sincronizado:", result.message);
-            }
-        }, 1000); // Aguarda 1 segundo após o login
-    }
-});
-
-// Expor para uso global (mas NÃO executar automaticamente)
-window.ensureAuthentication = ensureAuthentication;
-window.syncEmailVerificationStatus = syncEmailVerificationStatus;
-window.registerWithAutoLanguage = registerWithAutoLanguage;
-window.detectUserLanguage = detectUserLanguage;
-window.setFirebaseLanguage = setFirebaseLanguage;
-window.resendVerificationWithLanguage = resendVerificationWithLanguage;
-
-console.log("🚀 Firebase configurado - Login manual ativado");
-
 // Função para detectar idioma automaticamente
 async function detectUserLanguage(email) {
     try {
-        // Detectar informações do navegador
         const browserLanguage = navigator.language || navigator.userLanguage;
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         
-        // Tentar detectar país pelo timezone
         let country = null;
         const timezoneCountryMap = {
             'America/Sao_Paulo': 'BR',
@@ -183,7 +140,6 @@ async function detectUserLanguage(email) {
             country = timezoneCountryMap[timezone];
         }
 
-        // Estratégias de detecção local (fallback)
         const emailDomain = email.split('@')[1];
         const domainLanguages = {
             'gmail.com.br': 'pt-br',
@@ -237,7 +193,6 @@ async function detectUserLanguage(email) {
             'it-IT': 'it'
         };
 
-        // Prioridade: domínio > país > navegador > padrão
         let detectedLanguage = 'pt-br';
 
         if (domainLanguages[emailDomain]) {
@@ -248,27 +203,24 @@ async function detectUserLanguage(email) {
             detectedLanguage = browserLangMap[browserLanguage];
         }
 
-        console.log(`🌍 Idioma detectado: ${detectedLanguage}`, {
-            email: email,
-            domain: emailDomain,
-            country: country,
-            browser: browserLanguage,
-            timezone: timezone
-        });
-
+        console.log(`🌍 Idioma detectado: ${detectedLanguage}`);
         return detectedLanguage;
 
     } catch (error) {
-        console.error('Erro na detecção de idioma:', error);
-        return 'pt-br'; // fallback padrão
+        console.error("❌ Erro na detecção de idioma:", error);
+        return 'pt-br';
     }
 }
 
-// Função para configurar idioma do Firebase Auth antes do envio
+// Função para configurar idioma do Firebase Auth
 async function setFirebaseLanguage(language) {
     try {
-        // Mapear nossos códigos para códigos do Firebase
-        const firebaseLanguageMap = {
+        if (!window.auth) {
+            console.warn("⚠️ Firebase Auth não está inicializado ainda");
+            return;
+        }
+
+        const languageCodes = {
             'pt-br': 'pt',
             'es': 'es',
             'fr': 'fr',
@@ -277,98 +229,93 @@ async function setFirebaseLanguage(language) {
             'it': 'it'
         };
 
-        const firebaseLang = firebaseLanguageMap[language] || 'pt';
+        const firebaseLanguageCode = languageCodes[language] || 'pt';
+        window.auth.languageCode = firebaseLanguageCode;
         
-        // Configurar idioma do Firebase Auth
-        if (auth && auth.languageCode !== firebaseLang) {
-            auth.languageCode = firebaseLang;
-            console.log(`🔧 Firebase Auth configurado para: ${firebaseLang}`);
-        }
-
-        return firebaseLang;
+        console.log(`🔧 Firebase Auth configurado para: ${language} (${firebaseLanguageCode})`);
     } catch (error) {
-        console.error('Erro ao configurar idioma do Firebase:', error);
-        return 'pt';
+        console.error("❌ Erro ao configurar idioma do Firebase:", error);
     }
 }
 
-// Função melhorada para registro com detecção automática
+// Função para registro com detecção automática de idioma
 async function registerWithAutoLanguage(email, password) {
     try {
-        // 1. Detectar idioma do usuário
         const detectedLanguage = await detectUserLanguage(email);
-        
-        // 2. Configurar Firebase para o idioma detectado
         await setFirebaseLanguage(detectedLanguage);
         
-        // 3. Criar usuário (Firebase v8 compat)
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        if (!window.auth) {
+            throw new Error("Firebase Auth não está inicializado");
+        }
+        
+        const userCredential = await window.auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
+
+        await user.sendEmailVerification();
         
-        console.log(`✅ Usuário criado: ${user.email} (idioma: ${detectedLanguage})`);
-        
-        // 4. Enviar email de verificação (já no idioma correto)
-        await user.sendEmailVerification({
-            url: `https://atalho.me/emailHandler.html?lang=${detectedLanguage}`,
-            handleCodeInApp: false
-        });
-        
-        console.log(`📧 Email de verificação enviado em ${detectedLanguage}`);
-        
-        // 5. Salvar preferência de idioma no Firestore
-        await saveUserLanguagePreference(user.uid, detectedLanguage);
-        
-        return {
-            success: true,
-            user: user,
-            language: detectedLanguage
-        };
-        
+        console.log(`✅ Usuário criado com idioma ${detectedLanguage}:`, user.uid);
+        return { uid: user.uid, email: user.email, language: detectedLanguage };
+
     } catch (error) {
-        console.error('Erro no registro:', error);
+        console.error("❌ Erro no registro:", error);
         throw error;
     }
 }
 
-// Função para salvar preferência de idioma
-async function saveUserLanguagePreference(uid, language) {
-    try {
-        const userRef = db.collection('users').doc(uid);
-        await userRef.set({
-            preferred_language: language,
-            language_detected_at: new Date().toISOString(),
-            created_at: new Date().toISOString()
-        }, { merge: true });
-        
-        console.log(`💾 Preferência de idioma salva: ${language}`);
-    } catch (error) {
-        console.error('Erro ao salvar preferência de idioma:', error);
-    }
-}
-
-// Função para reenviar email com idioma específico
+// Função para reenviar verificação com idioma
 async function resendVerificationWithLanguage(language) {
     try {
-        const user = auth.currentUser;
-        if (!user) throw new Error('Usuário não autenticado');
-        
-        // Configurar idioma
+        if (!window.auth || !window.auth.currentUser) {
+            throw new Error("Usuário não está logado");
+        }
+
         await setFirebaseLanguage(language);
+        await window.auth.currentUser.sendEmailVerification();
         
-        // Reenviar
-        await user.sendEmailVerification({
-            url: `https://atalho.me/emailHandler.html?lang=${language}`,
-            handleCodeInApp: false
-        });
-        
-        console.log(`📧 Email reenviado em ${language}`);
-        
-        // Atualizar preferência
-        await saveUserLanguagePreference(user.uid, language);
-        
+        console.log(`✅ Verificação reenviada em ${language}`);
         return true;
+
     } catch (error) {
-        console.error('Erro ao reenviar email:', error);
+        console.error("❌ Erro ao reenviar verificação:", error);
         throw error;
+    }
+}
+
+// Função para sincronizar status de email após login
+async function syncEmailVerificationStatus() {
+    try {
+        if (!window.auth || !window.auth.currentUser) {
+            return null;
+        }
+
+        const user = window.auth.currentUser;
+        const idToken = await user.getIdToken();
+        
+        const syncEmail = window.functions.httpsCallable('syncEmailOnLogin');
+        const result = await syncEmail();
+        
+        console.log("✅ Sincronização de email:", result.data.message);
+        return result.data;
+        
+    } catch (error) {
+        console.error("❌ Erro na sincronização de email:", error);
+        return null;
+    }
+}
+
+// Função para garantir autenticação anônima quando necessário
+async function ensureAuthentication() {
+    try {
+        if (!window.auth) {
+            throw new Error("Firebase Auth não está inicializado");
+        }
+
+        if (!window.auth.currentUser) {
+            console.log("Realizando autenticação anônima para operações de pagamento...");
+            await window.auth.signInAnonymously();
+            console.log("Autenticação anônima bem-sucedida para pagamento");
+        }
+    } catch (error) {
+        console.error("Erro na autenticação anônima:", error);
     }
 }    

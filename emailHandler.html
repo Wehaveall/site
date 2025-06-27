@@ -133,26 +133,13 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
 
+    <!-- Configuração centralizada -->
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/firebase.js"></script>
+    
     <script>
-        // Configuração Firebase direta
-        const firebaseConfig = {
-            apiKey: "AIzaSyCsIbyCkHx_E5VHQXnHZYmoZSrpnuPrPUQ",
-            authDomain: "shortcut-6256b.firebaseapp.com",
-            databaseURL: "https://shortcut-6256b-default-rtdb.firebaseio.com",
-            projectId: "shortcut-6256b",
-            storageBucket: "shortcut-6256b.appspot.com",
-            messagingSenderId: "526680485333",
-            appId: "1:526680485333:web:a5434dd5b6da2fda9ee15c",
-            measurementId: "G-PZ2EHV9YR6"
-        };
-
-        // Inicializar Firebase
-        if (!firebase.apps || !firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-            console.log("✅ Firebase inicializado para verificação de email");
-        }
-
-        const auth = firebase.auth();
+        // Aguardar Firebase carregar da configuração centralizada
+        const auth = window.auth || firebase.auth();
         const functions = firebase.functions();
         
         // Função para forçar sincronização imediata usando oobCode
@@ -161,7 +148,8 @@
                 console.log('🔄 Forçando sincronização via oobCode...', oobCode);
                 console.log('📧 Email recebido como parâmetro:', userEmail);
                 
-                const url = 'https://syncemailverificationpublic-lj2of3bbgq-ue.a.run.app';
+                const url = window.AppConfig?.getCloudFunctionUrl('syncEmailVerification') || 
+                          'https://syncemailverificationpublic-lj2of3bbgq-ue.a.run.app';
                 console.log('🌐 URL da função:', url);
                 
                 // Se não recebeu email como parâmetro, tentar fallbacks

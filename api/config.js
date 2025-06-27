@@ -1,76 +1,39 @@
-/**
- * API endpoint para servir configurações públicas
- * Permite gerenciar configurações sem hardcode no frontend
- */
-
-module.exports = (req, res) => {
-    // Permitir apenas GET requests
+// 🔒 API ENDPOINT PARA CONFIGURAÇÃO SEGURA
+export default function handler(req, res) {
+    // Apenas métodos GET são permitidos
     if (req.method !== 'GET') {
-        return res.status(405).json({ error: 'Method not allowed' });
+        return res.status(405).json({ error: 'Método não permitido' });
     }
 
     try {
-        // Verificar se todas as variáveis obrigatórias estão definidas
-        const requiredEnvVars = [
-            'NEXT_PUBLIC_FIREBASE_API_KEY',
-            'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN',
-            'NEXT_PUBLIC_FIREBASE_DATABASE_URL',
-            'NEXT_PUBLIC_FIREBASE_PROJECT_ID',
-            'NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET',
-            'NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID',
-            'NEXT_PUBLIC_FIREBASE_APP_ID',
-            'NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID'
-        ];
-
-        const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
-        
-        if (missingVars.length > 0) {
-            console.error('❌ Variáveis de ambiente obrigatórias não definidas:', missingVars);
-            return res.status(500).json({ 
-                error: 'Configuração incompleta',
-                message: 'Variáveis de ambiente não configuradas no servidor'
-            });
-        }
-
-        // Configurações carregadas APENAS de variáveis de ambiente
+        // Retornar apenas configurações públicas
         const publicConfig = {
-            firebase: {
-                apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-                authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-                databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
-                projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-                storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-                messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-                appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-                measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
-            },
+            // Public Key do MercadoPago (APENAS de variáveis de ambiente)
+            publicKey: process.env.MERCADOPAGO_PUBLIC_KEY || null,
             
-            // Outras configurações públicas
-            app: {
-                name: "Atalho",
-                version: "1.0.0",
-                environment: process.env.NODE_ENV || "development"
-            },
+            // Configurações gerais
+            environment: process.env.NODE_ENV || 'production',
+            apiVersion: '1.0.0',
             
-            // URLs de serviços
-            services: {
-                cloudFunctions: {
-                    syncEmailVerification: process.env.SYNC_EMAIL_VERIFICATION_URL
-                }
-            }
+            // URLs permitidas (para CORS)
+            allowedOrigins: [
+                'https://atalho.me',
+                'https://www.atalho.me'
+            ],
+            
+            // Status das configurações
+            hasPublicKey: !!process.env.MERCADOPAGO_PUBLIC_KEY,
+            configSource: 'environment_variables'
         };
 
-        // Headers de cache para otimização
+        // Headers de segurança
         res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache por 1 hora
-        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.setHeader('X-Frame-Options', 'DENY');
 
         res.status(200).json(publicConfig);
-
     } catch (error) {
-        console.error('Erro ao carregar configurações:', error);
-        res.status(500).json({ 
-            error: 'Erro interno do servidor',
-            message: 'Não foi possível carregar as configurações'
-        });
+        console.error('Erro ao fornecer configuração:', error);
+        res.status(500).json({ error: 'Erro interno do servidor' });
     }
-}; 
+} 

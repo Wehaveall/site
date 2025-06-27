@@ -133,14 +133,39 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
 
-    <!-- Configuração centralizada -->
-    <script src="assets/js/static-config.js"></script>
-    <script src="assets/js/config.js"></script>
-    <script src="assets/js/firebase.js"></script>
-    
     <script>
-        // Aguardar Firebase carregar da configuração centralizada
-        const auth = window.auth || firebase.auth();
+        // Função para buscar a configuração do Firebase
+        async function getFirebaseConfig() {
+            try {
+                const response = await fetch('/api/firebase-config');
+                if (!response.ok) {
+                    throw new Error('Não foi possível carregar a configuração do Firebase.');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Erro ao buscar configuração do Firebase:', error);
+                showStatus('error', 'Erro crítico na inicialização. Não foi possível carregar a configuração.');
+                return null;
+            }
+        }
+
+        // Função principal de inicialização
+        async function initializeApp() {
+            const firebaseConfig = await getFirebaseConfig();
+
+            if (firebaseConfig) {
+                // Inicializar Firebase
+                if (!firebase.apps || !firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                    console.log("✅ Firebase inicializado para verificação de email");
+                }
+                
+                // Processar a verificação de email após a inicialização
+                handleEmailVerification();
+            }
+        }
+
+        const auth = firebase.auth();
         const functions = firebase.functions();
         
         // Função para forçar sincronização imediata usando oobCode
@@ -149,8 +174,7 @@
                 console.log('🔄 Forçando sincronização via oobCode...', oobCode);
                 console.log('📧 Email recebido como parâmetro:', userEmail);
                 
-                const url = window.AppConfig?.getCloudFunctionUrl('syncEmailVerification') || 
-                          'https://syncemailverificationpublic-lj2of3bbgq-ue.a.run.app';
+                const url = 'https://syncemailverificationpublic-lj2of3bbgq-ue.a.run.app';
                 console.log('🌐 URL da função:', url);
                 
                 // Se não recebeu email como parâmetro, tentar fallbacks
@@ -352,10 +376,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('📱 Página de verificação carregada');
             
-            // Aguardar Firebase inicializar
-            setTimeout(() => {
-                handleEmailVerification();
-            }, 1000);
+            // Inicia o processo de configuração e verificação
+            initializeApp();
         });
     </script>
 </body>

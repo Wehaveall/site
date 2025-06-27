@@ -1,60 +1,7 @@
-# Dependências
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Arquivos de ambiente (NUNCA committar)
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Permitir arquivo de exemplo
-!.env.example
-
-# Credenciais sensíveis
-*.key
-*.pem
-service-account*.json
-private-key*.json
-firebase-adminsdk*.json
-
-# Logs
-logs
-*.log
-
-# Cache
-.cache/
-.parcel-cache/
-
-# Build outputs
-dist/
-build/
-.output/
-
-# IDE
-.vscode/settings.json
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
 # Firebase
-.firebase/
+node_modules/
 firebase-debug.log
-firestore-debug.log
-
-# Credenciais temporárias
-temp-credentials/
-backup-keys/
-
-# Arquivos de configuração locais
-config.local.js
+*.log
 
 # Vercel
 .vercel
@@ -64,13 +11,8 @@ config.local.js
 *.jsonc
 secrets.js
 
-# Permitir arquivos de tradução
-!assets/translations/*.json
-!firebase.json
-!vercel.json
-!package.json
-
-# Shortcut
+# Firebase Admin SDK (CRÍTICO)
+*firebase-adminsdk*.json
 shortcut-*-firebase-adminsdk-*.json
 
 # Pasta de credenciais (NUNCA COMMITAR)
@@ -78,3 +20,13 @@ credentials/
 
 # Arquivos de configuração sensível
 assets/js/config.js
+
+# Permitir arquivos de tradução
+!assets/translations/*.json
+!firebase.json
+!vercel.json
+!package.json
+
+# Sistema
+.DS_Store
+Thumbs.db

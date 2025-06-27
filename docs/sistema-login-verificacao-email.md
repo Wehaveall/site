@@ -250,27 +250,13 @@ if (syncResult && syncResult.success) {
 
 ## Segurança
 
-### Melhorias de Segurança Implementadas
+### Medidas Implementadas
 
-1. **Configuração Centralizada**: 
-   - Credenciais movidas para `assets/js/config.js`
-   - Eliminação de duplicação de configurações
-   - Sistema baseado em ambiente (dev/prod)
-
-2. **Validação de Acesso**:
-   - Verificação obrigatória de email antes do login
-   - Logout automático para usuários não verificados
-   - Validação dupla: Auth + Firestore para consistência
-
-3. **Proteção de Rede**:
-   - CORS configurado adequadamente
-   - Headers de segurança implementados
-   - URLs de Cloud Functions gerenciadas centralmente
-
-4. **Controle de Sessão**:
-   - Links de verificação com prazo de validade
-   - Persistência de sessão configurada
-   - Limpeza automática de dados sensíveis
+1. **Verificação Obrigatória**: Login bloqueado até verificação de email
+2. **Logout Automático**: Usuários não verificados são desconectados
+3. **Validação Dupla**: Auth + Firestore para consistência
+4. **CORS Configurado**: Proteção contra requisições não autorizadas
+5. **Timeouts**: Links de verificação têm prazo de validade
 
 ### Headers de Segurança
 

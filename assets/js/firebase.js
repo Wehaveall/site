@@ -1,104 +1,21 @@
-// firebase.js - configuração centralizada e segura
-// Aguarda a configuração ser carregada do config.js
+// firebase.js - versão corrigida
+const firebaseConfig = {
+    apiKey: "AIzaSyCsIbyCkHx_E5VHQXnHZYmoZSrpnuPrPUQ",
+    authDomain: "shortcut-6256b.firebaseapp.com", // Voltar ao padrão
+    databaseURL: "https://shortcut-6256b-default-rtdb.firebaseio.com",
+    projectId: "shortcut-6256b",
+    storageBucket: "shortcut-6256b.appspot.com",
+    messagingSenderId: "526680485333",
+    appId: "1:526680485333:web:a5434dd5b6da2fda9ee15c",
+    measurementId: "G-PZ2EHV9YR6"
+};
 
-async function initializeFirebase() {
-    try {
-        // Aguarda a configuração ser carregada
-        let firebaseConfig = window.FIREBASE_CONFIG;
-        
-        // Se não estiver disponível, aguarda um pouco mais
-        if (!firebaseConfig && window.AppConfig?.getFirebaseConfig) {
-            firebaseConfig = await window.AppConfig.getFirebaseConfig();
-        }
-        
-        // Verificar se conseguiu carregar as configurações
-        if (!firebaseConfig) {
-            console.error('❌ ERRO CRÍTICO: Configurações Firebase não carregadas');
-            throw new Error('Configurações Firebase não disponíveis. Verifique se o servidor está funcionando e as variáveis de ambiente estão configuradas.');
-        }
-        
-        // Verificar se já foi inicializado
-        if (!firebase.apps || !firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-            console.log("✅ Firebase inicializado com configuração dinâmica");
-        } else {
-            console.log("ℹ️ Firebase já estava inicializado");
-        }
-        
-        return true;
-    } catch (error) {
-        console.error('❌ Erro ao inicializar Firebase:', error);
-        return false;
-    }
-}
-
-// Aguardar inicialização
-let firebaseReady = false;
-initializeFirebase().then(success => {
-    firebaseReady = success;
-    
-    if (!success) {
-        // Mostrar erro crítico para o usuário
-        showCriticalError();
-    }
-}).catch(error => {
-    console.error('❌ Falha crítica na inicialização:', error);
-    showCriticalError();
-});
-
-// Função para mostrar erro crítico de configuração
-function showCriticalError() {
-    const errorHtml = `
-        <div style="
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            font-family: monospace;
-        ">
-            <div style="
-                background: #dc3545;
-                padding: 2rem;
-                border-radius: 8px;
-                max-width: 500px;
-                text-align: center;
-            ">
-                <h2 style="margin-bottom: 1rem;">⚠️ ERRO DE CONFIGURAÇÃO</h2>
-                <p style="margin-bottom: 1rem;">
-                    As configurações Firebase não puderam ser carregadas do servidor.
-                </p>
-                <p style="margin-bottom: 1rem; font-size: 0.9rem;">
-                    Possíveis causas:<br>
-                    • Variáveis de ambiente não configuradas<br>
-                    • Servidor offline<br>
-                    • Problema de conectividade
-                </p>
-                <button onclick="window.location.reload()" style="
-                    background: white;
-                    color: #dc3545;
-                    border: none;
-                    padding: 0.5rem 1rem;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    font-weight: bold;
-                ">
-                    Tentar Novamente
-                </button>
-            </div>
-        </div>
-    `;
-    
-    // Adicionar ao body
-    const errorDiv = document.createElement('div');
-    errorDiv.innerHTML = errorHtml;
-    document.body.appendChild(errorDiv);
+// Verificar se já foi inicializado
+if (!firebase.apps || !firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+    console.log("Firebase inicializado com sucesso");
+} else {
+    console.log("Firebase já estava inicializado");
 }
 
 // Exporta as instâncias do Firebase

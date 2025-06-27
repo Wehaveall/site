@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "echo 'Static site build'",
+  "buildCommand": "node generate-config.js",
   "outputDirectory": ".",
   "functions": {
     "api/config.js": {

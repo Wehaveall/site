@@ -3,7 +3,7 @@
  * Permite gerenciar configurações sem hardcode no frontend
  */
 
-export default function handler(req, res) {
+module.exports = (req, res) => {
     // Permitir apenas GET requests
     if (req.method !== 'GET') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -73,13 +73,4 @@ export default function handler(req, res) {
             message: 'Não foi possível carregar as configurações'
         });
     }
-}
-
-// Configurações de runtime para Vercel
-export const config = {
-    api: {
-        bodyParser: {
-            sizeLimit: '1mb',
-        },
-    },
 }; 

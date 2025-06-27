@@ -412,67 +412,92 @@
         // Variável global para o sistema de tradução
         let i18nSystem = null;
 
-        // Inicializar sistema de tradução quando a página carregar
+        // Aguardar o sistema i18n global já inicializado
         document.addEventListener('DOMContentLoaded', async function() {
             try {
-                // Aguardar o sistema i18n carregar
-                if (typeof AtalhoI18n !== 'undefined') {
-                    // Criar instância SEM inicializar automaticamente
-                    i18nSystem = Object.create(AtalhoI18n.prototype);
-                    i18nSystem.currentLanguage = 'pt-br';
-                    i18nSystem.translations = {};
-                    i18nSystem.supportedLanguages = ['pt-br', 'en', 'es', 'fr', 'de', 'it'];
-                    i18nSystem.fallbackLanguage = 'pt-br';
-                    i18nSystem.translationCache = new Map();
+                // Aguardar o sistema i18n global estar pronto
+                let attempts = 0;
+                while (!window.i18nSystem && attempts < 50) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+                
+                if (window.i18nSystem) {
+                    i18nSystem = window.i18nSystem;
+                    console.log('🌍 Usando sistema de tradução global na página de registro');
                     
-                    // Carregar traduções manualmente SEM criar UI
-                    await i18nSystem.loadTranslations(true);
+                    // Aplicar traduções imediatamente
                     i18nSystem.applyTranslations();
                     
-                    console.log('🌍 Sistema de tradução inicializado na página de registro (modo manual)');
-                    
-                    // Configurar APENAS o seletor existente
+                    // Configurar event listener para mudanças de idioma
                     setupLanguageSelector();
+                    
+                    // Atualizar requisitos de senha com traduções
+                    updatePasswordRequirements('');
                 } else {
-                    console.warn('⚠️ Sistema de tradução não encontrado');
+                    console.warn('⚠️ Sistema de tradução global não encontrado');
                 }
             } catch (error) {
-                console.error('❌ Erro ao inicializar sistema de tradução:', error);
+                console.error('❌ Erro ao acessar sistema de tradução:', error);
             }
         });
 
         // Configurar seletor de idioma EXISTENTE (não criar novo)
         function setupLanguageSelector() {
+            // Procurar qualquer tipo de seletor de idioma
             const languageSelect = document.getElementById('language-select');
-            if (!languageSelect || !i18nSystem) return;
+            const languageDropdown = document.querySelector('.language-dropdown');
+            
+            if (!i18nSystem) return;
 
-            // Definir idioma atual no seletor
-            languageSelect.value = i18nSystem.getCurrentLanguage();
-
-            // Listener para mudança de idioma
-            languageSelect.addEventListener('change', async function() {
-                const newLanguage = this.value;
-                console.log(`🌍 Mudando idioma para: ${newLanguage}`);
-                
-                try {
-                    await i18nSystem.changeLanguage(newLanguage);
+            // Se há um select tradicional
+            if (languageSelect) {
+                languageSelect.value = i18nSystem.getCurrentLanguage();
+                languageSelect.addEventListener('change', async function() {
+                    const newLanguage = this.value;
+                    console.log(`🌍 Mudando idioma via select para: ${newLanguage}`);
                     
-                    // Aguardar um pouco para garantir que as traduções foram carregadas
-                    setTimeout(() => {
-                        // Atualizar placeholders específicos da página
+                    try {
+                        await i18nSystem.changeLanguage(newLanguage);
                         updateFormPlaceholders();
-                        
-                        // Atualizar mensagens dinâmicas se existirem
-                        updatePasswordRequirements();
-                        
-                        // Forçar re-aplicação de todas as traduções
+                        updatePasswordRequirements('');
                         i18nSystem.applyTranslations();
-                    }, 100);
-                    
-                    console.log(`✅ Idioma alterado para: ${newLanguage}`);
-                } catch (error) {
-                    console.error('❌ Erro ao alterar idioma:', error);
-                }
+                        console.log(`✅ Idioma alterado para: ${newLanguage}`);
+                    } catch (error) {
+                        console.error('❌ Erro ao alterar idioma:', error);
+                    }
+                });
+            }
+            
+            // Se há um dropdown customizado, escutar cliques
+            if (languageDropdown) {
+                const options = document.querySelectorAll('.language-option[data-lang]');
+                options.forEach(option => {
+                    option.addEventListener('click', async function() {
+                        const newLanguage = this.dataset.lang;
+                        console.log(`🌍 Mudando idioma via dropdown para: ${newLanguage}`);
+                        
+                        try {
+                            await i18nSystem.changeLanguage(newLanguage);
+                            updateFormPlaceholders();
+                            updatePasswordRequirements('');
+                            i18nSystem.applyTranslations();
+                            console.log(`✅ Idioma alterado para: ${newLanguage}`);
+                        } catch (error) {
+                            console.error('❌ Erro ao alterar idioma:', error);
+                        }
+                    });
+                });
+            }
+            
+            // Escutar eventos globais de mudança de idioma
+            window.addEventListener('languageChanged', function(event) {
+                console.log('🌍 Evento global de mudança de idioma recebido:', event.detail.language);
+                setTimeout(() => {
+                    updateFormPlaceholders();
+                    updatePasswordRequirements('');
+                    i18nSystem.applyTranslations();
+                }, 100);
             });
         }
 

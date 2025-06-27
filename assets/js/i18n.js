@@ -73,27 +73,19 @@ class AtalhoI18n {
             return urlLang;
         }
 
-        // 2. Detectar idioma do navegador - PRIORIDADE ALTA
+        // 2. Verificar localStorage PRIMEIRO (idioma selecionado pelo usuário)
+        const savedLang = localStorage.getItem('atalho_language');
+        if (savedLang && this.supportedLanguages.includes(savedLang)) {
+            console.log(`💾 Idioma detectado via localStorage (escolha do usuário): ${savedLang}`);
+            return savedLang;
+        }
+
+        // 3. Detectar idioma do navegador - APENAS na primeira visita
         const browserLang = this.detectBrowserLanguage();
         if (browserLang) {
             console.log(`🌐 Idioma detectado via navegador: ${browserLang}`);
-            
-            // Só usar localStorage se for igual ao navegador
-            const savedLang = localStorage.getItem('atalho_language');
-            if (savedLang === browserLang) {
-                return savedLang;
-            }
-            
-            // Atualizar localStorage com idioma do navegador
             localStorage.setItem('atalho_language', browserLang);
             return browserLang;
-        }
-
-        // 3. Verificar localStorage (apenas se navegador não detectado)
-        const savedLang = localStorage.getItem('atalho_language');
-        if (savedLang && this.supportedLanguages.includes(savedLang)) {
-            console.log(`💾 Idioma detectado via localStorage: ${savedLang}`);
-            return savedLang;
         }
 
         // 4. Detectar por timezone/país (aproximação)
@@ -446,6 +438,14 @@ class AtalhoI18n {
     }
 
     createLanguageSelector() {
+        // Verificar se já existe um seletor de idioma
+        if (document.getElementById('language-selector') || 
+            document.querySelector('.language-selector') ||
+            document.querySelector('.language-dropdown')) {
+            console.log('🌍 Seletor de idioma já existe, não criando duplicado');
+            return;
+        }
+
         // Procurar onde inserir o seletor (no header)
         const targetElement = document.querySelector('nav ul') || 
                              document.querySelector('header') || 
@@ -614,6 +614,7 @@ class AtalhoI18n {
 
 // 🚀 INICIALIZAÇÃO GLOBAL
 window.atalhoI18n = new AtalhoI18n();
+window.i18nSystem = window.atalhoI18n; // Alias para compatibilidade
 
 // 📤 EXPORTAR PARA USO EM OUTROS SCRIPTS
 window.t = (key, variables) => window.atalhoI18n.t(key, variables);

@@ -13,7 +13,18 @@ class AtalhoI18n {
         // Cache para performance
         this.translationCache = new Map();
         
+        // Limpar cache antigo ao inicializar
+        this.clearCache();
+        
         this.init();
+    }
+
+    /**
+     * 🗑️ LIMPAR CACHE DE TRADUÇÕES
+     */
+    clearCache() {
+        this.translationCache.clear();
+        console.log('🗑️ Cache de traduções limpo');
     }
 
     async init() {
@@ -21,8 +32,8 @@ class AtalhoI18n {
             // 1. Detectar idioma automaticamente
             this.currentLanguage = this.detectLanguage();
             
-            // 2. Carregar traduções
-            await this.loadTranslations();
+            // 2. Carregar traduções (forçar reload para garantir dados atualizados)
+            await this.loadTranslations(true);
             
             // 3. Aplicar traduções na página
             this.applyTranslations();
@@ -170,17 +181,20 @@ class AtalhoI18n {
     /**
      * 📁 CARREGAMENTO DE TRADUÇÕES
      */
-    async loadTranslations() {
+    async loadTranslations(forceReload = false) {
         const cacheKey = `translations_${this.currentLanguage}`;
         
-        // Verificar cache primeiro
-        if (this.translationCache.has(cacheKey)) {
+        // Verificar cache primeiro (apenas se não for reload forçado)
+        if (!forceReload && this.translationCache.has(cacheKey)) {
             this.translations = this.translationCache.get(cacheKey);
+            console.log(`📦 Traduções carregadas do cache para: ${this.currentLanguage}`);
             return;
         }
 
         try {
-            const response = await fetch(`/assets/translations/${this.currentLanguage}.json`);
+            // Adicionar timestamp para evitar cache do browser
+            const timestamp = forceReload ? `?t=${Date.now()}` : '';
+            const response = await fetch(`/assets/translations/${this.currentLanguage}.json${timestamp}`);
             
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
@@ -188,8 +202,16 @@ class AtalhoI18n {
             
             this.translations = await response.json();
             
+            // Verificar se as novas chaves 'register' existem
+            if (this.translations.register) {
+                console.log(`✅ Traduções 'register' encontradas para ${this.currentLanguage}`);
+            } else {
+                console.warn(`⚠️ Seção 'register' não encontrada para ${this.currentLanguage}`);
+            }
+            
             // Salvar no cache
             this.translationCache.set(cacheKey, this.translations);
+            console.log(`🔄 Traduções recarregadas para: ${this.currentLanguage}`);
             
         } catch (error) {
             console.error(`❌ Erro ao carregar traduções para ${this.currentLanguage}:`, error);
@@ -198,7 +220,7 @@ class AtalhoI18n {
             if (this.currentLanguage !== this.fallbackLanguage) {
                 console.log(`🔄 Tentando fallback para ${this.fallbackLanguage}`);
                 this.currentLanguage = this.fallbackLanguage;
-                await this.loadTranslations();
+                await this.loadTranslations(forceReload);
             }
         }
     }
@@ -350,8 +372,8 @@ class AtalhoI18n {
         this.currentLanguage = newLang;
         localStorage.setItem('atalho_language', newLang);
 
-        // Carregar novas traduções
-        await this.loadTranslations();
+        // Carregar novas traduções (forçar reload para garantir dados atualizados)
+        await this.loadTranslations(true);
         
         // Aplicar traduções
         this.applyTranslations();

@@ -67,6 +67,47 @@
     "noAccount": "Não tem uma conta?",
     "forgotPassword": "Esqueceu a senha?"
   },
+  "register": {
+    "title": "Complete seu Cadastro - Atalho",
+    "createAccount": "Crie sua Conta do Atalho",
+    "subtitle": "Complete seu cadastro para começar a usar o Atalho",
+    "loginData": "🔐 Dados de Acesso",
+    "personalData": "👤 Dados Pessoais",
+    "email": "E-Mail",
+    "emailHelper": "Este será seu e-mail de login no sistema",
+    "password": "Senha",
+    "confirmPassword": "Confirmar Senha",
+    "confirmPasswordPlaceholder": "Digite a senha novamente",
+    "fullName": "Nome Completo",
+    "fullNamePlaceholder": "Seu nome completo",
+    "phone": "Telefone (opcional)",
+    "phonePlaceholder": "(11) 99999-9999",
+    "company": "Empresa (opcional)",
+    "companyPlaceholder": "Nome da sua empresa",
+    "requiredFields": "* Campos obrigatórios",
+    "acceptTermsText": "Aceito os",
+    "termsOfUse": "termos de uso",
+    "and": "e",
+    "privacyPolicy": "política de privacidade",
+    "createAccountBtn": "Criar Conta",
+    "passwordRequirements": {
+      "length": "Mínimo 8 caracteres",
+      "uppercase": "Uma letra maiúscula",
+      "number": "Um número",
+      "symbol": "Um símbolo (:$%#@!* etc.)"
+    },
+    "passwordMatch": {
+      "match": "✓ As senhas coincidem",
+      "noMatch": "✗ As senhas não coincidem"
+    },
+    "success": {
+      "title": "Conta criada com sucesso!",
+      "subtitle": "Verifique seu email para ativar sua conta",
+      "description": "Enviamos um link de verificação para",
+      "checkEmail": "Verifique sua caixa de entrada e spam",
+      "redirecting": "Redirecionando para o login..."
+    }
+  },
   "common": {
     "loading": "Carregando...",
     "error": "Erro",

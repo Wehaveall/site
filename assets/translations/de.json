@@ -67,6 +67,47 @@
     "noAccount": "Sie haben noch kein Konto?",
     "forgotPassword": "Passwort vergessen?"
   },
+  "register": {
+    "title": "Vervollständigen Sie Ihre Registrierung - Atalho",
+    "createAccount": "Erstellen Sie Ihr Atalho-Konto",
+    "subtitle": "Vervollständigen Sie Ihre Registrierung, um Atalho zu verwenden",
+    "loginData": "🔐 Anmeldedaten",
+    "personalData": "👤 Persönliche Daten",
+    "email": "E-Mail",
+    "emailHelper": "Dies wird Ihre Anmelde-E-Mail für das System sein",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "confirmPasswordPlaceholder": "Passwort erneut eingeben",
+    "fullName": "Vollständiger Name",
+    "fullNamePlaceholder": "Ihr vollständiger Name",
+    "phone": "Telefon (optional)",
+    "phonePlaceholder": "(11) 99999-9999",
+    "company": "Unternehmen (optional)",
+    "companyPlaceholder": "Name Ihres Unternehmens",
+    "requiredFields": "* Pflichtfelder",
+    "acceptTermsText": "Ich akzeptiere die",
+    "termsOfUse": "Nutzungsbedingungen",
+    "and": "und",
+    "privacyPolicy": "Datenschutzrichtlinie",
+    "createAccountBtn": "Konto erstellen",
+    "passwordRequirements": {
+      "length": "Mindestens 8 Zeichen",
+      "uppercase": "Ein Großbuchstabe",
+      "number": "Eine Zahl",
+      "symbol": "Ein Symbol (:$%#@!* usw.)"
+    },
+    "passwordMatch": {
+      "match": "✓ Passwörter stimmen überein",
+      "noMatch": "✗ Passwörter stimmen nicht überein"
+    },
+    "success": {
+      "title": "Konto erfolgreich erstellt!",
+      "subtitle": "Überprüfen Sie Ihre E-Mail, um Ihr Konto zu aktivieren",
+      "description": "Wir haben einen Bestätigungslink gesendet an",
+      "checkEmail": "Überprüfen Sie Ihren Posteingang und Spam",
+      "redirecting": "Weiterleitung zur Anmeldung..."
+    }
+  },
   "common": {
     "loading": "Laden...",
     "error": "Fehler",

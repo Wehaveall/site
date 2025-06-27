@@ -67,6 +67,47 @@
     "noAccount": "¿No tienes una cuenta?",
     "forgotPassword": "¿Olvidaste la contraseña?"
   },
+  "register": {
+    "title": "Completa tu Registro - Atalho",
+    "createAccount": "Crea tu Cuenta de Atalho",
+    "subtitle": "Completa tu registro para comenzar a usar Atalho",
+    "loginData": "🔐 Datos de Acceso",
+    "personalData": "👤 Datos Personales",
+    "email": "Email",
+    "emailHelper": "Este será tu email de acceso al sistema",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "confirmPasswordPlaceholder": "Ingresa la contraseña nuevamente",
+    "fullName": "Nombre Completo",
+    "fullNamePlaceholder": "Tu nombre completo",
+    "phone": "Teléfono (opcional)",
+    "phonePlaceholder": "(11) 99999-9999",
+    "company": "Empresa (opcional)",
+    "companyPlaceholder": "Nombre de tu empresa",
+    "requiredFields": "* Campos obligatorios",
+    "acceptTermsText": "Acepto los",
+    "termsOfUse": "términos de uso",
+    "and": "y",
+    "privacyPolicy": "política de privacidad",
+    "createAccountBtn": "Crear Cuenta",
+    "passwordRequirements": {
+      "length": "Mínimo 8 caracteres",
+      "uppercase": "Una letra mayúscula",
+      "number": "Un número",
+      "symbol": "Un símbolo (:$%#@!* etc.)"
+    },
+    "passwordMatch": {
+      "match": "✓ Las contraseñas coinciden",
+      "noMatch": "✗ Las contraseñas no coinciden"
+    },
+    "success": {
+      "title": "¡Cuenta creada exitosamente!",
+      "subtitle": "Revisa tu email para activar tu cuenta",
+      "description": "Enviamos un enlace de verificación a",
+      "checkEmail": "Revisa tu bandeja de entrada y spam",
+      "redirecting": "Redirigiendo al login..."
+    }
+  },
   "common": {
     "loading": "Cargando...",
     "error": "Error",

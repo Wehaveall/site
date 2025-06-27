@@ -238,27 +238,7 @@
             border: 1px solid rgba(220, 53, 69, 0.3);
         }
 
-        /* Seletor de idioma no header */
-        .language-selector {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.9);
-            -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
-            border-radius: 8px;
-            padding: 0.5rem;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-        }
 
-        .language-selector select {
-            border: none;
-            background: transparent;
-            font-size: 0.9rem;
-            cursor: pointer;
-            padding: 0.25rem;
-        }
 
         @media (max-width: 768px) {
             .registration-container {
@@ -277,10 +257,7 @@
                 font-size: 0.9rem;
             }
 
-            .language-selector {
-                top: 10px;
-                right: 10px;
-            }
+
         }
     </style>
     
@@ -292,17 +269,7 @@
 </head>
 
 <body>
-    <!-- Seletor de Idioma -->
-    <div class="language-selector">
-        <select id="language-select" title="Select Language / Selecionar Idioma" aria-label="Language Selector">
-            <option value="pt-br">🇧🇷 Português</option>
-            <option value="en">🇺🇸 English</option>
-            <option value="es">🇪🇸 Español</option>
-            <option value="fr">🇫🇷 Français</option>
-            <option value="de">🇩🇪 Deutsch</option>
-            <option value="it">🇮🇹 Italiano</option>
-        </select>
-    </div>
+
 
     <!-- Header -->
     <header class="header">
@@ -442,55 +409,11 @@
             }
         });
 
-        // Configurar seletor de idioma EXISTENTE (não criar novo)
+        // Configurar event listeners para o dropdown automático do i18n
         function setupLanguageSelector() {
-            // Procurar qualquer tipo de seletor de idioma
-            const languageSelect = document.getElementById('language-select');
-            const languageDropdown = document.querySelector('.language-dropdown');
-            
             if (!i18nSystem) return;
-
-            // Se há um select tradicional
-            if (languageSelect) {
-                languageSelect.value = i18nSystem.getCurrentLanguage();
-                languageSelect.addEventListener('change', async function() {
-                    const newLanguage = this.value;
-                    console.log(`🌍 Mudando idioma via select para: ${newLanguage}`);
-                    
-                    try {
-                        await i18nSystem.changeLanguage(newLanguage);
-                        updateFormPlaceholders();
-                        updatePasswordRequirements('');
-                        i18nSystem.applyTranslations();
-                        console.log(`✅ Idioma alterado para: ${newLanguage}`);
-                    } catch (error) {
-                        console.error('❌ Erro ao alterar idioma:', error);
-                    }
-                });
-            }
             
-            // Se há um dropdown customizado, escutar cliques
-            if (languageDropdown) {
-                const options = document.querySelectorAll('.language-option[data-lang]');
-                options.forEach(option => {
-                    option.addEventListener('click', async function() {
-                        const newLanguage = this.dataset.lang;
-                        console.log(`🌍 Mudando idioma via dropdown para: ${newLanguage}`);
-                        
-                        try {
-                            await i18nSystem.changeLanguage(newLanguage);
-                            updateFormPlaceholders();
-                            updatePasswordRequirements('');
-                            i18nSystem.applyTranslations();
-                            console.log(`✅ Idioma alterado para: ${newLanguage}`);
-                        } catch (error) {
-                            console.error('❌ Erro ao alterar idioma:', error);
-                        }
-                    });
-                });
-            }
-            
-            // Escutar eventos globais de mudança de idioma
+            // Escutar eventos globais de mudança de idioma (do dropdown automático)
             window.addEventListener('languageChanged', function(event) {
                 console.log('🌍 Evento global de mudança de idioma recebido:', event.detail.language);
                 setTimeout(() => {
@@ -499,6 +422,8 @@
                     i18nSystem.applyTranslations();
                 }, 100);
             });
+            
+            console.log('✅ Event listeners configurados para dropdown automático do i18n');
         }
 
         // Atualizar placeholders dos formulários

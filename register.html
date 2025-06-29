@@ -216,14 +216,16 @@
             gap: 0.75rem;
             cursor: pointer;
             line-height: 1.5;
+            padding: 0.5rem 0;
         }
 
         .terms-checkbox input[type="checkbox"] {
             margin: 0;
-            margin-top: 0.125rem;
+            margin-top: 0.25rem;
             accent-color: var(--primary);
-            transform: scale(1.2);
+            transform: scale(1.1);
             flex-shrink: 0;
+            position: relative;
         }
 
         .terms-text {
@@ -242,6 +244,20 @@
         .terms-text a:hover {
             color: var(--primary);
             text-decoration: underline;
+        }
+
+        .terms-section {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            border: 1px solid rgba(219, 201, 173, 0.2);
+        }
+
+        .required-fields-note {
+            text-align: center;
+            margin: 1rem 0;
+            color: var(--text-light);
         }
 
         /* Feedback de confirmação de senha */
@@ -333,27 +349,7 @@
 
                 <!-- Layout em duas colunas -->
                 <div class="form-columns">
-                    <!-- Coluna Esquerda: Dados Pessoais -->
-                    <div class="form-section">
-                        <h3 data-i18n="register.personalData">👤 Dados Pessoais</h3>
-                        
-                        <div class="form-group">
-                            <label for="customer-name" data-i18n="register.fullName">Nome Completo *</label>
-                            <input type="text" id="customer-name" class="form-input" required data-i18n-placeholder="register.fullNamePlaceholder">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="customer-phone" data-i18n="register.phone">Telefone (opcional)</label>
-                            <input type="tel" id="customer-phone" class="form-input" data-i18n-placeholder="register.phonePlaceholder">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="customer-company" data-i18n="register.company">Empresa (opcional)</label>
-                            <input type="text" id="customer-company" class="form-input" data-i18n-placeholder="register.companyPlaceholder">
-                        </div>
-                    </div>
-
-                    <!-- Coluna Direita: Dados de Acesso -->
+                    <!-- Coluna Esquerda: Dados de Acesso -->
                     <div class="form-section">
                         <h3 data-i18n="register.loginData">🔐 Dados de Acesso</h3>
                         
@@ -387,6 +383,26 @@
                             <label for="confirm-password" data-i18n="register.confirmPassword">Confirmar Senha *</label>
                             <input type="password" id="confirm-password" class="form-input" required minlength="8" data-i18n-placeholder="register.confirmPasswordPlaceholder">
                             <div id="password-match-feedback" class="password-match-feedback" style="display: none;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Coluna Direita: Dados Pessoais -->
+                    <div class="form-section">
+                        <h3 data-i18n="register.personalData">👤 Dados Pessoais</h3>
+                        
+                        <div class="form-group">
+                            <label for="customer-name" data-i18n="register.fullName">Nome Completo *</label>
+                            <input type="text" id="customer-name" class="form-input" required data-i18n-placeholder="register.fullNamePlaceholder">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="customer-phone" data-i18n="register.phone">Telefone (opcional)</label>
+                            <input type="tel" id="customer-phone" class="form-input" data-i18n-placeholder="register.phonePlaceholder">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="customer-company" data-i18n="register.company">Empresa (opcional)</label>
+                            <input type="text" id="customer-company" class="form-input" data-i18n-placeholder="register.companyPlaceholder">
                         </div>
                     </div>
                 </div>

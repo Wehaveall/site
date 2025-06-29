@@ -18,7 +18,7 @@
         .registration-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 1rem;
         }
 
         .section-header-integrated {
@@ -49,8 +49,8 @@
             -webkit-backdrop-filter: blur(15px);
             backdrop-filter: blur(15px);
             border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.3);
             transition: all 0.3s ease;
@@ -59,8 +59,8 @@
         .form-columns {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-top: 2rem;
+            gap: 1rem;
+            margin-top: 1rem;
         }
 
         .email-confirmation-warning {
@@ -78,7 +78,7 @@
             width: 100%;
             height: 1px;
             background: linear-gradient(90deg, transparent 0%, rgba(219, 201, 173, 0.3) 20%, rgba(219, 201, 173, 0.5) 50%, rgba(219, 201, 173, 0.3) 80%, transparent 100%);
-            margin: 1.5rem 0;
+            margin: 1rem 0;
         }
 
         @media (max-width: 768px) {
@@ -108,7 +108,7 @@
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .form-group label {
@@ -121,10 +121,10 @@
 
         .form-input {
             width: 100%;
-            padding: 1rem;
+            padding: 0.75rem;
             border: 2px solid rgba(219, 201, 173, 0.3);
             border-radius: 12px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             background: rgba(255, 255, 255, 0.9);
             -webkit-backdrop-filter: blur(5px);
             backdrop-filter: blur(5px);
@@ -152,9 +152,9 @@
 
         .password-requirements {
             margin-top: 0.5rem;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             background: rgba(248, 245, 240, 0.8);
-            padding: 0.75rem;
+            padding: 0.5rem;
             border-radius: 8px;
             border-left: 3px solid var(--primary);
             -webkit-backdrop-filter: blur(5px);
@@ -174,17 +174,17 @@
 
         .submit-button {
             width: 100%;
-            padding: 1.25rem;
+            padding: 1rem;
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: var(--text-dark);
             border: none;
             border-radius: 12px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 16px rgba(219, 201, 173, 0.4);
-            margin-top: 1rem;
+            margin-top: 0.5rem;
         }
 
         .submit-button:hover:not(:disabled) {
@@ -211,8 +211,8 @@
             -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
             border: 1px solid rgba(219, 201, 173, 0.3);
         }
 
@@ -293,11 +293,11 @@
 
         @media (max-width: 768px) {
             .registration-container {
-                padding: 1rem;
+                padding: 0.5rem;
             }
             
             .form-section {
-                padding: 1.5rem;
+                padding: 1rem;
             }
             
             .section-header-integrated h2 {
@@ -340,7 +340,7 @@
     </header>
 
     <!-- Main Content -->
-    <main style="padding-top: 100px; min-height: 100vh;">
+    <main style="padding-top: 70px; min-height: 85vh;">
         <div class="registration-container">
 
             <!-- Formulário de Cadastro -->
@@ -473,8 +473,11 @@
                     // Configurar event listener para mudanças de idioma
                     setupLanguageSelector();
                     
-                    // Atualizar requisitos de senha com traduções
-                    updatePasswordRequirements('');
+                    // Aguardar um pouco mais e aplicar traduções das dicas de senha
+                    setTimeout(() => {
+                        updatePasswordRequirements('');
+                        updateFormPlaceholders();
+                    }, 200);
                 } else {
                     console.warn('⚠️ Sistema de tradução global não encontrado');
                 }
@@ -497,6 +500,17 @@
                 }, 100);
             });
             
+            // Forçar atualização de traduções quando necessário
+            window.addEventListener('load', function() {
+                setTimeout(() => {
+                    if (i18nSystem) {
+                        updatePasswordRequirements('');
+                        updateFormPlaceholders();
+                        console.log('🔄 Traduções reforçadas após load completo');
+                    }
+                }, 500);
+            });
+            
             console.log('✅ Event listeners configurados para dropdown automático do i18n');
         }
 
@@ -517,30 +531,84 @@
         }
 
         // Atualizar requisitos de senha dinamicamente
-        function updatePasswordRequirements() {
-            if (!i18nSystem) return;
+        function updatePasswordRequirements(password = '') {
+            if (!i18nSystem) {
+                console.warn('⚠️ Sistema i18n não disponível para updatePasswordRequirements');
+                return;
+            }
 
-            const requirements = {
-                'req-length-text': 'register.passwordRequirements.length',
-                'req-uppercase-text': 'register.passwordRequirements.uppercase',
-                'req-number-text': 'register.passwordRequirements.number',
-                'req-symbol-text': 'register.passwordRequirements.symbol'
-            };
+            // Verificar cada requisito
+            const hasLength = password.length >= 8;
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const hasSymbol = /[:$%#@!*&^()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(password);
 
-            Object.entries(requirements).forEach(([id, key]) => {
-                const element = document.getElementById(id);
-                if (element) {
-                    const translation = i18nSystem.t(key);
-                    if (translation && translation !== key) {
-                        element.textContent = translation;
-                        console.log(`✅ Traduzido ${id}: ${translation}`);
-                    } else {
-                        console.warn(`⚠️ Tradução não encontrada para: ${key}`);
-                    }
-                } else {
-                    console.warn(`⚠️ Elemento não encontrado: ${id}`);
-                }
-            });
+            // Obter traduções
+            const lengthText = i18nSystem.t('register.passwordRequirements.length') || 'Mínimo 8 caracteres';
+            const uppercaseText = i18nSystem.t('register.passwordRequirements.uppercase') || 'Uma letra maiúscula';
+            const numberText = i18nSystem.t('register.passwordRequirements.number') || 'Um número';
+            const symbolText = i18nSystem.t('register.passwordRequirements.symbol') || 'Um símbolo (:$%#@!* etc.)';
+
+            // Atualizar cada elemento diretamente
+            const lengthEl = document.getElementById('req-length');
+            const uppercaseEl = document.getElementById('req-uppercase');
+            const numberEl = document.getElementById('req-number');
+            const symbolEl = document.getElementById('req-symbol');
+
+            if (lengthEl) {
+                lengthEl.innerHTML = hasLength ? 
+                    `<span style="color: #28a745 !important; font-weight: bold !important;">✓ ${lengthText}</span>` : 
+                    `<span style="color: #dc3545 !important; font-weight: bold !important;">✗ ${lengthText}</span>`;
+                lengthEl.style.setProperty('background-color', hasLength ? 'rgba(40, 167, 69, 0.2)' : 'rgba(220, 53, 69, 0.2)', 'important');
+                lengthEl.style.setProperty('padding', '0.2rem 0.4rem', 'important');
+                lengthEl.style.setProperty('border-radius', '4px', 'important');
+                lengthEl.style.setProperty('margin', '0.2rem 0', 'important');
+                lengthEl.style.setProperty('display', 'block', 'important');
+            }
+
+            if (uppercaseEl) {
+                uppercaseEl.innerHTML = hasUppercase ? 
+                    `<span style="color: #28a745 !important; font-weight: bold !important;">✓ ${uppercaseText}</span>` : 
+                    `<span style="color: #dc3545 !important; font-weight: bold !important;">✗ ${uppercaseText}</span>`;
+                uppercaseEl.style.setProperty('background-color', hasUppercase ? 'rgba(40, 167, 69, 0.2)' : 'rgba(220, 53, 69, 0.2)', 'important');
+                uppercaseEl.style.setProperty('padding', '0.2rem 0.4rem', 'important');
+                uppercaseEl.style.setProperty('border-radius', '4px', 'important');
+                uppercaseEl.style.setProperty('margin', '0.2rem 0', 'important');
+                uppercaseEl.style.setProperty('display', 'block', 'important');
+            }
+
+            if (numberEl) {
+                numberEl.innerHTML = hasNumber ? 
+                    `<span style="color: #28a745 !important; font-weight: bold !important;">✓ ${numberText}</span>` : 
+                    `<span style="color: #dc3545 !important; font-weight: bold !important;">✗ ${numberText}</span>`;
+                numberEl.style.setProperty('background-color', hasNumber ? 'rgba(40, 167, 69, 0.2)' : 'rgba(220, 53, 69, 0.2)', 'important');
+                numberEl.style.setProperty('padding', '0.2rem 0.4rem', 'important');
+                numberEl.style.setProperty('border-radius', '4px', 'important');
+                numberEl.style.setProperty('margin', '0.2rem 0', 'important');
+                numberEl.style.setProperty('display', 'block', 'important');
+            }
+
+            if (symbolEl) {
+                symbolEl.innerHTML = hasSymbol ? 
+                    `<span style="color: #28a745 !important; font-weight: bold !important;">✓ ${symbolText}</span>` : 
+                    `<span style="color: #dc3545 !important; font-weight: bold !important;">✗ ${symbolText}</span>`;
+                symbolEl.style.setProperty('background-color', hasSymbol ? 'rgba(40, 167, 69, 0.2)' : 'rgba(220, 53, 69, 0.2)', 'important');
+                symbolEl.style.setProperty('padding', '0.2rem 0.4rem', 'important');
+                symbolEl.style.setProperty('border-radius', '4px', 'important');
+                symbolEl.style.setProperty('margin', '0.2rem 0', 'important');
+                symbolEl.style.setProperty('display', 'block', 'important');
+            }
+
+            // Alterar cor da borda do campo
+            const passwordField = document.getElementById('login-password');
+            if (passwordField && password.length > 0) {
+                const allValid = hasLength && hasUppercase && hasNumber && hasSymbol;
+                passwordField.style.borderColor = allValid ? '#28a745' : '#dc3545';
+            } else if (passwordField) {
+                passwordField.style.borderColor = 'rgba(219, 201, 173, 0.3)';
+            }
+
+            console.log('✅ Dicas de senha atualizadas com traduções');
         }
 
         // Função para mostrar mensagens de sucesso com redirecionamento
@@ -1197,79 +1265,7 @@
             }
         }
 
-        // Função para atualizar indicadores de requisitos da senha
-        function updatePasswordRequirements(password) {
-            // Verificar cada requisito
-            const hasLength = password.length >= 8;
-            const hasUppercase = /[A-Z]/.test(password);
-            const hasNumber = /[0-9]/.test(password);
-            const hasSymbol = /[:$%#@!*&^()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(password);
 
-            // Obter traduções
-            const lengthText = i18nSystem ? i18nSystem.t('register.passwordRequirements.length') : 'Mínimo 8 caracteres';
-            const uppercaseText = i18nSystem ? i18nSystem.t('register.passwordRequirements.uppercase') : 'Uma letra maiúscula';
-            const numberText = i18nSystem ? i18nSystem.t('register.passwordRequirements.number') : 'Um número';
-            const symbolText = i18nSystem ? i18nSystem.t('register.passwordRequirements.symbol') : 'Um símbolo (:$%#@!* etc.)';
-
-            // Atualizar cada elemento diretamente
-            const lengthEl = document.getElementById('req-length');
-            const uppercaseEl = document.getElementById('req-uppercase');
-            const numberEl = document.getElementById('req-number');
-            const symbolEl = document.getElementById('req-symbol');
-
-            if (lengthEl) {
-                lengthEl.innerHTML = hasLength ? 
-                    `<span style="color: #28a745 !important; font-weight: bold !important;">✓ ${lengthText}</span>` : 
-                    `<span style="color: #dc3545 !important; font-weight: bold !important;">✗ ${lengthText}</span>`;
-                lengthEl.style.setProperty('background-color', hasLength ? 'rgba(40, 167, 69, 0.2)' : 'rgba(220, 53, 69, 0.2)', 'important');
-                lengthEl.style.setProperty('padding', '0.25rem 0.5rem', 'important');
-                lengthEl.style.setProperty('border-radius', '4px', 'important');
-                lengthEl.style.setProperty('margin', '0.25rem 0', 'important');
-                lengthEl.style.setProperty('display', 'block', 'important');
-            }
-
-            if (uppercaseEl) {
-                uppercaseEl.innerHTML = hasUppercase ? 
-                    `<span style="color: #28a745 !important; font-weight: bold !important;">✓ ${uppercaseText}</span>` : 
-                    `<span style="color: #dc3545 !important; font-weight: bold !important;">✗ ${uppercaseText}</span>`;
-                uppercaseEl.style.setProperty('background-color', hasUppercase ? 'rgba(40, 167, 69, 0.2)' : 'rgba(220, 53, 69, 0.2)', 'important');
-                uppercaseEl.style.setProperty('padding', '0.25rem 0.5rem', 'important');
-                uppercaseEl.style.setProperty('border-radius', '4px', 'important');
-                uppercaseEl.style.setProperty('margin', '0.25rem 0', 'important');
-                uppercaseEl.style.setProperty('display', 'block', 'important');
-            }
-
-            if (numberEl) {
-                numberEl.innerHTML = hasNumber ? 
-                    `<span style="color: #28a745 !important; font-weight: bold !important;">✓ ${numberText}</span>` : 
-                    `<span style="color: #dc3545 !important; font-weight: bold !important;">✗ ${numberText}</span>`;
-                numberEl.style.setProperty('background-color', hasNumber ? 'rgba(40, 167, 69, 0.2)' : 'rgba(220, 53, 69, 0.2)', 'important');
-                numberEl.style.setProperty('padding', '0.25rem 0.5rem', 'important');
-                numberEl.style.setProperty('border-radius', '4px', 'important');
-                numberEl.style.setProperty('margin', '0.25rem 0', 'important');
-                numberEl.style.setProperty('display', 'block', 'important');
-            }
-
-            if (symbolEl) {
-                symbolEl.innerHTML = hasSymbol ? 
-                    `<span style="color: #28a745 !important; font-weight: bold !important;">✓ ${symbolText}</span>` : 
-                    `<span style="color: #dc3545 !important; font-weight: bold !important;">✗ ${symbolText}</span>`;
-                symbolEl.style.setProperty('background-color', hasSymbol ? 'rgba(40, 167, 69, 0.2)' : 'rgba(220, 53, 69, 0.2)', 'important');
-                symbolEl.style.setProperty('padding', '0.25rem 0.5rem', 'important');
-                symbolEl.style.setProperty('border-radius', '4px', 'important');
-                symbolEl.style.setProperty('margin', '0.25rem 0', 'important');
-                symbolEl.style.setProperty('display', 'block', 'important');
-            }
-
-            // Alterar cor da borda do campo
-            const passwordField = document.getElementById('login-password');
-            if (passwordField && password.length > 0) {
-                const allValid = hasLength && hasUppercase && hasNumber && hasSymbol;
-                passwordField.style.borderColor = allValid ? '#28a745' : '#dc3545';
-            } else if (passwordField) {
-                passwordField.style.borderColor = 'rgba(219, 201, 173, 0.3)';
-            }
-        }
 
         console.log("🚀 Página de registro simplificada carregada e aguardando Firebase...");
     </script>

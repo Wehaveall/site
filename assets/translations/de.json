@@ -75,6 +75,8 @@
     "personalData": "👤 Persönliche Daten",
     "email": "E-Mail",
     "emailHelper": "Dies wird Ihre Anmelde-E-Mail für das System sein",
+    "confirmEmail": "E-Mail bestätigen",
+    "confirmEmailPlaceholder": "E-Mail erneut eingeben",
     "password": "Passwort",
     "confirmPassword": "Passwort bestätigen",
     "confirmPasswordPlaceholder": "Passwort erneut eingeben",

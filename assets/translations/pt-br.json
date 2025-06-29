@@ -86,7 +86,7 @@
     "phonePlaceholder": "(11) 99999-9999",
     "company": "Empresa (opcional)",
     "companyPlaceholder": "Nome da sua empresa",
-    "requiredFields": "* Campos obrigatórios",
+    "requiredFields": "Campos obrigatórios",
     "acceptTermsText": "Aceito os",
     "termsOfUse": "termos de uso",
     "and": "e",

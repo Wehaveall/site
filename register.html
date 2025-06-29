@@ -184,7 +184,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 3px 12px rgba(219, 201, 173, 0.4);
-            margin-top: 0.4rem;
+            margin-top: 0.2rem;
         }
 
         .submit-button:hover:not(:disabled) {
@@ -201,7 +201,8 @@
 
         .required-fields-note {
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.8rem;
+            margin-top: 0.5rem;
             color: var(--text-light);
             font-style: italic;
         }
@@ -211,18 +212,18 @@
             -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             border-radius: 10px;
-            padding: 0.8rem;
-            margin-bottom: 0.8rem;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
             border: 1px solid rgba(219, 201, 173, 0.3);
         }
 
         .terms-checkbox {
             display: flex;
             align-items: flex-start;
-            gap: 0.75rem;
+            gap: 0.5rem;
             cursor: pointer;
-            line-height: 1.5;
-            padding: 0.5rem 0;
+            line-height: 1.4;
+            padding: 0.25rem 0;
         }
 
         .terms-checkbox input[type="checkbox"] {
@@ -252,19 +253,7 @@
             text-decoration: underline;
         }
 
-        .terms-section {
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 8px;
-            border: 1px solid rgba(219, 201, 173, 0.2);
-        }
 
-        .required-fields-note {
-            text-align: center;
-            margin: 1rem 0;
-            color: var(--text-light);
-        }
 
         /* Feedback de confirmação de senha */
         .password-match-feedback {
@@ -415,7 +404,7 @@
 
                         <!-- Legenda dos Campos Obrigatórios -->
                         <div class="required-fields-note">
-                            <small data-i18n="register.requiredFields">* Campos obrigatórios</small>
+                            <small><span style="color: #dc3545; font-weight: bold;">* </span><span data-i18n="register.requiredFields">Campos obrigatórios</span></small>
                         </div>
                     </div>
                 </div>

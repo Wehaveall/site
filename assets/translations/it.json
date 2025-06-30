@@ -165,7 +165,25 @@
     "cancel": "Annulla",
     "continue": "Continua",
     "back": "Indietro",
-    "next": "Avanti",
+    "next": "Prossimo",
     "close": "Chiudi"
+  },
+  "dashboard": {
+    "title": "Pannello di Controllo - Atalho",
+    "welcome": "Benvenuto nel Pannello di Controllo",
+    "personalInfo": "👤 Informazioni Personali",
+    "accountInfo": "Informazioni Account",
+    "fields": {
+      "name": "Nome",
+      "email": "Email",
+      "phone": "Telefono",
+      "country": "Paese",
+      "company": "Azienda",
+      "accountId": "ID Account",
+      "createdAt": "Account creato il"
+    },
+    "noData": "Dati non disponibili",
+    "loading": "Caricamento...",
+    "logout": "Esci"
   }
 } 

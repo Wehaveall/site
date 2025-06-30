@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Atalho</title>
+    <title data-i18n="dashboard.title">Dashboard - Atalho</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -25,8 +25,9 @@
             </div>
             <nav class="nav-menu">
                 <ul class="nav-links">
-                    <li><span id="user-name" style="color: #007bff;">Carregando...</span></li>
-                    <li><button id="logout-btn" class="nav-link" style="background: none; border: none; cursor: pointer; color: #dc3545;">Sair</button></li>
+                    <!-- O dropdown de idiomas será inserido aqui automaticamente -->
+                    <li><span id="user-name" style="color: #007bff;" data-i18n="dashboard.loading">Carregando...</span></li>
+                    <li><button id="logout-btn" class="nav-link" style="background: none; border: none; cursor: pointer; color: #dc3545;" data-i18n="dashboard.logout">Sair</button></li>
                 </ul>
             </nav>
         </div>
@@ -34,139 +35,47 @@
 
     <!-- Main Content -->
     <main style="padding-top: 100px; min-height: 100vh; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
-        <div class="container" style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        <div class="container" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
             
             <!-- Boas-vindas -->
             <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;">
                 <div style="color: #28a745; margin-bottom: 1rem;">
-                    <i class="fas fa-user-check" style="font-size: 3rem;"></i>
+                    <i class="fas fa-user-check" style="font-size: 3rem;">👤</i>
                 </div>
-                <h1 style="color: #28a745; margin-bottom: 1rem;">🎉 Bem-vindo ao Atalho!</h1>
-                <p style="color: #6c757d; margin-bottom: 1rem;">
-                    Sua licença foi ativada com sucesso. Agora você pode baixar e configurar o Atalho.
-                </p>
+                <h1 style="color: #28a745; margin-bottom: 1rem;" data-i18n="dashboard.welcome">Bem-vindo ao Dashboard</h1>
             </div>
 
-            <!-- Grid de Cards -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
-                
-                <!-- Card de Licença -->
-                <div style="background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <div style="display: flex; align-items: center; margin-bottom: 1rem;">
-                        <div style="background: #28a745; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                            <i class="fas fa-certificate"></i>
-                        </div>
-                        <div>
-                            <h3 style="margin: 0; color: #2c3e50;">Sua Licença</h3>
-                            <p style="margin: 0; color: #6c757d; font-size: 0.9rem;">Status da sua assinatura</p>
-                        </div>
-                    </div>
-                    <div id="license-info">
-                        <p style="margin-bottom: 0.5rem;"><strong>Status:</strong> <span style="color: #28a745;">✅ Ativa</span></p>
-                        <p style="margin-bottom: 0.5rem;"><strong>Tipo:</strong> Licença Anual</p>
-                        <p style="margin-bottom: 0.5rem;"><strong>Valor:</strong> R$ 49,90</p>
-                        <p style="margin-bottom: 1rem;"><strong>Ativada em:</strong> <span id="activation-date">Carregando...</span></p>
-                        <div style="background: #e8f5e8; padding: 1rem; border-radius: 6px;">
-                            <p style="margin: 0; color: #28a745; font-size: 0.9rem;">
-                                <strong>🎯 Licença válida por 1 ano</strong>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card de Download -->
-                <div style="background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <div style="display: flex; align-items: center; margin-bottom: 1rem;">
-                        <div style="background: #007bff; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                            <i class="fas fa-download"></i>
-                        </div>
-                        <div>
-                            <h3 style="margin: 0; color: #2c3e50;">Download</h3>
-                            <p style="margin: 0; color: #6c757d; font-size: 0.9rem;">Baixe o software</p>
-                        </div>
-                    </div>
-                    <p style="margin-bottom: 1rem; color: #6c757d;">
-                        Baixe a versão mais recente do Atalho para começar a usar.
-                    </p>
-                    <button onclick="downloadSoftware()" 
-                            style="width: 100%; padding: 0.75rem; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
-                        📥 Baixar Atalho v2.0
-                    </button>
-                    <p style="margin-top: 0.5rem; color: #6c757d; font-size: 0.8rem; text-align: center;">
-                        Compatível com Windows 10/11
-                    </p>
-                </div>
-
-                <!-- Card de Suporte -->
-                <div style="background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <div style="display: flex; align-items: center; margin-bottom: 1rem;">
-                        <div style="background: #ffc107; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                            <i class="fas fa-headset"></i>
-                        </div>
-                        <div>
-                            <h3 style="margin: 0; color: #2c3e50;">Suporte</h3>
-                            <p style="margin: 0; color: #6c757d; font-size: 0.9rem;">Ajuda e tutoriais</p>
-                        </div>
-                    </div>
-                    <p style="margin-bottom: 1rem; color: #6c757d;">
-                        Precisa de ajuda? Acesse nossos tutoriais ou entre em contato.
-                    </p>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button onclick="window.open('https://youtube.com', '_blank')" 
-                                style="flex: 1; padding: 0.5rem; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">
-                            📺 Tutoriais
-                        </button>
-                        <button onclick="window.open('mailto:suporte@atalho.com')" 
-                                style="flex: 1; padding: 0.5rem; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">
-                            📧 Contato
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Informações da Conta -->
+            <!-- Card de Informações Pessoais -->
             <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                <h2 style="color: #2c3e50; margin-bottom: 1.5rem;">👤 Informações da Conta</h2>
+                <h2 style="color: #2c3e50; margin-bottom: 1.5rem;" data-i18n="dashboard.personalInfo">👤 Informações Pessoais</h2>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
                     <div>
-                        <p style="margin-bottom: 0.5rem;"><strong>Nome:</strong> <span id="account-name">Carregando...</span></p>
-                        <p style="margin-bottom: 0.5rem;"><strong>Email:</strong> <span id="account-email">Carregando...</span></p>
+                        <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.name">Nome:</strong> <span id="account-name" data-i18n="dashboard.loading">Carregando...</span></p>
+                        <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.email">Email:</strong> <span id="account-email" data-i18n="dashboard.loading">Carregando...</span></p>
+                        <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.phone">Telefone:</strong> <span id="account-phone" data-i18n="dashboard.noData">-</span></p>
                     </div>
                     <div>
-                        <p style="margin-bottom: 0.5rem;"><strong>Telefone:</strong> <span id="account-phone">-</span></p>
-                        <p style="margin-bottom: 0.5rem;"><strong>País:</strong> <span id="account-company">-</span></p>
+                        <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.country">País:</strong> <span id="account-country" data-i18n="dashboard.noData">-</span></p>
+                        <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.company">Empresa:</strong> <span id="account-company" data-i18n="dashboard.noData">-</span></p>
+                        <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.accountId">ID da Conta:</strong> <span id="account-id" data-i18n="dashboard.loading">Carregando...</span></p>
                     </div>
                 </div>
                 <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e9ecef;">
-                    <p style="margin-bottom: 0.5rem;"><strong>ID do Pagamento:</strong> <span id="payment-id">Carregando...</span></p>
-                    <p style="margin-bottom: 0;"><strong>Conta criada em:</strong> <span id="account-created">Carregando...</span></p>
+                    <p style="margin-bottom: 0;"><strong data-i18n="dashboard.fields.createdAt">Conta criada em:</strong> <span id="account-created" data-i18n="dashboard.loading">Carregando...</span></p>
                 </div>
             </div>
 
-            <!-- Instruções de Instalação -->
-            <div style="background: #e8f4fd; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; border-left: 4px solid #007bff;">
-                <h3 style="color: #007bff; margin-bottom: 1rem;">🚀 Como começar a usar o Atalho</h3>
-                <ol style="color: #333; margin-left: 1rem;">
-                    <li style="margin-bottom: 0.5rem;">Clique em "Baixar Atalho v2.0" acima</li>
-                    <li style="margin-bottom: 0.5rem;">Execute o arquivo baixado e siga as instruções</li>
-                    <li style="margin-bottom: 0.5rem;">Abra o Atalho e configure seus primeiros atalhos</li>
-                    <li style="margin-bottom: 0.5rem;">Comece a economizar tempo digitando menos!</li>
-                </ol>
-                <div style="background: white; padding: 1rem; border-radius: 6px; margin-top: 1rem;">
-                    <p style="margin: 0; color: #007bff; font-weight: 600;">
-                        💡 Dica: Assista aos tutoriais para aproveitar ao máximo o Atalho!
-                    </p>
-                </div>
-            </div>
         </div>
     </main>
 
     <!-- Scripts -->
     <script src="assets/js/firebase.js"></script>
+    <script src="assets/js/i18n.js"></script>
 
     <script>
         let currentUser = null;
         let customerData = null;
+        let i18nSystem = null;
 
         // Função para mostrar mensagens
         function showSuccess(message) {
@@ -179,7 +88,7 @@
 
         // Função para formatar data
         function formatDate(timestamp) {
-            if (!timestamp) return 'Data não disponível';
+            if (!timestamp) return i18nSystem ? i18nSystem.t('dashboard.noData') : 'Data não disponível';
             
             let date;
             
@@ -201,13 +110,13 @@
             }
             else {
                 console.warn('⚠️ Formato de data não reconhecido:', timestamp);
-                return 'Data inválida';
+                return i18nSystem ? i18nSystem.t('dashboard.noData') : 'Data inválida';
             }
             
             // Verifica se a data é válida
             if (isNaN(date.getTime())) {
                 console.warn('⚠️ Data inválida:', timestamp);
-                return 'Data inválida';
+                return i18nSystem ? i18nSystem.t('dashboard.noData') : 'Data inválida';
             }
             
             return date.toLocaleDateString('pt-BR', {
@@ -239,13 +148,6 @@
                         console.log('✅ DADOS ENCONTRADOS pelo ID do documento:');
                         console.log('📋 ID do documento:', userDoc.id);
                         console.log('📄 Dados completos:', JSON.stringify(customerData, null, 2));
-                        console.log('📝 Campo Nome:', customerData.Nome);
-                        console.log('📧 Campo email:', customerData.email);
-                        console.log('📱 Campo phone:', customerData.phone);
-                        console.log('🌍 Campo country:', customerData.country);
-                        console.log('🆔 Campo id:', customerData.id);
-                        console.log('📅 Campo sub_start:', customerData.sub_start);
-                        console.log('📅 Campo sub_end:', customerData.sub_end);
                         
                         updateUI();
                         return;
@@ -310,14 +212,13 @@
                 // Se chegou aqui, não encontrou dados
                 console.log('⚠️ NENHUM DADO ENCONTRADO - Usando fallback');
                 customerData = {
-                    Nome: 'Dados não encontrados',
+                    Nome: currentUser.displayName || 'Nome não disponível',
                     email: currentUser.email,
-                    phone: 'Não encontrado',
-                    country: 'Não encontrado',
-                    payment_id: 'Não encontrado',
-                    license_activated_at: new Date(),
-                    created_at: new Date(currentUser.metadata.creationTime),
-                    license_status: 'active'
+                    phone: null,
+                    country: null,
+                    company: null,
+                    id: currentUser.uid,
+                    created_at: new Date(currentUser.metadata.creationTime)
                 };
                 
                 console.log('🔄 Dados de fallback:', customerData);
@@ -328,14 +229,13 @@
                 
                 // Fallback final
                 customerData = {
-                    Nome: 'Erro ao carregar',
+                    Nome: currentUser.displayName || 'Erro ao carregar',
                     email: currentUser.email,
-                    phone: 'Erro',
-                    country: 'Erro',
-                    payment_id: 'Erro',
-                    license_activated_at: new Date(),
-                    created_at: new Date(currentUser.metadata.creationTime),
-                    license_status: 'error'
+                    phone: null,
+                    country: null,
+                    company: null,
+                    id: currentUser.uid,
+                    created_at: new Date(currentUser.metadata.creationTime)
                 };
                 
                 console.log('🆘 Fallback final:', customerData);
@@ -349,28 +249,21 @@
             
             console.log('🔄 Atualizando interface com dados:', customerData);
             
+            const noDataText = i18nSystem ? i18nSystem.t('dashboard.noData') : '-';
+            
             // Dados do usuário no header
-            document.getElementById('user-name').textContent = customerData.Nome || 'Usuário';
+            document.getElementById('user-name').textContent = customerData.Nome || noDataText;
             
             // Informações da conta - usando os campos exatos do Firebase
-            document.getElementById('account-name').textContent = customerData.Nome || '-';
+            document.getElementById('account-name').textContent = customerData.Nome || noDataText;
             document.getElementById('account-email').textContent = customerData.email || currentUser.email;
-            document.getElementById('account-phone').textContent = customerData.phone || '-';
-            document.getElementById('account-company').textContent = customerData.country || '-';
-            document.getElementById('payment-id').textContent = customerData.id || customerData.payment_id || '-';
+            document.getElementById('account-phone').textContent = customerData.phone || noDataText;
+            document.getElementById('account-country').textContent = customerData.country || noDataText;
+            document.getElementById('account-company').textContent = customerData.company || noDataText;
+            document.getElementById('account-id').textContent = customerData.id || customerData.payment_id || currentUser.uid;
             
-            // Datas - verificando diferentes possíveis campos de data
-            if (customerData.sub_start) {
-                document.getElementById('activation-date').textContent = formatDate(customerData.sub_start);
-            } else if (customerData.license_activated_at) {
-                document.getElementById('activation-date').textContent = formatDate(customerData.license_activated_at);
-            } else {
-                document.getElementById('activation-date').textContent = formatDate(new Date());
-            }
-            
-            if (customerData.sub_start) {
-                document.getElementById('account-created').textContent = formatDate(customerData.sub_start);
-            } else if (customerData.created_at) {
+            // Data de criação
+            if (customerData.created_at) {
                 document.getElementById('account-created').textContent = formatDate(customerData.created_at);
             } else {
                 document.getElementById('account-created').textContent = formatDate(new Date(currentUser.metadata.creationTime));
@@ -397,48 +290,20 @@
             }
         }
 
-        // Função para download do software
-        function downloadSoftware() {
-            // Simula download
-            showSuccess('Download iniciado! O arquivo será baixado em breve.');
+        // Configurar event listeners para o dropdown automático do i18n
+        function setupLanguageSelector() {
+            if (!i18nSystem) return;
             
-            // Aqui você colocaria o link real do software
-            // window.open('https://releases.atalho.com/atalho-v2.0-setup.exe', '_blank');
+            // Escutar eventos globais de mudança de idioma (do dropdown automático)
+            window.addEventListener('languageChanged', function(event) {
+                console.log('🌍 Evento global de mudança de idioma recebido:', event.detail.language);
+                setTimeout(() => {
+                    i18nSystem.applyTranslations();
+                    updateUI(); // Reaplica dados com novas traduções
+                }, 100);
+            });
             
-            console.log('📥 Download do software solicitado');
-        }
-
-        // Função para sincronizar status de verificação de email
-        async function syncEmailVerificationStatus(user) {
-            try {
-                console.log('🔄 Sincronizando status de verificação de email...');
-                console.log('📧 Email verificado no Auth:', user.emailVerified);
-                
-                // Usar a instância global do db ou fallback
-                const firestore = window.db || firebase.firestore();
-                
-                // Atualiza o status no Firestore se necessário
-                const userDocRef = firestore.collection('users').doc(user.uid);
-                const userDoc = await userDocRef.get();
-                
-                if (userDoc.exists) {
-                    const userData = userDoc.data();
-                    
-                    // Se o email foi verificado no Auth mas não no Firestore, atualiza
-                    if (user.emailVerified && !userData.email_verified) {
-                        console.log('✅ Atualizando status de verificação no Firestore...');
-                        await userDocRef.update({
-                            email_verified: true,
-                            account_status: 'active',
-                            email_verified_at: new Date().toISOString()
-                        });
-                        console.log('✅ Status de verificação atualizado no Firestore');
-                    }
-                }
-                
-            } catch (error) {
-                console.error('❌ Erro ao sincronizar status de verificação:', error);
-            }
+            console.log('✅ Event listeners configurados para dropdown automático do i18n');
         }
 
         // Inicialização principal do dashboard
@@ -446,6 +311,26 @@
             console.log("🚀 Dashboard carregado, inicializando Firebase...");
             
             try {
+                // Aguardar o sistema i18n global estar pronto
+                let attempts = 0;
+                while (!window.i18nSystem && attempts < 50) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+                
+                if (window.i18nSystem) {
+                    i18nSystem = window.i18nSystem;
+                    console.log('🌍 Sistema de tradução ativo no dashboard');
+                    
+                    // Aplicar traduções imediatamente
+                    i18nSystem.applyTranslations();
+                    
+                    // Configurar event listener para mudanças de idioma
+                    setupLanguageSelector();
+                } else {
+                    console.warn('⚠️ Sistema de tradução global não encontrado');
+                }
+
                 // Aguardar inicialização do Firebase usando a função getFirebaseServices
                 const { auth, db, functions } = await getFirebaseServices();
                 console.log("✅ Serviços do Firebase prontos para o dashboard");
@@ -457,66 +342,10 @@
                         console.log('📧 Email do usuário:', user.email);
                         console.log('✅ Email verificado:', user.emailVerified);
                         
-                        // Sincroniza status de verificação
-                        await syncEmailVerificationStatus(user);
+                        currentUser = user;
                         
-                        console.log('🔗 Testando conexão com Firestore...');
-                        
-                        // Teste básico de conexão com Firestore
-                        try {
-                            const testRef = db.collection('users').doc(user.uid);
-                            console.log('📋 Referência criada para:', testRef.path);
-                            
-                            // TESTE DE PERMISSÕES ESPECÍFICO
-                            console.log('🔐 TESTE DE PERMISSÕES:');
-                            
-                            // Teste 1: Tentar ler um documento específico pelo UID
-                            try {
-                                console.log('🧪 Teste 1: Lendo documento pelo UID...');
-                                const docByUid = await db.collection('users').doc(user.uid).get();
-                                console.log('✅ Sucesso na leitura por UID:', docByUid.exists);
-                            } catch (uidError) {
-                                console.error('❌ Erro na leitura por UID:', uidError.message);
-                            }
-                            
-                            // Teste 2: Tentar listar todos os documentos
-                            try {
-                                console.log('🧪 Teste 2: Listando todos os documentos...');
-                                const allDocs = await db.collection('users').limit(1).get();
-                                console.log('✅ Sucesso na listagem:', allDocs.size, 'documentos');
-                            } catch (listError) {
-                                console.error('❌ Erro na listagem:', listError.message);
-                            }
-                            
-                            // Teste 3: Tentar query por campo
-                            try {
-                                console.log('🧪 Teste 3: Query por user.uid...');
-                                const queryDocs = await db.collection('users').where('user.uid', '==', user.uid).limit(1).get();
-                                console.log('✅ Sucesso na query:', queryDocs.size, 'documentos');
-                            } catch (queryError) {
-                                console.error('❌ Erro na query:', queryError.message);
-                            }
-                            
-                            // Teste 4: Tentar query por email
-                            try {
-                                console.log('🧪 Teste 4: Query por email...');
-                                const emailDocs = await db.collection('users').where('email', '==', user.email).limit(1).get();
-                                console.log('✅ Sucesso na query por email:', emailDocs.size, 'documentos');
-                            } catch (emailError) {
-                                console.error('❌ Erro na query por email:', emailError.message);
-                            }
-                            
-                            console.log('🔐 TESTES DE PERMISSÃO CONCLUÍDOS');
-                            
-                            currentUser = user;
-                            
-                            // Carrega dados do cliente
-                            await loadCustomerData(user.uid);
-                            
-                        } catch (connectionError) {
-                            console.error('❌ Erro de conexão com Firestore:', connectionError);
-                            showError('Erro de conexão com o banco de dados: ' + connectionError.message);
-                        }
+                        // Carrega dados do cliente
+                        await loadCustomerData(user.uid);
                         
                     } else {
                         console.log('❌ Usuário não autenticado, redirecionando...');

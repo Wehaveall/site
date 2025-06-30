@@ -167,5 +167,23 @@
     "back": "Back",
     "next": "Next",
     "close": "Close"
+  },
+  "dashboard": {
+    "title": "Dashboard - Atalho",
+    "welcome": "Welcome to Dashboard",
+    "personalInfo": "👤 Personal Information",
+    "accountInfo": "Account Information",
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "country": "Country",
+      "company": "Company",
+      "accountId": "Account ID",
+      "createdAt": "Account created on"
+    },
+    "noData": "Data not available",
+    "loading": "Loading...",
+    "logout": "Logout"
   }
 } 

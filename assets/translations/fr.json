@@ -167,5 +167,23 @@
     "back": "Retour",
     "next": "Suivant",
     "close": "Fermer"
+  },
+  "dashboard": {
+    "title": "Tableau de Bord - Atalho",
+    "welcome": "Bienvenue au Tableau de Bord",
+    "personalInfo": "👤 Informations Personnelles",
+    "accountInfo": "Informations du Compte",
+    "fields": {
+      "name": "Nom",
+      "email": "Email",
+      "phone": "Téléphone",
+      "country": "Pays",
+      "company": "Entreprise",
+      "accountId": "ID du Compte",
+      "createdAt": "Compte créé le"
+    },
+    "noData": "Données non disponibles",
+    "loading": "Chargement...",
+    "logout": "Se Déconnecter"
   }
 } 

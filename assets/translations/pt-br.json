@@ -167,5 +167,23 @@
     "back": "Voltar",
     "next": "Próximo",
     "close": "Fechar"
+  },
+  "dashboard": {
+    "title": "Dashboard - Atalho",
+    "welcome": "Bem-vindo ao Dashboard",
+    "personalInfo": "👤 Informações Pessoais",
+    "accountInfo": "Informações da Conta",
+    "fields": {
+      "name": "Nome",
+      "email": "Email",
+      "phone": "Telefone", 
+      "country": "País",
+      "company": "Empresa",
+      "accountId": "ID da Conta",
+      "createdAt": "Conta criada em"
+    },
+    "noData": "Dados não disponíveis",
+    "loading": "Carregando...",
+    "logout": "Sair"
   }
 } 

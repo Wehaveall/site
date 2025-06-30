@@ -8,13 +8,12 @@ async function initializeFirebase() {
         
         let firebaseConfig = null;
         
-        // Usar API única e simplificada (sempre funciona via Firebase SDK)
+        // Tentar API do Firebase - deve funcionar pois variáveis estão configuradas no Vercel
         try {
-            console.log("🔄 Obtendo configuração via API Firebase...");
             const response = await fetch('/api/firebase-config');
             if (response.ok) {
                 firebaseConfig = await response.json();
-                console.log("✅ Configuração obtida da API Firebase");
+                console.log("✅ Configuração obtida da API");
             } else {
                 console.error(`❌ API retornou status ${response.status}`);
                 const errorText = await response.text();
@@ -22,8 +21,17 @@ async function initializeFirebase() {
                 throw new Error(`API Firebase falhou: ${response.status}`);
             }
         } catch (apiError) {
-            console.error("❌ API Firebase falhou:", apiError.message);
-            throw new Error("Não foi possível obter configuração do Firebase");
+            console.error("❌ API Firebase falhou, usando configuração de emergência:", apiError.message);
+            // Configuração de emergência TEMPORÁRIA para não quebrar o sistema
+            firebaseConfig = {
+                apiKey: "AIzaSyCsIbyCkHx_E5VHQXnHZYmoZSrpnuPrPUQ",
+                authDomain: "shortcut-6256b.firebaseapp.com",
+                projectId: "shortcut-6256b",
+                storageBucket: "shortcut-6256b.firebasestorage.app",
+                messagingSenderId: "1003854506710",
+                appId: "1:1003854506710:web:ba8daa7071f8b7e8df96f9"
+            };
+            console.warn("⚠️ USANDO CONFIGURAÇÃO DE EMERGÊNCIA - INVESTIGAR VARIÁVEIS DE AMBIENTE");
         }
 
         if (!firebaseConfig || !firebaseConfig.apiKey) {

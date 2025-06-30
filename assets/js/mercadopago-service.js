@@ -13,19 +13,19 @@ class MercadoPagoService {
     async initialize() {
         try {
             // Aguardar configuração ser carregada
-            if (!window.secureConfig) {
+        if (!window.secureConfig) {
                 console.log('⏳ Aguardando configuração ser carregada...');
                 await ConfigLoader.waitForConfig();
-            }
+        }
 
-            // Usar configuração segura
-            this.config = window.secureConfig;
-            this.apiBaseUrl = this.config.getApiBaseUrl();
+        // Usar configuração segura
+        this.config = window.secureConfig;
+        this.apiBaseUrl = this.config.getApiBaseUrl();
             this.initialized = true;
 
-            // Log para confirmar URL base (sem expor credenciais)
-            console.log('🔗 API Base URL:', this.apiBaseUrl);
-            console.log('🛡️ Configuração segura carregada');
+        // Log para confirmar URL base (sem expor credenciais)
+        console.log('🔗 API Base URL:', this.apiBaseUrl);
+        console.log('🛡️ Configuração segura carregada');
             
             return true;
         } catch (error) {

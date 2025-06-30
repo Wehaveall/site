@@ -492,10 +492,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.logout = async function() {
         try {
             if (auth && auth.signOut) {
-                await auth.signOut();
-                console.log('✅ Logout realizado com sucesso');
-                alert('Logout realizado com sucesso!');
-                window.location.href = 'index.html';
+            await auth.signOut();
+            console.log('✅ Logout realizado com sucesso');
+            alert('Logout realizado com sucesso!');
+            window.location.href = 'index.html';
             } else {
                 console.warn('⚠️ Firebase Auth não disponível para logout');
                 // Mesmo assim redirecionar para a página inicial
@@ -529,50 +529,50 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Monitora auth (com proteção para Firebase não carregado)
     if (auth && auth.onAuthStateChanged) {
-        auth.onAuthStateChanged((user) => {
-            state.user = user;
-            
-            // Atualizar menu
-            updateNavMenu(user);
-            
-            // Mostrar/esconder aviso de autenticação e info do usuário
-            const authWarning = document.getElementById('auth-warning');
-            const userInfo = document.getElementById('user-info');
-            const userEmail = document.getElementById('user-email');
-            
-            if (user) {
-                console.log('✅ Usuário autenticado:', user.uid);
-                if (authWarning) authWarning.style.display = 'none';
-                if (userInfo) {
-                    userInfo.style.display = 'block';
-                    if (userEmail) userEmail.textContent = user.email;
-                }
+    auth.onAuthStateChanged((user) => {
+        state.user = user;
+        
+        // Atualizar menu
+        updateNavMenu(user);
+        
+        // Mostrar/esconder aviso de autenticação e info do usuário
+        const authWarning = document.getElementById('auth-warning');
+        const userInfo = document.getElementById('user-info');
+        const userEmail = document.getElementById('user-email');
+        
+        if (user) {
+            console.log('✅ Usuário autenticado:', user.uid);
+            if (authWarning) authWarning.style.display = 'none';
+            if (userInfo) {
+                userInfo.style.display = 'block';
+                if (userEmail) userEmail.textContent = user.email;
+            }
 
                 // Verificar se o documento existe antes de tentar atualizar (apenas se db estiver disponível)
                 if (db && db.collection) {
-                    db.collection('users')
-                        .doc(user.uid)
-                        .get()
-                        .then(doc => {
-                            if (doc.exists) {
-                                // Só atualiza se o documento já existir
-                                return db.collection('users')
-                                    .doc(user.uid)
-                                    .update({ last_login: firebase.firestore.FieldValue.serverTimestamp() });
-                            } else {
-                                console.log('Documento do usuário ainda não existe, pulando atualização');
-                            }
-                        })
-                        .catch(error => {
-                            console.warn('Erro ao verificar/atualizar último login:', error);
-                        });
+            db.collection('users')
+                .doc(user.uid)
+                .get()
+                .then(doc => {
+                    if (doc.exists) {
+                        // Só atualiza se o documento já existir
+                        return db.collection('users')
+                            .doc(user.uid)
+                            .update({ last_login: firebase.firestore.FieldValue.serverTimestamp() });
+                    } else {
+                        console.log('Documento do usuário ainda não existe, pulando atualização');
+                    }
+                })
+                .catch(error => {
+                    console.warn('Erro ao verificar/atualizar último login:', error);
+                });
                 }
-            } else {
-                console.log('ℹ️ Usuário não autenticado');
-                if (authWarning) authWarning.style.display = 'block';
-                if (userInfo) userInfo.style.display = 'none';
-            }
-        });
+        } else {
+            console.log('ℹ️ Usuário não autenticado');
+            if (authWarning) authWarning.style.display = 'block';
+            if (userInfo) userInfo.style.display = 'none';
+        }
+    });
     } else {
         console.warn('⚠️ Firebase Auth não disponível, exibindo sempre aviso de autenticação');
         // Se o Firebase não estiver disponível, sempre mostrar o aviso de login

@@ -121,10 +121,10 @@
                                 <div>PIX</div>
                             </button>
 
-                            <!-- Stripe - Apenas para outras linguagens -->
+                            <!-- Stripe - Para todos os idiomas -->
                             <button class="payment-option" data-method="stripe" id="stripe-option" style="display: none;">
                                 <i class="fa-solid fa-credit-card"></i>
-                                <div data-i18n="purchase.methods.stripe">Cartão de Crédito</div>
+                                <div data-i18n="purchase.methods.stripe">Stripe</div>
                             </button>
 
                             <!-- PayPal - Apenas para outras linguagens -->
@@ -153,7 +153,7 @@
 
                         <!-- Payment Containers -->
                         <div id="stripe-container" class="payment-container" style="display: none; margin-top: 1rem; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9;">
-                            <h4 data-i18n="purchase.stripe.title">Pagamento com Cartão</h4>
+                            <h4 data-i18n="purchase.stripe.title">Pagamento via Stripe</h4>
                             <div id="stripe-elements">
                                 <!-- Stripe Elements will be inserted here -->
                             </div>
@@ -414,6 +414,11 @@
             if (debugLanguage) {
                 debugLanguage.textContent = currentLanguage;
             }
+            
+            // Forçar re-render para garantir que mudanças sejam visíveis
+            if (pixOption) pixOption.offsetHeight; // força reflow
+            if (stripeOption) stripeOption.offsetHeight;
+            if (paypalOption) paypalOption.offsetHeight;
         }
 
         // ✅ LISTENER ADICIONAL: Para garantir que métodos de pagamento sejam atualizados

@@ -165,6 +165,55 @@
     <script src="assets/js/firebase.js"></script>
 
     <script>
+        // Aguardar Firebase estar disponível
+        async function waitForFirebase() {
+            return new Promise((resolve, reject) => {
+                let attempts = 0;
+                const maxAttempts = 100;
+                
+                const checkFirebase = () => {
+                    if (typeof getFirebaseServices === 'function') {
+                        console.log('✅ Firebase Services disponível');
+                        resolve();
+                    } else if (attempts >= maxAttempts) {
+                        reject(new Error('Firebase não carregou em tempo hábil'));
+                    } else {
+                        attempts++;
+                        setTimeout(checkFirebase, 100);
+                    }
+                };
+                
+                checkFirebase();
+            });
+        }
+
+        // Inicialização principal
+        async function initializeDashboard() {
+            try {
+                console.log('🚀 Inicializando dashboard...');
+                
+                // Aguardar Firebase
+                await waitForFirebase();
+                
+                // Inicializar Firebase
+                const { auth, db, functions } = await getFirebaseServices();
+                window.auth = auth;
+                window.db = db;
+                window.functions = functions;
+                
+                console.log('✅ Firebase inicializado no dashboard');
+                
+            } catch (error) {
+                console.error('❌ Erro ao inicializar dashboard:', error);
+                showError('Erro ao conectar com o sistema. Recarregue a página.');
+            }
+        }
+
+        // Inicializar quando DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+    </script>
+
+    <script>
         let currentUser = null;
         let customerData = null;
 

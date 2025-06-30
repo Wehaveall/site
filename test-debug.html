@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Debug - Atalho</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .info { background: #d1ecf1; border-color: #bee5eb; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Teste de Debug - Sistema Atalho</h1>
+    
+    <div id="tests-container">
+        <div class="test-section info">
+            <h3>⏳ Executando testes...</h3>
+            <p>Aguarde enquanto verificamos o sistema...</p>
+        </div>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
+
+    <!-- Scripts do sistema -->
+    <script src="assets/js/config-loader.js"></script>
+    <script src="assets/js/firebase.js"></script>
+    <script src="assets/js/i18n.js"></script>
+
+    <script>
+        let results = [];
+
+        function addResult(title, status, details) {
+            results.push({ title, status, details });
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const container = document.getElementById('tests-container');
+            container.innerHTML = '';
+
+            results.forEach(result => {
+                const div = document.createElement('div');
+                div.className = `test-section ${result.status}`;
+                div.innerHTML = `
+                    <h3>${result.status === 'success' ? '✅' : result.status === 'error' ? '❌' : 'ℹ️'} ${result.title}</h3>
+                    <pre>${result.details}</pre>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function runTests() {
+            try {
+                // Teste 1: Carregamento do Firebase
+                addResult('Firebase Libraries', 'info', 'Verificando carregamento das bibliotecas...');
+                
+                if (typeof firebase !== 'undefined') {
+                    addResult('Firebase Libraries', 'success', 'Firebase carregado com sucesso');
+                } else {
+                    addResult('Firebase Libraries', 'error', 'Firebase não foi carregado');
+                    return;
+                }
+
+                // Teste 2: Configuração
+                addResult('Configuração', 'info', 'Carregando configuração...');
+                try {
+                    await ConfigLoader.waitForConfig(10000);
+                    addResult('Configuração', 'success', 'Configuração carregada:\n' + JSON.stringify(window.secureConfig, null, 2));
+                } catch (configError) {
+                    addResult('Configuração', 'error', 'Erro na configuração: ' + configError.message);
+                }
+
+                // Teste 3: Firebase Services
+                addResult('Firebase Services', 'info', 'Inicializando Firebase...');
+                try {
+                    const services = await getFirebaseServices();
+                    addResult('Firebase Services', 'success', 'Firebase inicializado com sucesso');
+                    
+                    // Teste 4: Autenticação
+                    addResult('Autenticação', 'info', 'Verificando estado de autenticação...');
+                    
+                    services.auth.onAuthStateChanged(user => {
+                        if (user) {
+                            addResult('Autenticação', 'success', `Usuário logado: ${user.email}\nUID: ${user.uid}\nEmail verificado: ${user.emailVerified}`);
+                            
+                            // Teste 5: Firestore
+                            addResult('Firestore', 'info', 'Testando conexão com Firestore...');
+                            testFirestore(services.db, user);
+                        } else {
+                            addResult('Autenticação', 'info', 'Nenhum usuário logado');
+                        }
+                    });
+
+                } catch (firebaseError) {
+                    addResult('Firebase Services', 'error', 'Erro ao inicializar Firebase: ' + firebaseError.message);
+                }
+
+                // Teste 6: Sistema de tradução
+                addResult('Sistema de Tradução', 'info', 'Verificando i18n...');
+                let attempts = 0;
+                while (!window.i18nSystem && attempts < 50) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+                
+                if (window.i18nSystem) {
+                    addResult('Sistema de Tradução', 'success', `Sistema i18n carregado\nIdioma atual: ${window.i18nSystem.getCurrentLanguage()}\nIdiomas disponíveis: ${Object.keys(window.i18nSystem.translations || {}).join(', ')}`);
+                } else {
+                    addResult('Sistema de Tradução', 'error', 'Sistema i18n não carregado');
+                }
+
+            } catch (error) {
+                addResult('Erro Geral', 'error', error.message + '\n' + error.stack);
+            }
+        }
+
+        async function testFirestore(db, user) {
+            try {
+                // Teste básico de leitura
+                const testDoc = await db.collection('users').doc(user.uid).get();
+                addResult('Firestore - Leitura por UID', testDoc.exists ? 'success' : 'info', 
+                    testDoc.exists ? 'Documento encontrado:\n' + JSON.stringify(testDoc.data(), null, 2) : 'Documento não encontrado');
+
+                // Teste de query
+                const queryTest = await db.collection('users').where('user.uid', '==', user.uid).limit(1).get();
+                addResult('Firestore - Query por user.uid', 'success', `Query executada com sucesso\nDocumentos encontrados: ${queryTest.size}`);
+
+                // Teste de query por email
+                const emailTest = await db.collection('users').where('email', '==', user.email).limit(1).get();
+                addResult('Firestore - Query por email', 'success', `Query por email executada\nDocumentos encontrados: ${emailTest.size}`);
+                
+                if (emailTest.size > 0) {
+                    const userData = emailTest.docs[0].data();
+                    addResult('Dados do Usuário', 'success', 'Dados encontrados:\n' + JSON.stringify(userData, null, 2));
+                }
+
+            } catch (firestoreError) {
+                addResult('Firestore', 'error', 'Erro no Firestore: ' + firestoreError.message);
+            }
+        }
+
+        // Executar testes quando a página carregar
+        document.addEventListener('DOMContentLoaded', runTests);
+    </script>
+</body>
+</html> 

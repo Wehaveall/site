@@ -123,11 +123,11 @@
     },
     "price": "$19.90",
     "license": "Annual license",
-    "methods": {
-      "stripe": "Credit Card"
-    },
-    "stripe": {
-      "title": "Card Payment",
+            "methods": {
+            "stripe": "Stripe"
+        },
+        "stripe": {
+            "title": "Stripe Payment",
       "submit": "Pay Now"
     },
     "paypal": {

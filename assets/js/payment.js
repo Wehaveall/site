@@ -331,7 +331,7 @@ async function handlePixPayment(userEmail, userName) {
 // Função para Stripe
 async function handleStripePayment(userEmail, userName) {
     try {
-        showLoading('Preparando pagamento com cartão...');
+                        showLoading('Preparando pagamento via Stripe...');
 
         // Determinar moeda baseada no idioma atual
         const currentLanguage = window.i18nSystem ? window.i18nSystem.getCurrentLanguage() : 'pt-br';

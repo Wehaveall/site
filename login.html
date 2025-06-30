@@ -340,38 +340,7 @@
                 const verified = urlParams.get('verified');
                 
                 if (message === 'account-created') {
-                    const container = document.querySelector('.container');
-                    const alertDiv = document.createElement('div');
-                    alertDiv.style.cssText = `
-                        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-                        border: 2px solid #28a745;
-                        border-radius: 12px;
-                        padding: 1.5rem;
-                        margin-bottom: 2rem;
-                        text-align: center;
-                        box-shadow: var(--shadow-md);
-                    `;
-                    alertDiv.innerHTML = `
-                        <div style="color: #155724; margin-bottom: 1rem;">
-                            <i class="fas fa-envelope-circle-check" style="font-size: 2rem;"></i>
-                        </div>
-                        <h3 style="color: #155724; margin-bottom: 0.5rem;">✅ Conta criada com sucesso!</h3>
-                        <p style="color: #155724; margin-bottom: 1rem;">
-                            📧 Um link de verificação foi enviado para: <strong>${email || 'seu email'}</strong>
-                        </p>
-                        <div style="background: rgba(255,255,255,0.8); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                            <p style="color: #155724; margin: 0; font-size: 0.9rem;">
-                                ⚠️ <strong>Importante:</strong> Você precisa verificar seu email antes de fazer login.<br>
-                                Verifique sua caixa de entrada e spam/lixo eletrônico.
-                            </p>
-                        </div>
-                        <button onclick="this.parentElement.remove()" 
-                                style="background: #28a745; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
-                            Entendi ✓
-                        </button>
-                    `;
-                    container.insertBefore(alertDiv, container.firstChild);
-                    
+                    // Apenas pré-preenche o email sem mostrar mensagem repetida
                     if (email) {
                         document.getElementById('login-email').value = decodeURIComponent(email);
                     }

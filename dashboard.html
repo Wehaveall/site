@@ -6,6 +6,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-i18n="dashboard.title">Dashboard - Atalho</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    
+    <style>
+        /* Popup de sucesso animado (compartilhado entre páginas) */
+        .success-popup {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .success-popup.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .success-popup.hide {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        .success-popup .icon {
+            font-size: 1.2rem;
+            animation: bounce 0.6s ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .success-popup .message {
+            flex: 1;
+        }
+
+        .success-popup .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+        }
+
+        .success-popup .close-btn:hover {
+            opacity: 1;
+        }
+    </style>
+    
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -86,6 +158,61 @@
         let customerData = null;
         let currentUserData = null;
         let i18nSystem = null;
+
+        // Função global para restaurar popup em qualquer página
+        window.restoreSuccessPopup = function() {
+            const popupData = localStorage.getItem('atalho-success-popup');
+            if (popupData) {
+                const data = JSON.parse(popupData);
+                const elapsed = Date.now() - data.timestamp;
+                
+                // Se ainda não passou do tempo limite, recria o popup
+                if (elapsed < data.duration) {
+                    const remainingTime = data.duration - elapsed;
+                    
+                    // Remove popup anterior se existir
+                    const existingPopup = document.querySelector('.success-popup');
+                    if (existingPopup) {
+                        existingPopup.remove();
+                    }
+
+                    // Cria novo popup
+                    const popup = document.createElement('div');
+                    popup.className = 'success-popup show'; // Já adiciona a classe show
+                    popup.id = 'global-success-popup';
+                    popup.innerHTML = `
+                        <div class="icon">✅</div>
+                        <div class="message">${data.message}</div>
+                        <button class="close-btn">&times;</button>
+                    `;
+
+                    // Adiciona ao body
+                    document.body.appendChild(popup);
+
+                    // Função para fechar o popup
+                    const closePopup = () => {
+                        popup.classList.add('hide');
+                        localStorage.removeItem('atalho-success-popup');
+                        setTimeout(() => {
+                            if (popup.parentNode) {
+                                popup.parentNode.removeChild(popup);
+                            }
+                        }, 400);
+                    };
+
+                    // Event listener para botão de fechar
+                    popup.querySelector('.close-btn').addEventListener('click', closePopup);
+
+                    // Auto-fechar com o tempo restante
+                    setTimeout(closePopup, remainingTime);
+                    
+                    console.log(`✅ Popup restaurado no dashboard com ${Math.round(remainingTime/1000)}s restantes`);
+                } else {
+                    // Se já passou do tempo, remove do localStorage
+                    localStorage.removeItem('atalho-success-popup');
+                }
+            }
+        };
 
         // Função para mostrar mensagens
         function showSuccess(message) {
@@ -458,6 +585,13 @@
         document.addEventListener('DOMContentLoaded', async function() {
             console.log("🚀 Dashboard carregado, inicializando Firebase...");
             
+            // ✨ PRIMEIRO: Restaurar popup de sucesso imediatamente (se houver)
+            try {
+                restoreSuccessPopup();
+            } catch (error) {
+                console.warn('⚠️ Erro ao restaurar popup:', error);
+            }
+            
             try {
                 // Aguardar o sistema i18n global estar pronto
                 let attempts = 0;
@@ -509,6 +643,15 @@
                 showError("Erro ao conectar com nossos servidores. Tente recarregar a página.");
             }
         });
+
+        // ✨ Restaurar popup imediatamente quando o script carregar (ainda mais rápido)
+        try {
+            if (typeof restoreSuccessPopup === 'function') {
+                restoreSuccessPopup();
+            }
+        } catch (error) {
+            console.warn('⚠️ Erro ao restaurar popup no carregamento imediato:', error);
+        }
     </script>
 </body>
 

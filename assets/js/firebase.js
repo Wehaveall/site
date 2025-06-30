@@ -8,45 +8,22 @@ async function initializeFirebase() {
         
         let firebaseConfig = null;
         
-        // Tentar API alternativa primeiro (não depende de NEXT_PUBLIC_*)
+        // Usar API única e simplificada (sempre funciona via Firebase SDK)
         try {
-            console.log("🔄 Tentando API alternativa...");
-            const response = await fetch('/api/firebase-config-alt');
+            console.log("🔄 Obtendo configuração via API Firebase...");
+            const response = await fetch('/api/firebase-config');
             if (response.ok) {
                 firebaseConfig = await response.json();
-                console.log("✅ Configuração obtida da API alternativa");
+                console.log("✅ Configuração obtida da API Firebase");
             } else {
-                throw new Error(`API alternativa falhou: ${response.status}`);
+                console.error(`❌ API retornou status ${response.status}`);
+                const errorText = await response.text();
+                console.error("❌ Erro da API:", errorText);
+                throw new Error(`API Firebase falhou: ${response.status}`);
             }
-        } catch (altApiError) {
-            console.warn("⚠️ API alternativa falhou:", altApiError.message);
-            
-            // Fallback: Tentar API original
-            try {
-                console.log("🔄 Tentando API original como fallback...");
-                const response = await fetch('/api/firebase-config');
-                if (response.ok) {
-                    firebaseConfig = await response.json();
-                    console.log("✅ Configuração obtida da API original");
-                } else {
-                    console.error(`❌ API original retornou status ${response.status}`);
-                    const errorText = await response.text();
-                    console.error("❌ Erro da API original:", errorText);
-                    throw new Error(`API Firebase original falhou: ${response.status}`);
-                }
-            } catch (apiError) {
-                console.error("❌ Ambas APIs falharam, usando configuração de emergência:", apiError.message);
-                // Configuração de emergência TEMPORÁRIA para não quebrar o sistema
-                firebaseConfig = {
-                    apiKey: "AIzaSyCsIbyCkHx_E5VHQXnHZYmoZSrpnuPrPUQ",
-                    authDomain: "shortcut-6256b.firebaseapp.com",
-                    projectId: "shortcut-6256b",
-                    storageBucket: "shortcut-6256b.firebasestorage.app",
-                    messagingSenderId: "1003854506710",
-                    appId: "1:1003854506710:web:ba8daa7071f8b7e8df96f9"
-                };
-                console.warn("⚠️ USANDO CONFIGURAÇÃO DE EMERGÊNCIA - INVESTIGAR VARIÁVEIS DE AMBIENTE");
-            }
+        } catch (apiError) {
+            console.error("❌ API Firebase falhou:", apiError.message);
+            throw new Error("Não foi possível obter configuração do Firebase");
         }
 
         if (!firebaseConfig || !firebaseConfig.apiKey) {

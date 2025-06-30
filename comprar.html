@@ -199,6 +199,7 @@
     <!-- Scripts -->
     <!-- Custom Scripts -->
     <script src="assets/js/security-validator.js"></script>
+    <script src="assets/js/config-loader.js"></script>
     <script src="assets/js/firebase.js"></script>
     <script src="assets/js/mercadopago-service.js"></script>
     <script src="assets/js/pix-modal.js"></script>
@@ -210,8 +211,17 @@
 
         // Listener movido para payment.js para evitar conflitos
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             console.log("Página de compra inicializada");
+
+            // Aguardar configuração ser carregada
+            try {
+                console.log("⏳ Aguardando configuração...");
+                await ConfigLoader.waitForConfig(5000);
+                console.log("✅ Configuração carregada com sucesso");
+            } catch (error) {
+                console.warn("⚠️ Timeout ao aguardar configuração, continuando com fallback:", error);
+            }
 
             // Fechar modais ao clicar fora
             document.querySelectorAll('.modal').forEach(modal => {

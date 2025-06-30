@@ -9,9 +9,18 @@ class PixModalController {
         this.paymentExpirationTime = null;
         this.countdownInterval = null;
         this.currentPaymentId = null;
+        this.initialized = false;
     }
 
-    show() {
+    async initialize() {
+        if (!this.initialized) {
+            await this.mpService.initialize();
+            this.initialized = true;
+        }
+    }
+
+    async show() {
+        await this.initialize();
         this.modalElement.classList.remove('hidden');
         this.generatePixPayment();
     }
@@ -407,4 +416,31 @@ class PixModalController {
 }
 
 // Inicializa o controlador do modal
-const pixModal = new PixModalController();
+let pixModal = null;
+
+// Aguardar configuração ser carregada antes de inicializar
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // Aguardar configuração
+        if (window.ConfigLoader) {
+            await ConfigLoader.waitForConfig(5000);
+        }
+        
+        // Inicializar pixModal
+        pixModal = new PixModalController();
+        await pixModal.initialize();
+        
+        console.log('✅ PixModal inicializado com sucesso');
+    } catch (error) {
+        console.warn('⚠️ Erro ao inicializar PixModal, criando fallback:', error);
+        
+        // Fallback: criar sem aguardar configuração
+        pixModal = new PixModalController();
+        // Inicializar sem aguardar (vai usar fallback interno)
+        try {
+            await pixModal.initialize();
+        } catch (initError) {
+            console.warn('⚠️ Falha na inicialização do fallback:', initError);
+        }
+    }
+});

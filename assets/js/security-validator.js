@@ -145,19 +145,41 @@ class SecurityValidator {
     // =====================================
 
     validatePageIntegrity() {
-        // Verificar se scripts críticos não foram modificados
-        const criticalElements = [
-            'script[src*="firebase"]',
-            'script[src*="mercadopago"]',
-            'form#customer-registration-form',
-            '.payment-option'
-        ];
+        // Detectar que tipo de página estamos
+        const isPaymentPage = window.location.pathname.includes('comprar.html');
+        const isRegistrationPage = window.location.pathname.includes('register.html');
+        
+        // Elementos críticos específicos da página
+        let criticalElements = [];
+        
+        if (isPaymentPage) {
+            criticalElements = [
+                'script[src*="firebase"]',
+                'script[src*="mercadopago"]',
+                '.payment-option'
+            ];
+        } else if (isRegistrationPage) {
+            criticalElements = [
+                'script[src*="firebase"]',
+                'form#customer-registration-form'
+            ];
+        } else {
+            // Página genérica - verificações mínimas
+            criticalElements = [
+                'script[src*="firebase"]'
+            ];
+        }
+        
         const self = this;
 
         criticalElements.forEach(selector => {
             const elements = document.querySelectorAll(selector);
             if (elements.length === 0) {
-                self.logSecurityEventSafe('critical_element_missing', { selector });
+                self.logSecurityEventSafe('critical_element_missing', { 
+                    selector, 
+                    page: window.location.pathname,
+                    severity: 'warning' // Reduzir gravidade
+                });
             }
         });
 

@@ -271,7 +271,22 @@ async function processPayment(method) {
                 email: state.user.email,
                 uid: state.user.uid
             };
-            pixModal.show(userData);
+            
+            // Aguardar pixModal estar disponível
+            if (!pixModal) {
+                console.log('⏳ Aguardando PixModal estar disponível...');
+                let attempts = 0;
+                while (!pixModal && attempts < 50) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+                
+                if (!pixModal) {
+                    throw new Error('PixModal não disponível');
+                }
+            }
+            
+            await pixModal.show(userData);
         } else if (method === 'cartao') {
             // Implementação com cartão de crédito usando Mercado Pago
             showLoading(`Processando pagamento via cartão...`);

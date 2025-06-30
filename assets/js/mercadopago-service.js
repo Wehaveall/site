@@ -5,21 +5,50 @@ class MercadoPagoService {
         // IMPORTANTE: Log de inicialização para confirmar que estamos usando a versão correta
         console.log('🔒 Inicializando MercadoPagoService - VERSÃO SEGURA');
 
-        // Verificar se a configuração segura está disponível
-        if (!window.secureConfig) {
-            throw new Error('SecureConfig não foi carregado! Inclua config.js antes deste arquivo.');
+        this.config = null;
+        this.apiBaseUrl = null;
+        this.initialized = false;
+    }
+
+    async initialize() {
+        try {
+            // Aguardar configuração ser carregada
+            if (!window.secureConfig) {
+                console.log('⏳ Aguardando configuração ser carregada...');
+                await ConfigLoader.waitForConfig();
+            }
+
+            // Usar configuração segura
+            this.config = window.secureConfig;
+            this.apiBaseUrl = this.config.getApiBaseUrl();
+            this.initialized = true;
+
+            // Log para confirmar URL base (sem expor credenciais)
+            console.log('🔗 API Base URL:', this.apiBaseUrl);
+            console.log('🛡️ Configuração segura carregada');
+            
+            return true;
+        } catch (error) {
+            console.error('❌ Erro ao inicializar MercadoPagoService:', error);
+            
+            // Fallback de emergência
+            this.apiBaseUrl = window.location.origin + '/api';
+            this.initialized = true;
+            console.log('🔄 Usando URL de fallback:', this.apiBaseUrl);
+            
+            return false;
         }
+    }
 
-        // Usar configuração segura
-        this.config = window.secureConfig;
-        this.apiBaseUrl = this.config.getApiBaseUrl();
-
-        // Log para confirmar URL base (sem expor credenciais)
-        console.log('🔗 API Base URL:', this.apiBaseUrl);
-        console.log('🛡️ Configuração segura carregada');
+    async ensureInitialized() {
+        if (!this.initialized) {
+            await this.initialize();
+        }
     }
 
     async createPaymentPreference() {
+        await this.ensureInitialized();
+        
         try {
             console.log('Criando preferência de pagamento...');
             console.log('URL sendo acessada:', `${this.apiBaseUrl}/create-preference`);
@@ -54,6 +83,8 @@ class MercadoPagoService {
     }
 
     async createPixPayment() {
+        await this.ensureInitialized();
+        
         try {
             console.log("🎯 Criando pagamento PIX...");
 
@@ -99,6 +130,8 @@ class MercadoPagoService {
     }
 
     async checkPaymentStatus(paymentId) {
+        await this.ensureInitialized();
+        
         try {
             console.log(`🔍 Verificando status do pagamento ${paymentId}...`);
 

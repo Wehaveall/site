@@ -225,10 +225,13 @@
                 console.log('📊 === INÍCIO DO CARREGAMENTO DE DADOS ===');
                 console.log('🔍 UID do usuário:', uid);
                 
+                // Usar a instância global do db ou fallback
+                const firestore = window.db || firebase.firestore();
+                
                 // PRIMEIRO: Buscar diretamente pelo ID do documento (mais eficiente)
                 try {
                     console.log('🔍 Buscando documento pelo ID:', uid);
-                    const userDoc = await db.collection('users').doc(uid).get();
+                    const userDoc = await firestore.collection('users').doc(uid).get();
                     
                     if (userDoc.exists) {
                         customerData = userDoc.data();
@@ -257,7 +260,7 @@
                 try {
                     console.log('🔍 Buscando por user.uid =', uid);
                     
-                    const usersQuery = db.collection('users')
+                    const usersQuery = firestore.collection('users')
                         .where('user.uid', '==', uid)
                         .limit(1);
                     
@@ -280,7 +283,7 @@
                         
                         // TERCEIRO: Buscar por email
                         console.log('🔄 Tentativa alternativa: buscar por email =', currentUser.email);
-                        const emailQuery = db.collection('users')
+                        const emailQuery = firestore.collection('users')
                             .where('email', '==', currentUser.email)
                             .limit(1);
                         
@@ -379,7 +382,13 @@
         // Função para fazer logout
         async function logout() {
             try {
-                await firebase.auth().signOut();
+                // Usar a instância global do auth que foi configurada
+                if (window.auth) {
+                    await window.auth.signOut();
+                } else {
+                    // Fallback usando firebase global
+                    await firebase.auth().signOut();
+                }
                 console.log('✅ Logout realizado');
                 window.location.href = 'index.html';
             } catch (error) {
@@ -405,8 +414,11 @@
                 console.log('🔄 Sincronizando status de verificação de email...');
                 console.log('📧 Email verificado no Auth:', user.emailVerified);
                 
+                // Usar a instância global do db ou fallback
+                const firestore = window.db || firebase.firestore();
+                
                 // Atualiza o status no Firestore se necessário
-                const userDocRef = db.collection('users').doc(user.uid);
+                const userDocRef = firestore.collection('users').doc(user.uid);
                 const userDoc = await userDocRef.get();
                 
                 if (userDoc.exists) {
@@ -429,84 +441,97 @@
             }
         }
 
-        // Verificação de autenticação
-        firebase.auth().onAuthStateChanged(async function(user) {
-            if (user) {
-                console.log('✅ Usuário autenticado:', user.uid);
-                console.log('📧 Email do usuário:', user.email);
-                console.log('✅ Email verificado:', user.emailVerified);
+        // Inicialização principal do dashboard
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log("🚀 Dashboard carregado, inicializando Firebase...");
+            
+            try {
+                // Aguardar inicialização do Firebase usando a função getFirebaseServices
+                const { auth, db, functions } = await getFirebaseServices();
+                console.log("✅ Serviços do Firebase prontos para o dashboard");
                 
-                // Sincroniza status de verificação
-                await syncEmailVerificationStatus(user);
+                // Agora que o Firebase está inicializado, configurar verificação de autenticação
+                auth.onAuthStateChanged(async function(user) {
+                    if (user) {
+                        console.log('✅ Usuário autenticado:', user.uid);
+                        console.log('📧 Email do usuário:', user.email);
+                        console.log('✅ Email verificado:', user.emailVerified);
+                        
+                        // Sincroniza status de verificação
+                        await syncEmailVerificationStatus(user);
+                        
+                        console.log('🔗 Testando conexão com Firestore...');
+                        
+                        // Teste básico de conexão com Firestore
+                        try {
+                            const testRef = db.collection('users').doc(user.uid);
+                            console.log('📋 Referência criada para:', testRef.path);
+                            
+                            // TESTE DE PERMISSÕES ESPECÍFICO
+                            console.log('🔐 TESTE DE PERMISSÕES:');
+                            
+                            // Teste 1: Tentar ler um documento específico pelo UID
+                            try {
+                                console.log('🧪 Teste 1: Lendo documento pelo UID...');
+                                const docByUid = await db.collection('users').doc(user.uid).get();
+                                console.log('✅ Sucesso na leitura por UID:', docByUid.exists);
+                            } catch (uidError) {
+                                console.error('❌ Erro na leitura por UID:', uidError.message);
+                            }
+                            
+                            // Teste 2: Tentar listar todos os documentos
+                            try {
+                                console.log('🧪 Teste 2: Listando todos os documentos...');
+                                const allDocs = await db.collection('users').limit(1).get();
+                                console.log('✅ Sucesso na listagem:', allDocs.size, 'documentos');
+                            } catch (listError) {
+                                console.error('❌ Erro na listagem:', listError.message);
+                            }
+                            
+                            // Teste 3: Tentar query por campo
+                            try {
+                                console.log('🧪 Teste 3: Query por user.uid...');
+                                const queryDocs = await db.collection('users').where('user.uid', '==', user.uid).limit(1).get();
+                                console.log('✅ Sucesso na query:', queryDocs.size, 'documentos');
+                            } catch (queryError) {
+                                console.error('❌ Erro na query:', queryError.message);
+                            }
+                            
+                            // Teste 4: Tentar query por email
+                            try {
+                                console.log('🧪 Teste 4: Query por email...');
+                                const emailDocs = await db.collection('users').where('email', '==', user.email).limit(1).get();
+                                console.log('✅ Sucesso na query por email:', emailDocs.size, 'documentos');
+                            } catch (emailError) {
+                                console.error('❌ Erro na query por email:', emailError.message);
+                            }
+                            
+                            console.log('🔐 TESTES DE PERMISSÃO CONCLUÍDOS');
+                            
+                            currentUser = user;
+                            
+                            // Carrega dados do cliente
+                            await loadCustomerData(user.uid);
+                            
+                        } catch (connectionError) {
+                            console.error('❌ Erro de conexão com Firestore:', connectionError);
+                            showError('Erro de conexão com o banco de dados: ' + connectionError.message);
+                        }
+                        
+                    } else {
+                        console.log('❌ Usuário não autenticado, redirecionando...');
+                        window.location.href = 'login.html';
+                    }
+                });
+
+                // Event listeners
+                document.getElementById('logout-btn').addEventListener('click', logout);
                 
-                console.log('🔗 Testando conexão com Firestore...');
-                
-                // Teste básico de conexão com Firestore
-                try {
-                    const testRef = db.collection('users').doc(user.uid);
-                    console.log('📋 Referência criada para:', testRef.path);
-                    
-                    // TESTE DE PERMISSÕES ESPECÍFICO
-                    console.log('🔐 TESTE DE PERMISSÕES:');
-                    
-                    // Teste 1: Tentar ler um documento específico pelo UID
-                    try {
-                        console.log('🧪 Teste 1: Lendo documento pelo UID...');
-                        const docByUid = await db.collection('users').doc(user.uid).get();
-                        console.log('✅ Sucesso na leitura por UID:', docByUid.exists);
-                    } catch (uidError) {
-                        console.error('❌ Erro na leitura por UID:', uidError.message);
-                    }
-                    
-                    // Teste 2: Tentar listar todos os documentos
-                    try {
-                        console.log('🧪 Teste 2: Listando todos os documentos...');
-                        const allDocs = await db.collection('users').limit(1).get();
-                        console.log('✅ Sucesso na listagem:', allDocs.size, 'documentos');
-                    } catch (listError) {
-                        console.error('❌ Erro na listagem:', listError.message);
-                    }
-                    
-                    // Teste 3: Tentar query por campo
-                    try {
-                        console.log('🧪 Teste 3: Query por user.uid...');
-                        const queryDocs = await db.collection('users').where('user.uid', '==', user.uid).limit(1).get();
-                        console.log('✅ Sucesso na query:', queryDocs.size, 'documentos');
-                    } catch (queryError) {
-                        console.error('❌ Erro na query:', queryError.message);
-                    }
-                    
-                    // Teste 4: Tentar query por email
-                    try {
-                        console.log('🧪 Teste 4: Query por email...');
-                        const emailDocs = await db.collection('users').where('email', '==', user.email).limit(1).get();
-                        console.log('✅ Sucesso na query por email:', emailDocs.size, 'documentos');
-                    } catch (emailError) {
-                        console.error('❌ Erro na query por email:', emailError.message);
-                    }
-                    
-                    console.log('🔐 TESTES DE PERMISSÃO CONCLUÍDOS');
-                    
-                    currentUser = user;
-                    
-                    // Carrega dados do cliente
-                    await loadCustomerData(user.uid);
-                    
-                } catch (connectionError) {
-                    console.error('❌ Erro de conexão com Firestore:', connectionError);
-                    showError('Erro de conexão com o banco de dados: ' + connectionError.message);
-                }
-                
-            } else {
-                console.log('❌ Usuário não autenticado, redirecionando...');
-                window.location.href = 'login.html';
+            } catch (error) {
+                console.error("❌ Falha crítica na inicialização do Firebase no dashboard:", error);
+                showError("Erro ao conectar com nossos servidores. Tente recarregar a página.");
             }
         });
-
-        // Event listeners
-        document.getElementById('logout-btn').addEventListener('click', logout);
-
-        console.log("🚀 Dashboard carregado");
     </script>
 </body>
 

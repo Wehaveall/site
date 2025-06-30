@@ -1,30 +1,30 @@
 module.exports = (req, res) => {
-    // Log para debug detalhado
-    console.log('🔍 === DEBUG DA API FIREBASE CONFIG ===');
+    // SUPER DEBUG - descobrir por que variáveis não são lidas
+    console.log('🔍 === SUPER DEBUG VARIÁVEIS AMBIENTE ===');
     console.log('🔍 NODE_ENV:', process.env.NODE_ENV);
-    console.log('🔍 Vercel Environment:', process.env.VERCEL_ENV);
+    console.log('🔍 VERCEL_ENV:', process.env.VERCEL_ENV);
+    console.log('🔍 VERCEL_REGION:', process.env.VERCEL_REGION);
     
-    // Listar TODAS as variáveis de ambiente para debug
-    console.log('🔍 Total de variáveis de ambiente:', Object.keys(process.env).length);
+    // Listar TUDO que tem no process.env
+    console.log('🔍 Total variáveis:', Object.keys(process.env).length);
+    console.log('🔍 Primeiras 10 variáveis:', Object.keys(process.env).slice(0, 10));
     
-    // Verificar especificamente as variáveis do Firebase
-    const firebaseVars = Object.keys(process.env).filter(key => key.includes('FIREBASE'));
-    console.log('🔍 Variáveis com FIREBASE:', firebaseVars);
+    // Buscar QUALQUER variável que tenha 'firebase' (case insensitive)
+    const anyFirebase = Object.keys(process.env).filter(key => key.toLowerCase().includes('firebase'));
+    console.log('🔍 QUALQUER coisa com firebase:', anyFirebase);
     
-    // Verificar as específicas que esperamos
-    const expectedVars = [
-        'NEXT_PUBLIC_FIREBASE_API_KEY',
-        'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN', 
-        'NEXT_PUBLIC_FIREBASE_PROJECT_ID',
-        'NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET',
-        'NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID',
-        'NEXT_PUBLIC_FIREBASE_APP_ID'
-    ];
+    // Buscar por NEXT_PUBLIC
+    const nextPublic = Object.keys(process.env).filter(key => key.startsWith('NEXT_PUBLIC'));
+    console.log('🔍 Variáveis NEXT_PUBLIC:', nextPublic);
     
-    expectedVars.forEach(varName => {
-        const value = process.env[varName];
-        console.log(`🔍 ${varName}: ${value ? 'DEFINIDA' : 'UNDEFINED'}`);
-    });
+    // Verificar as específicas
+    const testVars = {
+        'NEXT_PUBLIC_FIREBASE_API_KEY': process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+        'NEXT_PUBLIC_FIREBASE_PROJECT_ID': process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+        'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN': process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    };
+    
+    console.log('🔍 Teste das 3 principais:', JSON.stringify(testVars, null, 2));
 
     // Configuração APENAS via variáveis de ambiente (sem fallbacks hardcoded)
     const firebaseConfig = {

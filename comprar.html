@@ -115,12 +115,14 @@
                                 <div>PIX</div>
                             </button>
 
-                            <button class="payment-option" data-method="stripe">
+                            <!-- Stripe - Apenas para outras linguagens -->
+                            <button class="payment-option" data-method="stripe" id="stripe-option" style="display: none;">
                                 <i class="fa-solid fa-credit-card"></i>
                                 <div data-i18n="purchase.methods.stripe">Cartão de Crédito</div>
                             </button>
 
-                            <button class="payment-option" data-method="paypal">
+                            <!-- PayPal - Apenas para outras linguagens -->
+                            <button class="payment-option" data-method="paypal" id="paypal-option" style="display: none;">
                                 <i class="fa-brands fa-paypal"></i>
                                 <div>PayPal</div>
                             </button>
@@ -156,7 +158,7 @@
                             <strong data-i18n="purchase.userInfo.loggedAs">Logado como:</strong> <span id="user-email"></span>
                             <br>
                             <small data-i18n="purchase.userInfo.canProceed">Você pode prosseguir com o pagamento.</small>
-                        </div>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -232,12 +234,13 @@
     <script src="assets/js/config-loader.js"></script>
     <script src="assets/js/firebase.js"></script>
     <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/mercadopago-service.js"></script>
     <script src="assets/js/stripe-service.js"></script>
     <script src="assets/js/paypal-service.js"></script>
     <script src="assets/js/pix-modal.js"></script>
     <script src="assets/js/payment.js"></script>
 
-    <!-- Mercado Pago Integration Script -->
+    <!-- Payment Integration Script -->
     <script>
         // Variável global para o sistema de tradução
         let i18nSystem = null;
@@ -246,7 +249,7 @@
         // Inicialização da página
         document.addEventListener('DOMContentLoaded', async () => {
             console.log("Página de compra inicializada");
-            
+
             // ✅ PRIMEIRO: Aguardar sistema i18n estar pronto
             try {
                 let attempts = 0;
@@ -297,7 +300,7 @@
                     if (e.target === modal) {
                         if (modal.id === 'pix-modal') {
                             if (window.pixModal) {
-                                pixModal.hide();
+                            pixModal.hide();
                             }
                         } else {
                             modal.classList.add('hidden');
@@ -310,13 +313,21 @@
         // Função para atualizar métodos de pagamento baseado no idioma
         function updatePaymentMethodsBasedOnLanguage() {
             const pixOption = document.getElementById('pix-option');
+            const stripeOption = document.getElementById('stripe-option');
+            const paypalOption = document.getElementById('paypal-option');
             const paymentNotice = document.getElementById('payment-language-notice');
             const noticeText = document.getElementById('payment-notice-text');
             
             if (currentLanguage === 'pt-br') {
-                // PIX disponível apenas para português brasileiro
+                // Para pt-br: apenas PIX
                 if (pixOption) {
                     pixOption.style.display = 'block';
+                }
+                if (stripeOption) {
+                    stripeOption.style.display = 'none';
+                }
+                if (paypalOption) {
+                    paypalOption.style.display = 'none';
                 }
                 
                 // Esconder aviso
@@ -324,9 +335,15 @@
                     paymentNotice.style.display = 'none';
                 }
             } else {
-                // Esconder PIX para outros idiomas
+                // Para outras linguagens: PayPal e Stripe
                 if (pixOption) {
                     pixOption.style.display = 'none';
+                }
+                if (stripeOption) {
+                    stripeOption.style.display = 'block';
+                }
+                if (paypalOption) {
+                    paypalOption.style.display = 'block';
                 }
                 
                 // Mostrar aviso sobre limitações de pagamento
@@ -335,11 +352,11 @@
                     
                     // Mensagens traduzidas para o aviso
                     const notices = {
-                        'en': 'ℹ️ PIX payment is only available for customers in Brazil. Please use credit card or Mercado Pago.',
-                        'es': 'ℹ️ El pago PIX solo está disponible para clientes en Brasil. Use tarjeta de crédito o Mercado Pago.',
-                        'fr': 'ℹ️ Le paiement PIX n\'est disponible que pour les clients au Brésil. Utilisez une carte de crédit ou Mercado Pago.',
-                        'de': 'ℹ️ PIX-Zahlung ist nur für Kunden in Brasilien verfügbar. Verwenden Sie Kreditkarte oder Mercado Pago.',
-                        'it': 'ℹ️ Il pagamento PIX è disponibile solo per i clienti in Brasile. Usa carta di credito o Mercado Pago.'
+                        'en': 'ℹ️ PIX payment is only available for customers in Brazil. Please use credit card or PayPal.',
+                        'es': 'ℹ️ El pago PIX solo está disponible para clientes en Brasil. Use tarjeta de crédito o PayPal.',
+                        'fr': 'ℹ️ Le paiement PIX n\'est disponible que pour les clients au Brésil. Utilisez une carte de crédit ou PayPal.',
+                        'de': 'ℹ️ PIX-Zahlung ist nur für Kunden in Brasilien verfügbar. Verwenden Sie Kreditkarte oder PayPal.',
+                        'it': 'ℹ️ Il pagamento PIX è disponibile solo per i clienti in Brasile. Usa carta di credito o PayPal.'
                     };
                     
                     noticeText.textContent = notices[currentLanguage] || notices['en'];

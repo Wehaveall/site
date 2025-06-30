@@ -637,43 +637,28 @@
                     position: relative;
                     animation: slideIn 0.3s ease;
                 ">
-                    <div style="color: #28a745; font-size: 3rem; margin-bottom: 1rem;">
-                        🎉
+                    <div style="margin-bottom: 1rem;">
+                        <img src="assets/img/Atalho.png" alt="Logo Atalho" style="width: 80px; height: 80px; object-fit: contain;">
                     </div>
                     <div style="color: #333; line-height: 1.6; margin-bottom: 2rem;">
                         ${message}
                     </div>
-                    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                        <button onclick="window.location.href='login.html?message=account-created&email=${encodeURIComponent(email)}'" 
-                                style="
-                                    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-                                    color: white;
-                                    border: none;
-                                    padding: 0.75rem 1.5rem;
-                                    border-radius: 8px;
-                                    font-size: 1rem;
-                                    font-weight: 600;
-                                    cursor: pointer;
-                                    transition: transform 0.2s ease;
-                                "
-                                onmouseover="this.style.transform='scale(1.05)'"
-                                onmouseout="this.style.transform='scale(1)'">
-                            🔐 Ir para Login
-                        </button>
+                    <div style="display: flex; justify-content: center;">
                         <button onclick="document.getElementById('success-popup').remove()" 
                                 style="
-                                    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-                                    color: white;
+                                    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+                                    color: var(--text-dark);
                                     border: none;
-                                    padding: 0.75rem 1.5rem;
-                                    border-radius: 8px;
+                                    padding: 0.8rem 2rem;
+                                    border-radius: 10px;
                                     font-size: 1rem;
                                     font-weight: 600;
                                     cursor: pointer;
-                                    transition: transform 0.2s ease;
+                                    transition: all 0.3s ease;
+                                    box-shadow: 0 3px 12px rgba(219, 201, 173, 0.4);
                                 "
-                                onmouseover="this.style.transform='scale(1.05)'"
-                                onmouseout="this.style.transform='scale(1)'">
+                                onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 24px rgba(219, 201, 173, 0.6)'"
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 3px 12px rgba(219, 201, 173, 0.4)'">
                             ✅ Entendi
                         </button>
                     </div>
@@ -1171,25 +1156,22 @@
                             let successMessage = '';
                             if (i18nSystem) {
                                 successMessage = `
-                                    🎉 <strong>${i18nSystem.t('register.success.title')}</strong><br><br>
+                                    <strong>${i18nSystem.t('register.success.title')}</strong><br><br>
                                     
                                     📧 <strong>${i18nSystem.t('register.success.description')}:</strong><br>
-                                    <strong style="color: #dbc9ad;">${loginEmail}</strong><br><br>
+                                    <strong style="color: #000000;">${loginEmail}</strong><br><br>
                                     
                                     <div style="background: #d4edda; padding: 10px; border-radius: 6px; margin: 10px 0; border: 1px solid #c3e6cb;">
                                         <strong>✅ ${i18nSystem.t('register.success.subtitle')}</strong><br>
                                         ${i18nSystem.t('register.success.checkEmail')}
                                     </div>
-                                    
-                                    🌍 <strong>Idioma detectado:</strong> <strong style="color: #dbc9ad;">${languageNames[detectedLanguage] || detectedLanguage}</strong><br>
-                                    <strong>ID:</strong> ${result.uid || 'N/A'}
                                 `;
                             } else {
                                 // Fallback para português se não houver tradução
                                 successMessage = `
-                                    🎉 <strong>Conta criada com sucesso!</strong><br><br>
+                                    <strong>Conta criada com sucesso!</strong><br><br>
                                     📧 <strong>Email de verificação enviado para:</strong><br>
-                                    <strong style="color: #dbc9ad;">${loginEmail}</strong><br><br>
+                                    <strong style="color: #000000;">${loginEmail}</strong><br><br>
                                     <div style="background: #d4edda; padding: 10px; border-radius: 6px; margin: 10px 0;">
                                         <strong>✅ Verifique seu email para ativar sua conta</strong><br>
                                         Verifique sua caixa de entrada e spam

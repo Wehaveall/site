@@ -120,14 +120,14 @@
                                 <div>PIX</div>
                             </button>
 
-                            <button class="payment-option" data-method="cartao">
-                                <i class="fa-solid fa-credit-card"></i>
-                                <div data-i18n="purchase.methods.card">Cartão</div>
+                            <button class="payment-option" data-method="paypal">
+                                <i class="fa-brands fa-paypal"></i>
+                                <div data-i18n="purchase.methods.paypal">PayPal</div>
                             </button>
 
-                            <button class="payment-option" data-method="mercadopago">
-                                <i class="fa-solid fa-hand-holding-dollar"></i>
-                                <div>Mercado Pago - TESTE</div>
+                            <button class="payment-option" data-method="stripe">
+                                <i class="fa-brands fa-stripe"></i>
+                                <div data-i18n="purchase.methods.stripe">Stripe</div>
                             </button>
                         </div>
 
@@ -584,11 +584,11 @@
                     
                     // Mensagens traduzidas para o aviso
                     const notices = {
-                        'en': 'ℹ️ PIX payment is only available for customers in Brazil. Please use credit card or Mercado Pago.',
-                        'es': 'ℹ️ El pago PIX solo está disponible para clientes en Brasil. Use tarjeta de crédito o Mercado Pago.',
-                        'fr': 'ℹ️ Le paiement PIX n\'est disponible que pour les clients au Brésil. Utilisez une carte de crédit ou Mercado Pago.',
-                        'de': 'ℹ️ PIX-Zahlung ist nur für Kunden in Brasilien verfügbar. Verwenden Sie Kreditkarte oder Mercado Pago.',
-                        'it': 'ℹ️ Il pagamento PIX è disponibile solo per i clienti in Brasile. Usa carta di credito o Mercado Pago.'
+                        'en': 'ℹ️ PIX payment is only available for customers in Brazil. Please use PayPal or Stripe.',
+                        'es': 'ℹ️ El pago PIX solo está disponible para clientes en Brasil. Use PayPal o Stripe.',
+                        'fr': 'ℹ️ Le paiement PIX n\'est disponible que pour les clients au Brésil. Utilisez PayPal ou Stripe.',
+                        'de': 'ℹ️ PIX-Zahlung ist nur für Kunden in Brasilien verfügbar. Verwenden Sie PayPal oder Stripe.',
+                        'it': 'ℹ️ Il pagamento PIX è disponibile solo per i clienti in Brasile. Usa PayPal o Stripe.'
                     };
                     
                     noticeText.textContent = notices[currentLanguage] || notices['en'];

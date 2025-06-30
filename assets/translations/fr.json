@@ -125,7 +125,8 @@
     "price": "19,90 €",
     "license": "Licence annuelle",
     "methods": {
-      "card": "Carte"
+      "paypal": "PayPal",
+      "stripe": "Stripe"
     },
     "authRequired": {
       "title": "Attention:",

@@ -14,7 +14,7 @@
 </head>
 
 <body>
-    <!-- Header -->
+    <!-- Header Completo (igual ao index.html) -->
     <header class="header">
         <div class="navbar">
             <div class="logo">
@@ -24,10 +24,19 @@
                 </a>
             </div>
             <nav class="nav-menu">
-                <ul class="nav-links">
+                <ul class="nav-links" id="nav-links">
                     <!-- O dropdown de idiomas será inserido aqui automaticamente -->
-                    <li><span id="user-name" style="color: #007bff;" data-i18n="dashboard.loading">Carregando...</span></li>
-                    <li><button id="logout-btn" class="nav-link" style="background: none; border: none; cursor: pointer; color: #dc3545;" data-i18n="dashboard.logout">Sair</button></li>
+                    <li><a href="index.html#features" class="nav-link" data-i18n="header.features">Recursos</a></li>
+                    <li><a href="tutoriais.html" class="nav-link" data-i18n="header.tutorials">Tutoriais</a></li>
+                    <li><a href="index.html#downloads" class="nav-link nav-link-multiline" data-i18n="header.downloads">Downloads de Bibliotecas</a></li>
+                    <!-- Links dinâmicos baseados na autenticação -->
+                    <li id="nav-register" style="display: none;"><a href="register.html" class="nav-link" data-i18n="header.register">Cadastro</a></li>
+                    <li id="nav-login" style="display: none;"><a href="login.html" class="nav-link" data-i18n="header.login">Entrar</a></li>
+                    <li id="nav-user-info" style="display: none;">
+                        <a href="dashboard.html" class="nav-link" style="color: #28a745; font-weight: 600;" id="nav-user-name" data-i18n="dashboard.loading">Carregando...</a>
+                    </li>
+                    <li id="nav-logout" style="display: none;"><a href="#" class="nav-link" onclick="logout()" data-i18n="dashboard.logout">Sair</a></li>
+                    <li><a href="comprar.html" class="nav-link btn-primary" data-i18n="header.buy">Comprar</a></li>
                 </ul>
             </nav>
         </div>
@@ -75,6 +84,7 @@
     <script>
         let currentUser = null;
         let customerData = null;
+        let currentUserData = null;
         let i18nSystem = null;
 
         // Função para mostrar mensagens
@@ -84,6 +94,24 @@
 
         function showError(message) {
             alert('❌ ' + message);
+        }
+
+        // Função para logout
+        async function logout() {
+            try {
+                // Usar a instância global do auth se disponível
+                if (window.auth) {
+                    await window.auth.signOut();
+                } else {
+                    await firebase.auth().signOut();
+                }
+                console.log('✅ Logout realizado com sucesso');
+                currentUserData = null;
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('❌ Erro no logout:', error);
+                showError('Erro ao fazer logout: ' + error.message);
+            }
         }
 
         // Função para formatar data
@@ -126,6 +154,147 @@
                 hour: '2-digit',
                 minute: '2-digit'
             });
+        }
+
+        // Função para buscar dados do usuário no Firestore
+        async function loadUserData(uid) {
+            try {
+                console.log('📊 Buscando dados do usuário:', uid);
+                
+                // Usar a instância global do db se disponível
+                const firestore = window.db || firebase.firestore();
+                
+                // Buscar dados do usuário
+                const userDoc = await firestore.collection('users').doc(uid).get();
+                
+                if (userDoc.exists) {
+                    currentUserData = userDoc.data();
+                    console.log('✅ Dados do usuário carregados:', currentUserData);
+                    return currentUserData;
+                } else {
+                    console.log('⚠️ Documento do usuário não encontrado');
+                    // Tentar buscar por email
+                    const emailQuery = await firestore.collection('users')
+                        .where('email', '==', currentUser.email)
+                        .limit(1)
+                        .get();
+                    
+                    if (!emailQuery.empty) {
+                        currentUserData = emailQuery.docs[0].data();
+                        console.log('✅ Dados encontrados por email:', currentUserData);
+                        return currentUserData;
+                    }
+                }
+                
+                return null;
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados do usuário:', error);
+                return null;
+            }
+        }
+
+        // Função para atualizar o menu baseado no status de autenticação
+        async function updateNavMenu(user) {
+            console.log('🔧 === INÍCIO DA ATUALIZAÇÃO DO MENU ===');
+            console.log('👤 Usuário recebido:', user ? user.email : 'null/undefined');
+            
+            const navRegister = document.getElementById('nav-register');
+            const navLogin = document.getElementById('nav-login');
+            const navUserInfo = document.getElementById('nav-user-info');
+            const navUserName = document.getElementById('nav-user-name');
+            const navLogout = document.getElementById('nav-logout');
+
+            // Verificar se todos os elementos foram encontrados
+            console.log('🔍 Elementos encontrados:');
+            console.log('  - nav-register:', navRegister ? 'Encontrado' : 'NÃO ENCONTRADO');
+            console.log('  - nav-login:', navLogin ? 'Encontrado' : 'NÃO ENCONTRADO');
+            console.log('  - nav-user-info:', navUserInfo ? 'Encontrado' : 'NÃO ENCONTRADO');
+            console.log('  - nav-user-name:', navUserName ? 'Encontrado' : 'NÃO ENCONTRADO');
+            console.log('  - nav-logout:', navLogout ? 'Encontrado' : 'NÃO ENCONTRADO');
+
+            if (user) {
+                console.log('✅ USUÁRIO LOGADO - Configurando menu para usuário autenticado');
+                
+                // Usuário logado: esconder Cadastro/Entrar, mostrar Nome/Sair
+                if (navRegister) {
+                    navRegister.style.display = 'none';
+                    console.log('  ✅ Cadastro escondido');
+                }
+                if (navLogin) {
+                    navLogin.style.display = 'none';
+                    console.log('  ✅ Login escondido');
+                }
+                if (navUserInfo) {
+                    navUserInfo.style.display = 'block';
+                    console.log('  ✅ Info do usuário mostrada');
+                }
+                if (navLogout) {
+                    navLogout.style.display = 'block';
+                    console.log('  ✅ Logout mostrado');
+                }
+                
+                // Carregar dados do usuário (COM CACHE)
+                let userData = currentUserData;
+                if (!userData || currentUserData?.uid !== user.uid) {
+                    console.log('📊 Carregando dados do usuário do Firestore...');
+                    userData = await loadUserData(user.uid);
+                    currentUserData = userData; // Cache dos dados
+                } else {
+                    console.log('⚡ Usando dados em cache do usuário');
+                }
+                
+                // Definir nome a ser exibido
+                let displayName = 'Usuário';
+                if (userData && userData.Nome) {
+                    displayName = userData.Nome;
+                    console.log('  📛 Nome obtido do Firestore:', displayName);
+                } else if (user.displayName) {
+                    displayName = user.displayName;
+                    console.log('  📛 Nome obtido do Firebase Auth:', displayName);
+                } else if (user.email) {
+                    // Usar primeira parte do email como fallback
+                    displayName = user.email.split('@')[0];
+                    console.log('  📛 Nome obtido do email:', displayName);
+                }
+                
+                // Limitar tamanho do nome no menu
+                if (displayName.length > 15) {
+                    displayName = displayName.substring(0, 12) + '...';
+                    console.log('  ✂️ Nome truncado para:', displayName);
+                }
+                
+                if (navUserName) {
+                    navUserName.textContent = displayName;
+                    navUserName.title = userData?.Nome || user.email || 'Usuário'; // Tooltip com nome completo
+                    console.log('  ✅ Nome definido no elemento:', displayName);
+                }
+                
+                console.log('✅ Menu atualizado para usuário logado:', user.email, '| Nome:', displayName);
+            } else {
+                console.log('❌ USUÁRIO DESLOGADO - Configurando menu para usuário não autenticado');
+                
+                // Usuário deslogado: mostrar Cadastro/Entrar, esconder Nome/Sair
+                if (navRegister) {
+                    navRegister.style.display = 'block';
+                    console.log('  ✅ Cadastro mostrado');
+                }
+                if (navLogin) {
+                    navLogin.style.display = 'block';
+                    console.log('  ✅ Login mostrado');
+                }
+                if (navUserInfo) {
+                    navUserInfo.style.display = 'none';
+                    console.log('  ✅ Info do usuário escondida');
+                }
+                if (navLogout) {
+                    navLogout.style.display = 'none';
+                    console.log('  ✅ Logout escondido');
+                }
+                currentUserData = null;
+                console.log('ℹ️ Menu atualizado para usuário deslogado');
+            }
+            
+            console.log('🔧 === FIM DA ATUALIZAÇÃO DO MENU ===');
         }
 
         // Função para carregar dados do cliente
@@ -251,9 +420,6 @@
             
             const noDataText = i18nSystem ? i18nSystem.t('dashboard.noData') : '-';
             
-            // Dados do usuário no header
-            document.getElementById('user-name').textContent = customerData.Nome || noDataText;
-            
             // Informações da conta - usando os campos exatos do Firebase
             document.getElementById('account-name').textContent = customerData.Nome || noDataText;
             document.getElementById('account-email').textContent = customerData.email || currentUser.email;
@@ -270,24 +436,6 @@
             }
             
             console.log('✅ Interface atualizada com sucesso');
-        }
-
-        // Função para fazer logout
-        async function logout() {
-            try {
-                // Usar a instância global do auth que foi configurada
-                if (window.auth) {
-                    await window.auth.signOut();
-                } else {
-                    // Fallback usando firebase global
-                    await firebase.auth().signOut();
-                }
-                console.log('✅ Logout realizado');
-                window.location.href = 'index.html';
-            } catch (error) {
-                console.error('❌ Erro no logout:', error);
-                showError('Erro ao fazer logout: ' + error.message);
-            }
         }
 
         // Configurar event listeners para o dropdown automático do i18n
@@ -344,6 +492,9 @@
                         
                         currentUser = user;
                         
+                        // Atualizar menu dinâmico
+                        await updateNavMenu(user);
+                        
                         // Carrega dados do cliente
                         await loadCustomerData(user.uid);
                         
@@ -352,9 +503,6 @@
                         window.location.href = 'login.html';
                     }
                 });
-
-                // Event listeners
-                document.getElementById('logout-btn').addEventListener('click', logout);
                 
             } catch (error) {
                 console.error("❌ Falha crítica na inicialização do Firebase no dashboard:", error);

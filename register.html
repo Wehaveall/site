@@ -644,7 +644,7 @@
                         ${message}
                     </div>
                     <div style="display: flex; justify-content: center;">
-                        <button onclick="document.getElementById('success-popup').remove()" 
+                        <button onclick="document.getElementById('success-popup').remove(); window.location.href='login.html?message=account-created&email=${encodeURIComponent(email)}'" 
                                 style="
                                     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
                                     color: var(--text-dark);

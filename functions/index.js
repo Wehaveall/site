@@ -415,9 +415,39 @@ exports.sendCustomEmailVerification = onCall({
 
     const emailTemplate = {
       "pt-br": {
-        subject: "🚀 Atalho - Confirme seu email para ativar sua conta",
-        html: `<div>Email de verificação do Atalho</div>
-               <p>Clique no link: ${verificationLink}</p>`,
+        subject: "Atalho - Confirme seu email para ativar sua conta",
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 20px;">
+            <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+              <div style="text-align: center; margin-bottom: 30px;">
+                <img src="https://atalho.me/assets/img/Atalho.png" alt="Logo Atalho" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px;">
+                <h1 style="color: #dbc9ad; margin: 0;">Atalho</h1>
+                <p style="color: #666; margin: 5px 0 0 0;">Automação e Produtividade</p>
+              </div>
+              
+              <h2 style="color: #333; text-align: center;">✅ Confirme seu email para ativar sua conta</h2>
+              
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${verificationLink}" 
+                   style="background: linear-gradient(135deg, #dbc9ad 0%, #c8b298 100%); 
+                          color: #333; 
+                          padding: 15px 30px; 
+                          text-decoration: none; 
+                          border-radius: 8px; 
+                          font-weight: bold; 
+                          font-size: 16px;
+                          display: inline-block;">
+                  ✅ Confirmar Email
+                </a>
+              </div>
+              
+              <p style="color: #888; font-size: 14px; line-height: 1.5;">
+                Se o botão não funcionar, copie e cole este link no seu navegador:<br>
+                <a href="${verificationLink}" style="color: #dbc9ad; word-break: break-all;">${verificationLink}</a>
+              </p>
+            </div>
+          </div>
+        `,
       },
     };
 

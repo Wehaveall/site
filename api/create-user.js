@@ -104,12 +104,13 @@ export default async function handler(req, res) {
       await db.collection('mail').add({
           to: [email],
           message: {
-              subject: '🚀 Atalho - Confirme seu email para ativar sua conta',
+              subject: 'Atalho - Confirme seu email para ativar sua conta',
               html: `
                   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 20px;">
                     <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                       <div style="text-align: center; margin-bottom: 30px;">
-                        <h1 style="color: #dbc9ad; margin: 0;">🚀 Atalho</h1>
+                        <img src="https://atalho.me/assets/img/Atalho.png" alt="Logo Atalho" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px;">
+                        <h1 style="color: #dbc9ad; margin: 0;">Atalho</h1>
                         <p style="color: #666; margin: 5px 0 0 0;">Automação e Produtividade</p>
                       </div>
                       

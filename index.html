@@ -253,51 +253,100 @@
 
         // Função para atualizar o menu baseado no status de autenticação
         async function updateNavMenu(user) {
+            console.log('🔧 === INÍCIO DA ATUALIZAÇÃO DO MENU ===');
+            console.log('👤 Usuário recebido:', user ? user.email : 'null/undefined');
+            
             const navRegister = document.getElementById('nav-register');
             const navLogin = document.getElementById('nav-login');
             const navUserInfo = document.getElementById('nav-user-info');
             const navUserName = document.getElementById('nav-user-name');
             const navLogout = document.getElementById('nav-logout');
 
+            // Verificar se todos os elementos foram encontrados
+            console.log('🔍 Elementos encontrados:');
+            console.log('  - nav-register:', navRegister ? 'Encontrado' : 'NÃO ENCONTRADO');
+            console.log('  - nav-login:', navLogin ? 'Encontrado' : 'NÃO ENCONTRADO');
+            console.log('  - nav-user-info:', navUserInfo ? 'Encontrado' : 'NÃO ENCONTRADO');
+            console.log('  - nav-user-name:', navUserName ? 'Encontrado' : 'NÃO ENCONTRADO');
+            console.log('  - nav-logout:', navLogout ? 'Encontrado' : 'NÃO ENCONTRADO');
+
             if (user) {
+                console.log('✅ USUÁRIO LOGADO - Configurando menu para usuário autenticado');
+                
                 // Usuário logado: esconder Cadastro/Entrar, mostrar Nome/Sair
-                navRegister.style.display = 'none';
-                navLogin.style.display = 'none';
-                navUserInfo.style.display = 'block';
-                navLogout.style.display = 'block';
+                if (navRegister) {
+                    navRegister.style.display = 'none';
+                    console.log('  ✅ Cadastro escondido');
+                }
+                if (navLogin) {
+                    navLogin.style.display = 'none';
+                    console.log('  ✅ Login escondido');
+                }
+                if (navUserInfo) {
+                    navUserInfo.style.display = 'block';
+                    console.log('  ✅ Info do usuário mostrada');
+                }
+                if (navLogout) {
+                    navLogout.style.display = 'block';
+                    console.log('  ✅ Logout mostrado');
+                }
                 
                 // Carregar dados do usuário
+                console.log('📊 Carregando dados do usuário...');
                 const userData = await loadUserData(user.uid);
                 
                 // Definir nome a ser exibido
                 let displayName = 'Usuário';
                 if (userData && userData.Nome) {
                     displayName = userData.Nome;
+                    console.log('  📛 Nome obtido do Firestore:', displayName);
                 } else if (user.displayName) {
                     displayName = user.displayName;
+                    console.log('  📛 Nome obtido do Firebase Auth:', displayName);
                 } else if (user.email) {
                     // Usar primeira parte do email como fallback
                     displayName = user.email.split('@')[0];
+                    console.log('  📛 Nome obtido do email:', displayName);
                 }
                 
                 // Limitar tamanho do nome no menu
                 if (displayName.length > 15) {
                     displayName = displayName.substring(0, 12) + '...';
+                    console.log('  ✂️ Nome truncado para:', displayName);
                 }
                 
-                navUserName.textContent = displayName;
-                navUserName.title = userData?.Nome || user.email || 'Usuário'; // Tooltip com nome completo
+                if (navUserName) {
+                    navUserName.textContent = displayName;
+                    navUserName.title = userData?.Nome || user.email || 'Usuário'; // Tooltip com nome completo
+                    console.log('  ✅ Nome definido no elemento:', displayName);
+                }
                 
                 console.log('✅ Menu atualizado para usuário logado:', user.email, '| Nome:', displayName);
             } else {
+                console.log('❌ USUÁRIO DESLOGADO - Configurando menu para usuário não autenticado');
+                
                 // Usuário deslogado: mostrar Cadastro/Entrar, esconder Nome/Sair
-                navRegister.style.display = 'block';
-                navLogin.style.display = 'block';
-                navUserInfo.style.display = 'none';
-                navLogout.style.display = 'none';
+                if (navRegister) {
+                    navRegister.style.display = 'block';
+                    console.log('  ✅ Cadastro mostrado');
+                }
+                if (navLogin) {
+                    navLogin.style.display = 'block';
+                    console.log('  ✅ Login mostrado');
+                }
+                if (navUserInfo) {
+                    navUserInfo.style.display = 'none';
+                    console.log('  ✅ Info do usuário escondida');
+                }
+                if (navLogout) {
+                    navLogout.style.display = 'none';
+                    console.log('  ✅ Logout escondido');
+                }
                 currentUserData = null;
                 console.log('ℹ️ Menu atualizado para usuário deslogado');
             }
+            
+            console.log('🔧 === FIM DA ATUALIZAÇÃO DO MENU ===');
         }
 
         // Inicialização principal com Firebase
@@ -309,15 +358,58 @@
                 const { auth, db, functions } = await getFirebaseServices();
                 console.log("✅ Serviços do Firebase prontos para o menu dinâmico");
                 
+                // Verificar imediatamente se há usuário logado
+                console.log('🔍 Verificando usuário atual...');
+                const currentUser = auth.currentUser;
+                console.log('👤 Usuário atual:', currentUser ? currentUser.email : 'Nenhum');
+                
                 // Listener para mudanças no estado de autenticação
                 auth.onAuthStateChanged(async function(user) {
+                    console.log('🔄 onAuthStateChanged disparado:', user ? user.email : 'Usuário deslogado');
                     await updateNavMenu(user);
+                });
+                
+                // Forçar verificação após 2 segundos (caso o onAuthStateChanged não dispare imediatamente)
+                setTimeout(async () => {
+                    console.log('⏰ Verificação de timeout - Estado atual do Firebase Auth:');
+                    const timeoutUser = auth.currentUser;
+                    console.log('👤 Usuário no timeout:', timeoutUser ? timeoutUser.email : 'Nenhum');
+                    
+                    if (timeoutUser) {
+                        console.log('🔄 Forçando atualização do menu via timeout...');
+                        await updateNavMenu(timeoutUser);
+                    }
+                }, 2000);
+                
+                // Também verificar quando a página fica visível (caso o usuário mude de aba)
+                document.addEventListener('visibilitychange', async function() {
+                    if (!document.hidden) {
+                        console.log('👁️ Página ficou visível - verificando autenticação...');
+                        const visibilityUser = auth.currentUser;
+                        if (visibilityUser) {
+                            console.log('🔄 Atualizando menu após página ficar visível...');
+                            await updateNavMenu(visibilityUser);
+                        }
+                    }
                 });
                 
             } catch (error) {
                 console.error("❌ Falha na inicialização do Firebase no menu:", error);
                 // Menu permanece estático se Firebase falhar
                 console.warn("⚠️ Menu funcionará em modo estático (sem autenticação dinâmica)");
+                
+                // Tentar verificação manual mesmo com erro
+                setTimeout(() => {
+                    console.log('🆘 Tentativa de verificação manual após erro...');
+                    try {
+                        if (firebase && firebase.auth && firebase.auth().currentUser) {
+                            console.log('🔄 Usuário encontrado via verificação manual');
+                            updateNavMenu(firebase.auth().currentUser);
+                        }
+                    } catch (manualError) {
+                        console.error('❌ Verificação manual também falhou:', manualError);
+                    }
+                }, 3000);
             }
         });
 
@@ -357,7 +449,68 @@
             getStats: () => window.atalhoI18n?.getTranslationStats()
         };
 
+        // 🔧 FUNÇÕES DE DEBUG PARA AUTENTICAÇÃO
+        window.debugAuth = {
+            checkCurrentUser: () => {
+                console.log('🔍 === VERIFICAÇÃO MANUAL DE AUTENTICAÇÃO ===');
+                console.log('🔥 Firebase inicializado:', !!firebase);
+                console.log('🔐 Auth disponível:', !!firebase?.auth);
+                
+                if (firebase?.auth) {
+                    const user = firebase.auth().currentUser;
+                    console.log('👤 Usuário atual:', user ? user.email : 'Nenhum');
+                    console.log('📊 Dados completos do usuário:', user);
+                    return user;
+                }
+                return null;
+            },
+            forceMenuUpdate: async () => {
+                console.log('🔄 === FORÇANDO ATUALIZAÇÃO DO MENU ===');
+                const user = window.debugAuth.checkCurrentUser();
+                await updateNavMenu(user);
+                console.log('✅ Atualização forçada concluída');
+            },
+            checkMenuElements: () => {
+                console.log('🔍 === VERIFICAÇÃO DOS ELEMENTOS DO MENU ===');
+                const elements = {
+                    'nav-register': document.getElementById('nav-register'),
+                    'nav-login': document.getElementById('nav-login'),
+                    'nav-user-info': document.getElementById('nav-user-info'),
+                    'nav-user-name': document.getElementById('nav-user-name'),
+                    'nav-logout': document.getElementById('nav-logout')
+                };
+                
+                for (const [id, element] of Object.entries(elements)) {
+                    console.log(`  ${id}:`, element ? 'Encontrado' : 'NÃO ENCONTRADO');
+                    if (element) {
+                        console.log(`    Display: ${element.style.display || 'default'}`);
+                        console.log(`    Conteúdo: "${element.textContent}"`);
+                    }
+                }
+                return elements;
+            },
+            simulateLogin: async () => {
+                console.log('🧪 === SIMULANDO LOGIN PARA TESTE ===');
+                const mockUser = {
+                    uid: 'test-uid',
+                    email: 'test@example.com',
+                    displayName: 'Usuário Teste'
+                };
+                console.log('👤 Usuário simulado:', mockUser);
+                await updateNavMenu(mockUser);
+                console.log('✅ Simulação de login concluída');
+            },
+            simulateLogout: async () => {
+                console.log('🧪 === SIMULANDO LOGOUT PARA TESTE ===');
+                await updateNavMenu(null);
+                console.log('✅ Simulação de logout concluída');
+            }
+        };
+
         console.log('🎮 Use testI18n.changeToEnglish() para testar idiomas no console!');
+        console.log('🔧 Use debugAuth.checkCurrentUser() para verificar autenticação!');
+        console.log('🔧 Use debugAuth.forceMenuUpdate() para forçar atualização do menu!');
+        console.log('🔧 Use debugAuth.checkMenuElements() para verificar elementos do menu!');
     </script>
 </body>
 

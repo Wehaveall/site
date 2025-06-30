@@ -850,9 +850,18 @@ body {
 }
 
 .payment-section h2 {
-    margin-bottom: 2rem;
-    font-size: 1.5rem;
-    color: var(--text-dark);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.payment-option-icon {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+    margin-bottom: 0.5rem;
+    font-size: 32px; /* For font-based icons like Font Awesome */
+    line-height: 1;
+    color: #555;
 }
 
 .payment-grid {

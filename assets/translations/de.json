@@ -110,6 +110,58 @@
       "redirecting": "Weiterleitung zur Anmeldung..."
     }
   },
+  "purchase": {
+    "title": "Atalho kaufen - Optimieren Sie Ihre Produktivität",
+    "subtitle": "Optimieren Sie Ihre Produktivität heute",
+    "paymentMethods": "Zahlungsmethoden",
+    "features": {
+      "textExpansion": "Automatische Texterweiterung",
+      "databases": "Anpassbare Datenbanken",
+      "formatting": "Erweiterte Formatierung",
+      "wordIntegration": "Word-Integration",
+      "lifetimeUpdates": "Lebenslange Updates"
+    },
+    "price": "19,90 €",
+    "license": "Jahreslizenz",
+    "methods": {
+      "card": "Karte"
+    },
+    "authRequired": {
+      "title": "Achtung:",
+      "message": "Sie müssen angemeldet sein, um eine Zahlung vorzunehmen.",
+      "login": "Hier klicken zum Anmelden",
+      "or": "oder",
+      "register": "registrieren"
+    },
+    "userInfo": {
+      "loggedAs": "Angemeldet als:",
+      "canProceed": "Sie können mit der Zahlung fortfahren."
+    },
+    "loading": "Verarbeitung...",
+    "success": {
+      "title": "Erfolg!",
+      "message": "Operation erfolgreich abgeschlossen."
+    },
+    "error": {
+      "title": "Fehler",
+      "message": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+      "close": "Schließen"
+    }
+  },
+  "nav": {
+    "home": "Startseite",
+    "features": "Funktionen",
+    "register": "Registrieren",
+    "login": "Anmelden",
+    "dashboard": "Dashboard",
+    "logout": "Abmelden"
+  },
+  "footer": {
+    "copyright": "© 2025 Atalho App. Alle Rechte vorbehalten.",
+    "privacy": "Datenschutzrichtlinie",
+    "terms": "Nutzungsbedingungen",
+    "home": "Startseite"
+  },
   "common": {
     "loading": "Laden...",
     "error": "Fehler",

@@ -110,6 +110,58 @@
       "redirecting": "Redirecionando para o login..."
     }
   },
+  "purchase": {
+    "title": "Comprar Atalho - Otimize sua produtividade",
+    "subtitle": "Otimize sua produtividade hoje mesmo",
+    "paymentMethods": "Formas de Pagamento",
+    "features": {
+      "textExpansion": "Expansão de texto automática",
+      "databases": "Bancos de dados personalizáveis",
+      "formatting": "Formatação avançada",
+      "wordIntegration": "Integração com Word",
+      "lifetimeUpdates": "Atualizações vitalícias"
+    },
+    "price": "R$ 49,90",
+    "license": "Licença anual",
+    "methods": {
+      "card": "Cartão"
+    },
+    "authRequired": {
+      "title": "Atenção:",
+      "message": "Você precisa estar logado para fazer um pagamento.",
+      "login": "Clique aqui para fazer login",
+      "or": "ou",
+      "register": "cadastre-se"
+    },
+    "userInfo": {
+      "loggedAs": "Logado como:",
+      "canProceed": "Você pode prosseguir com o pagamento."
+    },
+    "loading": "Processando...",
+    "success": {
+      "title": "Sucesso!",
+      "message": "Operação realizada com sucesso."
+    },
+    "error": {
+      "title": "Erro",
+      "message": "Ocorreu um erro. Tente novamente.",
+      "close": "Fechar"
+    }
+  },
+  "nav": {
+    "home": "Início",
+    "features": "Recursos",
+    "register": "Cadastro",
+    "login": "Entrar",
+    "dashboard": "Dashboard",
+    "logout": "Sair"
+  },
+  "footer": {
+    "copyright": "© 2025 Atalho App. Todos os direitos reservados.",
+    "privacy": "Política de Privacidade",
+    "terms": "Termos de Uso",
+    "home": "Início"
+  },
   "common": {
     "loading": "Carregando...",
     "error": "Erro",

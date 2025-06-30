@@ -110,6 +110,58 @@
       "redirecting": "Redirecting to login..."
     }
   },
+  "purchase": {
+    "title": "Buy Atalho - Optimize your productivity",
+    "subtitle": "Optimize your productivity today",
+    "paymentMethods": "Payment Methods",
+    "features": {
+      "textExpansion": "Automatic text expansion",
+      "databases": "Customizable databases",
+      "formatting": "Advanced formatting",
+      "wordIntegration": "Word integration",
+      "lifetimeUpdates": "Lifetime updates"
+    },
+    "price": "$19.90",
+    "license": "Annual license",
+    "methods": {
+      "card": "Card"
+    },
+    "authRequired": {
+      "title": "Attention:",
+      "message": "You need to be logged in to make a payment.",
+      "login": "Click here to login",
+      "or": "or",
+      "register": "sign up"
+    },
+    "userInfo": {
+      "loggedAs": "Logged in as:",
+      "canProceed": "You can proceed with payment."
+    },
+    "loading": "Processing...",
+    "success": {
+      "title": "Success!",
+      "message": "Operation completed successfully."
+    },
+    "error": {
+      "title": "Error",
+      "message": "An error occurred. Please try again.",
+      "close": "Close"
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "features": "Features",
+    "register": "Register",
+    "login": "Login",
+    "dashboard": "Dashboard",
+    "logout": "Logout"
+  },
+  "footer": {
+    "copyright": "© 2025 Atalho App. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use",
+    "home": "Home"
+  },
   "common": {
     "loading": "Loading...",
     "error": "Error",

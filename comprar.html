@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Atalho - Adquira sua licença e otimize sua produtividade" />
-    <title>Atalho - Comprar</title>
+    <title data-i18n="purchase.title">Comprar Atalho - Otimize sua produtividade</title>
 
     <!-- Fonts and Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,6 +23,10 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <link rel="icon" href="assets/img/Atalho.png" type="image/png">
+    <link rel="apple-touch-icon" href="assets/img/Atalho.png">
+    <link rel="shortcut icon" href="assets/img/Atalho.png" type="image/x-icon">
 </head>
 
 <body class="light-theme">
@@ -37,13 +41,13 @@
             </div>
             <nav class="nav-menu">
                 <ul class="nav-links" id="nav-links">
-                    <li><a href="index.html" class="nav-link">Início</a></li>
-                    <li><a href="index.html#features" class="nav-link">Recursos</a></li>
+                    <li><a href="index.html" class="nav-link" data-i18n="nav.home">Início</a></li>
+                    <li><a href="index.html#features" class="nav-link" data-i18n="nav.features">Recursos</a></li>
                     <!-- Links dinâmicos baseados na autenticação -->
-                    <li id="nav-register"><a href="register.html" class="nav-link">Cadastro</a></li>
-                    <li id="nav-login"><a href="login.html" class="nav-link">Entrar</a></li>
-                    <li id="nav-dashboard" style="display: none;"><a href="dashboard.html" class="nav-link">Dashboard</a></li>
-                    <li id="nav-logout" style="display: none;"><a href="#" class="nav-link" onclick="logout()">Sair</a></li>
+                    <li id="nav-register"><a href="register.html" class="nav-link" data-i18n="nav.register">Cadastro</a></li>
+                    <li id="nav-login"><a href="login.html" class="nav-link" data-i18n="nav.login">Entrar</a></li>
+                    <li id="nav-dashboard" style="display: none;"><a href="dashboard.html" class="nav-link" data-i18n="nav.dashboard">Dashboard</a></li>
+                    <li id="nav-logout" style="display: none;"><a href="#" class="nav-link" onclick="logout()" data-i18n="nav.logout">Sair</a></li>
                 </ul>
             </nav>
         </div>
@@ -55,7 +59,7 @@
             <div class="hero-content-centered">
                 <h1 class="hero-title">
                     Atalho
-                    <span class="hero-subtitle">Otimize sua produtividade hoje mesmo</span>
+                    <span class="hero-subtitle" data-i18n="purchase.subtitle">Otimize sua produtividade hoje mesmo</span>
                 </h1>
 
                 <div class="purchase-grid">
@@ -64,49 +68,56 @@
                         <ul class="features-list">
                             <li>
                                 <i class="fa-solid fa-check"></i>
-                                <span>Expansão de texto automática</span>
+                                <span data-i18n="purchase.features.textExpansion">Expansão de texto automática</span>
                             </li>
                             <li>
                                 <i class="fa-solid fa-check"></i>
-                                <span>Bancos de dados personalizáveis</span>
+                                <span data-i18n="purchase.features.databases">Bancos de dados personalizáveis</span>
                             </li>
                             <li>
                                 <i class="fa-solid fa-check"></i>
-                                <span>Formatação avançada</span>
+                                <span data-i18n="purchase.features.formatting">Formatação avançada</span>
                             </li>
                             <li>
                                 <i class="fa-solid fa-check"></i>
-                                <span>Integração com Word</span>
+                                <span data-i18n="purchase.features.wordIntegration">Integração com Word</span>
                             </li>
                             <li>
                                 <i class="fa-solid fa-check"></i>
-                                <span>Atualizações vitalícias</span>
+                                <span data-i18n="purchase.features.lifetimeUpdates">Atualizações vitalícias</span>
                             </li>
                         </ul>
                         <div class="price-box">
-                            <span class="price">R$ 49,90</span>
-                            <span class="license">Licença anual</span>
+                            <span class="price" data-i18n="purchase.price">R$ 49,90</span>
+                            <span class="license" data-i18n="purchase.license">Licença anual</span>
                         </div>
                     </div>
 
                     <!-- Payment Section -->
                     <div class="payment-section">
-                        <h2>Formas de Pagamento</h2>
+                        <h2 data-i18n="purchase.paymentMethods">Formas de Pagamento</h2>
+                        
+                        <!-- Auth Warning -->
                         <div id="auth-warning" class="auth-warning" style="display: none; background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; color: #856404;">
                             <i class="fas fa-exclamation-triangle"></i>
-                            <strong>Atenção:</strong> Você precisa estar logado para fazer um pagamento. 
-                            <a href="login.html" style="color: #856404; text-decoration: underline;">Clique aqui para fazer login</a> ou 
-                            <a href="register.html" style="color: #856404; text-decoration: underline;">cadastre-se</a>.
+                            <strong data-i18n="purchase.authRequired.title">Atenção:</strong> 
+                            <span data-i18n="purchase.authRequired.message">Você precisa estar logado para fazer um pagamento.</span>
+                            <a href="login.html" style="color: #856404; text-decoration: underline;" data-i18n="purchase.authRequired.login">Clique aqui para fazer login</a> 
+                            <span data-i18n="purchase.authRequired.or">ou</span>
+                            <a href="register.html" style="color: #856404; text-decoration: underline;" data-i18n="purchase.authRequired.register">cadastre-se</a>.
                         </div>
-                        <div class="payment-grid">
-                            <button class="payment-option" data-method="pix">
+
+                        <!-- Payment Grid -->
+                        <div class="payment-grid" id="payment-grid">
+                            <!-- PIX - Apenas para pt-br -->
+                            <button class="payment-option" data-method="pix" id="pix-option" style="display: none;">
                                 <i class="fa-solid fa-qrcode"></i>
                                 <div>PIX</div>
                             </button>
 
                             <button class="payment-option" data-method="cartao">
                                 <i class="fa-solid fa-credit-card"></i>
-                                <div>Cartão</div>
+                                <div data-i18n="purchase.methods.card">Cartão</div>
                             </button>
 
                             <button class="payment-option" data-method="mercadopago">
@@ -115,18 +126,24 @@
                             </button>
                         </div>
 
+                        <!-- Language-specific payment notice -->
+                        <div id="payment-language-notice" class="payment-notice" style="display: none; background: #e7f3ff; border: 1px solid #b3d9ff; border-radius: 8px; padding: 0.8rem; margin-top: 1rem; color: #004085; font-size: 0.9rem;">
+                            <i class="fas fa-info-circle"></i>
+                            <span id="payment-notice-text"></span>
+                        </div>
+
                         <!-- Mercado Pago Button Container -->
                         <div id="mercado-pago-button-container" class="hidden mt-4">
                             <!-- Mercado Pago button will be dynamically inserted here -->
                         </div>
 
-                        <!-- Informações do usuário logado -->
+                        <!-- User Info -->
                         <div id="user-info" class="user-info" style="display: none; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; padding: 1rem; margin-top: 1rem; color: #155724;">
                             <i class="fas fa-user-check"></i>
-                            <strong>Logado como:</strong> <span id="user-email"></span>
+                            <strong data-i18n="purchase.userInfo.loggedAs">Logado como:</strong> <span id="user-email"></span>
                             <br>
-                            <small>Você pode prosseguir com o pagamento.</small>
-                            </div>
+                            <small data-i18n="purchase.userInfo.canProceed">Você pode prosseguir com o pagamento.</small>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -137,24 +154,24 @@
     <div id="loading-modal" class="modal hidden">
         <div class="modal-content">
             <div class="spinner"></div>
-            <p id="loading-message">Processando...</p>
+            <p id="loading-message" data-i18n="purchase.loading">Processando...</p>
         </div>
     </div>
 
     <div id="success-modal" class="modal hidden">
         <div class="modal-content">
             <i class="fas fa-check-circle success-icon"></i>
-            <h3>Sucesso!</h3>
-            <p id="success-message">Operação realizada com sucesso.</p>
+            <h3 data-i18n="purchase.success.title">Sucesso!</h3>
+            <p id="success-message" data-i18n="purchase.success.message">Operação realizada com sucesso.</p>
         </div>
     </div>
 
     <div id="error-modal" class="modal hidden">
         <div class="modal-content">
             <i class="fas fa-exclamation-circle error-icon"></i>
-            <h3>Erro</h3>
-            <p id="error-message">Ocorreu um erro. Tente novamente.</p>
-            <button class="btn-hero" onclick="document.getElementById('error-modal').classList.add('hidden')">
+            <h3 data-i18n="purchase.error.title">Erro</h3>
+            <p id="error-message" data-i18n="purchase.error.message">Ocorreu um erro. Tente novamente.</p>
+            <button class="btn-hero" onclick="document.getElementById('error-modal').classList.add('hidden')" data-i18n="purchase.error.close">
                 Fechar
             </button>
         </div>
@@ -171,7 +188,7 @@
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-brand">
-                <p>© 2025 Atalho App. Todos os direitos reservados.</p>
+                <p data-i18n="footer.copyright">© 2025 Atalho App. Todos os direitos reservados.</p>
             </div>
 
             <div class="footer-social">
@@ -188,9 +205,9 @@
 
             <div class="footer-links">
                 <nav class="footer-nav">
-                    <a href="politica-de-privacidade.html">Política de Privacidade</a>
-                    <a href="termos-de-uso.html">Termos de Uso</a>
-                    <a href="index.html">Início</a>
+                    <a href="politica-de-privacidade.html" data-i18n="footer.privacy">Política de Privacidade</a>
+                    <a href="termos-de-uso.html" data-i18n="footer.terms">Termos de Uso</a>
+                    <a href="index.html" data-i18n="footer.home">Início</a>
                 </nav>
             </div>
         </div>
@@ -201,34 +218,73 @@
     <script src="assets/js/security-validator.js"></script>
     <script src="assets/js/config-loader.js"></script>
     <script src="assets/js/firebase.js"></script>
+    <script src="assets/js/i18n.js"></script>
     <script src="assets/js/mercadopago-service.js"></script>
     <script src="assets/js/pix-modal.js"></script>
     <script src="assets/js/payment.js"></script>
 
     <!-- Mercado Pago Integration Script -->
     <script>
-        // Funções movidas para payment.js para evitar duplicação
+        // Variável global para o sistema de tradução
+        let i18nSystem = null;
+        let currentLanguage = 'pt-br';
 
-        // Listener movido para payment.js para evitar conflitos
-
+        // Inicialização da página
         document.addEventListener('DOMContentLoaded', async () => {
             console.log("Página de compra inicializada");
+            
+            // ✅ PRIMEIRO: Aguardar sistema i18n estar pronto
+            try {
+                let attempts = 0;
+                while (!window.i18nSystem && attempts < 50) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+                
+                if (window.i18nSystem) {
+                    i18nSystem = window.i18nSystem;
+                    currentLanguage = i18nSystem.getCurrentLanguage();
+                    console.log('🌍 Sistema de tradução carregado:', currentLanguage);
+                    
+                    // Aplicar traduções iniciais
+                    i18nSystem.applyTranslations();
+                    
+                    // Configurar event listener para mudanças de idioma
+                    window.addEventListener('languageChanged', function(event) {
+                        currentLanguage = event.detail.language;
+                        console.log('🌍 Idioma alterado para:', currentLanguage);
+                        updatePaymentMethodsBasedOnLanguage();
+                        i18nSystem.applyTranslations();
+                    });
+                } else {
+                    console.warn('⚠️ Sistema de tradução não encontrado, usando fallback');
+                    currentLanguage = 'pt-br';
+                }
+            } catch (error) {
+                console.error('❌ Erro ao carregar sistema de tradução:', error);
+                currentLanguage = 'pt-br';
+            }
 
-            // Aguardar configuração ser carregada
+            // ✅ SEGUNDO: Configurar métodos de pagamento baseado no idioma
+            updatePaymentMethodsBasedOnLanguage();
+
+            // ✅ TERCEIRO: Aguardar configuração ser carregada
             try {
                 console.log("⏳ Aguardando configuração...");
-                await ConfigLoader.waitForConfig(3000); // Reduzido para 3 segundos
+                await ConfigLoader.waitForConfig(5000); // 5 segundos
                 console.log("✅ Configuração carregada com sucesso");
             } catch (error) {
                 console.warn("⚠️ Timeout ao aguardar configuração, continuando com fallback:", error);
             }
 
-            // Fechar modais ao clicar fora
+            // ✅ QUARTO: Configurar listeners de modais
             document.querySelectorAll('.modal').forEach(modal => {
                 modal.addEventListener('click', (e) => {
                     if (e.target === modal) {
                         if (modal.id === 'pix-modal') {
-                            pixModal.hide();
+                            if (window.pixModal) {
+                                pixModal.hide();
+                            }
                         } else {
                             modal.classList.add('hidden');
                         }
@@ -236,12 +292,49 @@
                 });
             });
         });
-    </script>
 
-    <script>
-        // Estado e funções movidas para payment.js para evitar duplicação
-        
-        // Inicialização
+        // Função para atualizar métodos de pagamento baseado no idioma
+        function updatePaymentMethodsBasedOnLanguage() {
+            const pixOption = document.getElementById('pix-option');
+            const paymentNotice = document.getElementById('payment-language-notice');
+            const noticeText = document.getElementById('payment-notice-text');
+            
+            if (currentLanguage === 'pt-br') {
+                // PIX disponível apenas para português brasileiro
+                if (pixOption) {
+                    pixOption.style.display = 'block';
+                }
+                
+                // Esconder aviso
+                if (paymentNotice) {
+                    paymentNotice.style.display = 'none';
+                }
+            } else {
+                // Esconder PIX para outros idiomas
+                if (pixOption) {
+                    pixOption.style.display = 'none';
+                }
+                
+                // Mostrar aviso sobre limitações de pagamento
+                if (paymentNotice && noticeText) {
+                    paymentNotice.style.display = 'block';
+                    
+                    // Mensagens traduzidas para o aviso
+                    const notices = {
+                        'en': 'ℹ️ PIX payment is only available for customers in Brazil. Please use credit card or Mercado Pago.',
+                        'es': 'ℹ️ El pago PIX solo está disponible para clientes en Brasil. Use tarjeta de crédito o Mercado Pago.',
+                        'fr': 'ℹ️ Le paiement PIX n\'est disponible que pour les clients au Brésil. Utilisez une carte de crédit ou Mercado Pago.',
+                        'de': 'ℹ️ PIX-Zahlung ist nur für Kunden in Brasilien verfügbar. Verwenden Sie Kreditkarte oder Mercado Pago.',
+                        'it': 'ℹ️ Il pagamento PIX è disponibile solo per i clienti in Brasile. Usa carta di credito o Mercado Pago.'
+                    };
+                    
+                    noticeText.textContent = notices[currentLanguage] || notices['en'];
+                }
+            }
+            
+            console.log(`🎯 Métodos de pagamento atualizados para idioma: ${currentLanguage}`);
+        }
+
         console.log("🚀 Página de compra carregada - Sistema de segurança ativo");
     </script>
 </body>

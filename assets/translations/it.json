@@ -110,6 +110,58 @@
       "redirecting": "Reindirizzamento al login..."
     }
   },
+  "purchase": {
+    "title": "Acquista Atalho - Ottimizza la tua produttività",
+    "subtitle": "Ottimizza la tua produttività oggi",
+    "paymentMethods": "Metodi di Pagamento",
+    "features": {
+      "textExpansion": "Espansione automatica del testo",
+      "databases": "Database personalizzabili",
+      "formatting": "Formattazione avanzata",
+      "wordIntegration": "Integrazione Word",
+      "lifetimeUpdates": "Aggiornamenti a vita"
+    },
+    "price": "19,90 €",
+    "license": "Licenza annuale",
+    "methods": {
+      "card": "Carta"
+    },
+    "authRequired": {
+      "title": "Attenzione:",
+      "message": "Devi essere loggato per effettuare un pagamento.",
+      "login": "Clicca qui per accedere",
+      "or": "o",
+      "register": "registrati"
+    },
+    "userInfo": {
+      "loggedAs": "Connesso come:",
+      "canProceed": "Puoi procedere con il pagamento."
+    },
+    "loading": "Elaborazione...",
+    "success": {
+      "title": "Successo!",
+      "message": "Operazione completata con successo."
+    },
+    "error": {
+      "title": "Errore",
+      "message": "Si è verificato un errore. Riprova.",
+      "close": "Chiudi"
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "features": "Caratteristiche",
+    "register": "Registrati",
+    "login": "Accedi",
+    "dashboard": "Dashboard",
+    "logout": "Esci"
+  },
+  "footer": {
+    "copyright": "© 2025 Atalho App. Tutti i diritti riservati.",
+    "privacy": "Informativa sulla Privacy",
+    "terms": "Termini di Utilizzo",
+    "home": "Home"
+  },
   "common": {
     "loading": "Caricamento...",
     "error": "Errore",

@@ -225,13 +225,248 @@
 
     <!-- Mercado Pago Integration Script -->
     <script>
-        // Variável global para o sistema de tradução
+        // Variáveis globais
         let i18nSystem = null;
         let currentLanguage = 'pt-br';
+        let currentUser = null;
+        let currentUserData = null;
+
+        // Função para logout
+        async function logout() {
+            try {
+                // Usar a instância global do auth se disponível
+                if (window.auth) {
+                    await window.auth.signOut();
+                } else {
+                    await firebase.auth().signOut();
+                }
+                console.log('✅ Logout realizado com sucesso');
+                updateNavMenu(null); // Atualiza menu para usuário deslogado
+                currentUserData = null;
+                currentUser = null;
+                updateAuthenticationState(); // Atualiza estado da página
+                // Usar tradução dinâmica para a mensagem
+                alert(window.i18nSystem?.t('auth.logoutSuccess') || 'Logout realizado com sucesso!');
+            } catch (error) {
+                console.error('❌ Erro no logout:', error);
+                alert((window.i18nSystem?.t('common.error') || 'Erro') + ': ' + error.message);
+            }
+        }
+
+        // Função para buscar dados do usuário no Firestore
+        async function loadUserData(uid) {
+            try {
+                console.log('📊 Buscando dados do usuário:', uid);
+                
+                // Usar a instância global do db se disponível
+                const firestore = window.db || firebase.firestore();
+                
+                // Buscar dados do usuário
+                const userDoc = await firestore.collection('users').doc(uid).get();
+                
+                if (userDoc.exists) {
+                    currentUserData = userDoc.data();
+                    console.log('✅ Dados do usuário carregados:', currentUserData);
+                    return currentUserData;
+                } else {
+                    console.log('⚠️ Documento do usuário não encontrado');
+                    // Tentar buscar por email
+                    const emailQuery = await firestore.collection('users')
+                        .where('email', '==', currentUser.email)
+                        .limit(1)
+                        .get();
+                    
+                    if (!emailQuery.empty) {
+                        currentUserData = emailQuery.docs[0].data();
+                        console.log('✅ Dados encontrados por email:', currentUserData);
+                        return currentUserData;
+                    }
+                }
+                
+                return null;
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados do usuário:', error);
+                return null;
+            }
+        }
+
+        // Função para atualizar o menu baseado no status de autenticação
+        async function updateNavMenu(user) {
+            console.log('🔧 === INÍCIO DA ATUALIZAÇÃO DO MENU (COMPRAR) ===');
+            console.log('👤 Usuário recebido:', user ? user.email : 'null/undefined');
+            
+            const navRegister = document.getElementById('nav-register');
+            const navLogin = document.getElementById('nav-login');
+            const navDashboard = document.getElementById('nav-dashboard');
+            const navLogout = document.getElementById('nav-logout');
+
+            // Verificar se todos os elementos foram encontrados
+            console.log('🔍 Elementos encontrados:');
+            console.log('  - nav-register:', navRegister ? 'Encontrado' : 'NÃO ENCONTRADO');
+            console.log('  - nav-login:', navLogin ? 'Encontrado' : 'NÃO ENCONTRADO');
+            console.log('  - nav-dashboard:', navDashboard ? 'Encontrado' : 'NÃO ENCONTRADO');
+            console.log('  - nav-logout:', navLogout ? 'Encontrado' : 'NÃO ENCONTRADO');
+
+            if (user) {
+                console.log('✅ USUÁRIO LOGADO - Configurando menu para usuário autenticado');
+                
+                // Usuário logado: esconder Cadastro/Entrar, mostrar Dashboard/Sair
+                if (navRegister) {
+                    navRegister.style.display = 'none';
+                    console.log('  ✅ Cadastro escondido');
+                }
+                if (navLogin) {
+                    navLogin.style.display = 'none';
+                    console.log('  ✅ Login escondido');
+                }
+                if (navDashboard) {
+                    navDashboard.style.display = 'block';
+                    console.log('  ✅ Dashboard mostrado');
+                }
+                if (navLogout) {
+                    navLogout.style.display = 'block';
+                    console.log('  ✅ Logout mostrado');
+                }
+                
+                // Carregar dados do usuário (COM CACHE)
+                let userData = currentUserData;
+                if (!userData || currentUserData?.uid !== user.uid) {
+                    console.log('📊 Carregando dados do usuário do Firestore...');
+                    userData = await loadUserData(user.uid);
+                    currentUserData = userData; // Cache dos dados
+                } else {
+                    console.log('⚡ Usando dados em cache do usuário');
+                }
+                
+                // Definir nome a ser exibido no dashboard
+                let displayName = 'Dashboard';
+                if (userData && userData.Nome) {
+                    displayName = userData.Nome;
+                    console.log('  📛 Nome obtido do Firestore:', displayName);
+                } else if (user.displayName) {
+                    displayName = user.displayName;
+                    console.log('  📛 Nome obtido do Firebase Auth:', displayName);
+                } else if (user.email) {
+                    // Usar primeira parte do email como fallback
+                    displayName = user.email.split('@')[0];
+                    console.log('  📛 Nome obtido do email:', displayName);
+                }
+                
+                // Limitar tamanho do nome no menu
+                if (displayName.length > 15) {
+                    displayName = displayName.substring(0, 12) + '...';
+                    console.log('  ✂️ Nome truncado para:', displayName);
+                }
+                
+                // Atualizar texto do link do dashboard
+                if (navDashboard) {
+                    const dashboardLink = navDashboard.querySelector('a');
+                    if (dashboardLink) {
+                        dashboardLink.textContent = displayName;
+                        dashboardLink.title = userData?.Nome || user.email || 'Dashboard'; // Tooltip com nome completo
+                        dashboardLink.style.color = '#28a745';
+                        dashboardLink.style.fontWeight = '600';
+                        console.log('  ✅ Nome definido no dashboard link:', displayName);
+                    }
+                }
+                
+                console.log('✅ Menu atualizado para usuário logado:', user.email, '| Nome:', displayName);
+            } else {
+                console.log('❌ USUÁRIO DESLOGADO - Configurando menu para usuário não autenticado');
+                
+                // Usuário deslogado: mostrar Cadastro/Entrar, esconder Dashboard/Sair
+                if (navRegister) {
+                    navRegister.style.display = 'block';
+                    console.log('  ✅ Cadastro mostrado');
+                }
+                if (navLogin) {
+                    navLogin.style.display = 'block';
+                    console.log('  ✅ Login mostrado');
+                }
+                if (navDashboard) {
+                    navDashboard.style.display = 'none';
+                    console.log('  ✅ Dashboard escondido');
+                }
+                if (navLogout) {
+                    navLogout.style.display = 'none';
+                    console.log('  ✅ Logout escondido');
+                }
+                currentUserData = null;
+                console.log('ℹ️ Menu atualizado para usuário deslogado');
+            }
+            
+            console.log('🔧 === FIM DA ATUALIZAÇÃO DO MENU (COMPRAR) ===');
+        }
+
+        // Função para atualizar estado de autenticação na página
+        function updateAuthenticationState() {
+            const authWarning = document.getElementById('auth-warning');
+            const userInfo = document.getElementById('user-info');
+            const userEmail = document.getElementById('user-email');
+            const paymentGrid = document.getElementById('payment-grid');
+
+            if (currentUser && currentUser.emailVerified) {
+                console.log('✅ Usuário autenticado e verificado - Liberando pagamentos');
+                
+                // Esconder aviso de autenticação
+                if (authWarning) {
+                    authWarning.style.display = 'none';
+                }
+                
+                // Mostrar informações do usuário
+                if (userInfo) {
+                    userInfo.style.display = 'block';
+                }
+                
+                if (userEmail) {
+                    userEmail.textContent = currentUser.email;
+                }
+                
+                // Habilitar métodos de pagamento
+                if (paymentGrid) {
+                    paymentGrid.style.opacity = '1';
+                    paymentGrid.style.pointerEvents = 'auto';
+                    
+                    // Habilitar todos os botões de pagamento
+                    const paymentButtons = paymentGrid.querySelectorAll('.payment-option');
+                    paymentButtons.forEach(button => {
+                        button.disabled = false;
+                        button.style.opacity = '1';
+                        button.style.cursor = 'pointer';
+                    });
+                }
+                
+            } else {
+                console.log('❌ Usuário não autenticado - Mostrando aviso');
+                
+                // Mostrar aviso de autenticação
+                if (authWarning) {
+                    authWarning.style.display = 'block';
+                }
+                
+                // Esconder informações do usuário
+                if (userInfo) {
+                    userInfo.style.display = 'none';
+                }
+                
+                // Desabilitar métodos de pagamento (opcional)
+                if (paymentGrid) {
+                    paymentGrid.style.opacity = '0.7';
+                    
+                    // Você pode optar por desabilitar ou deixar habilitado
+                    // const paymentButtons = paymentGrid.querySelectorAll('.payment-option');
+                    // paymentButtons.forEach(button => {
+                    //     button.disabled = true;
+                    //     button.style.opacity = '0.5';
+                    //     button.style.cursor = 'not-allowed';
+                    // });
+                }
+            }
+        }
 
         // Inicialização da página
         document.addEventListener('DOMContentLoaded', async () => {
-            console.log("Página de compra inicializada");
+            console.log("🚀 Página de compra inicializada");
             
             // ✅ PRIMEIRO: Aguardar sistema i18n estar pronto
             try {
@@ -268,7 +503,34 @@
             // ✅ SEGUNDO: Configurar métodos de pagamento baseado no idioma
             updatePaymentMethodsBasedOnLanguage();
 
-            // ✅ TERCEIRO: Aguardar configuração ser carregada
+            // ✅ TERCEIRO: Inicializar Firebase e sistema de autenticação
+            try {
+                console.log("🔥 Inicializando Firebase na página de compra...");
+                
+                // Aguardar inicialização do Firebase usando a função getFirebaseServices
+                const { auth, db, functions } = await getFirebaseServices();
+                console.log("✅ Serviços do Firebase prontos para a página de compra");
+                
+                // Configurar verificação de autenticação
+                auth.onAuthStateChanged(async function(user) {
+                    console.log('🔄 onAuthStateChanged disparado na página de compra:', user ? user.email : 'Usuário deslogado');
+                    
+                    currentUser = user;
+                    
+                    // Atualizar menu dinâmico
+                    await updateNavMenu(user);
+                    
+                    // Atualizar estado de autenticação na página
+                    updateAuthenticationState();
+                });
+                
+            } catch (error) {
+                console.error("❌ Falha na inicialização do Firebase na página de compra:", error);
+                // Continuar sem Firebase (modo degradado)
+                updateAuthenticationState(); // Mostra aviso de login
+            }
+
+            // ✅ QUARTO: Aguardar configuração ser carregada
             try {
                 console.log("⏳ Aguardando configuração...");
                 await ConfigLoader.waitForConfig(5000); // 5 segundos
@@ -277,7 +539,7 @@
                 console.warn("⚠️ Timeout ao aguardar configuração, continuando com fallback:", error);
             }
 
-            // ✅ QUARTO: Configurar listeners de modais
+            // ✅ QUINTO: Configurar listeners de modais
             document.querySelectorAll('.modal').forEach(modal => {
                 modal.addEventListener('click', (e) => {
                     if (e.target === modal) {
@@ -335,7 +597,7 @@
             console.log(`🎯 Métodos de pagamento atualizados para idioma: ${currentLanguage}`);
         }
 
-        console.log("🚀 Página de compra carregada - Sistema de segurança ativo");
+        console.log("🚀 Página de compra carregada - Sistema de autenticação integrado");
     </script>
 </body>
 

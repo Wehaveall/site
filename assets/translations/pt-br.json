@@ -65,7 +65,8 @@
     "acceptTerms": "Aceito os termos de uso",
     "alreadyAccount": "Já tem uma conta?",
     "noAccount": "Não tem uma conta?",
-    "forgotPassword": "Esqueceu a senha?"
+    "forgotPassword": "Esqueceu a senha?",
+    "logoutSuccess": "Logout realizado com sucesso!"
   },
   "register": {
     "title": "Complete seu Cadastro - Atalho",

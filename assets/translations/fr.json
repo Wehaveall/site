@@ -65,7 +65,8 @@
     "acceptTerms": "J'accepte les conditions d'utilisation",
     "alreadyAccount": "Vous avez déjà un compte ?",
     "noAccount": "Vous n'avez pas de compte ?",
-    "forgotPassword": "Mot de passe oublié ?"
+    "forgotPassword": "Mot de passe oublié ?",
+    "logoutSuccess": "Déconnexion réussie !"
   },
   "register": {
     "title": "Complétez votre Inscription - Atalho",

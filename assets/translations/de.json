@@ -65,7 +65,8 @@
     "acceptTerms": "Ich akzeptiere die Nutzungsbedingungen",
     "alreadyAccount": "Haben Sie bereits ein Konto?",
     "noAccount": "Sie haben noch kein Konto?",
-    "forgotPassword": "Passwort vergessen?"
+    "forgotPassword": "Passwort vergessen?",
+    "logoutSuccess": "Abmeldung erfolgreich!"
   },
   "register": {
     "title": "Vervollständigen Sie Ihre Registrierung - Atalho",

@@ -65,7 +65,8 @@
     "acceptTerms": "Acepto los términos de uso",
     "alreadyAccount": "¿Ya tienes una cuenta?",
     "noAccount": "¿No tienes una cuenta?",
-    "forgotPassword": "¿Olvidaste la contraseña?"
+    "forgotPassword": "¿Olvidaste la contraseña?",
+    "logoutSuccess": "¡Cierre de sesión exitoso!"
   },
   "register": {
     "title": "Completa tu Registro - Atalho",

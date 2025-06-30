@@ -41,7 +41,9 @@
                     <!-- Links dinâmicos baseados na autenticação -->
                     <li id="nav-register"><a href="register.html" class="nav-link" data-i18n="header.register">Cadastro</a></li>
                     <li id="nav-login"><a href="login.html" class="nav-link" data-i18n="header.login">Entrar</a></li>
-                    <li id="nav-dashboard" style="display: none;"><a href="dashboard.html" class="nav-link" data-i18n="header.dashboard">Dashboard</a></li>
+                    <li id="nav-user-info" style="display: none;">
+                        <a href="dashboard.html" class="nav-link" style="color: #28a745; font-weight: 600;" id="nav-user-name">Usuário</a>
+                    </li>
                     <li id="nav-logout" style="display: none;"><a href="#" class="nav-link" onclick="logout()" data-i18n="header.logout">Sair</a></li>
                     <li><a href="comprar.html" class="nav-link btn-primary" data-i18n="header.buy">Comprar</a></li>
                 </ul>
@@ -189,12 +191,21 @@
             // Por exemplo, recarregar dados do servidor no novo idioma
         });
 
+        // Variável para armazenar dados do usuário
+        let currentUserData = null;
+
         // Função para logout
         async function logout() {
             try {
-                await firebase.auth().signOut();
+                // Usar a instância global do auth se disponível
+                if (window.auth) {
+                    await window.auth.signOut();
+                } else {
+                    await firebase.auth().signOut();
+                }
                 console.log('✅ Logout realizado com sucesso');
                 updateNavMenu(null); // Atualiza menu para usuário deslogado
+                currentUserData = null;
                 // Usar tradução dinâmica para a mensagem
                 alert(window.atalhoI18n?.t('auth.logoutSuccess') || 'Logout realizado com sucesso!');
             } catch (error) {
@@ -203,33 +214,111 @@
             }
         }
 
+        // Função para buscar dados do usuário no Firestore
+        async function loadUserData(uid) {
+            try {
+                console.log('📊 Buscando dados do usuário:', uid);
+                
+                // Usar a instância global do db se disponível
+                const firestore = window.db || firebase.firestore();
+                
+                // Buscar dados do usuário
+                const userDoc = await firestore.collection('users').doc(uid).get();
+                
+                if (userDoc.exists) {
+                    currentUserData = userDoc.data();
+                    console.log('✅ Dados do usuário carregados:', currentUserData);
+                    return currentUserData;
+                } else {
+                    console.log('⚠️ Documento do usuário não encontrado');
+                    // Tentar buscar por email
+                    const emailQuery = await firestore.collection('users')
+                        .where('email', '==', firebase.auth().currentUser.email)
+                        .limit(1)
+                        .get();
+                    
+                    if (!emailQuery.empty) {
+                        currentUserData = emailQuery.docs[0].data();
+                        console.log('✅ Dados encontrados por email:', currentUserData);
+                        return currentUserData;
+                    }
+                }
+                
+                return null;
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados do usuário:', error);
+                return null;
+            }
+        }
+
         // Função para atualizar o menu baseado no status de autenticação
-        function updateNavMenu(user) {
+        async function updateNavMenu(user) {
             const navRegister = document.getElementById('nav-register');
             const navLogin = document.getElementById('nav-login');
-            const navDashboard = document.getElementById('nav-dashboard');
+            const navUserInfo = document.getElementById('nav-user-info');
+            const navUserName = document.getElementById('nav-user-name');
             const navLogout = document.getElementById('nav-logout');
 
             if (user) {
-                // Usuário logado: esconder Cadastro/Entrar, mostrar Dashboard/Sair
+                // Usuário logado: esconder Cadastro/Entrar, mostrar Nome/Sair
                 navRegister.style.display = 'none';
                 navLogin.style.display = 'none';
-                navDashboard.style.display = 'block';
+                navUserInfo.style.display = 'block';
                 navLogout.style.display = 'block';
-                console.log('✅ Menu atualizado para usuário logado:', user.email);
+                
+                // Carregar dados do usuário
+                const userData = await loadUserData(user.uid);
+                
+                // Definir nome a ser exibido
+                let displayName = 'Usuário';
+                if (userData && userData.Nome) {
+                    displayName = userData.Nome;
+                } else if (user.displayName) {
+                    displayName = user.displayName;
+                } else if (user.email) {
+                    // Usar primeira parte do email como fallback
+                    displayName = user.email.split('@')[0];
+                }
+                
+                // Limitar tamanho do nome no menu
+                if (displayName.length > 15) {
+                    displayName = displayName.substring(0, 12) + '...';
+                }
+                
+                navUserName.textContent = displayName;
+                navUserName.title = userData?.Nome || user.email || 'Usuário'; // Tooltip com nome completo
+                
+                console.log('✅ Menu atualizado para usuário logado:', user.email, '| Nome:', displayName);
             } else {
-                // Usuário deslogado: mostrar Cadastro/Entrar, esconder Dashboard/Sair
+                // Usuário deslogado: mostrar Cadastro/Entrar, esconder Nome/Sair
                 navRegister.style.display = 'block';
                 navLogin.style.display = 'block';
-                navDashboard.style.display = 'none';
+                navUserInfo.style.display = 'none';
                 navLogout.style.display = 'none';
+                currentUserData = null;
                 console.log('ℹ️ Menu atualizado para usuário deslogado');
             }
         }
 
-        // Listener para mudanças no estado de autenticação
-        firebase.auth().onAuthStateChanged(function(user) {
-            updateNavMenu(user);
+        // Inicialização principal com Firebase
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 Página inicial carregada, inicializando Firebase...');
+            
+            try {
+                // Aguardar inicialização do Firebase usando a função getFirebaseServices
+                const { auth, db, functions } = await getFirebaseServices();
+                console.log("✅ Serviços do Firebase prontos para o menu dinâmico");
+                
+                // Listener para mudanças no estado de autenticação
+                auth.onAuthStateChanged(async function(user) {
+                    await updateNavMenu(user);
+                });
+                
+            } catch (error) {
+                console.error("❌ Falha na inicialização do Firebase no menu:", error);
+                // Menu permanece estático se Firebase falhar
+                console.warn("⚠️ Menu funcionará em modo estático (sem autenticação dinâmica)");
+            }
         });
 
         // Smooth scroll para links internos

@@ -65,7 +65,8 @@
     "acceptTerms": "I accept the terms of use",
     "alreadyAccount": "Already have an account?",
     "noAccount": "Don't have an account?",
-    "forgotPassword": "Forgot password?"
+    "forgotPassword": "Forgot password?",
+    "logoutSuccess": "Logout successful!"
   },
   "register": {
     "title": "Complete Your Registration - Atalho",

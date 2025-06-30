@@ -123,15 +123,8 @@
     },
     "price": "19,90 €",
     "license": "Licenza annuale",
-            "methods": {
-            "stripe": "Stripe"
-        },
-        "stripe": {
-            "title": "Pagamento via Stripe",
-      "submit": "Paga Ora"
-    },
-    "paypal": {
-      "title": "Pagamento PayPal"
+    "methods": {
+      "card": "Carta"
     },
     "authRequired": {
       "title": "Attenzione:",

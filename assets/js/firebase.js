@@ -53,10 +53,10 @@ async function initializeFirebase() {
         // Configurações do Firebase após inicialização
         console.log("🔧 Aplicando configurações do Firebase...");
         
-        // Configurar persistência de autenticação para LOCAL (permanente)
+        // Configurar persistência de autenticação para SESSION
         try {
-            await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-            console.log("✅ Persistência configurada para LOCAL (permanente)");
+            await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+            console.log("✅ Persistência configurada para SESSION");
         } catch (error) {
             console.error("❌ Erro ao configurar persistência:", error);
         }

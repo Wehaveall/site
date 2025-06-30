@@ -228,17 +228,6 @@ function validateForm() {
     return isValid;
 }
 
-// Função para esconder todos os containers de pagamento
-function hideAllPaymentContainers() {
-    const containers = ['stripe-container', 'paypal-container'];
-    containers.forEach(id => {
-        const container = document.getElementById(id);
-        if (container) {
-            container.style.display = 'none';
-        }
-    });
-}
-
 async function processPayment(method) {
     if (state.processing) return;
 
@@ -270,157 +259,62 @@ async function processPayment(method) {
         }
     }
 
-    // Esconder outros containers de pagamento
-    hideAllPaymentContainers();
-
-    const userEmail = state.user?.email || currentUser?.email;
-    const userName = state.user?.displayName || currentUser?.displayName || 'Cliente';
+    state.processing = true;
+    state.selectedMethod = method;
 
     try {
-        console.log(`💳 Processando pagamento via ${method}`);
-
-        switch (method) {
-            case 'pix':
-                await handlePixPayment(userEmail, userName);
-                break;
-                
-            case 'stripe':
-                await handleStripePayment(userEmail, userName);
-                break;
-                
-            case 'paypal':
-                await handlePayPalPayment(userEmail, userName);
-                break;
-                
-            default:
-                throw new Error('Método de pagamento não suportado');
-        }
-
-    } catch (error) {
-        console.error('❌ Erro no processo de pagamento:', error);
-        showError('Erro ao processar pagamento: ' + error.message);
-        hideAllPaymentContainers();
-    }
-}
-
-// Função para PIX (mantém a lógica existente)
-async function handlePixPayment(userEmail, userName) {
+        if (method === 'pix') {
+            // Abre o modal do PIX que terá a lógica de geração e checagem
+            // Passa os dados do usuário logado para o PIX
             const userData = {
-        name: userName || 'Usuário',
-        email: userEmail,
+                name: state.user.displayName || 'Usuário',
+                email: state.user.email,
                 uid: state.user.uid
             };
-    
-    // Aguardar pixModal estar disponível
-    if (!window.pixModal) {
-        console.log('⏳ Aguardando PixModal estar disponível...');
-        let attempts = 0;
-        while (!window.pixModal && attempts < 50) {
-            await new Promise(resolve => setTimeout(resolve, 100));
-            attempts++;
-        }
-        
-        if (!window.pixModal) {
-            throw new Error('PixModal não disponível');
-        }
-    }
-    
-    await window.pixModal.show(userData);
-}
-
-// Função para Stripe
-async function handleStripePayment(userEmail, userName) {
-    try {
-                        showLoading('Preparando pagamento via Stripe...');
-
-        // Determinar moeda baseada no idioma atual
-        const currentLanguage = window.i18nSystem ? window.i18nSystem.getCurrentLanguage() : 'pt-br';
-        const currency = window.stripeService.getCurrencyByLanguage(currentLanguage);
-        const amount = window.stripeService.getAmountByCurrency(currency);
-
-        console.log(`💰 Criando pagamento Stripe: ${amount} ${currency}`);
-
-        // Criar Payment Intent
-        await window.stripeService.createPaymentIntent(amount, currency, userEmail);
-
-        // Mostrar container do Stripe
-        const stripeContainer = document.getElementById('stripe-container');
-        if (stripeContainer) {
-            stripeContainer.style.display = 'block';
             
-            // Criar elementos do Stripe
-            await window.stripeService.createCardElement('#stripe-elements');
-            
-            // Mostrar botão de submit
-            const submitButton = document.getElementById('stripe-submit');
-            if (submitButton) {
-                submitButton.style.display = 'block';
+            // Aguardar pixModal estar disponível
+            if (!pixModal) {
+                console.log('⏳ Aguardando PixModal estar disponível...');
+                let attempts = 0;
+                while (!pixModal && attempts < 50) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
                 
-                // Configurar listener do botão
-                submitButton.onclick = async () => {
-                    submitButton.disabled = true;
-                    submitButton.textContent = 'Processando...';
-                    
-                    try {
-                        showLoading('Processando pagamento...');
-                        const result = await window.stripeService.confirmPayment(userEmail, userName);
-                        
-                        if (result.success) {
-                            hideLoading();
-                            showSuccess('Pagamento realizado com sucesso!');
-                            setTimeout(() => {
-                                window.location.href = '/success.html';
-                            }, 2000);
-                        }
-                    } catch (error) {
-                        console.error('❌ Erro no pagamento Stripe:', error);
-                        showError('Erro no pagamento: ' + error.message);
-                        submitButton.disabled = false;
-                        submitButton.textContent = i18nSystem ? i18nSystem.t('purchase.stripe.submit') : 'Pagar Agora';
-                    } finally {
-                hideLoading();
-                    }
-                };
+                if (!pixModal) {
+                    throw new Error('PixModal não disponível');
+                }
             }
-        }
-
-        hideLoading();
-        console.log('✅ Container Stripe configurado');
-
-    } catch (error) {
-            hideLoading();
-        console.error('❌ Erro ao configurar Stripe:', error);
-        throw error;
-    }
-}
-
-// Função para PayPal
-async function handlePayPalPayment(userEmail, userName) {
-    try {
-        showLoading('Preparando pagamento PayPal...');
-
-        // Determinar moeda baseada no idioma atual
-        const currentLanguage = window.i18nSystem ? window.i18nSystem.getCurrentLanguage() : 'pt-br';
-        const currency = window.paypalService.getCurrencyByLanguage(currentLanguage);
-
-        console.log(`💰 Configurando PayPal: ${currency}`);
-
-        // Mostrar container do PayPal
-        const paypalContainer = document.getElementById('paypal-container');
-        if (paypalContainer) {
-            paypalContainer.style.display = 'block';
             
-            // Renderizar botões do PayPal
-            await window.paypalService.renderButtons('#paypal-buttons', userEmail, currency);
+            await pixModal.show(userData);
+        } else if (method === 'cartao') {
+            // Implementação com cartão de crédito usando Mercado Pago
+            showLoading(`Processando pagamento via cartão...`);
+
+            const mpButton = document.getElementById('mercado-pago-button-container');
+            if (mpButton) {
+                mpButton.classList.remove('hidden');
+                hideLoading();
+            } else {
+                throw new Error('Container do Mercado Pago não encontrado');
+            }
+        } else {
+            // Para outros métodos mantém simulação temporariamente
+            showLoading(`Processando pagamento via ${method}...`);
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            hideLoading();
+            showSuccess('Pagamento processado com sucesso!');
+
+            const registerForm = document.getElementById('register-form');
+            registerForm.classList.remove('hidden');
+            registerForm.scrollIntoView({ behavior: 'smooth' });
         }
-
-        hideLoading();
-        console.log('✅ Container PayPal configurado');
-
     } catch (error) {
+        console.error('Erro no processamento:', error);
         hideLoading();
-        console.error('❌ Erro ao configurar PayPal:', error);
-        throw error;
+        showError('Erro ao processar pagamento. Por favor, tente novamente.');
+    } finally {
+        state.processing = false;
     }
 }
 
@@ -598,10 +492,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.logout = async function() {
         try {
             if (auth && auth.signOut) {
-            await auth.signOut();
-            console.log('✅ Logout realizado com sucesso');
-            alert('Logout realizado com sucesso!');
-            window.location.href = 'index.html';
+                await auth.signOut();
+                console.log('✅ Logout realizado com sucesso');
+                alert('Logout realizado com sucesso!');
+                window.location.href = 'index.html';
             } else {
                 console.warn('⚠️ Firebase Auth não disponível para logout');
                 // Mesmo assim redirecionar para a página inicial
@@ -635,50 +529,50 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Monitora auth (com proteção para Firebase não carregado)
     if (auth && auth.onAuthStateChanged) {
-    auth.onAuthStateChanged((user) => {
-        state.user = user;
-        
-        // Atualizar menu
-        updateNavMenu(user);
-        
-        // Mostrar/esconder aviso de autenticação e info do usuário
-        const authWarning = document.getElementById('auth-warning');
-        const userInfo = document.getElementById('user-info');
-        const userEmail = document.getElementById('user-email');
-        
-        if (user) {
-            console.log('✅ Usuário autenticado:', user.uid);
-            if (authWarning) authWarning.style.display = 'none';
-            if (userInfo) {
-                userInfo.style.display = 'block';
-                if (userEmail) userEmail.textContent = user.email;
-            }
+        auth.onAuthStateChanged((user) => {
+            state.user = user;
+            
+            // Atualizar menu
+            updateNavMenu(user);
+            
+            // Mostrar/esconder aviso de autenticação e info do usuário
+            const authWarning = document.getElementById('auth-warning');
+            const userInfo = document.getElementById('user-info');
+            const userEmail = document.getElementById('user-email');
+            
+            if (user) {
+                console.log('✅ Usuário autenticado:', user.uid);
+                if (authWarning) authWarning.style.display = 'none';
+                if (userInfo) {
+                    userInfo.style.display = 'block';
+                    if (userEmail) userEmail.textContent = user.email;
+                }
 
                 // Verificar se o documento existe antes de tentar atualizar (apenas se db estiver disponível)
                 if (db && db.collection) {
-            db.collection('users')
-                .doc(user.uid)
-                .get()
-                .then(doc => {
-                    if (doc.exists) {
-                        // Só atualiza se o documento já existir
-                        return db.collection('users')
-                            .doc(user.uid)
-                            .update({ last_login: firebase.firestore.FieldValue.serverTimestamp() });
-                    } else {
-                        console.log('Documento do usuário ainda não existe, pulando atualização');
-                    }
-                })
-                .catch(error => {
-                    console.warn('Erro ao verificar/atualizar último login:', error);
-                });
+                    db.collection('users')
+                        .doc(user.uid)
+                        .get()
+                        .then(doc => {
+                            if (doc.exists) {
+                                // Só atualiza se o documento já existir
+                                return db.collection('users')
+                                    .doc(user.uid)
+                                    .update({ last_login: firebase.firestore.FieldValue.serverTimestamp() });
+                            } else {
+                                console.log('Documento do usuário ainda não existe, pulando atualização');
+                            }
+                        })
+                        .catch(error => {
+                            console.warn('Erro ao verificar/atualizar último login:', error);
+                        });
                 }
-        } else {
-            console.log('ℹ️ Usuário não autenticado');
-            if (authWarning) authWarning.style.display = 'block';
-            if (userInfo) userInfo.style.display = 'none';
-        }
-    });
+            } else {
+                console.log('ℹ️ Usuário não autenticado');
+                if (authWarning) authWarning.style.display = 'block';
+                if (userInfo) userInfo.style.display = 'none';
+            }
+        });
     } else {
         console.warn('⚠️ Firebase Auth não disponível, exibindo sempre aviso de autenticação');
         // Se o Firebase não estiver disponível, sempre mostrar o aviso de login

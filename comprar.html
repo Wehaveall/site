@@ -5,14 +5,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Atalho - Adquira sua licença e otimize sua produtividade" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-    <meta http-equiv="Last-Modified" content="0" />
-    <meta http-equiv="If-Modified-Since" content="0" />
-    <meta name="cache-control" content="max-age=0" />
-    <meta name="expires" content="0" />
-    <meta name="pragma" content="no-cache" />
     <title data-i18n="purchase.title">Comprar Atalho - Otimize sua produtividade</title>
 
     <!-- Fonts and Icons -->
@@ -24,8 +16,8 @@
     <!-- Styles -->
     <link rel="stylesheet" href="assets/css/style.css" />
 
-    <!-- Stripe SDK -->
-    <script src="https://js.stripe.com/v3/"></script>
+    <!-- Mercado Pago SDK -->
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -54,9 +46,6 @@
                     <!-- Links dinâmicos baseados na autenticação -->
                     <li id="nav-register"><a href="register.html" class="nav-link" data-i18n="nav.register">Cadastro</a></li>
                     <li id="nav-login"><a href="login.html" class="nav-link" data-i18n="nav.login">Entrar</a></li>
-                    <li id="nav-user-name" style="display: none;" class="nav-user">
-                        <!-- Nome do usuário será inserido aqui -->
-                    </li>
                     <li id="nav-dashboard" style="display: none;"><a href="dashboard.html" class="nav-link" data-i18n="nav.dashboard">Dashboard</a></li>
                     <li id="nav-logout" style="display: none;"><a href="#" class="nav-link" onclick="logout()" data-i18n="nav.logout">Sair</a></li>
                 </ul>
@@ -126,76 +115,15 @@
                                 <div>PIX</div>
                             </button>
 
-                            <!-- Stripe - Para todos os idiomas -->
-                            <button class="payment-option" data-method="stripe" id="stripe-option" style="display: none;">
+                            <button class="payment-option" data-method="cartao">
                                 <i class="fa-solid fa-credit-card"></i>
-                                <div data-i18n="purchase.methods.stripe">Stripe</div>
+                                <div data-i18n="purchase.methods.card">Cartão</div>
                             </button>
 
-                            <!-- PayPal - Para todos os idiomas -->
-                            <button class="payment-option" data-method="paypal" id="paypal-option" style="display: none;">
-                                <i class="fa-brands fa-paypal"></i>
-                                <div>PayPal</div>
+                            <button class="payment-option" data-method="mercadopago">
+                                <i class="fa-solid fa-hand-holding-dollar"></i>
+                                <div>Mercado Pago</div>
                             </button>
-                        </div>
-
-                        <!-- Script para limpar elementos antigos e garantir exibição correta -->
-                        <script>
-                        (function() {
-                            // Função para remover elementos antigos problemáticos
-                            function cleanOldPaymentElements() {
-                                console.log('🧹 Limpando elementos antigos de pagamento...');
-                                
-                                // Remover qualquer elemento com texto "Cartão" ou "Mercado Pago"
-                                const allButtons = document.querySelectorAll('button, div, span');
-                                allButtons.forEach(element => {
-                                    const text = element.textContent || element.innerText || '';
-                                    if (text.includes('Cartão') || text.includes('cartão') || 
-                                        text.includes('Mercado Pago') || text.includes('mercado pago')) {
-                                        console.log('🗑️ Removendo elemento antigo:', text.trim());
-                                        element.remove();
-                                    }
-                                });
-                                
-                                // Garantir que apenas os elementos corretos existam
-                                const paymentGrid = document.getElementById('payment-grid');
-                                if (paymentGrid) {
-                                    const existingButtons = paymentGrid.querySelectorAll('.payment-option');
-                                    existingButtons.forEach(btn => {
-                                        const method = btn.getAttribute('data-method');
-                                        if (!['pix', 'stripe', 'paypal'].includes(method)) {
-                                            console.log('🗑️ Removendo botão inválido:', method);
-                                            btn.remove();
-                                        }
-                                    });
-                                }
-                                
-                                console.log('✅ Limpeza concluída');
-                            }
-                            
-                            // Executar limpeza imediatamente
-                            cleanOldPaymentElements();
-                            
-                            // Executar limpeza após DOM estar pronto
-                            if (document.readyState === 'loading') {
-                                document.addEventListener('DOMContentLoaded', cleanOldPaymentElements);
-                            }
-                            
-                            // Executar limpeza após um pequeno delay
-                            setTimeout(cleanOldPaymentElements, 500);
-                            setTimeout(cleanOldPaymentElements, 1500);
-                        })();
-                        </script>
-
-                        <!-- Botão de Debug Temporário -->
-                        <div style="margin-top: 1rem; text-align: center;">
-                            <button onclick="updatePaymentMethodsBasedOnLanguage(); console.log('🔧 Forçando atualização manual');" 
-                                    style="background: #6c757d; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">
-                                🔧 Forçar Atualização de Métodos (DEBUG)
-                            </button>
-                            <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
-                                Idioma atual: <span id="debug-language">Carregando...</span>
-                            </div>
                         </div>
 
                         <!-- Language-specific payment notice -->
@@ -204,22 +132,9 @@
                             <span id="payment-notice-text"></span>
                         </div>
 
-                        <!-- Payment Containers -->
-                        <div id="stripe-container" class="payment-container" style="display: none; margin-top: 1rem; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9;">
-                            <h4 data-i18n="purchase.stripe.title">Pagamento via Stripe</h4>
-                            <div id="stripe-elements">
-                                <!-- Stripe Elements will be inserted here -->
-                            </div>
-                            <button id="stripe-submit" class="btn-hero" style="margin-top: 1rem; display: none;" data-i18n="purchase.stripe.submit">
-                                Pagar Agora
-                            </button>
-                        </div>
-
-                        <div id="paypal-container" class="payment-container" style="display: none; margin-top: 1rem; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9;">
-                            <h4 data-i18n="purchase.paypal.title">Pagamento via PayPal</h4>
-                            <div id="paypal-buttons">
-                                <!-- PayPal buttons will be inserted here -->
-                            </div>
+                        <!-- Mercado Pago Button Container -->
+                        <div id="mercado-pago-button-container" class="hidden mt-4">
+                            <!-- Mercado Pago button will be dynamically inserted here -->
                         </div>
 
                         <!-- User Info -->
@@ -228,7 +143,7 @@
                             <strong data-i18n="purchase.userInfo.loggedAs">Logado como:</strong> <span id="user-email"></span>
                             <br>
                             <small data-i18n="purchase.userInfo.canProceed">Você pode prosseguir com o pagamento.</small>
-                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -303,15 +218,12 @@
     <script src="assets/js/security-validator.js"></script>
     <script src="assets/js/config-loader.js"></script>
     <script src="assets/js/firebase.js"></script>
-    <script src="assets/js/auth-manager.js"></script>
     <script src="assets/js/i18n.js"></script>
     <script src="assets/js/mercadopago-service.js"></script>
-    <script src="assets/js/stripe-service.js"></script>
-    <script src="assets/js/paypal-service.js"></script>
     <script src="assets/js/pix-modal.js"></script>
     <script src="assets/js/payment.js"></script>
 
-    <!-- Payment Integration Script -->
+    <!-- Mercado Pago Integration Script -->
     <script>
         // Variável global para o sistema de tradução
         let i18nSystem = null;
@@ -320,78 +232,8 @@
         // Inicialização da página
         document.addEventListener('DOMContentLoaded', async () => {
             console.log("Página de compra inicializada");
-
-            // ✅ PRIMEIRO: Limpeza agressiva de elementos incorretos
-            function enforceCorrectPaymentElements() {
-                console.log('🔧 Executando limpeza agressiva de elementos de pagamento...');
-                
-                // Remover TODOS os elementos que contenham as palavras incorretas
-                const problematicSelectors = [
-                    '*:contains("Cartão")',
-                    '*:contains("cartão")', 
-                    '*:contains("Mercado Pago")',
-                    '*:contains("mercado pago")',
-                    '*[data-method="card"]',
-                    '*[data-method="mercadopago"]',
-                    '*[id*="card"]',
-                    '*[id*="mercado"]'
-                ];
-                
-                // Como contains não funciona em querySelector, fazer de forma manual
-                const allElements = document.querySelectorAll('*');
-                allElements.forEach(element => {
-                    const text = element.textContent || element.innerText || '';
-                    const id = element.id || '';
-                    const dataMethod = element.getAttribute('data-method') || '';
-                    
-                    if (element.tagName !== 'SCRIPT' && !element.closest('script')) {
-                        if (text.toLowerCase().includes('cartão') || 
-                            text.toLowerCase().includes('mercado pago') ||
-                            dataMethod === 'card' ||
-                            dataMethod === 'mercadopago' ||
-                            id.includes('card') ||
-                            id.includes('mercado')) {
-                            console.log('🗑️ Removendo elemento problemático:', {
-                                tag: element.tagName,
-                                id: element.id,
-                                class: element.className,
-                                text: text.trim().substring(0, 50),
-                                dataMethod: dataMethod
-                            });
-                            element.remove();
-                        }
-                    }
-                });
-                
-                // Garantir que apenas os 3 elementos corretos existam no payment-grid
-                const paymentGrid = document.getElementById('payment-grid');
-                if (paymentGrid) {
-                    const validMethods = ['pix', 'stripe', 'paypal'];
-                    const existingButtons = paymentGrid.querySelectorAll('button');
-                    
-                    existingButtons.forEach(btn => {
-                        const method = btn.getAttribute('data-method');
-                        if (!validMethods.includes(method)) {
-                            console.log('🗑️ Removendo botão com método inválido:', method);
-                            btn.remove();
-                        }
-                    });
-                    
-                    // Verificar se temos exatamente 3 botões
-                    const finalButtons = paymentGrid.querySelectorAll('.payment-option');
-                    console.log(`📊 Botões finais encontrados: ${finalButtons.length}`);
-                    finalButtons.forEach(btn => {
-                        console.log('  ✓', btn.getAttribute('data-method'), ':', btn.textContent.trim());
-                    });
-                }
-                
-                console.log('✅ Limpeza agressiva concluída');
-            }
             
-            // Executar limpeza imediatamente
-            enforceCorrectPaymentElements();
-
-            // ✅ SEGUNDO: Aguardar sistema i18n estar pronto
+            // ✅ PRIMEIRO: Aguardar sistema i18n estar pronto
             try {
                 let attempts = 0;
                 while (!window.i18nSystem && attempts < 50) {
@@ -423,52 +265,10 @@
                 currentLanguage = 'pt-br';
             }
 
-            // ✅ TERCEIRO: Configurar métodos de pagamento baseado no idioma
+            // ✅ SEGUNDO: Configurar métodos de pagamento baseado no idioma
             updatePaymentMethodsBasedOnLanguage();
-            
-            // ✅ INTERCEPTAR: Monitorar adições de novos elementos
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    if (mutation.type === 'childList') {
-                        mutation.addedNodes.forEach((node) => {
-                            if (node.nodeType === Node.ELEMENT_NODE) {
-                                const text = node.textContent || node.innerText || '';
-                                if (text.toLowerCase().includes('cartão') || 
-                                    text.toLowerCase().includes('mercado pago')) {
-                                    console.log('🚫 Interceptando adição de elemento incorreto:', text.trim());
-                                    node.remove();
-                                }
-                            }
-                        });
-                    }
-                });
-            });
-            
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true
-            });
-            
-            // ✅ GARANTIR: Múltiplas execuções para garantir sucesso
-            setTimeout(() => {
-                console.log('🔄 Limpeza de segurança #1');
-                enforceCorrectPaymentElements();
-                updatePaymentMethodsBasedOnLanguage();
-            }, 1000);
-            
-            setTimeout(() => {
-                console.log('🔄 Limpeza de segurança #2');
-                enforceCorrectPaymentElements();
-                updatePaymentMethodsBasedOnLanguage();
-            }, 3000);
-            
-            setTimeout(() => {
-                console.log('🔄 Limpeza final');
-                enforceCorrectPaymentElements();
-                updatePaymentMethodsBasedOnLanguage();
-            }, 5000);
 
-            // ✅ QUARTO: Aguardar configuração ser carregada
+            // ✅ TERCEIRO: Aguardar configuração ser carregada
             try {
                 console.log("⏳ Aguardando configuração...");
                 await ConfigLoader.waitForConfig(5000); // 5 segundos
@@ -477,13 +277,13 @@
                 console.warn("⚠️ Timeout ao aguardar configuração, continuando com fallback:", error);
             }
 
-            // ✅ QUINTO: Configurar listeners de modais
+            // ✅ QUARTO: Configurar listeners de modais
             document.querySelectorAll('.modal').forEach(modal => {
                 modal.addEventListener('click', (e) => {
                     if (e.target === modal) {
                         if (modal.id === 'pix-modal') {
                             if (window.pixModal) {
-                            pixModal.hide();
+                                pixModal.hide();
                             }
                         } else {
                             modal.classList.add('hidden');
@@ -495,141 +295,45 @@
 
         // Função para atualizar métodos de pagamento baseado no idioma
         function updatePaymentMethodsBasedOnLanguage() {
-            console.log(`🔄 Atualizando métodos de pagamento para idioma: ${currentLanguage}`);
-            
-            // Primeiro, limpar todos os elementos incorretos
-            const allElements = document.querySelectorAll('button, div, span');
-            allElements.forEach(element => {
-                const text = element.textContent || element.innerText || '';
-                if ((text.includes('Cartão') || text.includes('cartão') || 
-                     text.includes('Mercado Pago') || text.includes('mercado pago')) &&
-                    !element.closest('script')) {
-                    console.log('🗑️ Removendo elemento incorreto durante atualização:', text.trim());
-                    element.remove();
-                }
-            });
-            
             const pixOption = document.getElementById('pix-option');
-            const stripeOption = document.getElementById('stripe-option');
-            const paypalOption = document.getElementById('paypal-option');
             const paymentNotice = document.getElementById('payment-language-notice');
             const noticeText = document.getElementById('payment-notice-text');
             
-            // Debug: verificar se elementos foram encontrados
-            console.log('📊 Elementos encontrados:', {
-                pixOption: !!pixOption,
-                stripeOption: !!stripeOption,
-                paypalOption: !!paypalOption,
-                paymentNotice: !!paymentNotice
-            });
-            
-            // Esconder todos os métodos primeiro
-            if (pixOption) pixOption.style.display = 'none';
-            if (stripeOption) stripeOption.style.display = 'none';
-            if (paypalOption) paypalOption.style.display = 'none';
-            
-            // Stripe e PayPal estão disponíveis para todos os idiomas
-            if (stripeOption) {
-                stripeOption.style.display = 'block';
-                // Garantir que o texto está correto
-                const stripeText = stripeOption.querySelector('div[data-i18n]');
-                if (stripeText && !stripeText.textContent.includes('Stripe')) {
-                    stripeText.textContent = 'Stripe';
-                }
-                console.log('✅ Stripe habilitado');
-            }
-            if (paypalOption) {
-                paypalOption.style.display = 'block';
-                // Garantir que o texto está correto
-                const paypalText = paypalOption.querySelector('div');
-                if (paypalText && !paypalText.textContent.includes('PayPal')) {
-                    paypalText.textContent = 'PayPal';
-                }
-                console.log('✅ PayPal habilitado');
-            }
-
             if (currentLanguage === 'pt-br') {
-                // Para pt-br: PIX + Stripe + PayPal
-                console.log('🇧🇷 Configurando para pt-br: PIX + Stripe + PayPal');
+                // PIX disponível apenas para português brasileiro
                 if (pixOption) {
                     pixOption.style.display = 'block';
-                    console.log('✅ PIX habilitado (exclusivo do Brasil)');
                 }
                 
-                // Esconder aviso para pt-br (já tem todos os métodos)
+                // Esconder aviso
                 if (paymentNotice) {
                     paymentNotice.style.display = 'none';
                 }
             } else {
-                // Para outras linguagens: apenas Stripe + PayPal (sem PIX)
-                console.log(`🌍 Configurando para ${currentLanguage}: Stripe + PayPal (sem PIX)`);
+                // Esconder PIX para outros idiomas
+                if (pixOption) {
+                    pixOption.style.display = 'none';
+                }
                 
-                // Mostrar aviso sobre PIX não estar disponível
+                // Mostrar aviso sobre limitações de pagamento
                 if (paymentNotice && noticeText) {
                     paymentNotice.style.display = 'block';
                     
                     // Mensagens traduzidas para o aviso
                     const notices = {
-                        'en': 'ℹ️ PIX payment is only available for customers in Brazil. Please use credit card or PayPal.',
-                        'es': 'ℹ️ El pago PIX solo está disponible para clientes en Brasil. Use tarjeta de crédito o PayPal.',
-                        'fr': 'ℹ️ Le paiement PIX n\'est disponible que pour les clients au Brésil. Utilisez une carte de crédit ou PayPal.',
-                        'de': 'ℹ️ PIX-Zahlung ist nur für Kunden in Brasilien verfügbar. Verwenden Sie Kreditkarte oder PayPal.',
-                        'it': 'ℹ️ Il pagamento PIX è disponibile solo per i clienti in Brasile. Usa carta di credito o PayPal.'
+                        'en': 'ℹ️ PIX payment is only available for customers in Brazil. Please use credit card or Mercado Pago.',
+                        'es': 'ℹ️ El pago PIX solo está disponible para clientes en Brasil. Use tarjeta de crédito o Mercado Pago.',
+                        'fr': 'ℹ️ Le paiement PIX n\'est disponible que pour les clients au Brésil. Utilisez une carte de crédit ou Mercado Pago.',
+                        'de': 'ℹ️ PIX-Zahlung ist nur für Kunden in Brasilien verfügbar. Verwenden Sie Kreditkarte oder Mercado Pago.',
+                        'it': 'ℹ️ Il pagamento PIX è disponibile solo per i clienti in Brasile. Usa carta di credito o Mercado Pago.'
                     };
                     
                     noticeText.textContent = notices[currentLanguage] || notices['en'];
-                    console.log('ℹ️ Aviso sobre PIX não disponível mostrado');
                 }
             }
             
-            console.log(`✅ Métodos de pagamento atualizados para idioma: ${currentLanguage}`);
-            
-            // Atualizar display de debug
-            const debugLanguage = document.getElementById('debug-language');
-            if (debugLanguage) {
-                debugLanguage.textContent = currentLanguage;
-            }
-            
-            // Forçar re-render para garantir que mudanças sejam visíveis
-            if (pixOption) pixOption.offsetHeight; // força reflow
-            if (stripeOption) stripeOption.offsetHeight;
-            if (paypalOption) paypalOption.offsetHeight;
-            
-            // Verificação final: garantir que não há elementos incorretos
-            setTimeout(() => {
-                const incorrectElements = document.querySelectorAll('*');
-                let foundIncorrect = false;
-                incorrectElements.forEach(element => {
-                    const text = element.textContent || element.innerText || '';
-                    if ((text.includes('Cartão') || text.includes('Mercado Pago')) && 
-                        !element.closest('script') && element.tagName !== 'SCRIPT') {
-                        console.warn('⚠️ Ainda há elemento incorreto após limpeza:', text.trim());
-                        foundIncorrect = true;
-                    }
-                });
-                
-                if (!foundIncorrect) {
-                    console.log('✅ Verificação final: Nenhum elemento incorreto encontrado');
-                }
-            }, 100);
+            console.log(`🎯 Métodos de pagamento atualizados para idioma: ${currentLanguage}`);
         }
-
-        // ✅ LISTENER ADICIONAL: Para garantir que métodos de pagamento sejam atualizados
-        document.addEventListener('DOMContentLoaded', function() {
-            // Chamar após DOM estar completamente carregado
-            setTimeout(() => {
-                console.log('🔄 Chamada DOM Ready para métodos de pagamento');
-                updatePaymentMethodsBasedOnLanguage();
-            }, 500);
-        });
-
-        // ✅ LISTENER WINDOW LOAD: Para garantir que tudo esteja carregado
-        window.addEventListener('load', function() {
-            setTimeout(() => {
-                console.log('🔄 Chamada Window Load para métodos de pagamento');
-                updatePaymentMethodsBasedOnLanguage();
-            }, 500);
-        });
 
         console.log("🚀 Página de compra carregada - Sistema de segurança ativo");
     </script>

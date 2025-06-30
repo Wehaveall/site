@@ -8,6 +8,11 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
+    <meta http-equiv="Last-Modified" content="0" />
+    <meta http-equiv="If-Modified-Since" content="0" />
+    <meta name="cache-control" content="max-age=0" />
+    <meta name="expires" content="0" />
+    <meta name="pragma" content="no-cache" />
     <title data-i18n="purchase.title">Comprar Atalho - Otimize sua produtividade</title>
 
     <!-- Fonts and Icons -->
@@ -127,12 +132,60 @@
                                 <div data-i18n="purchase.methods.stripe">Stripe</div>
                             </button>
 
-                            <!-- PayPal - Apenas para outras linguagens -->
+                            <!-- PayPal - Para todos os idiomas -->
                             <button class="payment-option" data-method="paypal" id="paypal-option" style="display: none;">
                                 <i class="fa-brands fa-paypal"></i>
                                 <div>PayPal</div>
                             </button>
                         </div>
+
+                        <!-- Script para limpar elementos antigos e garantir exibição correta -->
+                        <script>
+                        (function() {
+                            // Função para remover elementos antigos problemáticos
+                            function cleanOldPaymentElements() {
+                                console.log('🧹 Limpando elementos antigos de pagamento...');
+                                
+                                // Remover qualquer elemento com texto "Cartão" ou "Mercado Pago"
+                                const allButtons = document.querySelectorAll('button, div, span');
+                                allButtons.forEach(element => {
+                                    const text = element.textContent || element.innerText || '';
+                                    if (text.includes('Cartão') || text.includes('cartão') || 
+                                        text.includes('Mercado Pago') || text.includes('mercado pago')) {
+                                        console.log('🗑️ Removendo elemento antigo:', text.trim());
+                                        element.remove();
+                                    }
+                                });
+                                
+                                // Garantir que apenas os elementos corretos existam
+                                const paymentGrid = document.getElementById('payment-grid');
+                                if (paymentGrid) {
+                                    const existingButtons = paymentGrid.querySelectorAll('.payment-option');
+                                    existingButtons.forEach(btn => {
+                                        const method = btn.getAttribute('data-method');
+                                        if (!['pix', 'stripe', 'paypal'].includes(method)) {
+                                            console.log('🗑️ Removendo botão inválido:', method);
+                                            btn.remove();
+                                        }
+                                    });
+                                }
+                                
+                                console.log('✅ Limpeza concluída');
+                            }
+                            
+                            // Executar limpeza imediatamente
+                            cleanOldPaymentElements();
+                            
+                            // Executar limpeza após DOM estar pronto
+                            if (document.readyState === 'loading') {
+                                document.addEventListener('DOMContentLoaded', cleanOldPaymentElements);
+                            }
+                            
+                            // Executar limpeza após um pequeno delay
+                            setTimeout(cleanOldPaymentElements, 500);
+                            setTimeout(cleanOldPaymentElements, 1500);
+                        })();
+                        </script>
 
                         <!-- Botão de Debug Temporário -->
                         <div style="margin-top: 1rem; text-align: center;">
@@ -268,7 +321,77 @@
         document.addEventListener('DOMContentLoaded', async () => {
             console.log("Página de compra inicializada");
 
-            // ✅ PRIMEIRO: Aguardar sistema i18n estar pronto
+            // ✅ PRIMEIRO: Limpeza agressiva de elementos incorretos
+            function enforceCorrectPaymentElements() {
+                console.log('🔧 Executando limpeza agressiva de elementos de pagamento...');
+                
+                // Remover TODOS os elementos que contenham as palavras incorretas
+                const problematicSelectors = [
+                    '*:contains("Cartão")',
+                    '*:contains("cartão")', 
+                    '*:contains("Mercado Pago")',
+                    '*:contains("mercado pago")',
+                    '*[data-method="card"]',
+                    '*[data-method="mercadopago"]',
+                    '*[id*="card"]',
+                    '*[id*="mercado"]'
+                ];
+                
+                // Como contains não funciona em querySelector, fazer de forma manual
+                const allElements = document.querySelectorAll('*');
+                allElements.forEach(element => {
+                    const text = element.textContent || element.innerText || '';
+                    const id = element.id || '';
+                    const dataMethod = element.getAttribute('data-method') || '';
+                    
+                    if (element.tagName !== 'SCRIPT' && !element.closest('script')) {
+                        if (text.toLowerCase().includes('cartão') || 
+                            text.toLowerCase().includes('mercado pago') ||
+                            dataMethod === 'card' ||
+                            dataMethod === 'mercadopago' ||
+                            id.includes('card') ||
+                            id.includes('mercado')) {
+                            console.log('🗑️ Removendo elemento problemático:', {
+                                tag: element.tagName,
+                                id: element.id,
+                                class: element.className,
+                                text: text.trim().substring(0, 50),
+                                dataMethod: dataMethod
+                            });
+                            element.remove();
+                        }
+                    }
+                });
+                
+                // Garantir que apenas os 3 elementos corretos existam no payment-grid
+                const paymentGrid = document.getElementById('payment-grid');
+                if (paymentGrid) {
+                    const validMethods = ['pix', 'stripe', 'paypal'];
+                    const existingButtons = paymentGrid.querySelectorAll('button');
+                    
+                    existingButtons.forEach(btn => {
+                        const method = btn.getAttribute('data-method');
+                        if (!validMethods.includes(method)) {
+                            console.log('🗑️ Removendo botão com método inválido:', method);
+                            btn.remove();
+                        }
+                    });
+                    
+                    // Verificar se temos exatamente 3 botões
+                    const finalButtons = paymentGrid.querySelectorAll('.payment-option');
+                    console.log(`📊 Botões finais encontrados: ${finalButtons.length}`);
+                    finalButtons.forEach(btn => {
+                        console.log('  ✓', btn.getAttribute('data-method'), ':', btn.textContent.trim());
+                    });
+                }
+                
+                console.log('✅ Limpeza agressiva concluída');
+            }
+            
+            // Executar limpeza imediatamente
+            enforceCorrectPaymentElements();
+
+            // ✅ SEGUNDO: Aguardar sistema i18n estar pronto
             try {
                 let attempts = 0;
                 while (!window.i18nSystem && attempts < 50) {
@@ -300,22 +423,52 @@
                 currentLanguage = 'pt-br';
             }
 
-            // ✅ SEGUNDO: Configurar métodos de pagamento baseado no idioma
+            // ✅ TERCEIRO: Configurar métodos de pagamento baseado no idioma
             updatePaymentMethodsBasedOnLanguage();
             
-            // ✅ GARANTIR: Chamar novamente após um pequeno delay para garantir execução
+            // ✅ INTERCEPTAR: Monitorar adições de novos elementos
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'childList') {
+                        mutation.addedNodes.forEach((node) => {
+                            if (node.nodeType === Node.ELEMENT_NODE) {
+                                const text = node.textContent || node.innerText || '';
+                                if (text.toLowerCase().includes('cartão') || 
+                                    text.toLowerCase().includes('mercado pago')) {
+                                    console.log('🚫 Interceptando adição de elemento incorreto:', text.trim());
+                                    node.remove();
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+            
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+            
+            // ✅ GARANTIR: Múltiplas execuções para garantir sucesso
             setTimeout(() => {
-                console.log('🔄 Chamada de segurança para atualizar métodos de pagamento');
+                console.log('🔄 Limpeza de segurança #1');
+                enforceCorrectPaymentElements();
                 updatePaymentMethodsBasedOnLanguage();
             }, 1000);
             
-            // ✅ GARANTIR: Chamar novamente após mais tempo para casos de carregamento lento
             setTimeout(() => {
-                console.log('🔄 Chamada final para atualizar métodos de pagamento');
+                console.log('🔄 Limpeza de segurança #2');
+                enforceCorrectPaymentElements();
                 updatePaymentMethodsBasedOnLanguage();
             }, 3000);
+            
+            setTimeout(() => {
+                console.log('🔄 Limpeza final');
+                enforceCorrectPaymentElements();
+                updatePaymentMethodsBasedOnLanguage();
+            }, 5000);
 
-            // ✅ TERCEIRO: Aguardar configuração ser carregada
+            // ✅ QUARTO: Aguardar configuração ser carregada
             try {
                 console.log("⏳ Aguardando configuração...");
                 await ConfigLoader.waitForConfig(5000); // 5 segundos
@@ -324,7 +477,7 @@
                 console.warn("⚠️ Timeout ao aguardar configuração, continuando com fallback:", error);
             }
 
-            // ✅ QUARTO: Configurar listeners de modais
+            // ✅ QUINTO: Configurar listeners de modais
             document.querySelectorAll('.modal').forEach(modal => {
                 modal.addEventListener('click', (e) => {
                     if (e.target === modal) {
@@ -343,6 +496,18 @@
         // Função para atualizar métodos de pagamento baseado no idioma
         function updatePaymentMethodsBasedOnLanguage() {
             console.log(`🔄 Atualizando métodos de pagamento para idioma: ${currentLanguage}`);
+            
+            // Primeiro, limpar todos os elementos incorretos
+            const allElements = document.querySelectorAll('button, div, span');
+            allElements.forEach(element => {
+                const text = element.textContent || element.innerText || '';
+                if ((text.includes('Cartão') || text.includes('cartão') || 
+                     text.includes('Mercado Pago') || text.includes('mercado pago')) &&
+                    !element.closest('script')) {
+                    console.log('🗑️ Removendo elemento incorreto durante atualização:', text.trim());
+                    element.remove();
+                }
+            });
             
             const pixOption = document.getElementById('pix-option');
             const stripeOption = document.getElementById('stripe-option');
@@ -366,10 +531,20 @@
             // Stripe e PayPal estão disponíveis para todos os idiomas
             if (stripeOption) {
                 stripeOption.style.display = 'block';
+                // Garantir que o texto está correto
+                const stripeText = stripeOption.querySelector('div[data-i18n]');
+                if (stripeText && !stripeText.textContent.includes('Stripe')) {
+                    stripeText.textContent = 'Stripe';
+                }
                 console.log('✅ Stripe habilitado');
             }
             if (paypalOption) {
                 paypalOption.style.display = 'block';
+                // Garantir que o texto está correto
+                const paypalText = paypalOption.querySelector('div');
+                if (paypalText && !paypalText.textContent.includes('PayPal')) {
+                    paypalText.textContent = 'PayPal';
+                }
                 console.log('✅ PayPal habilitado');
             }
 
@@ -419,6 +594,24 @@
             if (pixOption) pixOption.offsetHeight; // força reflow
             if (stripeOption) stripeOption.offsetHeight;
             if (paypalOption) paypalOption.offsetHeight;
+            
+            // Verificação final: garantir que não há elementos incorretos
+            setTimeout(() => {
+                const incorrectElements = document.querySelectorAll('*');
+                let foundIncorrect = false;
+                incorrectElements.forEach(element => {
+                    const text = element.textContent || element.innerText || '';
+                    if ((text.includes('Cartão') || text.includes('Mercado Pago')) && 
+                        !element.closest('script') && element.tagName !== 'SCRIPT') {
+                        console.warn('⚠️ Ainda há elemento incorreto após limpeza:', text.trim());
+                        foundIncorrect = true;
+                    }
+                });
+                
+                if (!foundIncorrect) {
+                    console.log('✅ Verificação final: Nenhum elemento incorreto encontrado');
+                }
+            }, 100);
         }
 
         // ✅ LISTENER ADICIONAL: Para garantir que métodos de pagamento sejam atualizados

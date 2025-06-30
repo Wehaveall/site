@@ -435,21 +435,48 @@ async function registerUser(userData) {
     }
 }
 
-// Listeners
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("Página de compra carregada");
+// Variável para evitar múltiplas inicializações
+let paymentPageInitialized = false;
 
-    // Aguardar Firebase estar pronto
-    if (!window.auth || !window.db) {
-        console.log('⏳ Firebase não está pronto, aguardando...');
-        setTimeout(() => {
-            location.reload();
-        }, 1000);
+// Listeners
+document.addEventListener('DOMContentLoaded', async () => {
+    // Evitar múltiplas inicializações
+    if (paymentPageInitialized) {
+        console.log("⚠️ Página de compra já foi inicializada, ignorando");
         return;
     }
+    paymentPageInitialized = true;
+    
+    console.log("Página de compra carregada");
 
-    const auth = window.auth;
-    const db = window.db;
+    // Aguardar Firebase estar pronto de forma assíncrona (sem reload)
+    let auth = window.auth;
+    let db = window.db;
+    
+    if (!auth || !db) {
+        console.log('⏳ Firebase não está pronto, aguardando inicialização...');
+        
+        // Aguardar Firebase de forma assíncrona
+        let attempts = 0;
+        const maxAttempts = 100; // 10 segundos máximo
+        
+        while ((!auth || !db) && attempts < maxAttempts) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            auth = window.auth;
+            db = window.db;
+            attempts++;
+        }
+        
+        if (!auth || !db) {
+            console.error('❌ Timeout ao aguardar Firebase');
+            showError('Erro ao conectar com nossos servidores. Tente recarregar a página manualmente.');
+            return;
+        }
+        
+        console.log('✅ Firebase carregado após aguardar');
+    }
+
+    console.log('🎯 Página de compra totalmente inicializada com Firebase e configurações carregadas');
 
     // Função para logout (expor globalmente)
     window.logout = async function() {

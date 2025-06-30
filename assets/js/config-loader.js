@@ -97,21 +97,25 @@ class ConfigLoader {
     }
 }
 
-// Inicializar carregamento automático
-const configLoader = new ConfigLoader();
+// Inicializar carregamento automático (apenas uma vez)
+if (!window.configLoader) {
+    const configLoader = new ConfigLoader();
+    window.configLoader = configLoader;
 
-// Carregar configuração assim que o DOM estiver pronto
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
+    // Carregar configuração assim que o DOM estiver pronto
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            configLoader.loadConfig();
+        });
+    } else {
+        // DOM já está pronto
         configLoader.loadConfig();
-    });
+    }
 } else {
-    // DOM já está pronto
-    configLoader.loadConfig();
+    console.log('📋 Config Loader já foi inicializado anteriormente');
 }
 
 // Exportar para uso global
 window.ConfigLoader = ConfigLoader;
-window.configLoader = configLoader;
 
 console.log('📋 Config Loader inicializado'); 

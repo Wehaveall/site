@@ -418,29 +418,41 @@ class PixModalController {
 // Inicializa o controlador do modal
 let pixModal = null;
 
-// Aguardar configuração ser carregada antes de inicializar
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        // Aguardar configuração
-        if (window.ConfigLoader) {
-            await ConfigLoader.waitForConfig(5000);
-        }
-        
-        // Inicializar pixModal
-        pixModal = new PixModalController();
-        await pixModal.initialize();
-        
-        console.log('✅ PixModal inicializado com sucesso');
-    } catch (error) {
-        console.warn('⚠️ Erro ao inicializar PixModal, criando fallback:', error);
-        
-        // Fallback: criar sem aguardar configuração
-        pixModal = new PixModalController();
-        // Inicializar sem aguardar (vai usar fallback interno)
+// Aguardar configuração ser carregada antes de inicializar (apenas uma vez)
+if (!window.pixModalInitialized) {
+    window.pixModalInitialized = true;
+    
+    document.addEventListener('DOMContentLoaded', async () => {
         try {
+            // Verificar se já foi inicializado
+            if (pixModal) {
+                console.log('⚠️ PixModal já foi inicializado anteriormente');
+                return;
+            }
+            
+            // Aguardar configuração
+            if (window.ConfigLoader) {
+                await ConfigLoader.waitForConfig(5000);
+            }
+            
+            // Inicializar pixModal
+            pixModal = new PixModalController();
             await pixModal.initialize();
-        } catch (initError) {
-            console.warn('⚠️ Falha na inicialização do fallback:', initError);
+            
+            console.log('✅ PixModal inicializado com sucesso');
+        } catch (error) {
+            console.warn('⚠️ Erro ao inicializar PixModal, criando fallback:', error);
+            
+            // Fallback: criar sem aguardar configuração
+            if (!pixModal) {
+                pixModal = new PixModalController();
+                // Inicializar sem aguardar (vai usar fallback interno)
+                try {
+                    await pixModal.initialize();
+                } catch (initError) {
+                    console.warn('⚠️ Falha na inicialização do fallback:', initError);
+                }
+            }
         }
-    }
-});
+    });
+}

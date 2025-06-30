@@ -562,12 +562,16 @@ class SecurityValidator {
     }
 }
 
-// Inicializar validador de segurança
-const securityValidator = new SecurityValidator();
-
-// Exportar para uso global
-window.SecurityValidator = SecurityValidator;
-window.securityValidator = securityValidator;
+// Inicializar validador de segurança (apenas uma vez)
+if (!window.securityValidator) {
+    const securityValidator = new SecurityValidator();
+    
+    // Exportar para uso global
+    window.SecurityValidator = SecurityValidator;
+    window.securityValidator = securityValidator;
+} else {
+    console.log('🔒 Security Validator já foi inicializado anteriormente');
+}
 
 console.log('🔒 Sistema de segurança frontend inicializado');
 console.log('🛡️ Proteções ativas: DevTools, Console, DOM, CSRF, Rate Limiting');

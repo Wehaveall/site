@@ -217,7 +217,7 @@
             // Aguardar configuração ser carregada
             try {
                 console.log("⏳ Aguardando configuração...");
-                await ConfigLoader.waitForConfig(5000);
+                await ConfigLoader.waitForConfig(3000); // Reduzido para 3 segundos
                 console.log("✅ Configuração carregada com sucesso");
             } catch (error) {
                 console.warn("⚠️ Timeout ao aguardar configuração, continuando com fallback:", error);

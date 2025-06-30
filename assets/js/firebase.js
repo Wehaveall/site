@@ -29,7 +29,19 @@ async function initializeFirebase() {
         // Retorna as instâncias dos serviços para uso
         const auth = firebase.auth();
         const db = firebase.firestore();
-        const functions = firebase.functions();
+        
+        // Firebase Functions é opcional - só carrega se disponível
+        let functions = null;
+        try {
+            if (firebase.functions) {
+                functions = firebase.functions();
+                console.log("✅ Firebase Functions carregado");
+            } else {
+                console.log("⚠️ Firebase Functions não disponível nesta página");
+            }
+        } catch (error) {
+            console.warn("⚠️ Firebase Functions não carregou:", error.message);
+        }
 
         // Configurações do Firebase após inicialização
         console.log("🔧 Aplicando configurações do Firebase...");
@@ -248,6 +260,12 @@ async function syncEmailVerificationStatus() {
 
         const user = window.auth.currentUser;
         const idToken = await user.getIdToken();
+        
+        // Verificar se Functions está disponível
+        if (!window.functions) {
+            console.warn("⚠️ Firebase Functions não disponível - pulando sincronização");
+            return null;
+        }
         
         const syncEmail = window.functions.httpsCallable('syncEmailOnLogin');
         const result = await syncEmail();

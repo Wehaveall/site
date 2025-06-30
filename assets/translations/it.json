@@ -157,12 +157,6 @@
     "dashboard": "Dashboard",
     "logout": "Esci"
   },
-  "footer": {
-    "copyright": "© 2025 Atalho App. Tutti i diritti riservati.",
-    "privacy": "Informativa sulla Privacy",
-    "terms": "Termini di Utilizzo",
-    "home": "Home"
-  },
   "common": {
     "loading": "Caricamento...",
     "error": "Errore",

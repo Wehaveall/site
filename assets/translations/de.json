@@ -151,27 +151,21 @@
   },
   "nav": {
     "home": "Startseite",
-    "features": "Funktionen",
+    "features": "Eigenschaften",
     "register": "Registrieren",
     "login": "Anmelden",
     "dashboard": "Dashboard",
     "logout": "Abmelden"
   },
-  "footer": {
-    "copyright": "© 2025 Atalho App. Alle Rechte vorbehalten.",
-    "privacy": "Datenschutzrichtlinie",
-    "terms": "Nutzungsbedingungen",
-    "home": "Startseite"
-  },
   "common": {
-    "loading": "Laden...",
+    "loading": "Wird geladen...",
     "error": "Fehler",
     "success": "Erfolg",
     "save": "Speichern",
     "cancel": "Abbrechen",
     "continue": "Weiter",
     "back": "Zurück",
-    "next": "Weiter",
+    "next": "Nächste",
     "close": "Schließen"
   }
 } 

@@ -157,12 +157,6 @@
     "dashboard": "Dashboard",
     "logout": "Sair"
   },
-  "footer": {
-    "copyright": "© 2025 Atalho App. Todos os direitos reservados.",
-    "privacy": "Política de Privacidade",
-    "terms": "Termos de Uso",
-    "home": "Início"
-  },
   "common": {
     "loading": "Carregando...",
     "error": "Erro",

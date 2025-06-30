@@ -153,15 +153,9 @@
     "home": "Inicio",
     "features": "Características",
     "register": "Registro",
-    "login": "Iniciar Sesión",
-    "dashboard": "Tablero",
-    "logout": "Cerrar Sesión"
-  },
-  "footer": {
-    "copyright": "© 2025 Atalho App. Todos los derechos reservados.",
-    "privacy": "Política de Privacidad",
-    "terms": "Términos de Uso",
-    "home": "Inicio"
+    "login": "Iniciar sesión",
+    "dashboard": "Panel",
+    "logout": "Cerrar sesión"
   },
   "common": {
     "loading": "Cargando...",

@@ -157,12 +157,6 @@
     "dashboard": "Tableau de bord",
     "logout": "Se déconnecter"
   },
-  "footer": {
-    "copyright": "© 2025 Atalho App. Tous droits réservés.",
-    "privacy": "Politique de confidentialité",
-    "terms": "Conditions d'utilisation",
-    "home": "Accueil"
-  },
   "common": {
     "loading": "Chargement...",
     "error": "Erreur",

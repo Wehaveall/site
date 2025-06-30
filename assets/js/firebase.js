@@ -61,21 +61,33 @@ async function initializeFirebase() {
             console.error("❌ Erro ao configurar persistência:", error);
         }
 
-        // Configurações do Firestore
-        db.settings({
-            cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-            merge: true
-        });
-
-        // Habilita persistência offline do Firestore
+        // Configurações do Firestore com nova API de cache
         try {
-            await db.enablePersistence();
-            console.log("✅ Persistência offline do Firestore habilitada");
+            db.settings({
+                cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+                merge: true,
+                cache: firebase.firestore.localCacheSettings({
+                    kind: 'persistent'
+                })
+            });
+            console.log("✅ Persistência offline do Firestore configurada com nova API");
         } catch (err) {
-            if (err.code == 'failed-precondition') {
-                console.log('Persistência do Firestore falhou: múltiplas abas abertas');
-            } else if (err.code == 'unimplemented') {
-                console.log('O navegador não suporta persistência do Firestore');
+            // Fallback para método antigo se a nova API não estiver disponível
+            try {
+                db.settings({
+                    cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+                    merge: true
+                });
+                await db.enablePersistence();
+                console.log("✅ Persistência offline do Firestore habilitada (fallback)");
+            } catch (fallbackErr) {
+                if (fallbackErr.code == 'failed-precondition') {
+                    console.log('⚠️ Persistência do Firestore falhou: múltiplas abas abertas');
+                } else if (fallbackErr.code == 'unimplemented') {
+                    console.log('⚠️ O navegador não suporta persistência do Firestore');
+                } else {
+                    console.error('❌ Erro ao configurar persistência:', fallbackErr);
+                }
             }
         }
 
@@ -240,45 +252,33 @@ async function setFirebaseLanguage(language) {
 
 // Função para registro com detecção automática de idioma
 async function registerWithAutoLanguage(email, password) {
-    try {
-        const detectedLanguage = await detectUserLanguage(email);
-        await setFirebaseLanguage(detectedLanguage);
-        
-        if (!window.auth) {
-            throw new Error("Firebase Auth não está inicializado");
-        }
-        
-        const userCredential = await window.auth.createUserWithEmailAndPassword(email, password);
-        const user = userCredential.user;
-
-        await user.sendEmailVerification();
-        
-        console.log(`✅ Usuário criado com idioma ${detectedLanguage}:`, user.uid);
-        return { uid: user.uid, email: user.email, language: detectedLanguage };
-
-    } catch (error) {
-        console.error("❌ Erro no registro:", error);
-        throw error;
+    const detectedLanguage = await detectUserLanguage(email);
+    await setFirebaseLanguage(detectedLanguage);
+    
+    if (!window.auth) {
+        throw new Error("Firebase Auth não está inicializado");
     }
+    
+    const userCredential = await window.auth.createUserWithEmailAndPassword(email, password);
+    const user = userCredential.user;
+
+    await user.sendEmailVerification();
+    
+    console.log(`✅ Usuário criado com idioma ${detectedLanguage}:`, user.uid);
+    return { uid: user.uid, email: user.email, language: detectedLanguage };
 }
 
 // Função para reenviar verificação com idioma
 async function resendVerificationWithLanguage(language) {
-    try {
-        if (!window.auth || !window.auth.currentUser) {
-            throw new Error("Usuário não está logado");
-        }
-
-        await setFirebaseLanguage(language);
-        await window.auth.currentUser.sendEmailVerification();
-        
-        console.log(`✅ Verificação reenviada em ${language}`);
-        return true;
-
-    } catch (error) {
-        console.error("❌ Erro ao reenviar verificação:", error);
-        throw error;
+    if (!window.auth || !window.auth.currentUser) {
+        throw new Error("Usuário não está logado");
     }
+
+    await setFirebaseLanguage(language);
+    await window.auth.currentUser.sendEmailVerification();
+    
+    console.log(`✅ Verificação reenviada em ${language}`);
+    return true;
 }
 
 // Função para sincronizar status de email após login

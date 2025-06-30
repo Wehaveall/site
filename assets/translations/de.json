@@ -124,7 +124,14 @@
     "price": "19,90 €",
     "license": "Jahreslizenz",
     "methods": {
-      "card": "Karte"
+      "stripe": "Kreditkarte"
+    },
+    "stripe": {
+      "title": "Kartenzahlung",
+      "submit": "Jetzt Bezahlen"
+    },
+    "paypal": {
+      "title": "PayPal-Zahlung"
     },
     "authRequired": {
       "title": "Achtung:",

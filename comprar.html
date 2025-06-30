@@ -16,8 +16,8 @@
     <!-- Styles -->
     <link rel="stylesheet" href="assets/css/style.css" />
 
-    <!-- Mercado Pago SDK -->
-    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <!-- Stripe SDK -->
+    <script src="https://js.stripe.com/v3/"></script>
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -115,14 +115,14 @@
                                 <div>PIX</div>
                             </button>
 
-                            <button class="payment-option" data-method="cartao">
+                            <button class="payment-option" data-method="stripe">
                                 <i class="fa-solid fa-credit-card"></i>
-                                <div data-i18n="purchase.methods.card">Cartão</div>
+                                <div data-i18n="purchase.methods.stripe">Cartão de Crédito</div>
                             </button>
 
-                            <button class="payment-option" data-method="mercadopago">
-                                <i class="fa-solid fa-hand-holding-dollar"></i>
-                                <div>Mercado Pago</div>
+                            <button class="payment-option" data-method="paypal">
+                                <i class="fa-brands fa-paypal"></i>
+                                <div>PayPal</div>
                             </button>
                         </div>
 
@@ -132,9 +132,22 @@
                             <span id="payment-notice-text"></span>
                         </div>
 
-                        <!-- Mercado Pago Button Container -->
-                        <div id="mercado-pago-button-container" class="hidden mt-4">
-                            <!-- Mercado Pago button will be dynamically inserted here -->
+                        <!-- Payment Containers -->
+                        <div id="stripe-container" class="payment-container" style="display: none; margin-top: 1rem; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9;">
+                            <h4 data-i18n="purchase.stripe.title">Pagamento com Cartão</h4>
+                            <div id="stripe-elements">
+                                <!-- Stripe Elements will be inserted here -->
+                            </div>
+                            <button id="stripe-submit" class="btn-hero" style="margin-top: 1rem; display: none;" data-i18n="purchase.stripe.submit">
+                                Pagar Agora
+                            </button>
+                        </div>
+
+                        <div id="paypal-container" class="payment-container" style="display: none; margin-top: 1rem; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9;">
+                            <h4 data-i18n="purchase.paypal.title">Pagamento via PayPal</h4>
+                            <div id="paypal-buttons">
+                                <!-- PayPal buttons will be inserted here -->
+                            </div>
                         </div>
 
                         <!-- User Info -->
@@ -219,7 +232,8 @@
     <script src="assets/js/config-loader.js"></script>
     <script src="assets/js/firebase.js"></script>
     <script src="assets/js/i18n.js"></script>
-    <script src="assets/js/mercadopago-service.js"></script>
+    <script src="assets/js/stripe-service.js"></script>
+    <script src="assets/js/paypal-service.js"></script>
     <script src="assets/js/pix-modal.js"></script>
     <script src="assets/js/payment.js"></script>
 

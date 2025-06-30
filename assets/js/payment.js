@@ -228,6 +228,17 @@ function validateForm() {
     return isValid;
 }
 
+// Função para esconder todos os containers de pagamento
+function hideAllPaymentContainers() {
+    const containers = ['stripe-container', 'paypal-container'];
+    containers.forEach(id => {
+        const container = document.getElementById(id);
+        if (container) {
+            container.style.display = 'none';
+        }
+    });
+}
+
 async function processPayment(method) {
     if (state.processing) return;
 
@@ -259,62 +270,157 @@ async function processPayment(method) {
         }
     }
 
-    state.processing = true;
-    state.selectedMethod = method;
+    // Esconder outros containers de pagamento
+    hideAllPaymentContainers();
+
+    const userEmail = state.user?.email || currentUser?.email;
+    const userName = state.user?.displayName || currentUser?.displayName || 'Cliente';
 
     try {
-        if (method === 'pix') {
-            // Abre o modal do PIX que terá a lógica de geração e checagem
-            // Passa os dados do usuário logado para o PIX
-            const userData = {
-                name: state.user.displayName || 'Usuário',
-                email: state.user.email,
-                uid: state.user.uid
-            };
-            
-            // Aguardar pixModal estar disponível
-            if (!pixModal) {
-                console.log('⏳ Aguardando PixModal estar disponível...');
-                let attempts = 0;
-                while (!pixModal && attempts < 50) {
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                    attempts++;
-                }
+        console.log(`💳 Processando pagamento via ${method}`);
+
+        switch (method) {
+            case 'pix':
+                await handlePixPayment(userEmail, userName);
+                break;
                 
-                if (!pixModal) {
-                    throw new Error('PixModal não disponível');
-                }
-            }
-            
-            await pixModal.show(userData);
-        } else if (method === 'cartao') {
-            // Implementação com cartão de crédito usando Mercado Pago
-            showLoading(`Processando pagamento via cartão...`);
-
-            const mpButton = document.getElementById('mercado-pago-button-container');
-            if (mpButton) {
-                mpButton.classList.remove('hidden');
-                hideLoading();
-            } else {
-                throw new Error('Container do Mercado Pago não encontrado');
-            }
-        } else {
-            // Para outros métodos mantém simulação temporariamente
-            showLoading(`Processando pagamento via ${method}...`);
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            hideLoading();
-            showSuccess('Pagamento processado com sucesso!');
-
-            const registerForm = document.getElementById('register-form');
-            registerForm.classList.remove('hidden');
-            registerForm.scrollIntoView({ behavior: 'smooth' });
+            case 'stripe':
+                await handleStripePayment(userEmail, userName);
+                break;
+                
+            case 'paypal':
+                await handlePayPalPayment(userEmail, userName);
+                break;
+                
+            default:
+                throw new Error('Método de pagamento não suportado');
         }
+
     } catch (error) {
-        console.error('Erro no processamento:', error);
+        console.error('❌ Erro no processo de pagamento:', error);
+        showError('Erro ao processar pagamento: ' + error.message);
+        hideAllPaymentContainers();
+    }
+}
+
+// Função para PIX (mantém a lógica existente)
+async function handlePixPayment(userEmail, userName) {
+    const userData = {
+        name: userName || 'Usuário',
+        email: userEmail,
+        uid: state.user.uid
+    };
+    
+    // Aguardar pixModal estar disponível
+    if (!window.pixModal) {
+        console.log('⏳ Aguardando PixModal estar disponível...');
+        let attempts = 0;
+        while (!window.pixModal && attempts < 50) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            attempts++;
+        }
+        
+        if (!window.pixModal) {
+            throw new Error('PixModal não disponível');
+        }
+    }
+    
+    await window.pixModal.show(userData);
+}
+
+// Função para Stripe
+async function handleStripePayment(userEmail, userName) {
+    try {
+        showLoading('Preparando pagamento com cartão...');
+
+        // Determinar moeda baseada no idioma atual
+        const currentLanguage = window.i18nSystem ? window.i18nSystem.getCurrentLanguage() : 'pt-br';
+        const currency = window.stripeService.getCurrencyByLanguage(currentLanguage);
+        const amount = window.stripeService.getAmountByCurrency(currency);
+
+        console.log(`💰 Criando pagamento Stripe: ${amount} ${currency}`);
+
+        // Criar Payment Intent
+        await window.stripeService.createPaymentIntent(amount, currency, userEmail);
+
+        // Mostrar container do Stripe
+        const stripeContainer = document.getElementById('stripe-container');
+        if (stripeContainer) {
+            stripeContainer.style.display = 'block';
+            
+            // Criar elementos do Stripe
+            await window.stripeService.createCardElement('#stripe-elements');
+            
+            // Mostrar botão de submit
+            const submitButton = document.getElementById('stripe-submit');
+            if (submitButton) {
+                submitButton.style.display = 'block';
+                
+                // Configurar listener do botão
+                submitButton.onclick = async () => {
+                    submitButton.disabled = true;
+                    submitButton.textContent = 'Processando...';
+                    
+                    try {
+                        showLoading('Processando pagamento...');
+                        const result = await window.stripeService.confirmPayment(userEmail, userName);
+                        
+                        if (result.success) {
+                            hideLoading();
+                            showSuccess('Pagamento realizado com sucesso!');
+                            setTimeout(() => {
+                                window.location.href = '/success.html';
+                            }, 2000);
+                        }
+                    } catch (error) {
+                        console.error('❌ Erro no pagamento Stripe:', error);
+                        showError('Erro no pagamento: ' + error.message);
+                        submitButton.disabled = false;
+                        submitButton.textContent = i18nSystem ? i18nSystem.t('purchase.stripe.submit') : 'Pagar Agora';
+                    } finally {
+                        hideLoading();
+                    }
+                };
+            }
+        }
+
         hideLoading();
-        showError('Erro ao processar pagamento. Por favor, tente novamente.');
-    } finally {
-        state.processing = false;
+        console.log('✅ Container Stripe configurado');
+
+    } catch (error) {
+        hideLoading();
+        console.error('❌ Erro ao configurar Stripe:', error);
+        throw error;
+    }
+}
+
+// Função para PayPal
+async function handlePayPalPayment(userEmail, userName) {
+    try {
+        showLoading('Preparando pagamento PayPal...');
+
+        // Determinar moeda baseada no idioma atual
+        const currentLanguage = window.i18nSystem ? window.i18nSystem.getCurrentLanguage() : 'pt-br';
+        const currency = window.paypalService.getCurrencyByLanguage(currentLanguage);
+
+        console.log(`💰 Configurando PayPal: ${currency}`);
+
+        // Mostrar container do PayPal
+        const paypalContainer = document.getElementById('paypal-container');
+        if (paypalContainer) {
+            paypalContainer.style.display = 'block';
+            
+            // Renderizar botões do PayPal
+            await window.paypalService.renderButtons('#paypal-buttons', userEmail, currency);
+        }
+
+        hideLoading();
+        console.log('✅ Container PayPal configurado');
+
+    } catch (error) {
+        hideLoading();
+        console.error('❌ Erro ao configurar PayPal:', error);
+        throw error;
     }
 }
 

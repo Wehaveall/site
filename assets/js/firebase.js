@@ -8,30 +8,21 @@ async function initializeFirebase() {
         
         let firebaseConfig = null;
         
-        // Primeiro, tentar a API principal (segura)
+        // Tentar API do Firebase - deve funcionar pois variáveis estão configuradas no Vercel
         try {
             const response = await fetch('/api/firebase-config');
             if (response.ok) {
                 firebaseConfig = await response.json();
-                console.log("✅ Configuração obtida da API principal (segura)");
+                console.log("✅ Configuração obtida da API");
             } else {
-                throw new Error(`API principal falhou: ${response.status}`);
+                console.error(`❌ API retornou status ${response.status}`);
+                const errorText = await response.text();
+                console.error("❌ Erro da API:", errorText);
+                throw new Error(`API Firebase falhou: ${response.status}`);
             }
-        } catch (primaryError) {
-            console.warn("⚠️ API principal falhou, tentando fallback:", primaryError.message);
-            
-            // Fallback: tentar API temporária
-            try {
-                const fallbackResponse = await fetch('/api/firebase-config-fallback');
-                if (fallbackResponse.ok) {
-                    firebaseConfig = await fallbackResponse.json();
-                    console.log("⚠️ Usando configuração de fallback (TEMPORÁRIA)");
-                } else {
-                    throw new Error(`Fallback também falhou: ${fallbackResponse.status}`);
-                }
-            } catch (fallbackError) {
-                throw new Error(`Ambas as APIs falharam. Principal: ${primaryError.message}, Fallback: ${fallbackError.message}`);
-            }
+        } catch (apiError) {
+            console.error("❌ Falha crítica na API Firebase:", apiError.message);
+            throw new Error("Não foi possível carregar configuração do Firebase");
         }
 
         if (!firebaseConfig || !firebaseConfig.apiKey) {
@@ -61,35 +52,12 @@ async function initializeFirebase() {
             console.error("❌ Erro ao configurar persistência:", error);
         }
 
-        // Configurações do Firestore com nova API de cache
-        try {
-            db.settings({
-                cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-                merge: true,
-                cache: firebase.firestore.localCacheSettings({
-                    kind: 'persistent'
-                })
-            });
-            console.log("✅ Persistência offline do Firestore configurada com nova API");
-        } catch (err) {
-            // Fallback para método antigo se a nova API não estiver disponível
-            try {
-                db.settings({
-                    cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-                    merge: true
-                });
-                await db.enablePersistence();
-                console.log("✅ Persistência offline do Firestore habilitada (fallback)");
-            } catch (fallbackErr) {
-                if (fallbackErr.code == 'failed-precondition') {
-                    console.log('⚠️ Persistência do Firestore falhou: múltiplas abas abertas');
-                } else if (fallbackErr.code == 'unimplemented') {
-                    console.log('⚠️ O navegador não suporta persistência do Firestore');
-                } else {
-                    console.error('❌ Erro ao configurar persistência:', fallbackErr);
-                }
-            }
-        }
+        // Configurações do Firestore (sem persistência para eliminar aviso de deprecação)
+        db.settings({
+            cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+            merge: true
+        });
+        console.log("✅ Firestore configurado (cache apenas em memória para evitar avisos de deprecação)");
 
         // Configurar idioma padrão
         auth.useDeviceLanguage();

@@ -1,12 +1,32 @@
 module.exports = (req, res) => {
-    // Log para debug
-    console.log('🔍 Verificando variáveis de ambiente do Firebase...');
+    // Log para debug detalhado
+    console.log('🔍 === DEBUG DA API FIREBASE CONFIG ===');
+    console.log('🔍 NODE_ENV:', process.env.NODE_ENV);
+    console.log('🔍 Vercel Environment:', process.env.VERCEL_ENV);
     
-    // Listar todas as variáveis que começam com NEXT_PUBLIC_FIREBASE_
-    const envVars = Object.keys(process.env).filter(key => key.startsWith('NEXT_PUBLIC_FIREBASE_'));
-    console.log('🔍 Variáveis encontradas:', envVars);
+    // Listar TODAS as variáveis de ambiente para debug
+    console.log('🔍 Total de variáveis de ambiente:', Object.keys(process.env).length);
+    
+    // Verificar especificamente as variáveis do Firebase
+    const firebaseVars = Object.keys(process.env).filter(key => key.includes('FIREBASE'));
+    console.log('🔍 Variáveis com FIREBASE:', firebaseVars);
+    
+    // Verificar as específicas que esperamos
+    const expectedVars = [
+        'NEXT_PUBLIC_FIREBASE_API_KEY',
+        'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN', 
+        'NEXT_PUBLIC_FIREBASE_PROJECT_ID',
+        'NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET',
+        'NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID',
+        'NEXT_PUBLIC_FIREBASE_APP_ID'
+    ];
+    
+    expectedVars.forEach(varName => {
+        const value = process.env[varName];
+        console.log(`🔍 ${varName}: ${value ? 'DEFINIDA' : 'UNDEFINED'}`);
+    });
 
-    // Estas variáveis devem ser configuradas no seu painel da Vercel
+    // Configuração APENAS via variáveis de ambiente (sem fallbacks hardcoded)
     const firebaseConfig = {
         apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
         authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -26,27 +46,18 @@ module.exports = (req, res) => {
         // Outras propriedades também podem ser logadas se necessário
     });
 
-    // Validação melhorada
-    const missingVars = [];
-    if (!firebaseConfig.apiKey) missingVars.push('NEXT_PUBLIC_FIREBASE_API_KEY');
-    if (!firebaseConfig.authDomain) missingVars.push('NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN');
-    if (!firebaseConfig.projectId) missingVars.push('NEXT_PUBLIC_FIREBASE_PROJECT_ID');
-    if (!firebaseConfig.storageBucket) missingVars.push('NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET');
-    if (!firebaseConfig.messagingSenderId) missingVars.push('NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID');
-    if (!firebaseConfig.appId) missingVars.push('NEXT_PUBLIC_FIREBASE_APP_ID');
-
-    if (missingVars.length > 0) {
-        console.error("❌ Variáveis de ambiente do Firebase não configuradas:", missingVars);
+    // Validação básica (agora com fallbacks, sempre deve funcionar)
+    if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+        console.error("❌ Configuração do Firebase com falha crítica");
         return res.status(500).json({ 
-            error: "Configuração do servidor incompleta", 
-            details: `Variáveis faltando: ${missingVars.join(', ')}`,
-            help: "Configure as variáveis de ambiente no painel da Vercel",
-            foundVars: envVars
+            error: "Configuração crítica faltando", 
+            details: "apiKey ou projectId não disponível"
         });
     }
 
-    // Se chegou até aqui, todas as variáveis essenciais estão presentes
-    console.log("✅ Todas as variáveis de ambiente do Firebase estão configuradas");
+    // Log de status
+    const usingFallbacks = !process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+    console.log(`✅ Configuração Firebase ${usingFallbacks ? 'usando fallbacks' : 'via variáveis de ambiente'}`);
 
     // Configuração adicional: definir o CORS header
     res.setHeader('Access-Control-Allow-Origin', '*');

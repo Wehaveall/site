@@ -292,9 +292,15 @@
                     console.log('  ✅ Logout mostrado');
                 }
                 
-                // Carregar dados do usuário
-                console.log('📊 Carregando dados do usuário...');
-                const userData = await loadUserData(user.uid);
+                // Carregar dados do usuário (COM CACHE)
+                let userData = currentUserData;
+                if (!userData || currentUserData?.uid !== user.uid) {
+                    console.log('📊 Carregando dados do usuário do Firestore...');
+                    userData = await loadUserData(user.uid);
+                    currentUserData = userData; // Cache dos dados
+                } else {
+                    console.log('⚡ Usando dados em cache do usuário');
+                }
                 
                 // Definir nome a ser exibido
                 let displayName = 'Usuário';
@@ -364,31 +370,20 @@
                 const currentUser = auth.currentUser;
                 console.log('👤 Usuário atual:', currentUser ? currentUser.email : 'Nenhum');
                 
-                // Listener para mudanças no estado de autenticação
+                // Listener para mudanças no estado de autenticação (OTIMIZADO)
                 auth.onAuthStateChanged(async function(user) {
                     console.log('🔄 onAuthStateChanged disparado:', user ? user.email : 'Usuário deslogado');
                     await updateNavMenu(user);
                 });
                 
-                // Verificar múltiplas vezes para garantir que o usuário seja detectado
-                const checkUserMultipleTimes = async () => {
-                    const intervals = [500, 1000, 1500, 2000]; // Verificar em 0.5s, 1s, 1.5s e 2s
-                    
-                    for (const delay of intervals) {
-                        setTimeout(async () => {
-                            console.log(`⏰ Verificação aos ${delay}ms - Estado atual do Firebase Auth:`);
-                            const timeoutUser = auth.currentUser;
-                            console.log('👤 Usuário no timeout:', timeoutUser ? timeoutUser.email : 'Nenhum');
-                            
-                            if (timeoutUser) {
-                                console.log('🔄 Forçando atualização do menu via timeout...');
-                                await updateNavMenu(timeoutUser);
-                            }
-                        }, delay);
+                // Verificação única e rápida caso o onAuthStateChanged não dispare imediatamente
+                setTimeout(async () => {
+                    const currentUser = auth.currentUser;
+                    if (currentUser && !currentUserData) {
+                        console.log('⚡ Verificação rápida encontrou usuário logado');
+                        await updateNavMenu(currentUser);
                     }
-                };
-                
-                checkUserMultipleTimes();
+                }, 300); // Apenas uma verificação rápida em 300ms
                 
                 // Também verificar quando a página fica visível (caso o usuário mude de aba)
                 document.addEventListener('visibilitychange', async function() {

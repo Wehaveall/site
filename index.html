@@ -42,11 +42,7 @@
                     <li id="nav-register"><a href="register.html" class="nav-link" data-i18n="header.register">Cadastro</a></li>
                     <li id="nav-login"><a href="login.html" class="nav-link" data-i18n="header.login">Entrar</a></li>
                     <li id="nav-user-info" style="display: none;">
-                        <a href="dashboard.html" class="nav-link" id="nav-user-name">
-                            <div class="nav-user-name">
-                                <span class="first-name">Usuário</span>
-                            </div>
-                        </a>
+                        <a href="dashboard.html" class="nav-link" style="color: #28a745; font-weight: 600;" id="nav-user-name">Usuário</a>
                     </li>
                     <li id="nav-logout" style="display: none;"><a href="#" class="nav-link" onclick="logout()" data-i18n="header.logout">Sair</a></li>
                     <li><a href="comprar.html" class="nav-link btn-primary" data-i18n="header.buy">Comprar</a></li>
@@ -232,6 +228,10 @@
                 
                 if (userDoc.exists) {
                     currentUserData = userDoc.data();
+                    // Garante que o campo 'name' exista, mesmo que seja 'Nome' no Firestore
+                    if (currentUserData.Nome && !currentUserData.name) {
+                        currentUserData.name = currentUserData.Nome;
+                    }
                     console.log('✅ Dados do usuário carregados:', currentUserData);
                     return currentUserData;
                 } else {
@@ -244,6 +244,10 @@
                     
                     if (!emailQuery.empty) {
                         currentUserData = emailQuery.docs[0].data();
+                         // Garante que o campo 'name' exista
+                        if (currentUserData.Nome && !currentUserData.name) {
+                            currentUserData.name = currentUserData.Nome;
+                        }
                         console.log('✅ Dados encontrados por email:', currentUserData);
                         return currentUserData;
                     }
@@ -320,18 +324,18 @@
                     console.log('  📛 Nome obtido do email:', displayName);
                 }
                 
-                // Dividir o nome em duas partes
-                const nameParts = displayName.split(' ');
-                const firstName = nameParts[0];
-                const lastName = nameParts.slice(1).join(' ');
-                
                 if (navUserName) {
+                    const nameParts = displayName.split(' ');
+                    const firstName = nameParts[0];
+                    const lastName = nameParts.slice(1).join(' ');
+
                     navUserName.innerHTML = `
                         <div class="nav-user-name">
                             <span class="first-name">${firstName}</span>
-                            ${lastName ? `<span class="last-name">${lastName}</span>` : ''}
+                            <span class="last-name">${lastName}</span>
                         </div>
                     `;
+                    navUserName.style.padding = '0'; // Remove padding do <a> para ajustar
                     navUserName.title = displayName; // Tooltip com nome completo
                     console.log('  ✅ Nome definido no elemento:', displayName);
                 }

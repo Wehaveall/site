@@ -357,9 +357,9 @@
                         <div class="form-group">
                             <label for="confirm-email"><span style="color: #dc3545; font-weight: bold;">* </span><span data-i18n="register.confirmEmail">Confirmar E-Mail</span></label>
                             <input type="email" id="confirm-email" class="form-input" required data-i18n-placeholder="register.confirmEmailPlaceholder" autocomplete="off">
-                            <div class="email-confirmation-warning">
-                                ⚠️ Digite novamente seu e-mail - Não é possível colar neste campo
-                            </div>
+                                        <div class="email-confirmation-warning" data-i18n="register.emailWarning">
+                ⚠️ Digite novamente seu e-mail - Não é possível colar neste campo
+            </div>
                             <div id="email-match-feedback" class="password-match-feedback" style="display: none;"></div>
                         </div>
 
@@ -967,12 +967,22 @@
                     if (warning) {
                         warning.style.background = 'rgba(255, 0, 0, 0.1)';
                         warning.style.color = '#dc3545';
-                        warning.textContent = i18nSystem ? i18nSystem.t('register.emailWarningBlocked') : '🚫 Colagem bloqueada - Digite o e-mail manualmente';
+                        warning.setAttribute('data-i18n', 'register.emailWarningBlocked');
+                        if (i18nSystem) {
+                            i18nSystem.applyTranslations();
+                        } else {
+                            warning.textContent = '🚫 Colagem bloqueada - Digite o e-mail manualmente';
+                        }
                         
                         setTimeout(() => {
                             warning.style.background = 'rgba(255, 238, 186, 0.8)';
                             warning.style.color = '#b8860b';
-                            warning.textContent = i18nSystem ? i18nSystem.t('register.emailWarning') : '⚠️ Digite novamente seu e-mail - Não é possível colar neste campo';
+                            warning.setAttribute('data-i18n', 'register.emailWarning');
+                            if (i18nSystem) {
+                                i18nSystem.applyTranslations();
+                            } else {
+                                warning.textContent = '⚠️ Digite novamente seu e-mail - Não é possível colar neste campo';
+                            }
                         }, 3000);
                     }
                 });

@@ -1073,40 +1073,57 @@
                     btn.textContent = '🌍 Detectando idioma...';
 
                     try {
-                        // ✨ NOVO: Detecção automática de idioma
-                        console.log('🌍 Iniciando detecção automática de idioma...');
-                        let detectedLanguage = 'pt-br';
-                        
-                        // Verificar se temos a função de detecção disponível
-                        if (typeof detectUserLanguage === 'function') {
-                            detectedLanguage = await detectUserLanguage(loginEmail);
-                            console.log(`🎯 Idioma detectado automaticamente: ${detectedLanguage}`);
-                        } else {
-                            console.warn('⚠️ Função detectUserLanguage não encontrada, usando fallback local');
-                            // Fallback básico local
-                            const emailDomain = loginEmail.split('@')[1];
-                            if (emailDomain.includes('.br')) detectedLanguage = 'pt-br';
-                            else if (emailDomain.includes('.es')) detectedLanguage = 'es';
-                            else if (emailDomain.includes('.fr')) detectedLanguage = 'fr';
-                            else if (emailDomain.includes('.de')) detectedLanguage = 'de';
-                            else if (emailDomain.includes('.it')) detectedLanguage = 'it';
+                        // ✨ NOVO: Detecção de idioma com prioridades
+                        console.log('🌍 Iniciando detecção de idioma com prioridades...');
+                        let selectedLanguage = 'pt-br';
+
+                        // Prioridade 1: Idioma definido no dropdown
+                        if (window.i18nSystem) {
+                            selectedLanguage = window.i18nSystem.getCurrentLanguage();
+                            console.log('🌍 Usando idioma do dropdown:', selectedLanguage);
+                        }
+                        // Prioridade 2: Idioma do navegador
+                        else {
+                            const browserLang = navigator.language || navigator.userLanguage;
+                            const browserLangMap = {
+                                'pt': 'pt-br',
+                                'pt-BR': 'pt-br',
+                                'pt-PT': 'pt-br',
+                                'es': 'es',
+                                'es-ES': 'es',
+                                'es-MX': 'es',
+                                'fr': 'fr',
+                                'fr-FR': 'fr',
+                                'fr-CA': 'fr',
+                                'en': 'en',
+                                'en-US': 'en',
+                                'en-GB': 'en',
+                                'de': 'de',
+                                'de-DE': 'de',
+                                'it': 'it',
+                                'it-IT': 'it'
+                            };
+                            
+                            if (browserLangMap[browserLang]) {
+                                selectedLanguage = browserLangMap[browserLang];
+                                console.log('🌍 Usando idioma do navegador:', selectedLanguage);
+                            }
+                            // Prioridade 3: Idioma do Sistema Operacional
                             else {
-                                const browserLang = (navigator.language || navigator.userLanguage).toLowerCase();
-                                if (browserLang.includes('pt')) detectedLanguage = 'pt-br';
-                                else if (browserLang.includes('es')) detectedLanguage = 'es';
-                                else if (browserLang.includes('fr')) detectedLanguage = 'fr';
-                                else if (browserLang.includes('de')) detectedLanguage = 'de';
-                                else if (browserLang.includes('it')) detectedLanguage = 'it';
-                                else detectedLanguage = 'en';
+                                const osLang = navigator.languages ? navigator.languages[0] : navigator.language;
+                                if (browserLangMap[osLang]) {
+                                    selectedLanguage = browserLangMap[osLang];
+                                    console.log('🌍 Usando idioma do sistema:', selectedLanguage);
+                                }
                             }
                         }
 
                         btn.textContent = '🔧 Configurando Firebase...';
 
-                        // ✨ NOVO: Configurar idioma do Firebase Auth
+                        // Configurar idioma do Firebase Auth
                         if (typeof setFirebaseLanguage === 'function') {
-                            await setFirebaseLanguage(detectedLanguage);
-                            console.log(`🔧 Firebase configurado para: ${detectedLanguage}`);
+                            await setFirebaseLanguage(selectedLanguage);
+                            console.log(`🔧 Firebase configurado para: ${selectedLanguage}`);
                         }
 
                         btn.textContent = '⏳ Criando conta...';
@@ -1114,7 +1131,7 @@
                         // ✨ NOVO: Usar API própria de registro (sem CORS)
                         if (typeof registerUserSimple === 'function') {
                             console.log('🚀 Usando API própria de registro (sem CORS)...');
-                            const result = await registerUserSimple(loginEmail, loginPassword, detectedLanguage, name);
+                            const result = await registerUserSimple(loginEmail, loginPassword, selectedLanguage, name);
                             
                             console.log('✅ Usuário criado via API própria:', result);
                             
@@ -1157,7 +1174,6 @@
                             if (i18nSystem) {
                                 successMessage = `
                                     <strong>${i18nSystem.t('register.success.title')}</strong><br><br>
-                                    
                                     📧 <strong>${i18nSystem.t('register.success.description')}:</strong><br>
                                     <strong style="color: #000000;">${loginEmail}</strong><br><br>
                                     

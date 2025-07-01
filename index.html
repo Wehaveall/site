@@ -42,7 +42,11 @@
                     <li id="nav-register"><a href="register.html" class="nav-link" data-i18n="header.register">Cadastro</a></li>
                     <li id="nav-login"><a href="login.html" class="nav-link" data-i18n="header.login">Entrar</a></li>
                     <li id="nav-user-info" style="display: none;">
-                        <a href="dashboard.html" class="nav-link" style="color: #28a745; font-weight: 600;" id="nav-user-name">Usuário</a>
+                        <a href="dashboard.html" class="nav-link" id="nav-user-name">
+                            <div class="nav-user-name">
+                                <span class="first-name">Usuário</span>
+                            </div>
+                        </a>
                     </li>
                     <li id="nav-logout" style="display: none;"><a href="#" class="nav-link" onclick="logout()" data-i18n="header.logout">Sair</a></li>
                     <li><a href="comprar.html" class="nav-link btn-primary" data-i18n="header.buy">Comprar</a></li>
@@ -304,8 +308,8 @@
                 
                 // Definir nome a ser exibido
                 let displayName = 'Usuário';
-                if (userData && userData.Nome) {
-                    displayName = userData.Nome;
+                if (userData && userData.name) {
+                    displayName = userData.name;
                     console.log('  📛 Nome obtido do Firestore:', displayName);
                 } else if (user.displayName) {
                     displayName = user.displayName;
@@ -316,15 +320,19 @@
                     console.log('  📛 Nome obtido do email:', displayName);
                 }
                 
-                // Limitar tamanho do nome no menu
-                if (displayName.length > 15) {
-                    displayName = displayName.substring(0, 12) + '...';
-                    console.log('  ✂️ Nome truncado para:', displayName);
-                }
+                // Dividir o nome em duas partes
+                const nameParts = displayName.split(' ');
+                const firstName = nameParts[0];
+                const lastName = nameParts.slice(1).join(' ');
                 
                 if (navUserName) {
-                    navUserName.textContent = displayName;
-                    navUserName.title = userData?.Nome || user.email || 'Usuário'; // Tooltip com nome completo
+                    navUserName.innerHTML = `
+                        <div class="nav-user-name">
+                            <span class="first-name">${firstName}</span>
+                            ${lastName ? `<span class="last-name">${lastName}</span>` : ''}
+                        </div>
+                    `;
+                    navUserName.title = displayName; // Tooltip com nome completo
                     console.log('  ✅ Nome definido no elemento:', displayName);
                 }
                 

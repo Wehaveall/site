@@ -68,6 +68,56 @@
     "forgotPassword": "Forgot password?",
     "logoutSuccess": "Logout successful!"
   },
+  "login": {
+    "title": "Login - Atalho",
+    "heading": "Sign In to Your Account",
+    "subtitle": "Access your Atalho license",
+    "emailLabel": "Email",
+    "emailPlaceholder": "your@email.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Your password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password",
+    "loginButton": "🔑 Sign In",
+    "loginButtonLoading": "⏳ Signing in...",
+    "noAccount": "Don't have an account yet?",
+    "signUpLink": "Sign up",
+    "alreadyLogged": {
+      "title": "You're already logged in!",
+      "email": "Email:",
+      "dashboard": "🏠 Go to Dashboard",
+      "logout": "🚪 Logout",
+      "forceLogout": "🔧 Force Complete Logout"
+    },
+    "errors": {
+      "fillFields": "Please fill in email and password.",
+      "invalidEmail": "Please enter a valid email.",
+      "loginFailed": "Login error:",
+      "emailNotVerified": {
+        "title": "Email not verified",
+        "message": "You need to verify your email before logging in. Check your inbox (including spam) and click the verification link.",
+        "resendEmail": "Resend Email"
+      },
+      "invalidCredentials": {
+        "title": "Incorrect data",
+        "message": "Email or password incorrect. Check if you typed correctly or try to recover your password.",
+        "forgotPassword": "Forgot password"
+      },
+      "tooManyAttempts": {
+        "title": "Too many attempts",
+        "message": "You made too many login attempts. Wait a few minutes before trying again."
+      },
+      "userNotFound": "Email not found. Check if you already have an account.",
+      "wrongPassword": "Incorrect password. Try again or use \"Forgot password\".",
+      "invalidEmail": "Invalid email.",
+      "userDisabled": "This account has been disabled. Contact support.",
+      "networkError": "Error connecting to our servers. Try reloading the page.",
+      "understand": "Got it"
+    },
+    "success": {
+      "loginSuccessful": "Login successful!"
+    }
+  },
   "resetPassword": {
     "title": "Password Recovery - Atalho",
     "heading": "Forgot your password?",

@@ -66,7 +66,57 @@
     "alreadyAccount": "Hai già un account?",
     "noAccount": "Non hai un account?",
     "forgotPassword": "Password dimenticata?",
-    "logoutSuccess": "Logout eseguito con successo!"
+    "logoutSuccess": "Logout avvenuto con successo!"
+  },
+  "login": {
+    "title": "Accesso - Atalho",
+    "heading": "Accedi al tuo Account",
+    "subtitle": "Accedi alla tua licenza Atalho",
+    "emailLabel": "Email",
+    "emailPlaceholder": "tua@email.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "La tua password",
+    "rememberMe": "Ricordami",
+    "forgotPassword": "Password dimenticata",
+    "loginButton": "🔑 Accedi",
+    "loginButtonLoading": "⏳ Accesso in corso...",
+    "noAccount": "Non hai ancora un account?",
+    "signUpLink": "Registrati",
+    "alreadyLogged": {
+      "title": "Sei già connesso!",
+      "email": "Email:",
+      "dashboard": "🏠 Vai alla Dashboard",
+      "logout": "🚪 Disconnetti",
+      "forceLogout": "🔧 Forza Disconnessione Completa"
+    },
+    "errors": {
+      "fillFields": "Per favore, compila email e password.",
+      "invalidEmail": "Per favore, inserisci un'email valida.",
+      "loginFailed": "Errore di accesso:",
+      "emailNotVerified": {
+        "title": "Email non verificata",
+        "message": "Devi verificare la tua email prima di accedere. Controlla la tua casella di posta (incluso spam) e clicca sul link di verifica.",
+        "resendEmail": "Reinvia Email"
+      },
+      "invalidCredentials": {
+        "title": "Dati incorretti",
+        "message": "Email o password incorrect. Verifica di aver digitato correttamente o prova a recuperare la tua password.",
+        "forgotPassword": "Password dimenticata"
+      },
+      "tooManyAttempts": {
+        "title": "Troppi tentativi",
+        "message": "Hai fatto troppi tentativi di accesso. Aspetta alcuni minuti prima di riprovare."
+      },
+      "userNotFound": "Email non trovata. Verifica se hai già un account.",
+      "wrongPassword": "Password incorretta. Riprova o usa \"Password dimenticata\".",
+      "invalidEmail": "Email non valida.",
+      "userDisabled": "Questo account è stato disabilitato. Contatta il supporto.",
+      "networkError": "Errore di connessione ai nostri server. Prova a ricaricare la pagina.",
+      "understand": "Capito"
+    },
+    "success": {
+      "loginSuccessful": "Accesso avvenuto con successo!"
+    }
   },
   "resetPassword": {
     "title": "Recupera Password - Atalho",

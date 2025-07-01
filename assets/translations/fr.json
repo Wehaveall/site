@@ -68,6 +68,56 @@
     "forgotPassword": "Mot de passe oublié ?",
     "logoutSuccess": "Déconnexion réussie !"
   },
+  "login": {
+    "title": "Connexion - Atalho",
+    "heading": "Connectez-vous à votre Compte",
+    "subtitle": "Accédez à votre licence Atalho",
+    "emailLabel": "Email",
+    "emailPlaceholder": "votre@email.com",
+    "passwordLabel": "Mot de passe",
+    "passwordPlaceholder": "Votre mot de passe",
+    "rememberMe": "Se souvenir de moi",
+    "forgotPassword": "Mot de passe oublié",
+    "loginButton": "🔑 Se connecter",
+    "loginButtonLoading": "⏳ Connexion...",
+    "noAccount": "Vous n'avez pas encore de compte ?",
+    "signUpLink": "S'inscrire",
+    "alreadyLogged": {
+      "title": "Vous êtes déjà connecté !",
+      "email": "Email :",
+      "dashboard": "🏠 Aller au Tableau de Bord",
+      "logout": "🚪 Se Déconnecter",
+      "forceLogout": "🔧 Forcer la Déconnexion Complète"
+    },
+    "errors": {
+      "fillFields": "Veuillez remplir l'email et le mot de passe.",
+      "invalidEmail": "Veuillez entrer un email valide.",
+      "loginFailed": "Erreur de connexion :",
+      "emailNotVerified": {
+        "title": "Email non vérifié",
+        "message": "Vous devez vérifier votre email avant de vous connecter. Vérifiez votre boîte de réception (y compris les spams) et cliquez sur le lien de vérification.",
+        "resendEmail": "Renvoyer l'Email"
+      },
+      "invalidCredentials": {
+        "title": "Données incorrectes",
+        "message": "Email ou mot de passe incorrect. Vérifiez si vous avez tapé correctement ou essayez de récupérer votre mot de passe.",
+        "forgotPassword": "Mot de passe oublié"
+      },
+      "tooManyAttempts": {
+        "title": "Trop de tentatives",
+        "message": "Vous avez fait trop de tentatives de connexion. Attendez quelques minutes avant de réessayer."
+      },
+      "userNotFound": "Email introuvable. Vérifiez si vous avez déjà un compte.",
+      "wrongPassword": "Mot de passe incorrect. Réessayez ou utilisez \"Mot de passe oublié\".",
+      "invalidEmail": "Email invalide.",
+      "userDisabled": "Ce compte a été désactivé. Contactez le support.",
+      "networkError": "Erreur de connexion à nos serveurs. Essayez de recharger la page.",
+      "understand": "Compris"
+    },
+    "success": {
+      "loginSuccessful": "Connexion réussie !"
+    }
+  },
   "resetPassword": {
     "title": "Récupérer le Mot de Passe - Atalho",
     "heading": "Mot de passe oublié ?",

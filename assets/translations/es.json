@@ -68,6 +68,56 @@
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "logoutSuccess": "¡Sesión cerrada exitosamente!"
   },
+  "login": {
+    "title": "Iniciar Sesión - Atalho",
+    "heading": "Accede a tu Cuenta",
+    "subtitle": "Accede a tu licencia de Atalho",
+    "emailLabel": "Email",
+    "emailPlaceholder": "tu@email.com",
+    "passwordLabel": "Contraseña",
+    "passwordPlaceholder": "Tu contraseña",
+    "rememberMe": "Recordarme",
+    "forgotPassword": "Olvidé mi contraseña",
+    "loginButton": "🔑 Iniciar Sesión",
+    "loginButtonLoading": "⏳ Iniciando sesión...",
+    "noAccount": "¿Aún no tienes una cuenta?",
+    "signUpLink": "Regístrate",
+    "alreadyLogged": {
+      "title": "¡Ya tienes sesión iniciada!",
+      "email": "Email:",
+      "dashboard": "🏠 Ir al Panel",
+      "logout": "🚪 Cerrar Sesión",
+      "forceLogout": "🔧 Forzar Cierre Completo"
+    },
+    "errors": {
+      "fillFields": "Por favor, completa email y contraseña.",
+      "invalidEmail": "Por favor, ingresa un email válido.",
+      "loginFailed": "Error en el inicio de sesión:",
+      "emailNotVerified": {
+        "title": "Email no verificado",
+        "message": "Necesitas verificar tu email antes de iniciar sesión. Revisa tu bandeja de entrada (incluyendo spam) y haz clic en el enlace de verificación.",
+        "resendEmail": "Reenviar Email"
+      },
+      "invalidCredentials": {
+        "title": "Datos incorrectos",
+        "message": "Email o contraseña incorrectos. Verifica si escribiste correctamente o intenta recuperar tu contraseña.",
+        "forgotPassword": "Olvidé mi contraseña"
+      },
+      "tooManyAttempts": {
+        "title": "Muchos intentos",
+        "message": "Hiciste muchos intentos de inicio de sesión. Espera unos minutos antes de intentar nuevamente."
+      },
+      "userNotFound": "Email no encontrado. Verifica si ya tienes una cuenta.",
+      "wrongPassword": "Contraseña incorrecta. Intenta de nuevo o usa \"Olvidé mi contraseña\".",
+      "invalidEmail": "Email inválido.",
+      "userDisabled": "Esta cuenta ha sido deshabilitada. Contacta al soporte.",
+      "networkError": "Error al conectar con nuestros servidores. Intenta recargar la página.",
+      "understand": "Entendido"
+    },
+    "success": {
+      "loginSuccessful": "¡Inicio de sesión exitoso!"
+    }
+  },
   "resetPassword": {
     "title": "Recuperar Contraseña - Atalho",
     "heading": "¿Olvidaste tu contraseña?",

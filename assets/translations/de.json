@@ -68,6 +68,56 @@
     "forgotPassword": "Passwort vergessen?",
     "logoutSuccess": "Abmeldung erfolgreich!"
   },
+  "login": {
+    "title": "Anmeldung - Atalho",
+    "heading": "Bei Ihrem Konto anmelden",
+    "subtitle": "Greifen Sie auf Ihre Atalho-Lizenz zu",
+    "emailLabel": "E-Mail",
+    "emailPlaceholder": "ihre@email.com",
+    "passwordLabel": "Passwort",
+    "passwordPlaceholder": "Ihr Passwort",
+    "rememberMe": "Angemeldet bleiben",
+    "forgotPassword": "Passwort vergessen",
+    "loginButton": "🔑 Anmelden",
+    "loginButtonLoading": "⏳ Anmeldung...",
+    "noAccount": "Haben Sie noch kein Konto?",
+    "signUpLink": "Registrieren",
+    "alreadyLogged": {
+      "title": "Sie sind bereits angemeldet!",
+      "email": "E-Mail:",
+      "dashboard": "🏠 Zum Dashboard",
+      "logout": "🚪 Abmelden",
+      "forceLogout": "🔧 Vollständige Abmeldung erzwingen"
+    },
+    "errors": {
+      "fillFields": "Bitte füllen Sie E-Mail und Passwort aus.",
+      "invalidEmail": "Bitte geben Sie eine gültige E-Mail ein.",
+      "loginFailed": "Anmeldungsfehler:",
+      "emailNotVerified": {
+        "title": "E-Mail nicht verifiziert",
+        "message": "Sie müssen Ihre E-Mail verifizieren, bevor Sie sich anmelden können. Überprüfen Sie Ihren Posteingang (einschließlich Spam) und klicken Sie auf den Verifizierungslink.",
+        "resendEmail": "E-Mail erneut senden"
+      },
+      "invalidCredentials": {
+        "title": "Falsche Daten",
+        "message": "E-Mail oder Passwort falsch. Überprüfen Sie, ob Sie korrekt eingegeben haben, oder versuchen Sie, Ihr Passwort wiederherzustellen.",
+        "forgotPassword": "Passwort vergessen"
+      },
+      "tooManyAttempts": {
+        "title": "Zu viele Versuche",
+        "message": "Sie haben zu viele Anmeldeversuche gemacht. Warten Sie einige Minuten, bevor Sie es erneut versuchen."
+      },
+      "userNotFound": "E-Mail nicht gefunden. Überprüfen Sie, ob Sie bereits ein Konto haben.",
+      "wrongPassword": "Falsches Passwort. Versuchen Sie es erneut oder verwenden Sie \"Passwort vergessen\".",
+      "invalidEmail": "Ungültige E-Mail.",
+      "userDisabled": "Dieses Konto wurde deaktiviert. Kontaktieren Sie den Support.",
+      "networkError": "Fehler beim Verbinden mit unseren Servern. Versuchen Sie, die Seite neu zu laden.",
+      "understand": "Verstanden"
+    },
+    "success": {
+      "loginSuccessful": "Anmeldung erfolgreich!"
+    }
+  },
   "resetPassword": {
     "title": "Passwort Wiederherstellen - Atalho",
     "heading": "Passwort vergessen?",

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Atalho</title>
+    <title data-i18n="login.title">Login - Atalho</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -221,8 +221,9 @@
             </div>
             <nav class="nav-menu">
                 <ul class="nav-links">
-                    <li><a href="index.html" class="nav-link">Início</a></li>
-                    <li><a href="comprar.html" class="nav-link btn-primary">Comprar</a></li>
+                    <li><a href="index.html" class="nav-link" data-i18n="header.home">Início</a></li>
+                    <li><a href="comprar.html" class="nav-link btn-primary" data-i18n="header.buy">Comprar</a></li>
+                    <!-- O seletor de idiomas será inserido automaticamente aqui pelo i18n.js -->
                 </ul>
             </nav>
         </div>
@@ -238,47 +239,50 @@
                     <div style="color: var(--primary-dark); margin-bottom: 1rem;">
                         <i class="fas fa-sign-in-alt" style="font-size: 3rem;"></i>
                     </div>
-                    <h1 style="color: var(--text-dark); margin-bottom: 0.5rem;">Entrar na sua Conta</h1>
-                    <p style="color: var(--text-light);">Acesse sua licença do Atalho</p>
+                    <h1 style="color: var(--text-dark); margin-bottom: 0.5rem;" data-i18n="login.heading">Entrar na sua Conta</h1>
+                    <p style="color: var(--text-light);" data-i18n="login.subtitle">Acesse sua licença do Atalho</p>
                 </div>
 
                 <form id="login-form">
                     <div style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;" data-i18n="login.emailLabel">
                             Email
                         </label>
                         <input type="email" id="login-email" required
                                style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
+                               data-i18n-placeholder="login.emailPlaceholder"
                                placeholder="seu@email.com">
                     </div>
 
                     <div style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;" data-i18n="login.passwordLabel">
                             Senha
                         </label>
                         <input type="password" id="login-password" required
                                style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
+                               data-i18n-placeholder="login.passwordPlaceholder"
                                placeholder="Sua senha">
                     </div>
 
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
                         <label style="display: flex; align-items: center; cursor: pointer;">
                             <input type="checkbox" id="remember-me" style="margin-right: 0.5rem;">
-                            <span style="color: var(--text-light); font-size: 0.9rem;">Lembrar de mim</span>
+                            <span style="color: var(--text-light); font-size: 0.9rem;" data-i18n="login.rememberMe">Lembrar de mim</span>
                         </label>
-                        <a href="reset-password.html" style="color: var(--primary-dark); text-decoration: none; font-size: 0.9rem; transition: color 0.2s ease;" data-i18n="auth.forgotPassword">
+                        <a href="reset-password.html" style="color: var(--primary-dark); text-decoration: none; font-size: 0.9rem; transition: color 0.2s ease;" data-i18n="login.forgotPassword">
                             Esqueci minha senha
                         </a>
                     </div>
 
                     <button type="submit" id="login-btn"
-                            style="width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: var(--text-dark); border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; margin-bottom: 1rem;">
+                            style="width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: var(--text-dark); border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; margin-bottom: 1rem;"
+                            data-i18n="login.loginButton">
                         🔑 Entrar
                     </button>
 
                     <div style="text-align: center; margin-top: 1rem;">
-                        <p style="color: var(--text-light); margin-bottom: 0.5rem;">Ainda não tem uma conta?</p>
-                        <a href="register.html" style="color: var(--primary-dark); text-decoration: none; font-weight: 600; transition: color 0.2s ease;">
+                        <p style="color: var(--text-light); margin-bottom: 0.5rem;" data-i18n="login.noAccount">Ainda não tem uma conta?</p>
+                        <a href="register.html" style="color: var(--primary-dark); text-decoration: none; font-weight: 600; transition: color 0.2s ease;" data-i18n="login.signUpLink">
                             Cadastre-se
                         </a>
                     </div>
@@ -292,11 +296,29 @@
     </main>
 
     <!-- Scripts -->
+    <script src="assets/js/i18n.js"></script>
     <script src="assets/js/firebase.js"></script>
 
     <script>
+        // Sistema de tradução global
+        let i18nSystem = null;
+        
         // Envolve toda a lógica em um listener que aguarda a inicialização do Firebase
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Aguardar o sistema i18n global estar pronto
+            let attempts = 0;
+            while (!window.i18nSystem && attempts < 50) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                attempts++;
+            }
+            
+            if (window.i18nSystem) {
+                i18nSystem = window.i18nSystem;
+                console.log('🌍 Usando sistema de tradução global na página de login');
+            } else {
+                console.warn('⚠️ Sistema de tradução global não encontrado');
+            }
+            
             getFirebaseServices().then(({ auth, db }) => {
                 console.log("✅ Serviços do Firebase prontos para o login.");
 
@@ -415,25 +437,30 @@
                         existingModal.remove();
                     }
 
+                    // Função auxiliar para obter tradução
+                    const t = (key, fallback) => {
+                        return i18nSystem ? i18nSystem.t(key) : fallback;
+                    };
+
                     // Criar modal de erro
                     const modalOverlay = document.createElement('div');
                     modalOverlay.className = 'error-modal-overlay';
                     
                     // Determinar título e ação baseado na mensagem
-                    let title = 'Erro no Login';
+                    let title = t('login.errors.loginFailed', 'Erro no Login');
                     let actionButton = '';
                     
-                    if (message.includes('Email não verificado')) {
-                        title = 'Email não verificado';
-                        message = 'Você precisa verificar seu email antes de fazer login. Verifique sua caixa de entrada (incluindo spam) e clique no link de verificação.';
-                        actionButton = '<a href="register.html" class="btn-secondary">Reenviar Email</a>';
-                                         } else if (message.includes('não encontrado') || message.includes('incorreta') || message.includes('incorretos')) {
-                        title = 'Dados incorretos';
-                        message = 'Email ou senha incorretos. Verifique se digitou corretamente ou tente recuperar sua senha.';
-                        actionButton = '<a href="reset-password.html" class="btn-secondary">Esqueci minha senha</a>';
-                    } else if (message.includes('Muitas tentativas')) {
-                        title = 'Muitas tentativas';
-                        message = 'Você fez muitas tentativas de login. Aguarde alguns minutos antes de tentar novamente.';
+                    if (message.includes('Email não verificado') || message.includes('not verified')) {
+                        title = t('login.errors.emailNotVerified.title', 'Email não verificado');
+                        message = t('login.errors.emailNotVerified.message', 'Você precisa verificar seu email antes de fazer login. Verifique sua caixa de entrada (incluindo spam) e clique no link de verificação.');
+                        actionButton = `<a href="register.html" class="btn-secondary">${t('login.errors.emailNotVerified.resendEmail', 'Reenviar Email')}</a>`;
+                    } else if (message.includes('não encontrado') || message.includes('incorreta') || message.includes('incorretos') || message.includes('invalid-login-credentials')) {
+                        title = t('login.errors.invalidCredentials.title', 'Dados incorretos');
+                        message = t('login.errors.invalidCredentials.message', 'Email ou senha incorretos. Verifique se digitou corretamente ou tente recuperar sua senha.');
+                        actionButton = `<a href="reset-password.html" class="btn-secondary">${t('login.errors.invalidCredentials.forgotPassword', 'Esqueci minha senha')}</a>`;
+                    } else if (message.includes('Muitas tentativas') || message.includes('too-many-requests')) {
+                        title = t('login.errors.tooManyAttempts.title', 'Muitas tentativas');
+                        message = t('login.errors.tooManyAttempts.message', 'Você fez muitas tentativas de login. Aguarde alguns minutos antes de tentar novamente.');
                     }
                     
                     modalOverlay.innerHTML = `
@@ -445,7 +472,7 @@
                             <p>${message}</p>
                             <div class="error-modal-actions">
                                 <button class="btn-primary" onclick="this.closest('.error-modal-overlay').remove()">
-                                    Entendi
+                                    ${t('login.errors.understand', 'Entendi')}
                                 </button>
                                 ${actionButton}
                             </div>
@@ -499,15 +526,12 @@
                             // Faz logout imediatamente
                             await auth.signOut();
                             
-                            throw new Error(`
-                                Email não verificado! 
-                                
-                                📧 Você precisa verificar seu email antes de fazer login.
-                                
-                                ✅ Verifique sua caixa de entrada (e spam) e clique no link de verificação que foi enviado quando você criou sua conta.
-                                
-                                💡 Se não encontrar o email, verifique a pasta de spam/lixo eletrônico.
-                            `);
+                            // Função auxiliar para obter tradução
+                            const t = (key, fallback) => {
+                                return i18nSystem ? i18nSystem.t(key) : fallback;
+                            };
+                            
+                            throw new Error(t('login.errors.emailNotVerified.message', 'Email não verificado'));
                         }
                         
                         console.log('✅ Login realizado com sucesso:', user.uid);
@@ -522,22 +546,27 @@
                             throw error;
                         }
                         
+                        // Função auxiliar para obter tradução
+                        const t = (key, fallback) => {
+                            return i18nSystem ? i18nSystem.t(key) : fallback;
+                        };
+                        
                         // Traduz erros comuns do Firebase
                         switch (error.code) {
                             case 'auth/user-not-found':
-                                throw new Error('Email não encontrado. Verifique se você já tem uma conta.');
+                                throw new Error(t('login.errors.userNotFound', 'Email não encontrado. Verifique se você já tem uma conta.'));
                             case 'auth/wrong-password':
-                                throw new Error('Senha incorreta. Tente novamente ou use "Esqueci minha senha".');
+                                throw new Error(t('login.errors.wrongPassword', 'Senha incorreta. Tente novamente ou use "Esqueci minha senha".'));
                             case 'auth/invalid-login-credentials':
-                                throw new Error('Email ou senha incorretos. Verifique se digitou corretamente.');
+                                throw new Error(t('login.errors.invalidCredentials.message', 'Email ou senha incorretos. Verifique se digitou corretamente.'));
                             case 'auth/invalid-email':
-                                throw new Error('Email inválido.');
+                                throw new Error(t('login.errors.invalidEmail', 'Email inválido.'));
                             case 'auth/user-disabled':
-                                throw new Error('Esta conta foi desabilitada. Entre em contato com o suporte.');
+                                throw new Error(t('login.errors.userDisabled', 'Esta conta foi desabilitada. Entre em contato com o suporte.'));
                             case 'auth/too-many-requests':
-                                throw new Error('Muitas tentativas de login. Tente novamente mais tarde.');
+                                throw new Error(t('login.errors.tooManyAttempts.message', 'Muitas tentativas de login. Tente novamente mais tarde.'));
                             default:
-                                throw new Error('Email ou senha incorretos. Verifique se digitou corretamente.');
+                                throw new Error(t('login.errors.invalidCredentials.message', 'Email ou senha incorretos. Verifique se digitou corretamente.'));
                         }
                     }
                 }
@@ -585,30 +614,35 @@
                             return;
                         }
                         
+                        // Função auxiliar para obter tradução
+                        const t = (key, fallback) => {
+                            return i18nSystem ? i18nSystem.t(key) : fallback;
+                        };
+                        
                         const loginForm = document.getElementById('login-form');
                         loginForm.innerHTML = `
                             <div style="text-align: center; padding: 2rem;">
                                 <div style="color: #28a745; margin-bottom: 1rem;">
                                     <i class="fas fa-user-check" style="font-size: 3rem;"></i>
                                 </div>
-                                <h3 style="color: #28a745; margin-bottom: 1rem;">Você já está logado!</h3>
+                                <h3 style="color: #28a745; margin-bottom: 1rem;">${t('login.alreadyLogged.title', 'Você já está logado!')}</h3>
                                 <p style="color: #6c757d; margin-bottom: 1.5rem;">
-                                    Email: <strong>${user.email || 'Não disponível'}</strong>
+                                    ${t('login.alreadyLogged.email', 'Email:')} <strong>${user.email || 'Não disponível'}</strong>
                                 </p>
                                 <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                                     <button onclick="window.location.href='dashboard.html'" 
                                             style="padding: 0.75rem 1.5rem; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
-                                        🏠 Ir para Dashboard
+                                        ${t('login.alreadyLogged.dashboard', '🏠 Ir para Dashboard')}
                                     </button>
                                     <button onclick="logout()" 
                                             style="padding: 0.75rem 1.5rem; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
-                                        🚪 Fazer Logout
+                                        ${t('login.alreadyLogged.logout', '🚪 Fazer Logout')}
                                     </button>
                                 </div>
                                 <div style="margin-top: 1rem;">
                                     <button onclick="forceLogout()" 
                                             style="padding: 0.5rem 1rem; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">
-                                        🔧 Forçar Logout Completo
+                                        ${t('login.alreadyLogged.forceLogout', '🔧 Forçar Logout Completo')}
                                     </button>
                                 </div>
                             </div>
@@ -646,24 +680,29 @@
                 document.getElementById('login-form').addEventListener('submit', async function(e) {
                     e.preventDefault();
                     
+                    // Função auxiliar para obter tradução
+                    const t = (key, fallback) => {
+                        return i18nSystem ? i18nSystem.t(key) : fallback;
+                    };
+                    
                     const email = document.getElementById('login-email').value.trim();
                     const password = document.getElementById('login-password').value;
                     
                     if (!email || !password) {
-                        showError('Por favor, preencha email e senha.');
+                        showError(t('login.errors.fillFields', 'Por favor, preencha email e senha.'));
                         return;
                     }
 
                     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     if (!emailRegex.test(email)) {
-                        showError('Por favor, insira um email válido.');
+                        showError(t('login.errors.invalidEmail', 'Por favor, insira um email válido.'));
                         return;
                     }
 
                     const btn = document.getElementById('login-btn');
                     const originalText = btn.textContent;
                     btn.disabled = true;
-                    btn.textContent = '⏳ Entrando...';
+                    btn.textContent = t('login.loginButtonLoading', '⏳ Entrando...');
 
                     try {
                         // Marca que o login está em progresso
@@ -672,7 +711,7 @@
                         const user = await login(email, password);
                         
                         // Mostra popup de sucesso
-                        showSuccessPopup('Login realizado com sucesso!');
+                        showSuccessPopup(t('login.success.loginSuccessful', 'Login realizado com sucesso!'));
                         
                         // Redireciona após 1 segundo (o popup continua na próxima página)
                         setTimeout(() => {
@@ -694,7 +733,11 @@
             
             }).catch(error => {
                 console.error("❌ Falha crítica na inicialização do Firebase:", error);
-                showError("Erro ao conectar com nossos servidores. Tente recarregar a página.");
+                // Função auxiliar para obter tradução
+                const t = (key, fallback) => {
+                    return i18nSystem ? i18nSystem.t(key) : fallback;
+                };
+                showError(t('login.errors.networkError', 'Erro ao conectar com nossos servidores. Tente recarregar a página.'));
             });
 
             // Funções que não dependem do Firebase podem ficar aqui
@@ -712,6 +755,11 @@
                 }
                 
                 if (verified === 'true') {
+                    // Função auxiliar para obter tradução
+                    const t = (key, fallback) => {
+                        return i18nSystem ? i18nSystem.t(key) : fallback;
+                    };
+                    
                     const container = document.querySelector('.container');
                     const alertDiv = document.createElement('div');
                     alertDiv.style.cssText = `
@@ -727,13 +775,13 @@
                         <div style="color: #0c5460; margin-bottom: 1rem;">
                             <i class="fas fa-check-circle" style="font-size: 2rem;"></i>
                         </div>
-                        <h3 style="color: #0c5460; margin-bottom: 0.5rem;">🎉 Email verificado!</h3>
+                        <h3 style="color: #0c5460; margin-bottom: 0.5rem;">🎉 ${t('common.success', 'Email verificado!')}</h3>
                         <p style="color: #0c5460; margin-bottom: 1rem;">
-                            Sua conta foi ativada com sucesso. Agora você pode fazer login.
+                            ${t('register.success.description', 'Sua conta foi ativada com sucesso. Agora você pode fazer login.')}
                         </p>
                         <button onclick="this.parentElement.remove()" 
                                 style="background: #17a2b8; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
-                            Fazer Login ✓
+                            ${t('login.loginButton', 'Fazer Login')} ✓
                         </button>
                     `;
                     container.insertBefore(alertDiv, container.firstChild);

@@ -68,6 +68,56 @@
     "forgotPassword": "Esqueceu a senha?",
     "logoutSuccess": "Logout realizado com sucesso!"
   },
+  "login": {
+    "title": "Login - Atalho",
+    "heading": "Entrar na sua Conta",
+    "subtitle": "Acesse sua licença do Atalho",
+    "emailLabel": "Email",
+    "emailPlaceholder": "seu@email.com",
+    "passwordLabel": "Senha",
+    "passwordPlaceholder": "Sua senha",
+    "rememberMe": "Lembrar de mim",
+    "forgotPassword": "Esqueci minha senha",
+    "loginButton": "🔑 Entrar",
+    "loginButtonLoading": "⏳ Entrando...",
+    "noAccount": "Ainda não tem uma conta?",
+    "signUpLink": "Cadastre-se",
+    "alreadyLogged": {
+      "title": "Você já está logado!",
+      "email": "Email:",
+      "dashboard": "🏠 Ir para Dashboard",
+      "logout": "🚪 Fazer Logout",
+      "forceLogout": "🔧 Forçar Logout Completo"
+    },
+    "errors": {
+      "fillFields": "Por favor, preencha email e senha.",
+      "invalidEmail": "Por favor, insira um email válido.",
+      "loginFailed": "Erro no login:",
+      "emailNotVerified": {
+        "title": "Email não verificado",
+        "message": "Você precisa verificar seu email antes de fazer login. Verifique sua caixa de entrada (incluindo spam) e clique no link de verificação.",
+        "resendEmail": "Reenviar Email"
+      },
+      "invalidCredentials": {
+        "title": "Dados incorretos",
+        "message": "Email ou senha incorretos. Verifique se digitou corretamente ou tente recuperar sua senha.",
+        "forgotPassword": "Esqueci minha senha"
+      },
+      "tooManyAttempts": {
+        "title": "Muitas tentativas",
+        "message": "Você fez muitas tentativas de login. Aguarde alguns minutos antes de tentar novamente."
+      },
+      "userNotFound": "Email não encontrado. Verifique se você já tem uma conta.",
+      "wrongPassword": "Senha incorreta. Tente novamente ou use \"Esqueci minha senha\".",
+      "invalidEmail": "Email inválido.",
+      "userDisabled": "Esta conta foi desabilitada. Entre em contato com o suporte.",
+      "networkError": "Erro ao conectar com nossos servidores. Tente recarregar a página.",
+      "understand": "Entendi"
+    },
+    "success": {
+      "loginSuccessful": "Login realizado com sucesso!"
+    }
+  },
   "resetPassword": {
     "title": "Recuperar Senha - Atalho",
     "heading": "Esqueceu sua senha?",

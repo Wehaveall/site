@@ -8,11 +8,84 @@
     <link rel="stylesheet" href="assets/css/style.css">
     
     <style>
+        /* Variáveis CSS */
+        :root {
+            --header-height: 60px;
+        }
+
         /* Estilos específicos para a página de registro */
         body {
             background: linear-gradient(135deg, #f0e9df 0%, #f7f3ed 25%, #ffffff 50%, #f7f3ed 75%, #f0e9df 100%);
             background-attachment: fixed;
             min-height: 100vh;
+        }
+
+        /* Ajustes específicos para o header na página de registro */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: linear-gradient(120deg,
+                #e6dac8 0%,
+                #e6dac8 20%,
+                #f0e9df 40%,
+                white 60%);
+            z-index: 998;
+            transition: all 0.3s ease;
+            border-bottom: none;
+            overflow: visible;
+        }
+
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(to bottom,
+                #e6dac8 0%,
+                rgba(240, 233, 223, 0.5) 70%,
+                rgba(255, 255, 255, 0.3) 100%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .logo {
+            position: relative;
+            z-index: 999;
+            height: var(--header-height);
+            margin-right: auto;
+            display: flex;
+            align-items: center;
+            padding-right: 1rem;
+        }
+
+        .logo-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            position: relative;
+            height: 100%;
+        }
+
+        .logo-img {
+            height: 80%;
+            width: auto;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            max-height: none;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            margin-left: calc(var(--header-height) + 10px);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
         }
 
         .registration-container {
@@ -253,8 +326,6 @@
             text-decoration: underline;
         }
 
-
-
         /* Feedback de confirmação de senha */
         .password-match-feedback {
             margin-top: 0.5rem;
@@ -278,8 +349,6 @@
             border: 1px solid rgba(220, 53, 69, 0.3);
         }
 
-
-
         @media (max-width: 768px) {
             .registration-container {
                 padding: 0.4rem;
@@ -296,8 +365,6 @@
             .section-header-integrated p {
                 font-size: 0.85rem;
             }
-
-
         }
     </style>
     
@@ -329,7 +396,7 @@
     </header>
 
     <!-- Main Content -->
-    <main style="padding-top: 60px; min-height: 80vh;">
+    <main style="padding-top: calc(var(--header-height) + 20px); min-height: 80vh;">
         <div class="registration-container">
 
             <!-- Formulário de Cadastro -->

@@ -265,7 +265,7 @@
                         const actionCodeInfo = await auth.checkActionCode(oobCode);
                         const email = actionCodeInfo.data.email;
                         console.log(`📧 Email extraído do código: ${email}`);
-
+                
                         // 2. Aplicar verificação de email
                         await auth.applyActionCode(oobCode);
                         
@@ -284,7 +284,7 @@
                     window.location.href = `new-password.html${window.location.search}`;
                 } else {
                     throw new Error(i18nSystem ? i18nSystem.t('emailHandler.error.invalidLink') : 'Link inválido ou expirado');
-                }
+                        }
             } catch (error) {
                 console.error('❌ Erro na verificação:', error);
                 showError(error.message);

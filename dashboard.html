@@ -8,6 +8,25 @@
     <link rel="stylesheet" href="assets/css/style.css">
     
     <style>
+        /* Estilos específicos para a página de registro */
+        .nav-user-name {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            line-height: 1.2;
+            padding: 5px 0;
+        }
+        
+        .nav-user-name .first-name {
+            font-size: 0.9rem;
+            color: var(--text-dark);
+        }
+        
+        .nav-user-name .last-name {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
         /* Popup de sucesso animado (compartilhado entre páginas) */
         .success-popup {
             position: fixed;
@@ -115,17 +134,9 @@
     </header>
 
     <!-- Main Content -->
-    <main style="padding-top: 100px; min-height: 100vh; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+    <main style="padding-top: 100px; min-height: 100vh; background: linear-gradient(120deg, #f0e9df 0%, #f7f3ed 20%, white 50%);">
         <div class="container" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
             
-            <!-- Boas-vindas -->
-            <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;">
-                <div style="color: #28a745; margin-bottom: 1rem;">
-                    <i class="fas fa-user-check" style="font-size: 3rem;">👤</i>
-                </div>
-                <h1 style="color: #28a745; margin-bottom: 1rem;" data-i18n="dashboard.welcome">Bem-vindo ao Dashboard</h1>
-            </div>
-
             <!-- Card de Informações Pessoais -->
             <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                 <h2 style="color: #2c3e50; margin-bottom: 1.5rem;" data-i18n="dashboard.personalInfo">👤 Informações Pessoais</h2>
@@ -138,7 +149,6 @@
                     <div>
                         <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.country">País:</strong> <span id="account-country" data-i18n="dashboard.noData">-</span></p>
                         <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.company">Empresa:</strong> <span id="account-company" data-i18n="dashboard.noData">-</span></p>
-                        <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.accountId">ID da Conta:</strong> <span id="account-id" data-i18n="dashboard.loading">Carregando...</span></p>
                     </div>
                 </div>
                 <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e9ecef;">
@@ -283,25 +293,44 @@
             });
         }
 
+        // Função para atualizar o nome do usuário no header
+        function updateUserName(name) {
+            const userNameElement = document.getElementById('nav-user-name');
+            if (userNameElement && name) {
+                // Dividir o nome em partes
+                const nameParts = name.split(' ');
+                const firstName = nameParts[0];
+                const lastName = nameParts.slice(1).join(' ');
+                
+                // Criar estrutura HTML para nome em duas linhas
+                userNameElement.innerHTML = `
+                    <div class="nav-user-name">
+                        <span class="first-name">${firstName}</span>
+                        <span class="last-name">${lastName}</span>
+                    </div>
+                `;
+                userNameElement.style.padding = '0';  // Remover padding padrão do link
+            }
+        }
+
         // Função para buscar dados do usuário no Firestore
-        async function loadUserData(uid) {
+        async function loadUserData() {
             try {
-                console.log('📊 Buscando dados do usuário:', uid);
-                
-                // Usar a instância global do db se disponível
-                const firestore = window.db || firebase.firestore();
-                
-                // Buscar dados do usuário
-                const userDoc = await firestore.collection('users').doc(uid).get();
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
                 
                 if (userDoc.exists) {
                     currentUserData = userDoc.data();
                     console.log('✅ Dados do usuário carregados:', currentUserData);
+                    
+                    // Atualizar nome no header
+                    if (currentUserData && currentUserData.name) {
+                        updateUserName(currentUserData.name);
+                    }
+                    
                     return currentUserData;
                 } else {
-                    console.log('⚠️ Documento do usuário não encontrado');
                     // Tentar buscar por email
-                    const emailQuery = await firestore.collection('users')
+                    const emailQuery = await db.collection('users')
                         .where('email', '==', currentUser.email)
                         .limit(1)
                         .get();
@@ -309,13 +338,21 @@
                     if (!emailQuery.empty) {
                         currentUserData = emailQuery.docs[0].data();
                         console.log('✅ Dados encontrados por email:', currentUserData);
+                        
+                        // Atualizar nome no header
+                        if (currentUserData && currentUserData.name) {
+                            updateUserName(currentUserData.name);
+                        }
+                        
                         return currentUserData;
                     }
+                    
+                    console.warn('⚠️ Nenhum dado encontrado para o usuário');
+                    return null;
                 }
-                
-                return null;
             } catch (error) {
                 console.error('❌ Erro ao carregar dados do usuário:', error);
+                showError('Erro ao carregar dados do usuário: ' + error.message);
                 return null;
             }
         }
@@ -364,7 +401,7 @@
                 let userData = currentUserData;
                 if (!userData || currentUserData?.uid !== user.uid) {
                     console.log('📊 Carregando dados do usuário do Firestore...');
-                    userData = await loadUserData(user.uid);
+                    userData = await loadUserData();
                     currentUserData = userData; // Cache dos dados
                 } else {
                     console.log('⚡ Usando dados em cache do usuário');
@@ -372,8 +409,8 @@
                 
                 // Definir nome a ser exibido
                 let displayName = 'Usuário';
-                if (userData && userData.Nome) {
-                    displayName = userData.Nome;
+                if (userData && userData.name) {
+                    displayName = userData.name;
                     console.log('  📛 Nome obtido do Firestore:', displayName);
                 } else if (user.displayName) {
                     displayName = user.displayName;
@@ -392,7 +429,7 @@
                 
                 if (navUserName) {
                     navUserName.textContent = displayName;
-                    navUserName.title = userData?.Nome || user.email || 'Usuário'; // Tooltip com nome completo
+                    navUserName.title = userData?.name || user.email || 'Usuário'; // Tooltip com nome completo
                     console.log('  ✅ Nome definido no elemento:', displayName);
                 }
                 
@@ -508,7 +545,7 @@
                 // Se chegou aqui, não encontrou dados
                 console.log('⚠️ NENHUM DADO ENCONTRADO - Usando fallback');
                 customerData = {
-                    Nome: currentUser.displayName || 'Nome não disponível',
+                    name: currentUser.displayName || 'Nome não disponível',
                     email: currentUser.email,
                     phone: null,
                     country: null,
@@ -525,7 +562,7 @@
                 
                 // Fallback final
                 customerData = {
-                    Nome: currentUser.displayName || 'Erro ao carregar',
+                    name: currentUser.displayName || 'Erro ao carregar',
                     email: currentUser.email,
                     phone: null,
                     country: null,
@@ -548,12 +585,11 @@
             const noDataText = i18nSystem ? i18nSystem.t('dashboard.noData') : '-';
             
             // Informações da conta - usando os campos exatos do Firebase
-            document.getElementById('account-name').textContent = customerData.Nome || noDataText;
+            document.getElementById('account-name').textContent = customerData.name || noDataText;
             document.getElementById('account-email').textContent = customerData.email || currentUser.email;
             document.getElementById('account-phone').textContent = customerData.phone || noDataText;
             document.getElementById('account-country').textContent = customerData.country || noDataText;
             document.getElementById('account-company').textContent = customerData.company || noDataText;
-            document.getElementById('account-id').textContent = customerData.id || customerData.payment_id || currentUser.uid;
             
             // Data de criação
             if (customerData.created_at) {

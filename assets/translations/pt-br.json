@@ -203,12 +203,36 @@
       "match": "✓ As senhas coincidem",
       "noMatch": "✗ As senhas não coincidem"
     },
+    "emailWarning": "⚠️ Digite novamente seu e-mail - Não é possível colar neste campo",
+    "emailWarningBlocked": "🚫 Colagem bloqueada - Digite o e-mail manualmente",
+    "loading": {
+      "detectingLanguage": "🌍 Detectando idioma...",
+      "configuringFirebase": "🔧 Configurando Firebase...",
+      "creatingAccount": "⏳ Criando conta...",
+      "savingExtraData": "💾 Salvando dados extras..."
+    },
     "success": {
       "title": "Conta criada com sucesso!",
+      "description": "Email de verificação enviado para",
       "subtitle": "Verifique seu email para ativar sua conta",
-      "description": "Enviamos um link de verificação para",
       "checkEmail": "Verifique sua caixa de entrada e spam",
-      "redirecting": "Redirecionando para o login..."
+      "understood": "✅ Entendi"
+    },
+    "errors": {
+      "invalidData": "Dados inválidos detectados. Por favor, verifique as informações.",
+      "emailMismatch": "Os e-mails não coincidem. Por favor, verifique se digitou corretamente nos dois campos.",
+      "fillAllFields": "Por favor, preencha todos os campos obrigatórios corretamente e aceite os termos.",
+      "passwordMismatch": "As senhas não coincidem.",
+      "passwordMinLength": "A senha deve ter pelo menos 8 caracteres.",
+      "passwordUppercase": "A senha deve conter pelo menos uma letra maiúscula.",
+      "passwordNumber": "A senha deve conter pelo menos um número.",
+      "passwordSpecial": "A senha deve conter pelo menos um caractere especial.",
+      "registrationUnavailable": "Sistema de registro não disponível. Tente novamente em alguns minutos.",
+      "networkError": "Erro de conexão. Verifique sua internet e tente novamente.",
+      "corsError": "Erro de configuração. Tente novamente em alguns minutos.",
+      "emailExists": "Este email já está cadastrado. Tente fazer login.",
+      "serverError": "Erro ao conectar com nossos servidores. Tente recarregar a página.",
+      "close": "❌ Fechar"
     }
   },
   "purchase": {
@@ -286,5 +310,54 @@
     "noData": "Dados não disponíveis",
     "loading": "Carregando...",
     "logout": "Sair"
+  },
+  "success": {
+    "title": "Cadastro Realizado com Sucesso",
+    "congratulations": "Cadastro realizado com sucesso!",
+    "description": "Parabéns! Seu pagamento foi confirmado e sua conta foi criada com sucesso. Agora você tem acesso completo ao Atalho e pode começar a otimizar sua produtividade.",
+    "userInfo": {
+      "loading": "Carregando informações do usuário...",
+      "email": "Email cadastrado:",
+      "userId": "ID do usuário:",
+      "unavailable": "Não disponível",
+      "errorRecovering": "Não foi possível recuperar suas informações.",
+      "checkEmail": "Verifique seu e-mail para detalhes sobre sua conta."
+    },
+    "nextSteps": {
+      "title": "Próximos passos:",
+      "download": "➤ Baixe o aplicativo Atalho para começar a usar",
+      "tutorials": "➤ Acesse a seção de tutoriais para aprender a utilizar todas as funcionalidades",
+      "libraries": "➤ Faça o download das bibliotecas de termos para seu segmento",
+      "email": "➤ Você receberá um e-mail com instruções detalhadas"
+    },
+    "buttons": {
+      "download": "Baixar Atalho",
+      "backToHome": "Voltar ao Início"
+    }
+  },
+  "emailHandler": {
+    "title": "Verificação de Email - Atalho",
+    "verifying": "Verificando...",
+    "autoVerified": {
+      "title": "Email verificado automaticamente!",
+      "description": "Sua conta foi ativada com sucesso. Redirecionando para login..."
+    },
+    "verificationSuccess": {
+      "title": "Email verificado com sucesso!",
+      "syncing": "Sincronizando dados da conta...",
+      "activated": "Conta ativada com sucesso!",
+      "status": "Status:",
+      "active": "Ativo",
+      "pending": "Pendente",
+      "canLogin": "Agora você pode fazer login normalmente.",
+      "finalSuccess": "Sua conta foi ativada. Agora você pode fazer login normalmente."
+    },
+    "errors": {
+      "title": "Erro na Verificação",
+      "invalidLink": "Link de verificação inválido ou expirado. Solicite um novo email de verificação.",
+      "expiredLink": "Link de verificação expirado. Solicite um novo email de verificação.",
+      "disabledAccount": "Esta conta foi desabilitada. Entre em contato com o suporte.",
+      "general": "Ocorreu um erro na verificação do email."
+    }
   }
 } 

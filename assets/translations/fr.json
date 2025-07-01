@@ -203,12 +203,36 @@
       "match": "✓ Les mots de passe correspondent",
       "noMatch": "✗ Les mots de passe ne correspondent pas"
     },
+    "emailWarning": "⚠️ Tapez votre email à nouveau - Le collage n'est pas autorisé dans ce champ",
+    "emailWarningBlocked": "🚫 Collage bloqué - Tapez l'email manuellement",
+    "loading": {
+      "detectingLanguage": "🌍 Détection de la langue...",
+      "configuringFirebase": "🔧 Configuration de Firebase...",
+      "creatingAccount": "⏳ Création du compte...",
+      "savingExtraData": "💾 Sauvegarde des données supplémentaires..."
+    },
     "success": {
-      "title": "Compte créé avec succès!",
+      "title": "Compte créé avec succès !",
+      "description": "Email de vérification envoyé à",
       "subtitle": "Vérifiez votre email pour activer votre compte",
-      "description": "Nous avons envoyé un lien de vérification à",
       "checkEmail": "Vérifiez votre boîte de réception et spam",
-      "redirecting": "Redirection vers la connexion..."
+      "understood": "✅ Compris"
+    },
+    "errors": {
+      "invalidData": "Données invalides détectées. Veuillez vérifier les informations.",
+      "emailMismatch": "Les emails ne correspondent pas. Veuillez vérifier si vous avez tapé correctement dans les deux champs.",
+      "fillAllFields": "Veuillez remplir tous les champs obligatoires correctement et accepter les conditions.",
+      "passwordMismatch": "Les mots de passe ne correspondent pas.",
+      "passwordMinLength": "Le mot de passe doit avoir au moins 8 caractères.",
+      "passwordUppercase": "Le mot de passe doit contenir au moins une lettre majuscule.",
+      "passwordNumber": "Le mot de passe doit contenir au moins un chiffre.",
+      "passwordSpecial": "Le mot de passe doit contenir au moins un caractère spécial.",
+      "registrationUnavailable": "Système d'inscription non disponible. Réessayez dans quelques minutes.",
+      "networkError": "Erreur de connexion. Vérifiez votre internet et réessayez.",
+      "corsError": "Erreur de configuration. Réessayez dans quelques minutes.",
+      "emailExists": "Cet email est déjà enregistré. Essayez de vous connecter.",
+      "serverError": "Erreur de connexion à nos serveurs. Essayez de recharger la page.",
+      "close": "❌ Fermer"
     }
   },
   "purchase": {
@@ -267,7 +291,8 @@
     "continue": "Continuer",
     "back": "Retour",
     "next": "Suivant",
-    "close": "Fermer"
+    "close": "Fermer",
+    "logout": "Déconnexion"
   },
   "dashboard": {
     "title": "Tableau de Bord - Atalho",
@@ -286,5 +311,54 @@
     "noData": "Données non disponibles",
     "loading": "Chargement...",
     "logout": "Se Déconnecter"
+  },
+  "success": {
+    "title": "Inscription Complétée avec Succès",
+    "congratulations": "Inscription complétée avec succès !",
+    "description": "Félicitations ! Votre paiement a été confirmé et votre compte a été créé avec succès. Vous avez maintenant un accès complet à Atalho et pouvez commencer à optimiser votre productivité.",
+    "userInfo": {
+      "loading": "Chargement des informations utilisateur...",
+      "email": "Email enregistré :",
+      "userId": "ID utilisateur :",
+      "unavailable": "Non disponible",
+      "errorRecovering": "Impossible de récupérer vos informations.",
+      "checkEmail": "Vérifiez votre email pour les détails sur votre compte."
+    },
+    "nextSteps": {
+      "title": "Prochaines étapes :",
+      "download": "➤ Téléchargez l'application Atalho pour commencer à utiliser",
+      "tutorials": "➤ Accédez à la section tutoriels pour apprendre à utiliser toutes les fonctionnalités",
+      "libraries": "➤ Téléchargez les bibliothèques de termes pour votre segment",
+      "email": "➤ Vous recevrez un email avec des instructions détaillées"
+    },
+    "buttons": {
+      "download": "Télécharger Atalho",
+      "backToHome": "Retour à l'accueil"
+    }
+  },
+  "emailHandler": {
+    "title": "Vérification d'Email - Atalho",
+    "verifying": "Vérification...",
+    "autoVerified": {
+      "title": "Email vérifié automatiquement !",
+      "description": "Votre compte a été activé avec succès. Redirection vers la connexion..."
+    },
+    "verificationSuccess": {
+      "title": "Email vérifié avec succès !",
+      "syncing": "Synchronisation des données du compte...",
+      "activated": "Compte activé avec succès !",
+      "status": "Statut :",
+      "active": "Actif",
+      "pending": "En attente",
+      "canLogin": "Vous pouvez maintenant vous connecter normalement.",
+      "finalSuccess": "Votre compte a été activé. Vous pouvez maintenant vous connecter normalement."
+    },
+    "errors": {
+      "title": "Erreur de Vérification",
+      "invalidLink": "Lien de vérification invalide ou expiré. Demandez un nouvel email de vérification.",
+      "expiredLink": "Lien de vérification expiré. Demandez un nouvel email de vérification.",
+      "disabledAccount": "Ce compte a été désactivé. Contactez le support.",
+      "general": "Une erreur s'est produite lors de la vérification de l'email."
+    }
   }
 } 

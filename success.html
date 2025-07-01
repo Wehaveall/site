@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro Realizado com Sucesso</title>
+    <title data-i18n="success.title">Cadastro Realizado com Sucesso</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -86,42 +86,86 @@
 </head>
 
 <body>
-    <div class="success-container">
+    <!-- Header com seletor de idiomas -->
+    <header style="position: fixed; top: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 1000; padding: 10px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="assets/img/Atalho.png" alt="Logo Atalho" style="width: 30px; height: 30px; object-fit: contain;">
+                <span style="font-weight: 600; color: #333;">Atalho</span>
+            </div>
+            <nav>
+                <ul style="list-style: none; margin: 0; padding: 0; display: flex; align-items: center;">
+                    <!-- O dropdown de idiomas será inserido aqui automaticamente pelo i18n.js -->
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="success-container" style="margin-top: 60px;">
         <div class="success-icon">✓</div>
-        <h1>Cadastro realizado com sucesso!</h1>
-        <p>
+        <h1 data-i18n="success.congratulations">Cadastro realizado com sucesso!</h1>
+        <p data-i18n="success.description">
             Parabéns! Seu pagamento foi confirmado e sua conta foi criada com sucesso.
             Agora você tem acesso completo ao Atalho e pode começar a otimizar sua produtividade.
         </p>
 
         <div id="user-info" class="user-info">
-            <p>Carregando informações do usuário...</p>
+            <p data-i18n="success.userInfo.loading">Carregando informações do usuário...</p>
         </div>
 
         <div class="next-steps">
-            <h3>Próximos passos:</h3>
-            <div class="next-steps-item">
+            <h3 data-i18n="success.nextSteps.title">Próximos passos:</h3>
+            <div class="next-steps-item" data-i18n="success.nextSteps.download">
                 ➤ Baixe o aplicativo Atalho para começar a usar
             </div>
-            <div class="next-steps-item">
+            <div class="next-steps-item" data-i18n="success.nextSteps.tutorials">
                 ➤ Acesse a seção de tutoriais para aprender a utilizar todas as funcionalidades
             </div>
-            <div class="next-steps-item">
+            <div class="next-steps-item" data-i18n="success.nextSteps.libraries">
                 ➤ Faça o download das bibliotecas de termos para seu segmento
             </div>
-            <div class="next-steps-item">
+            <div class="next-steps-item" data-i18n="success.nextSteps.email">
                 ➤ Você receberá um e-mail com instruções detalhadas
             </div>
         </div>
 
         <div style="margin-top: 30px;">
-            <a href="download.html" class="button">Baixar Atalho</a>
-            <a href="index.html" class="button button-secondary">Voltar ao Início</a>
+            <a href="download.html" class="button" data-i18n="success.buttons.download">Baixar Atalho</a>
+            <a href="index.html" class="button button-secondary" data-i18n="success.buttons.backToHome">Voltar ao Início</a>
         </div>
     </div>
 
+    <!-- Scripts de i18n -->
+    <script src="assets/js/i18n.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        // Variável global para o sistema de tradução
+        let i18nSystem = null;
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            // Aguardar o sistema i18n global estar pronto
+            let attempts = 0;
+            while (!window.i18nSystem && attempts < 50) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                attempts++;
+            }
+            
+            if (window.i18nSystem) {
+                i18nSystem = window.i18nSystem;
+                console.log('🌍 Sistema de tradução carregado na página de sucesso');
+                
+                // Aplicar traduções
+                i18nSystem.applyTranslations();
+                
+                // Escutar mudanças de idioma
+                window.addEventListener('languageChanged', function(event) {
+                    console.log('🌍 Idioma alterado para:', event.detail.language);
+                    setTimeout(() => {
+                        i18nSystem.applyTranslations();
+                        updateUserInfoTranslations();
+                    }, 100);
+                });
+            }
             // Debug info
             console.log('Success page loaded:', window.location.href);
 
@@ -132,8 +176,36 @@
             console.log('Dados recuperados:', { userId, userEmail });
 
             // Exibir informações na página se disponíveis
+            updateUserInfoTranslations();
+        });
+
+        // Função para atualizar as traduções das informações do usuário
+        function updateUserInfoTranslations() {
             const userInfoDiv = document.getElementById('user-info');
-            if (userInfoDiv) {
+            const userId = localStorage.getItem('userId');
+            const userEmail = localStorage.getItem('userEmail');
+            
+            if (userInfoDiv && i18nSystem) {
+                if (userEmail) {
+                    const emailLabel = i18nSystem.t('success.userInfo.email');
+                    const userIdLabel = i18nSystem.t('success.userInfo.userId');
+                    const unavailable = i18nSystem.t('success.userInfo.unavailable');
+                    
+                    userInfoDiv.innerHTML = `
+                        <p>${emailLabel} <strong>${userEmail}</strong></p>
+                        <p>${userIdLabel} ${userId || unavailable}</p>
+                    `;
+                } else {
+                    const errorRecovering = i18nSystem.t('success.userInfo.errorRecovering');
+                    const checkEmail = i18nSystem.t('success.userInfo.checkEmail');
+                    
+                    userInfoDiv.innerHTML = `
+                        <p>${errorRecovering}</p>
+                        <p>${checkEmail}</p>
+                    `;
+                }
+            } else if (userInfoDiv) {
+                // Fallback sem traduções
                 if (userEmail) {
                     userInfoDiv.innerHTML = `
                         <p>Email cadastrado: <strong>${userEmail}</strong></p>
@@ -146,15 +218,15 @@
                     `;
                 }
             }
+        }
 
-            // ADICIONADO: Marcar que um checkout bem-sucedido ocorreu
-            localStorage.setItem('successfulCheckout', 'true');
+        // ADICIONADO: Marcar que um checkout bem-sucedido ocorreu
+        localStorage.setItem('successfulCheckout', 'true');
 
-            // ADICIONADO: Definir um tempo de expiração para esta marcação (48 horas)
-            const expiryTime = new Date();
-            expiryTime.setHours(expiryTime.getHours() + 48);
-            localStorage.setItem('checkoutExpiry', expiryTime.toISOString());
-        });
+        // ADICIONADO: Definir um tempo de expiração para esta marcação (48 horas)
+        const expiryTime = new Date();
+        expiryTime.setHours(expiryTime.getHours() + 48);
+        localStorage.setItem('checkoutExpiry', expiryTime.toISOString());
     </script>
 </body>
 

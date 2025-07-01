@@ -643,7 +643,7 @@
                     <div style="color: #333; line-height: 1.6; margin-bottom: 2rem;">
                         ${message}
                     </div>
-                    <div style="display: flex; justify-content: center;">
+                                                        <div style="display: flex; justify-content: center;">
                         <button onclick="document.getElementById('success-popup').remove(); window.location.href='login.html?message=account-created&email=${encodeURIComponent(email)}'" 
                                 style="
                                     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
@@ -659,7 +659,7 @@
                                 "
                                 onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 24px rgba(219, 201, 173, 0.6)'"
                                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 3px 12px rgba(219, 201, 173, 0.4)'">
-                            ✅ Entendi
+                            ${i18nSystem ? i18nSystem.t('register.success.understood') : '✅ Entendi'}
                         </button>
                     </div>
                 </div>
@@ -967,12 +967,12 @@
                     if (warning) {
                         warning.style.background = 'rgba(255, 0, 0, 0.1)';
                         warning.style.color = '#dc3545';
-                        warning.textContent = '🚫 Colagem bloqueada - Digite o e-mail manualmente';
+                        warning.textContent = i18nSystem ? i18nSystem.t('register.emailWarningBlocked') : '🚫 Colagem bloqueada - Digite o e-mail manualmente';
                         
                         setTimeout(() => {
                             warning.style.background = 'rgba(255, 238, 186, 0.8)';
                             warning.style.color = '#b8860b';
-                            warning.textContent = '⚠️ Digite novamente seu e-mail - Não é possível colar neste campo';
+                            warning.textContent = i18nSystem ? i18nSystem.t('register.emailWarning') : '⚠️ Digite novamente seu e-mail - Não é possível colar neste campo';
                         }, 3000);
                     }
                 });
@@ -1052,25 +1052,25 @@
 
                     // Validações de segurança e de campos (existentes)
                     if (window.securityValidator && !window.securityValidator.validateRegistrationAttempt({ name, email: loginEmail, password: loginPassword, phone, company })) {
-                        showError('Dados inválidos detectados. Por favor, verifique as informações.');
+                        showError(i18nSystem ? i18nSystem.t('register.errors.invalidData') : 'Dados inválidos detectados. Por favor, verifique as informações.');
                         return;
                     }
 
                     // Validação específica para confirmação de email
                     if (loginEmail !== confirmEmail) {
-                        showError('Os e-mails não coincidem. Por favor, verifique se digitou corretamente nos dois campos.');
+                        showError(i18nSystem ? i18nSystem.t('register.errors.emailMismatch') : 'Os e-mails não coincidem. Por favor, verifique se digitou corretamente nos dois campos.');
                         return;
                     }
 
                     if (!name || !loginEmail || !confirmEmail || !loginPassword || !validatePasswords() || !termsAccepted) {
-                        showError('Por favor, preencha todos os campos obrigatórios corretamente e aceite os termos.');
+                        showError(i18nSystem ? i18nSystem.t('register.errors.fillAllFields') : 'Por favor, preencha todos os campos obrigatórios corretamente e aceite os termos.');
                         return;
                     }
 
                     const btn = document.getElementById('complete-registration-btn');
                     const originalText = btn.textContent;
                     btn.disabled = true;
-                    btn.textContent = '🌍 Detectando idioma...';
+                    btn.textContent = i18nSystem ? i18nSystem.t('register.loading.detectingLanguage') : '🌍 Detectando idioma...';
 
                     try {
                         // ✨ NOVO: Detecção de idioma com prioridades
@@ -1118,7 +1118,7 @@
                             }
                         }
 
-                        btn.textContent = '🔧 Configurando Firebase...';
+                        btn.textContent = i18nSystem ? i18nSystem.t('register.loading.configuringFirebase') : '🔧 Configurando Firebase...';
 
                         // Configurar idioma do Firebase Auth
                         if (typeof setFirebaseLanguage === 'function') {
@@ -1126,7 +1126,7 @@
                             console.log(`🔧 Firebase configurado para: ${selectedLanguage}`);
                         }
 
-                        btn.textContent = '⏳ Criando conta...';
+                        btn.textContent = i18nSystem ? i18nSystem.t('register.loading.creatingAccount') : '⏳ Criando conta...';
 
                         // ✨ NOVO: Usar API própria de registro (sem CORS)
                         if (typeof registerUserSimple === 'function') {
@@ -1137,7 +1137,7 @@
                             
                             // Salvar dados extras no Firestore (via API se necessário)
                             if (result.uid && (name || phone || company)) {
-                                btn.textContent = '💾 Salvando dados extras...';
+                                btn.textContent = i18nSystem ? i18nSystem.t('register.loading.savingExtraData') : '💾 Salvando dados extras...';
                                 try {
                                     // Salvar dados extras via API
                                     await fetch('/api/update-user-profile', {
@@ -1198,7 +1198,7 @@
                             showSuccessWithRedirect(successMessage, loginEmail);
                             
                         } else {
-                            throw new Error('Sistema de registro não disponível. Tente novamente em alguns minutos.');
+                            throw new Error(i18nSystem ? i18nSystem.t('register.errors.registrationUnavailable') : 'Sistema de registro não disponível. Tente novamente em alguns minutos.');
                         }
                         
                     } catch (error) {
@@ -1206,11 +1206,11 @@
                         
                         let errorMessage = 'Erro: ' + error.message;
                         if (error.message.includes('network')) {
-                            errorMessage = 'Erro de conexão. Verifique sua internet e tente novamente.';
+                            errorMessage = i18nSystem ? i18nSystem.t('register.errors.networkError') : 'Erro de conexão. Verifique sua internet e tente novamente.';
                         } else if (error.message.includes('CORS')) {
-                            errorMessage = 'Erro de configuração. Tente novamente em alguns minutos.';
+                            errorMessage = i18nSystem ? i18nSystem.t('register.errors.corsError') : 'Erro de configuração. Tente novamente em alguns minutos.';
                         } else if (error.code === 'auth/email-already-exists') {
-                            errorMessage = 'Este email já está cadastrado. Tente fazer login.';
+                            errorMessage = i18nSystem ? i18nSystem.t('register.errors.emailExists') : 'Este email já está cadastrado. Tente fazer login.';
                         }
                         
                         showError(errorMessage);
@@ -1222,7 +1222,7 @@
 
             }).catch(error => {
                 console.error("❌ Falha crítica na inicialização do Firebase:", error);
-                showError("Erro ao conectar com nossos servidores. Tente recarregar a página.");
+                showError(i18nSystem ? i18nSystem.t('register.errors.serverError') : "Erro ao conectar com nossos servidores. Tente recarregar a página.");
             });
         });
 

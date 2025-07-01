@@ -203,12 +203,36 @@
       "match": "✓ Passwörter stimmen überein",
       "noMatch": "✗ Passwörter stimmen nicht überein"
     },
+    "emailWarning": "⚠️ Geben Sie Ihre E-Mail erneut ein - Einfügen ist in diesem Feld nicht erlaubt",
+    "emailWarningBlocked": "🚫 Einfügen blockiert - Geben Sie die E-Mail manuell ein",
+    "loading": {
+      "detectingLanguage": "🌍 Sprache erkennen...",
+      "configuringFirebase": "🔧 Firebase konfigurieren...",
+      "creatingAccount": "⏳ Konto erstellen...",
+      "savingExtraData": "💾 Zusätzliche Daten speichern..."
+    },
     "success": {
       "title": "Konto erfolgreich erstellt!",
+      "description": "Bestätigungs-E-Mail gesendet an",
       "subtitle": "Überprüfen Sie Ihre E-Mail, um Ihr Konto zu aktivieren",
-      "description": "Wir haben einen Bestätigungslink gesendet an",
-      "checkEmail": "Überprüfen Sie Ihren Posteingang und Spam",
-      "redirecting": "Weiterleitung zur Anmeldung..."
+      "checkEmail": "Überprüfen Sie Ihren Posteingang und Spam-Ordner",
+      "understood": "✅ Verstanden"
+    },
+    "errors": {
+      "invalidData": "Ungültige Daten erkannt. Bitte überprüfen Sie die Informationen.",
+      "emailMismatch": "E-Mails stimmen nicht überein. Bitte überprüfen Sie, ob Sie in beiden Feldern korrekt eingegeben haben.",
+      "fillAllFields": "Bitte füllen Sie alle Pflichtfelder korrekt aus und akzeptieren Sie die Bedingungen.",
+      "passwordMismatch": "Passwörter stimmen nicht überein.",
+      "passwordMinLength": "Das Passwort muss mindestens 8 Zeichen haben.",
+      "passwordUppercase": "Das Passwort muss mindestens einen Großbuchstaben enthalten.",
+      "passwordNumber": "Das Passwort muss mindestens eine Zahl enthalten.",
+      "passwordSpecial": "Das Passwort muss mindestens ein Sonderzeichen enthalten.",
+      "registrationUnavailable": "Registrierungssystem nicht verfügbar. Versuchen Sie es in wenigen Minuten erneut.",
+      "networkError": "Verbindungsfehler. Überprüfen Sie Ihr Internet und versuchen Sie es erneut.",
+      "corsError": "Konfigurationsfehler. Versuchen Sie es in wenigen Minuten erneut.",
+      "emailExists": "Diese E-Mail ist bereits registriert. Versuchen Sie sich anzumelden.",
+      "serverError": "Fehler beim Verbinden mit unseren Servern. Versuchen Sie, die Seite neu zu laden.",
+      "close": "❌ Schließen"
     }
   },
   "purchase": {
@@ -259,7 +283,7 @@
     "logout": "Abmelden"
   },
   "common": {
-    "loading": "Wird geladen...",
+    "loading": "Laden...",
     "error": "Fehler",
     "success": "Erfolg",
     "save": "Speichern",
@@ -267,7 +291,8 @@
     "continue": "Weiter",
     "back": "Zurück",
     "next": "Nächste",
-    "close": "Schließen"
+    "close": "Schließen",
+    "logout": "Abmelden"
   },
   "dashboard": {
     "title": "Dashboard - Atalho",
@@ -286,5 +311,54 @@
     "noData": "Daten nicht verfügbar",
     "loading": "Wird geladen...",
     "logout": "Abmelden"
+  },
+  "success": {
+    "title": "Registrierung Erfolgreich Abgeschlossen",
+    "congratulations": "Registrierung erfolgreich abgeschlossen!",
+    "description": "Herzlichen Glückwunsch! Ihre Zahlung wurde bestätigt und Ihr Konto wurde erfolgreich erstellt. Sie haben jetzt vollen Zugang zu Atalho und können beginnen, Ihre Produktivität zu optimieren.",
+    "userInfo": {
+      "loading": "Benutzerinformationen laden...",
+      "email": "Registrierte E-Mail:",
+      "userId": "Benutzer-ID:",
+      "unavailable": "Nicht verfügbar",
+      "errorRecovering": "Ihre Informationen konnten nicht abgerufen werden.",
+      "checkEmail": "Überprüfen Sie Ihre E-Mail für Details zu Ihrem Konto."
+    },
+    "nextSteps": {
+      "title": "Nächste Schritte:",
+      "download": "➤ Laden Sie die Atalho-App herunter, um zu beginnen",
+      "tutorials": "➤ Greifen Sie auf die Tutorial-Sektion zu, um alle Funktionen zu erlernen",
+      "libraries": "➤ Laden Sie Begriffsbibliotheken für Ihr Segment herunter",
+      "email": "➤ Sie erhalten eine E-Mail mit detaillierten Anweisungen"
+    },
+    "buttons": {
+      "download": "Atalho Herunterladen",
+      "backToHome": "Zurück zur Startseite"
+    }
+  },
+  "emailHandler": {
+    "title": "E-Mail-Verifizierung - Atalho",
+    "verifying": "Verifizierung...",
+    "autoVerified": {
+      "title": "E-Mail automatisch verifiziert!",
+      "description": "Ihr Konto wurde erfolgreich aktiviert. Weiterleitung zur Anmeldung..."
+    },
+    "verificationSuccess": {
+      "title": "E-Mail erfolgreich verifiziert!",
+      "syncing": "Kontodaten synchronisieren...",
+      "activated": "Konto erfolgreich aktiviert!",
+      "status": "Status:",
+      "active": "Aktiv",
+      "pending": "Ausstehend",
+      "canLogin": "Sie können sich jetzt normal anmelden.",
+      "finalSuccess": "Ihr Konto wurde aktiviert. Sie können sich jetzt normal anmelden."
+    },
+    "errors": {
+      "title": "Verifizierungsfehler",
+      "invalidLink": "Ungültiger oder abgelaufener Verifizierungslink. Fordern Sie eine neue Verifizierungs-E-Mail an.",
+      "expiredLink": "Abgelaufener Verifizierungslink. Fordern Sie eine neue Verifizierungs-E-Mail an.",
+      "disabledAccount": "Dieses Konto wurde deaktiviert. Kontaktieren Sie den Support.",
+      "general": "Bei der E-Mail-Verifizierung ist ein Fehler aufgetreten."
+    }
   }
 } 

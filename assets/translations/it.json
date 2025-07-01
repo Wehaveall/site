@@ -203,12 +203,36 @@
       "match": "✓ Le password corrispondono",
       "noMatch": "✗ Le password non corrispondono"
     },
+    "emailWarning": "⚠️ Digita nuovamente la tua email - Non è consentito incollare in questo campo",
+    "emailWarningBlocked": "🚫 Incolla bloccato - Digita l'email manualmente",
+    "loading": {
+      "detectingLanguage": "🌍 Rilevamento lingua...",
+      "configuringFirebase": "🔧 Configurazione Firebase...",
+      "creatingAccount": "⏳ Creazione account...",
+      "savingExtraData": "💾 Salvataggio dati aggiuntivi..."
+    },
     "success": {
       "title": "Account creato con successo!",
+      "description": "Email di verifica inviata a",
       "subtitle": "Controlla la tua email per attivare il tuo account",
-      "description": "Abbiamo inviato un link di verifica a",
       "checkEmail": "Controlla la tua casella di posta e spam",
-      "redirecting": "Reindirizzamento al login..."
+      "understood": "✅ Capito"
+    },
+    "errors": {
+      "invalidData": "Dati non validi rilevati. Si prega di verificare le informazioni.",
+      "emailMismatch": "Le email non corrispondono. Si prega di verificare di aver digitato correttamente in entrambi i campi.",
+      "fillAllFields": "Si prega di compilare tutti i campi obbligatori correttamente e accettare i termini.",
+      "passwordMismatch": "Le password non corrispondono.",
+      "passwordMinLength": "La password deve avere almeno 8 caratteri.",
+      "passwordUppercase": "La password deve contenere almeno una lettera maiuscola.",
+      "passwordNumber": "La password deve contenere almeno un numero.",
+      "passwordSpecial": "La password deve contenere almeno un carattere speciale.",
+      "registrationUnavailable": "Sistema di registrazione non disponibile. Riprova tra qualche minuto.",
+      "networkError": "Errore di connessione. Controlla la tua connessione internet e riprova.",
+      "corsError": "Errore di configurazione. Riprova tra qualche minuto.",
+      "emailExists": "Questa email è già registrata. Prova ad accedere.",
+      "serverError": "Errore di connessione ai nostri server. Prova a ricaricare la pagina.",
+      "close": "❌ Chiudi"
     }
   },
   "purchase": {
@@ -267,7 +291,8 @@
     "continue": "Continua",
     "back": "Indietro",
     "next": "Prossimo",
-    "close": "Chiudi"
+    "close": "Chiudi",
+    "logout": "Disconnetti"
   },
   "dashboard": {
     "title": "Pannello di Controllo - Atalho",
@@ -286,5 +311,54 @@
     "noData": "Dati non disponibili",
     "loading": "Caricamento...",
     "logout": "Esci"
+  },
+  "success": {
+    "title": "Registrazione Completata con Successo",
+    "congratulations": "Registrazione completata con successo!",
+    "description": "Congratulazioni! Il tuo pagamento è stato confermato e il tuo account è stato creato con successo. Ora hai accesso completo ad Atalho e puoi iniziare a ottimizzare la tua produttività.",
+    "userInfo": {
+      "loading": "Caricamento informazioni utente...",
+      "email": "Email registrata:",
+      "userId": "ID utente:",
+      "unavailable": "Non disponibile",
+      "errorRecovering": "Impossibile recuperare le tue informazioni.",
+      "checkEmail": "Controlla la tua email per i dettagli sul tuo account."
+    },
+    "nextSteps": {
+      "title": "Prossimi passi:",
+      "download": "➤ Scarica l'applicazione Atalho per iniziare ad utilizzare",
+      "tutorials": "➤ Accedi alla sezione tutorial per imparare ad utilizzare tutte le funzionalità",
+      "libraries": "➤ Scarica le librerie di termini per il tuo segmento",
+      "email": "➤ Riceverai un'email con istruzioni dettagliate"
+    },
+    "buttons": {
+      "download": "Scarica Atalho",
+      "backToHome": "Torna alla Home"
+    }
+  },
+  "emailHandler": {
+    "title": "Verifica Email - Atalho",
+    "verifying": "Verifica in corso...",
+    "autoVerified": {
+      "title": "Email verificata automaticamente!",
+      "description": "Il tuo account è stato attivato con successo. Reindirizzamento al login..."
+    },
+    "verificationSuccess": {
+      "title": "Email verificata con successo!",
+      "syncing": "Sincronizzazione dati account...",
+      "activated": "Account attivato con successo!",
+      "status": "Stato:",
+      "active": "Attivo",
+      "pending": "In attesa",
+      "canLogin": "Ora puoi accedere normalmente.",
+      "finalSuccess": "Il tuo account è stato attivato. Ora puoi accedere normalmente."
+    },
+    "errors": {
+      "title": "Errore di Verifica",
+      "invalidLink": "Link di verifica non valido o scaduto. Richiedi una nuova email di verifica.",
+      "expiredLink": "Link di verifica scaduto. Richiedi una nuova email di verifica.",
+      "disabledAccount": "Questo account è stato disabilitato. Contatta il supporto.",
+      "general": "Si è verificato un errore durante la verifica dell'email."
+    }
   }
 } 

@@ -203,12 +203,36 @@
       "match": "✓ Passwords match",
       "noMatch": "✗ Passwords don't match"
     },
+    "emailWarning": "⚠️ Type your email again - Pasting is not allowed in this field",
+    "emailWarningBlocked": "🚫 Paste blocked - Type the email manually",
+    "loading": {
+      "detectingLanguage": "🌍 Detecting language...",
+      "configuringFirebase": "🔧 Configuring Firebase...",
+      "creatingAccount": "⏳ Creating account...",
+      "savingExtraData": "💾 Saving additional data..."
+    },
     "success": {
       "title": "Account created successfully!",
+      "description": "Verification email sent to",
       "subtitle": "Check your email to activate your account",
-      "description": "We sent a verification link to",
       "checkEmail": "Check your inbox and spam folder",
-      "redirecting": "Redirecting to login..."
+      "understood": "✅ Got it"
+    },
+    "errors": {
+      "invalidData": "Invalid data detected. Please check the information.",
+      "emailMismatch": "Emails don't match. Please check if you typed correctly in both fields.",
+      "fillAllFields": "Please fill in all required fields correctly and accept the terms.",
+      "passwordMismatch": "Passwords don't match.",
+      "passwordMinLength": "Password must have at least 8 characters.",
+      "passwordUppercase": "Password must contain at least one uppercase letter.",
+      "passwordNumber": "Password must contain at least one number.",
+      "passwordSpecial": "Password must contain at least one special character.",
+      "registrationUnavailable": "Registration system unavailable. Try again in a few minutes.",
+      "networkError": "Connection error. Check your internet and try again.",
+      "corsError": "Configuration error. Try again in a few minutes.",
+      "emailExists": "This email is already registered. Try logging in.",
+      "serverError": "Error connecting to our servers. Try reloading the page.",
+      "close": "❌ Close"
     }
   },
   "purchase": {
@@ -267,7 +291,8 @@
     "continue": "Continue",
     "back": "Back",
     "next": "Next",
-    "close": "Close"
+    "close": "Close",
+    "logout": "Logout"
   },
   "dashboard": {
     "title": "Dashboard - Atalho",
@@ -286,5 +311,54 @@
     "noData": "Data not available",
     "loading": "Loading...",
     "logout": "Logout"
+  },
+  "success": {
+    "title": "Registration Completed Successfully",
+    "congratulations": "Registration completed successfully!",
+    "description": "Congratulations! Your payment has been confirmed and your account has been created successfully. You now have full access to Atalho and can start optimizing your productivity.",
+    "userInfo": {
+      "loading": "Loading user information...",
+      "email": "Registered email:",
+      "userId": "User ID:",
+      "unavailable": "Not available",
+      "errorRecovering": "Could not retrieve your information.",
+      "checkEmail": "Check your email for details about your account."
+    },
+    "nextSteps": {
+      "title": "Next steps:",
+      "download": "➤ Download the Atalho app to start using",
+      "tutorials": "➤ Access the tutorials section to learn how to use all features",
+      "libraries": "➤ Download term libraries for your segment",
+      "email": "➤ You will receive an email with detailed instructions"
+    },
+    "buttons": {
+      "download": "Download Atalho",
+      "backToHome": "Back to Home"
+    }
+  },
+  "emailHandler": {
+    "title": "Email Verification - Atalho",
+    "verifying": "Verifying...",
+    "autoVerified": {
+      "title": "Email verified automatically!",
+      "description": "Your account has been activated successfully. Redirecting to login..."
+    },
+    "verificationSuccess": {
+      "title": "Email verified successfully!",
+      "syncing": "Syncing account data...",
+      "activated": "Account activated successfully!",
+      "status": "Status:",
+      "active": "Active",
+      "pending": "Pending",
+      "canLogin": "You can now log in normally.",
+      "finalSuccess": "Your account has been activated. You can now log in normally."
+    },
+    "errors": {
+      "title": "Verification Error",
+      "invalidLink": "Invalid or expired verification link. Request a new verification email.",
+      "expiredLink": "Expired verification link. Request a new verification email.",
+      "disabledAccount": "This account has been disabled. Contact support.",
+      "general": "An error occurred during email verification."
+    }
   }
 } 

@@ -1372,52 +1372,65 @@ body {
 .language-selector {
     position: relative;
     display: inline-block;
+    margin-left: 10px;
+    flex-shrink: 0;
 }
 
 .language-dropdown {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(219, 201, 173, 0.3);
-    border-radius: 8px;
+    background: white;
+    border: 2px solid #e1e5e9;
+    border-radius: 6px;
+    padding: 6px 10px;
     cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: #2c3e50;
     transition: all 0.3s ease;
-    font-size: 0.9rem;
-    color: var(--text-dark);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    min-width: 70px;
+    max-width: 85px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    white-space: nowrap;
 }
 
 .language-dropdown:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: var(--primary);
+    border-color: #3498db;
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2);
     transform: translateY(-1px);
 }
 
 .language-dropdown.active {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: var(--primary);
+    border-color: #3498db;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
 }
 
-.language-dropdown .flag-icon {
-    width: 20px;
-    height: 15px;
-    object-fit: cover;
+.current-language {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    justify-content: center;
+    gap: 4px;
+}
+
+.flag-icon {
+    width: 18px;
+    height: 13px;
+    margin-right: 6px;
     border-radius: 2px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    flex-shrink: 0;
 }
 
-.language-dropdown .language-code {
-    font-weight: 600;
-    font-size: 0.85rem;
-    letter-spacing: 0.5px;
+.language-name {
+    display: none; /* Ocultar nomes das línguas - só bandeiras + códigos */
 }
 
-.language-dropdown .dropdown-arrow {
-    font-size: 0.7rem;
-    color: var(--text-light);
+.dropdown-arrow {
+    margin-left: 8px;
+    font-size: 12px;
+    color: #7f8c8d;
     transition: transform 0.3s ease;
 }
 
@@ -1430,20 +1443,17 @@ body {
     top: 100%;
     left: 0;
     right: 0;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(219, 201, 173, 0.4);
-    border-radius: 8px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    background: white;
+    border: 2px solid #e1e5e9;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     z-index: 1000;
-    margin-top: 4px;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
     transition: all 0.3s ease;
-    max-height: 200px;
-    overflow-y: auto;
+    overflow: visible;
 }
 
 .language-options.show {
@@ -1455,13 +1465,14 @@ body {
 .language-option {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
+    justify-content: space-between;
+    padding: 8px 10px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 0.85rem;
-    color: var(--text-dark);
-    border-bottom: 1px solid rgba(219, 201, 173, 0.2);
+    transition: background-color 0.2s ease;
+    font-size: 12px;
+    border-bottom: 1px solid #f8f9fa;
+    white-space: nowrap;
+    gap: 6px;
 }
 
 .language-option:last-child {
@@ -1469,94 +1480,105 @@ body {
 }
 
 .language-option:hover {
-    background: rgba(219, 201, 173, 0.1);
-    transform: translateX(2px);
+    background-color: #f8f9fa;
 }
 
 .language-option.selected {
-    background: rgba(219, 201, 173, 0.2);
+    background-color: #e3f2fd;
+    color: #1976d2;
     font-weight: 600;
 }
 
 .language-option .flag-icon {
-    width: 20px;
-    height: 15px;
-    object-fit: cover;
-    border-radius: 2px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    margin-right: 6px;
 }
 
-.language-option .language-code {
-    font-weight: 500;
-    letter-spacing: 0.3px;
+.language-option .language-name {
+    display: none; /* Ocultar nomes também nas opções */
 }
 
-/* Responsive language selector */
+.language-code {
+    margin-left: 4px;
+    font-size: 11px;
+    color: #2c3e50;
+    font-weight: 600;
+    min-width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* Nav link com quebra de linha forçada */
+.nav-link-multiline {
+    white-space: normal !important;
+    line-height: 1.2 !important;
+    text-align: center;
+    max-width: 100px;
+    word-wrap: break-word;
+    -webkit-hyphens: none;
+    hyphens: none;
+}
+
+/* Aumentar altura do header para acomodar quebras de linha */
+header {
+    min-height: 80px;
+}
+
+.header-container {
+    min-height: 80px;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.nav-links {
+    align-items: center;
+    display: flex;
+    height: 100%;
+}
+
+.nav-links li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    height: 100%;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
+    .language-selector {
+        margin-left: 5px;
+    }
+    
     .language-dropdown {
-        padding: 6px 10px;
-        font-size: 0.8rem;
+        min-width: 60px;
+        max-width: 75px;
+        padding: 4px 6px;
+        font-size: 11px;
     }
     
-    .language-dropdown .flag-icon {
-        width: 18px;
-        height: 13px;
+    .nav-link-multiline {
+        max-width: 80px;
+        font-size: 12px;
     }
     
-    .language-options {
-        left: -50px;
-        right: -50px;
+    header {
+        min-height: 70px;
+    }
+    
+    .flag-icon {
+        width: 16px;
+        height: 12px;
+        margin-right: 4px;
+    }
+    
+    .language-code {
+        font-size: 10px;
+        min-width: 18px;
     }
     
     .language-option {
-        padding: 12px;
-        font-size: 0.9rem;
+        padding: 8px 10px;
+        font-size: 12px;
     }
-}
-
-/* Integration with navigation */
-nav .language-selector {
-    margin-left: auto;
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-    .language-dropdown {
-        background: rgba(0, 0, 0, 0.3);
-        color: #fff;
-        border-color: rgba(255, 255, 255, 0.2);
-    }
-    
-    .language-dropdown:hover {
-        background: rgba(0, 0, 0, 0.4);
-    }
-    
-    .language-options {
-        background: rgba(30, 30, 30, 0.95);
-        border-color: rgba(255, 255, 255, 0.2);
-    }
-    
-    .language-option {
-        color: #fff;
-        border-color: rgba(255, 255, 255, 0.1);
-    }
-    
-    .language-option:hover {
-        background: rgba(255, 255, 255, 0.1);
-    }
-}
-
-/* Animation for language change */
-.language-changing {
-    opacity: 0.7;
-    transition: opacity 0.3s ease;
-}
-
-.language-changed {
-    animation: fadeIn 0.5s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0.7; }
-    to { opacity: 1; }
 }

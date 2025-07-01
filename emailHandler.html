@@ -271,9 +271,10 @@
                     
                     // PRIMEIRO: Extrair email do oobCode ANTES de aplicá-lo
                     let userEmail = null;
+                    let actionCodeInfo = null;
                     try {
                         console.log('🔍 Extraindo email do oobCode antes de aplicar...');
-                        const actionCodeInfo = await auth.checkActionCode(oobCode);
+                        actionCodeInfo = await auth.checkActionCode(oobCode);
                         userEmail = actionCodeInfo.data.email;
                         console.log('📧 Email extraído:', userEmail);
                     } catch (e) {
@@ -284,6 +285,29 @@
                     await auth.applyActionCode(oobCode);
                     
                     console.log('✅ Email verificado com sucesso!');
+                    
+                    // TERCEIRO: Atualizar status no Firestore
+                    if (userEmail) {
+                        try {
+                            const { firestore } = await getFirebaseServices();
+                            const usersRef = firestore.collection('users');
+                            const userQuery = await usersRef.where('email', '==', userEmail).get();
+                            
+                            if (!userQuery.empty) {
+                                const userDoc = userQuery.docs[0];
+                                await userDoc.ref.update({
+                                    emailVerified: true,
+                                    status: 'active',
+                                    isActive: true,
+                                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                                    'metadata.lastUpdateTime': firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                                console.log('✅ Status do usuário atualizado no Firestore');
+                            }
+                        } catch (error) {
+                            console.error('❌ Erro ao atualizar status no Firestore:', error);
+                        }
+                    }
                     
                     // Aguardar um pouco para o Firebase Auth processar
                     showStatus('success', `

@@ -50,24 +50,54 @@ export default async function handler(req, res) {
 
     console.log(`[API] ✅ Usuário criado no Auth com UID: ${userRecord.uid}`);
 
-    // 2. Configurar idioma para o email
+    // 2. Criar documento do usuário no Firestore com dados completos
+    await db.collection('users').doc(userRecord.uid).set({
+      uid: userRecord.uid,
+      email: email,
+      name: name,
+      phone: phone || '',
+      company: company || '',
+      language: language,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      status: 'pending_email_verification',
+      emailVerified: false,
+      isActive: false,
+      role: 'user',
+      preferences: {
+        language: language,
+        notifications: {
+          email: true,
+          push: true
+        }
+      },
+      metadata: {
+        lastSignInTime: null,
+        creationTime: admin.firestore.FieldValue.serverTimestamp(),
+        lastUpdateTime: admin.firestore.FieldValue.serverTimestamp()
+      }
+    });
+
+    console.log(`[API] ✅ Documento do usuário criado no Firestore`);
+
+    // 3. Configurar idioma para o email
     adminInstance.auth().updateUser(userRecord.uid, {
       languageCode: language === 'pt-br' ? 'pt' : language // Firebase usa 'pt' ao invés de 'pt-br'
     });
 
-    // 3. Gerar link de verificação com idioma
+    // 4. Gerar link de verificação com idioma
     const actionCodeSettings = {
       url: `https://atalho.me/emailHandler.html?lang=${language}`,
       handleCodeInApp: false,
     };
 
-    // 4. Gerar link de verificação
+    // 5. Gerar link de verificação
     const verificationLink = await adminInstance.auth().generateEmailVerificationLink(
       email,
       actionCodeSettings
     );
 
-    // 5. Enviar email customizado com o idioma correto
+    // 6. Enviar email customizado com o idioma correto
     try {
       // Configurar email baseado no idioma
       const emailTemplates = {
@@ -316,7 +346,7 @@ export default async function handler(req, res) {
       console.log(`[API] ✅ Email de fallback simples enviado.`);
     }
 
-    // 6. Responde ao cliente com sucesso
+    // 7. Responde ao cliente com sucesso
     console.log(`[API] ✅ Processo concluído com sucesso para UID: ${userRecord.uid}`);
     return res.status(201).json({
         success: true,

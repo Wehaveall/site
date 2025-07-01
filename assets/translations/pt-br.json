@@ -347,5 +347,32 @@
       "invalidToken": "Link inválido ou já utilizado",
       "generalError": "Erro inesperado. Tente novamente"
     }
+  },
+  "emailVerification": {
+    "title": "Verificação de Email",
+    "loading": "Verificando seu email...",
+    "loginButton": "Ir para Login",
+    "autoVerified": {
+      "title": "Email verificado automaticamente!",
+      "message": "Sua conta foi ativada com sucesso. Redirecionando para login..."
+    },
+    "verifying": {
+      "title": "Email verificado com sucesso!",
+      "message": "Sincronizando dados da conta..."
+    },
+    "verified": {
+      "title": "Conta ativada com sucesso!",
+      "status": "Status:",
+      "active": "Ativo",
+      "pending": "Pendente",
+      "login": "Agora você pode fazer login normalmente."
+    },
+    "errors": {
+      "title": "Erro na Verificação",
+      "general": "Ocorreu um erro na verificação do email.",
+      "invalidCode": "Link de verificação inválido ou expirado. Solicite um novo email de verificação.",
+      "expiredCode": "Link de verificação expirado. Solicite um novo email de verificação.",
+      "disabled": "Esta conta foi desabilitada. Entre em contato com o suporte."
+    }
   }
 } 

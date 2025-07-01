@@ -301,5 +301,32 @@
     "noData": "Daten nicht verfügbar",
     "loading": "Wird geladen...",
     "logout": "Abmelden"
+  },
+  "emailVerification": {
+    "title": "E-Mail-Verifizierung",
+    "loading": "E-Mail wird verifiziert...",
+    "loginButton": "Zum Login",
+    "autoVerified": {
+      "title": "E-Mail automatisch verifiziert!",
+      "message": "Ihr Konto wurde erfolgreich aktiviert. Weiterleitung zum Login..."
+    },
+    "verifying": {
+      "title": "E-Mail erfolgreich verifiziert!",
+      "message": "Kontodaten werden synchronisiert..."
+    },
+    "verified": {
+      "title": "Konto erfolgreich aktiviert!",
+      "status": "Status:",
+      "active": "Aktiv",
+      "pending": "Ausstehend",
+      "login": "Sie können sich jetzt normal anmelden."
+    },
+    "errors": {
+      "title": "Verifizierungsfehler",
+      "general": "Bei der E-Mail-Verifizierung ist ein Fehler aufgetreten.",
+      "invalidCode": "Ungültiger oder abgelaufener Verifizierungslink. Fordern Sie eine neue Verifizierungs-E-Mail an.",
+      "expiredCode": "Verifizierungslink abgelaufen. Fordern Sie eine neue Verifizierungs-E-Mail an.",
+      "disabled": "Dieses Konto wurde deaktiviert. Kontaktieren Sie den Support."
+    }
   }
 } 

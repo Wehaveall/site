@@ -279,5 +279,32 @@
     "noData": "Données non disponibles",
     "loading": "Chargement...",
     "logout": "Se Déconnecter"
+  },
+  "emailVerification": {
+    "title": "Vérification de l'Email",
+    "loading": "Vérification de votre email...",
+    "loginButton": "Aller à la Connexion",
+    "autoVerified": {
+      "title": "Email vérifié automatiquement !",
+      "message": "Votre compte a été activé avec succès. Redirection vers la connexion..."
+    },
+    "verifying": {
+      "title": "Email vérifié avec succès !",
+      "message": "Synchronisation des données du compte..."
+    },
+    "verified": {
+      "title": "Compte activé avec succès !",
+      "status": "Statut :",
+      "active": "Actif",
+      "pending": "En attente",
+      "login": "Vous pouvez maintenant vous connecter normalement."
+    },
+    "errors": {
+      "title": "Erreur de Vérification",
+      "general": "Une erreur s'est produite lors de la vérification de l'email.",
+      "invalidCode": "Lien de vérification invalide ou expiré. Demandez un nouvel email de vérification.",
+      "expiredCode": "Lien de vérification expiré. Demandez un nouvel email de vérification.",
+      "disabled": "Ce compte a été désactivé. Contactez le support."
+    }
   }
 } 

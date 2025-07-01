@@ -301,5 +301,32 @@
     "noData": "Datos no disponibles",
     "loading": "Cargando...",
     "logout": "Salir"
+  },
+  "emailVerification": {
+    "title": "Verificación de Email",
+    "loading": "Verificando tu email...",
+    "loginButton": "Ir al Login",
+    "autoVerified": {
+      "title": "¡Email verificado automáticamente!",
+      "message": "Tu cuenta ha sido activada con éxito. Redirigiendo al login..."
+    },
+    "verifying": {
+      "title": "¡Email verificado con éxito!",
+      "message": "Sincronizando datos de la cuenta..."
+    },
+    "verified": {
+      "title": "¡Cuenta activada con éxito!",
+      "status": "Estado:",
+      "active": "Activo",
+      "pending": "Pendiente",
+      "login": "Ahora puedes iniciar sesión normalmente."
+    },
+    "errors": {
+      "title": "Error de Verificación",
+      "general": "Ocurrió un error durante la verificación del email.",
+      "invalidCode": "Enlace de verificación inválido o expirado. Solicita un nuevo email de verificación.",
+      "expiredCode": "Enlace de verificación expirado. Solicita un nuevo email de verificación.",
+      "disabled": "Esta cuenta ha sido deshabilitada. Contacta con soporte."
+    }
   }
 } 

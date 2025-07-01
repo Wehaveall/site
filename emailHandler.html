@@ -77,30 +77,28 @@
         }
 
         .btn {
-            background: linear-gradient(135deg, #dbc9ad 0%, #c8b298 100%);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
             display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #dbc9ad 0%, #c8b298 100%);
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
             margin-top: 20px;
-            transition: transform 0.2s ease;
         }
 
         .btn:hover {
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .spinner {
             border: 3px solid #f3f3f3;
-            border-top: 3px solid #1976d2;
+            border-top: 3px solid #dbc9ad;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 24px;
+            height: 24px;
             animation: spin 1s linear infinite;
             margin: 0 auto 10px;
         }
@@ -111,19 +109,20 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="logo"><img src="assets/img/Atalho.png" alt="Logo Atalho" style="width: 80px; height: 80px; object-fit: contain;"></div>
         <h1>Atalho</h1>
-        <p id="verificationTitle">Verificação de Email</p>
+        <p id="verificationTitle" data-i18n="emailVerification.title">Verificação de Email</p>
 
         <div id="status" class="status loading">
             <div class="spinner"></div>
-            <div id="loadingText">Verificando seu email...</div>
+            <div id="loadingText" data-i18n="emailVerification.loading">Verificando seu email...</div>
         </div>
 
         <div id="actions" style="display: none;">
-            <a href="login.html" class="btn" id="loginButton">Ir para Login</a>
+            <a href="login.html" class="btn" id="loginButton" data-i18n="emailVerification.loginButton">Ir para Login</a>
         </div>
     </div>
 
@@ -136,85 +135,6 @@
     <script src="assets/js/i18n.js"></script>
 
     <script>
-        // Objeto de traduções
-        const translations = {
-            'pt-br': {
-                title: 'Verificação de Email',
-                loading: 'Verificando seu email...',
-                loginButton: 'Ir para Login',
-                autoVerified: {
-                    title: 'Email verificado automaticamente!',
-                    message: 'Sua conta foi ativada com sucesso. Redirecionando para login...'
-                },
-                verifying: {
-                    title: 'Email verificado com sucesso!',
-                    message: 'Sincronizando dados da conta...'
-                },
-                verified: {
-                    title: 'Conta ativada com sucesso!',
-                    status: 'Status:',
-                    active: 'Ativo',
-                    pending: 'Pendente',
-                    login: 'Agora você pode fazer login normalmente.'
-                },
-                errors: {
-                    title: 'Erro na Verificação',
-                    general: 'Ocorreu um erro na verificação do email.',
-                    invalidCode: 'Link de verificação inválido ou expirado. Solicite um novo email de verificação.',
-                    expiredCode: 'Link de verificação expirado. Solicite um novo email de verificação.',
-                    disabled: 'Esta conta foi desabilitada. Entre em contato com o suporte.'
-                }
-            },
-            'it': {
-                title: 'Verifica Email',
-                loading: 'Verifica della tua email...',
-                loginButton: 'Vai al Login',
-                autoVerified: {
-                    title: 'Email verificata automaticamente!',
-                    message: 'Il tuo account è stato attivato con successo. Reindirizzamento al login...'
-                },
-                verifying: {
-                    title: 'Email verificata con successo!',
-                    message: 'Sincronizzazione dei dati dell\'account...'
-                },
-                verified: {
-                    title: 'Account attivato con successo!',
-                    status: 'Stato:',
-                    active: 'Attivo',
-                    pending: 'In attesa',
-                    login: 'Ora puoi accedere normalmente.'
-                },
-                errors: {
-                    title: 'Errore di Verifica',
-                    general: 'Si è verificato un errore durante la verifica dell\'email.',
-                    invalidCode: 'Link di verifica non valido o scaduto. Richiedi una nuova email di verifica.',
-                    expiredCode: 'Link di verifica scaduto. Richiedi una nuova email di verifica.',
-                    disabled: 'Questo account è stato disabilitato. Contatta il supporto.'
-                }
-            }
-        };
-
-        // Função para obter a linguagem atual
-        function getCurrentLanguage() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const lang = urlParams.get('lang') || 'pt-br';
-            return translations[lang] ? lang : 'pt-br';
-        }
-
-        // Função para obter texto traduzido
-        function getText(key) {
-            const lang = getCurrentLanguage();
-            const keys = key.split('.');
-            let text = translations[lang];
-            
-            for (const k of keys) {
-                text = text[k];
-                if (!text) return translations['pt-br'][key] || key;
-            }
-            
-            return text;
-        }
-
         // Função principal de inicialização
         async function initializeApp() {
             try {
@@ -223,62 +143,29 @@
                 
                 console.log("✅ Firebase inicializado para verificação de email");
                 
-                // Atualizar textos iniciais
-                document.getElementById('verificationTitle').textContent = getText('title');
-                document.getElementById('loadingText').textContent = getText('loading');
-                document.getElementById('loginButton').textContent = getText('loginButton');
-                
                 // Processar a verificação de email após a inicialização
                 handleEmailVerification(auth);
             } catch (error) {
                 console.error("❌ Erro ao inicializar Firebase:", error);
-                showStatus('error', getText('errors.general'));
+                showStatus('error', window.t('emailVerification.errors.general'));
             }
         }
 
         // Função para forçar sincronização imediata usando oobCode
-        async function forceSyncVerification(oobCode, userEmail = null, auth = null) {
+        async function forceSyncVerification(oobCode, userEmail, auth) {
             try {
-                console.log('🔄 Forçando sincronização via oobCode...', oobCode);
-                console.log('📧 Email recebido como parâmetro:', userEmail);
+                console.log('🔄 Forçando sincronização com oobCode...');
                 
-                const url = 'https://syncemailverificationpublic-lj2of3bbgq-ue.a.run.app';
-                console.log('🌐 URL da função:', url);
-                
-                // Se não recebeu email como parâmetro, tentar fallbacks
-                if (!userEmail && auth) {
-                    console.log('⚠️ Email não fornecido, tentando fallbacks...');
-                    
-                    // Fallback: tentar usuário atual
-                    try {
-                        const currentUser = auth.currentUser;
-                        if (currentUser) {
-                            userEmail = currentUser.email;
-                            console.log('📧 Email do usuário atual (fallback):', userEmail);
-                        }
-                    } catch (e) {
-                        console.log('⚠️ Não foi possível obter usuário atual:', e.message);
-                    }
-                }
-                
-                const payload = { 
-                    oobCode,
-                    email: userEmail 
-                };
-                
-                const body = JSON.stringify(payload);
-                console.log('📤 Payload:', body);
-                
-                const response = await fetch(url, {
+                const response = await fetch('/api/payment-status', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
-                    body: body
+                    body: JSON.stringify({
+                        oobCode,
+                        email: userEmail
+                    })
                 });
-
-                console.log('📡 Response status:', response.status);
-                console.log('📡 Response headers:', Object.fromEntries(response.headers.entries()));
 
                 if (!response.ok) {
                     const errorText = await response.text();
@@ -321,8 +208,9 @@
                 const mode = getUrlParameter('mode');
                 const oobCode = getUrlParameter('oobCode');
                 const continueUrl = getUrlParameter('continueUrl');
+                const lang = getUrlParameter('lang') || window.getCurrentLanguage();
 
-                console.log('🔍 Parâmetros recebidos:', { mode, oobCode, continueUrl });
+                console.log('🔍 Parâmetros recebidos:', { mode, oobCode, continueUrl, lang });
                 console.log('🔍 URL completa:', window.location.href);
                 console.log('🔍 Search params:', window.location.search);
 
@@ -331,14 +219,14 @@
                     console.log('🔄 Verificação automática detectada - redirecionando para login');
                     showStatus('success', `
                         <div style="font-size: 3rem; margin-bottom: 15px;">✅</div>
-                        <div><strong>${getText('autoVerified.title')}</strong></div>
+                        <div><strong>${window.t('emailVerification.autoVerified.title')}</strong></div>
                         <div style="margin-top: 10px; font-size: 0.9rem;">
-                            ${getText('autoVerified.message')}
+                            ${window.t('emailVerification.autoVerified.message')}
                         </div>
                     `);
                     
                     setTimeout(() => {
-                        window.location.href = 'login.html?verified=true';
+                        window.location.href = `login.html?verified=true&lang=${lang}`;
                     }, 2000);
                     return;
                 }
@@ -346,7 +234,7 @@
                 // Se não tem mode ou oobCode, redireciona para login
                 if (!mode || !oobCode) {
                     console.log('⚠️ Parâmetros mode ou oobCode não encontrados - redirecionando para login');
-                    window.location.href = 'login.html';
+                    window.location.href = `login.html?lang=${lang}`;
                     return;
                 }
 
@@ -372,9 +260,9 @@
                     // Aguardar um pouco para o Firebase Auth processar
                     showStatus('success', `
                         <div style="font-size: 2rem; margin-bottom: 10px;">✅</div>
-                        <div><strong>${getText('verifying.title')}</strong></div>
+                        <div><strong>${window.t('emailVerification.verifying.title')}</strong></div>
                         <div style="margin-top: 10px; font-size: 0.9rem;">
-                            ${getText('verifying.message')}
+                            ${window.t('emailVerification.verifying.message')}
                         </div>
                     `);
                     
@@ -385,18 +273,18 @@
                         if (syncResult && syncResult.success) {
                             showStatus('success', `
                                 <div style="font-size: 3rem; margin-bottom: 15px;">🎉</div>
-                                <div><strong>${getText('verified.title')}</strong></div>
+                                <div><strong>${window.t('emailVerification.verified.title')}</strong></div>
                                 <div style="margin-top: 10px; font-size: 0.9rem;">
-                                    ${getText('verified.status')} ${syncResult.account_status === 'active' ? getText('verified.active') : getText('verified.pending')}<br>
-                                    ${getText('verified.login')}
+                                    ${window.t('emailVerification.verified.status')} ${syncResult.account_status === 'active' ? window.t('emailVerification.verified.active') : window.t('emailVerification.verified.pending')}<br>
+                                    ${window.t('emailVerification.verified.login')}
                                 </div>
                             `);
                         } else {
                             showStatus('success', `
                                 <div style="font-size: 3rem; margin-bottom: 15px;">✅</div>
-                                <div><strong>${getText('verifying.title')}</strong></div>
+                                <div><strong>${window.t('emailVerification.verifying.title')}</strong></div>
                                 <div style="margin-top: 10px; font-size: 0.9rem;">
-                                    ${getText('verified.login')}
+                                    ${window.t('emailVerification.verified.login')}
                                 </div>
                             `);
                         }
@@ -404,7 +292,7 @@
 
                     // Redirecionar automaticamente após 6 segundos (tempo para sincronização)
                     setTimeout(() => {
-                        const redirectUrl = continueUrl || 'login.html?verified=true';
+                        const redirectUrl = continueUrl || `login.html?verified=true&lang=${lang}`;
                         window.location.href = decodeURIComponent(redirectUrl);
                     }, 6000);
 
@@ -421,19 +309,19 @@
             } catch (error) {
                 console.error('❌ Erro na verificação:', error);
                 
-                let errorMessage = getText('errors.general');
+                let errorMessage = window.t('emailVerification.errors.general');
                 
                 if (error.code === 'auth/invalid-action-code') {
-                    errorMessage = getText('errors.invalidCode');
+                    errorMessage = window.t('emailVerification.errors.invalidCode');
                 } else if (error.code === 'auth/expired-action-code') {
-                    errorMessage = getText('errors.expiredCode');
+                    errorMessage = window.t('emailVerification.errors.expiredCode');
                 } else if (error.code === 'auth/user-disabled') {
-                    errorMessage = getText('errors.disabled');
+                    errorMessage = window.t('emailVerification.errors.disabled');
                 }
 
                 showStatus('error', `
                     <div style="font-size: 3rem; margin-bottom: 15px;">❌</div>
-                    <div><strong>${getText('errors.title')}</strong></div>
+                    <div><strong>${window.t('emailVerification.errors.title')}</strong></div>
                     <div style="margin-top: 10px; font-size: 0.9rem;">
                         ${errorMessage}
                     </div>
@@ -444,9 +332,6 @@
         // Aguardar Firebase carregar e processar
         document.addEventListener('DOMContentLoaded', function() {
             console.log('📱 Página de verificação carregada');
-            
-            // Inicia o processo de configuração e verificação
-            // Nota: Não inicializamos o i18n com dropdown aqui para evitar quebrar o layout
             initializeApp();
         });
     </script>

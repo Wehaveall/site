@@ -279,5 +279,32 @@
     "noData": "Data not available",
     "loading": "Loading...",
     "logout": "Logout"
+  },
+  "emailVerification": {
+    "title": "Email Verification",
+    "loading": "Verifying your email...",
+    "loginButton": "Go to Login",
+    "autoVerified": {
+      "title": "Email automatically verified!",
+      "message": "Your account has been successfully activated. Redirecting to login..."
+    },
+    "verifying": {
+      "title": "Email successfully verified!",
+      "message": "Synchronizing account data..."
+    },
+    "verified": {
+      "title": "Account successfully activated!",
+      "status": "Status:",
+      "active": "Active",
+      "pending": "Pending",
+      "login": "You can now login normally."
+    },
+    "errors": {
+      "title": "Verification Error",
+      "general": "An error occurred during email verification.",
+      "invalidCode": "Invalid or expired verification link. Request a new verification email.",
+      "expiredCode": "Verification link expired. Request a new verification email.",
+      "disabled": "This account has been disabled. Contact support."
+    }
   }
 } 

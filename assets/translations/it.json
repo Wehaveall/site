@@ -301,5 +301,32 @@
     "noData": "Dati non disponibili",
     "loading": "Caricamento...",
     "logout": "Esci"
+  },
+  "emailVerification": {
+    "title": "Verifica Email",
+    "loading": "Verifica della tua email...",
+    "loginButton": "Vai al Login",
+    "autoVerified": {
+      "title": "Email verificata automaticamente!",
+      "message": "Il tuo account è stato attivato con successo. Reindirizzamento al login..."
+    },
+    "verifying": {
+      "title": "Email verificata con successo!",
+      "message": "Sincronizzazione dei dati dell'account..."
+    },
+    "verified": {
+      "title": "Account attivato con successo!",
+      "status": "Stato:",
+      "active": "Attivo",
+      "pending": "In attesa",
+      "login": "Ora puoi accedere normalmente."
+    },
+    "errors": {
+      "title": "Errore di Verifica",
+      "general": "Si è verificato un errore durante la verifica dell'email.",
+      "invalidCode": "Link di verifica non valido o scaduto. Richiedi una nuova email di verifica.",
+      "expiredCode": "Link di verifica scaduto. Richiedi una nuova email di verifica.",
+      "disabled": "Questo account è stato disabilitato. Contatta il supporto."
+    }
   }
 } 

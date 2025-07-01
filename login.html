@@ -27,6 +27,112 @@
             color: var(--primary) !important;
         }
 
+        /* Modal de erro customizado */
+        .error-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .error-modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .error-modal {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            transform: scale(0.8) translateY(20px);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .error-modal-overlay.show .error-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .error-modal .icon {
+            color: #e74c3c;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .error-modal h3 {
+            color: #2c3e50;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .error-modal p {
+            color: #7f8c8d;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .error-modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .error-modal .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--text-dark);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .error-modal .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(219, 201, 173, 0.4);
+        }
+
+        .error-modal .btn-secondary {
+            background: transparent;
+            color: var(--primary-dark);
+            border: 2px solid var(--primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .error-modal .btn-secondary:hover {
+            background: var(--primary);
+            color: var(--text-dark);
+        }
+
         /* Popup de sucesso animado */
         .success-popup {
             position: fixed;
@@ -301,9 +407,78 @@
                     }
                 };
 
-                // Função para mostrar mensagens de erro (mantém o alert)
+                // Função para mostrar mensagens de erro com modal customizado
                 function showError(message) {
-                    alert('❌ ' + message);
+                    // Remove modal anterior se existir
+                    const existingModal = document.querySelector('.error-modal-overlay');
+                    if (existingModal) {
+                        existingModal.remove();
+                    }
+
+                    // Criar modal de erro
+                    const modalOverlay = document.createElement('div');
+                    modalOverlay.className = 'error-modal-overlay';
+                    
+                    // Determinar título e ação baseado na mensagem
+                    let title = 'Erro no Login';
+                    let actionButton = '';
+                    
+                    if (message.includes('Email não verificado')) {
+                        title = 'Email não verificado';
+                        message = 'Você precisa verificar seu email antes de fazer login. Verifique sua caixa de entrada (incluindo spam) e clique no link de verificação.';
+                        actionButton = '<a href="register.html" class="btn-secondary">Reenviar Email</a>';
+                                         } else if (message.includes('não encontrado') || message.includes('incorreta') || message.includes('incorretos')) {
+                        title = 'Dados incorretos';
+                        message = 'Email ou senha incorretos. Verifique se digitou corretamente ou tente recuperar sua senha.';
+                        actionButton = '<a href="reset-password.html" class="btn-secondary">Esqueci minha senha</a>';
+                    } else if (message.includes('Muitas tentativas')) {
+                        title = 'Muitas tentativas';
+                        message = 'Você fez muitas tentativas de login. Aguarde alguns minutos antes de tentar novamente.';
+                    }
+                    
+                    modalOverlay.innerHTML = `
+                        <div class="error-modal">
+                            <div class="icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <h3>${title}</h3>
+                            <p>${message}</p>
+                            <div class="error-modal-actions">
+                                <button class="btn-primary" onclick="this.closest('.error-modal-overlay').remove()">
+                                    Entendi
+                                </button>
+                                ${actionButton}
+                            </div>
+                        </div>
+                    `;
+
+                    // Adicionar ao DOM
+                    document.body.appendChild(modalOverlay);
+
+                    // Mostrar modal com animação
+                    setTimeout(() => {
+                        modalOverlay.classList.add('show');
+                    }, 100);
+
+                    // Fechar ao clicar no overlay
+                    modalOverlay.addEventListener('click', (e) => {
+                        if (e.target === modalOverlay) {
+                            modalOverlay.classList.remove('show');
+                            setTimeout(() => modalOverlay.remove(), 300);
+                        }
+                    });
+
+                    // Fechar com ESC
+                    const handleEsc = (e) => {
+                        if (e.key === 'Escape') {
+                            modalOverlay.classList.remove('show');
+                            setTimeout(() => modalOverlay.remove(), 300);
+                            document.removeEventListener('keydown', handleEsc);
+                        }
+                    };
+                    document.addEventListener('keydown', handleEsc);
+                    
+                    console.log('🚨 Modal de erro exibido:', title);
                 }
 
                 // Variável para controlar se está no processo de login
@@ -353,6 +528,8 @@
                                 throw new Error('Email não encontrado. Verifique se você já tem uma conta.');
                             case 'auth/wrong-password':
                                 throw new Error('Senha incorreta. Tente novamente ou use "Esqueci minha senha".');
+                            case 'auth/invalid-login-credentials':
+                                throw new Error('Email ou senha incorretos. Verifique se digitou corretamente.');
                             case 'auth/invalid-email':
                                 throw new Error('Email inválido.');
                             case 'auth/user-disabled':
@@ -360,7 +537,7 @@
                             case 'auth/too-many-requests':
                                 throw new Error('Muitas tentativas de login. Tente novamente mais tarde.');
                             default:
-                                throw new Error('Erro no login: ' + error.message);
+                                throw new Error('Email ou senha incorretos. Verifique se digitou corretamente.');
                         }
                     }
                 }

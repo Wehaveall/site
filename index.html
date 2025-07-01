@@ -304,8 +304,8 @@
                 
                 // Definir nome a ser exibido
                 let displayName = 'Usuário';
-                if (userData && userData.Nome) {
-                    displayName = userData.Nome;
+                if (userData && userData.name) {
+                    displayName = userData.name;
                     console.log('  📛 Nome obtido do Firestore:', displayName);
                 } else if (user.displayName) {
                     displayName = user.displayName;
@@ -328,7 +328,7 @@
                             ${lastName ? `<span class="last-name">${lastName}</span>` : ''}
                         </div>
                     `;
-                    navUserName.title = userData?.Nome || user.email || 'Usuário'; // Tooltip com nome completo
+                    navUserName.title = userData?.name || user.email || 'Usuário'; // Tooltip com nome completo
                     console.log('  ✅ Nome definido no elemento:', displayName);
                 }
                 

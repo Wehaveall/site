@@ -247,8 +247,7 @@
       "textExpansion": "Expansão de texto automática",
       "databases": "Bancos de dados personalizáveis",
       "formatting": "Formatação avançada",
-      "wordIntegration": "Integração com Word",
-      "lifetimeUpdates": "Atualizações vitalícias"
+      "wordIntegration": "Integração com Word"
     },
     "price": "R$ 49,90",
     "license": "Licença anual",
@@ -309,9 +308,9 @@
       "country": "País",
       "company": "Empresa",
       "accountId": "ID da Conta",
-      "createdAt": "Conta criada em"
+      "createdAt": "Data de Cadastro"
     },
-    "noData": "Dados não disponíveis",
+    "noData": "Não informado",
     "loading": "Carregando...",
     "logout": "Sair"
   },

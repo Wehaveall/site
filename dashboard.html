@@ -293,93 +293,29 @@
             });
         }
 
-        // Função para atualizar o nome do usuário no header
-        function updateUserName(name) {
-            const userNameElement = document.getElementById('nav-user-name');
-            if (userNameElement && name) {
-                // Dividir o nome em partes
-                const nameParts = name.split(' ');
-                const firstName = nameParts[0];
-                const lastName = nameParts.slice(1).join(' ');
-                
-                // Criar estrutura HTML para nome em duas linhas
-                userNameElement.innerHTML = `
-                    <div class="nav-user-name">
-                        <span class="first-name">${firstName}</span>
-                        ${lastName ? `<span class="last-name">${lastName}</span>` : ''}
-                    </div>
-                `;
-                userNameElement.style.padding = '0';  // Remover padding padrão do link
-            }
-        }
-
-        // Função para buscar dados do usuário no Firestore
-        async function loadUserData() {
-            try {
-                const userDoc = await db.collection('users').doc(currentUser.uid).get();
-                
-                if (userDoc.exists) {
-                    currentUserData = userDoc.data();
-                    console.log('✅ Dados do usuário carregados:', currentUserData);
-                    
-                    // Atualizar nome no header
-                    if (currentUserData && currentUserData.name) {
-                        updateUserName(currentUserData.name);
-                    }
-                    
-                    return currentUserData;
-                } else {
-                    // Tentar buscar por email
-                    const emailQuery = await db.collection('users')
-                        .where('email', '==', currentUser.email)
-                        .limit(1)
-                        .get();
-                    
-                    if (!emailQuery.empty) {
-                        currentUserData = emailQuery.docs[0].data();
-                        console.log('✅ Dados encontrados por email:', currentUserData);
-                        
-                        // Atualizar nome no header
-                        if (currentUserData && currentUserData.name) {
-                            updateUserName(currentUserData.name);
-                        }
-                        
-                        return currentUserData;
-                    }
-                    
-                    console.warn('⚠️ Nenhum dado encontrado para o usuário');
-                    return null;
-                }
-            } catch (error) {
-                console.error('❌ Erro ao carregar dados do usuário:', error);
-                showError('Erro ao carregar dados do usuário: ' + error.message);
-                return null;
-            }
-        }
-
-        // Função para atualizar o menu baseado no status de autenticação
-        async function updateNavMenu(user) {
+        // Função para atualizar o menu com base no estado de autenticação
+        function updateNavMenu(user, userData = null) {
             console.log('🔧 === INÍCIO DA ATUALIZAÇÃO DO MENU ===');
-            console.log('👤 Usuário recebido:', user ? user.email : 'null/undefined');
-            
+            console.log('👤 Usuário recebido:', user.email);
+
+            // Elementos do menu
             const navRegister = document.getElementById('nav-register');
             const navLogin = document.getElementById('nav-login');
             const navUserInfo = document.getElementById('nav-user-info');
             const navUserName = document.getElementById('nav-user-name');
             const navLogout = document.getElementById('nav-logout');
 
-            // Verificar se todos os elementos foram encontrados
             console.log('🔍 Elementos encontrados:');
-            console.log('  - nav-register:', navRegister ? 'Encontrado' : 'NÃO ENCONTRADO');
-            console.log('  - nav-login:', navLogin ? 'Encontrado' : 'NÃO ENCONTRADO');
-            console.log('  - nav-user-info:', navUserInfo ? 'Encontrado' : 'NÃO ENCONTRADO');
-            console.log('  - nav-user-name:', navUserName ? 'Encontrado' : 'NÃO ENCONTRADO');
-            console.log('  - nav-logout:', navLogout ? 'Encontrado' : 'NÃO ENCONTRADO');
+            console.log('  - nav-register:', navRegister ? 'Encontrado' : 'Não encontrado');
+            console.log('  - nav-login:', navLogin ? 'Encontrado' : 'Não encontrado');
+            console.log('  - nav-user-info:', navUserInfo ? 'Encontrado' : 'Não encontrado');
+            console.log('  - nav-user-name:', navUserName ? 'Encontrado' : 'Não encontrado');
+            console.log('  - nav-logout:', navLogout ? 'Encontrado' : 'Não encontrado');
 
             if (user) {
                 console.log('✅ USUÁRIO LOGADO - Configurando menu para usuário autenticado');
-                
-                // Usuário logado: esconder Cadastro/Entrar, mostrar Nome/Sair
+
+                // Esconder opções de cadastro e login
                 if (navRegister) {
                     navRegister.style.display = 'none';
                     console.log('  ✅ Cadastro escondido');
@@ -389,24 +325,14 @@
                     console.log('  ✅ Login escondido');
                 }
                 if (navUserInfo) {
-                    navUserInfo.style.display = 'block';
+                    navUserInfo.style.display = 'flex';
                     console.log('  ✅ Info do usuário mostrada');
                 }
                 if (navLogout) {
-                    navLogout.style.display = 'block';
+                    navLogout.style.display = 'flex';
                     console.log('  ✅ Logout mostrado');
                 }
-                
-                // Carregar dados do usuário (COM CACHE)
-                let userData = currentUserData;
-                if (!userData || currentUserData?.uid !== user.uid) {
-                    console.log('📊 Carregando dados do usuário do Firestore...');
-                    userData = await loadUserData();
-                    currentUserData = userData; // Cache dos dados
-                } else {
-                    console.log('⚡ Usando dados em cache do usuário');
-                }
-                
+
                 // Definir nome a ser exibido
                 let displayName = 'Usuário';
                 if (userData && userData.Nome) {
@@ -421,33 +347,34 @@
                     console.log('  📛 Nome obtido do email:', displayName);
                 }
 
-                // Separar nome em duas linhas
-                const nameParts = displayName.split(' ');
+                // Separar nome em primeiro e último
+                const nameParts = displayName.split(' ').filter(part => part.length > 0);
                 const firstName = nameParts[0];
-                const lastName = nameParts.slice(1).join(' ');
+                const lastName = nameParts[nameParts.length - 1];
 
+                // Atualizar nome no header
                 if (navUserName) {
                     navUserName.innerHTML = `
                         <div class="nav-user-name">
-                            <span class="first-name">${firstName}</span>
-                            ${lastName ? `<span class="last-name">${lastName}</span>` : ''}
+                            <span class="first-name" style="color: #28a745; font-weight: 600;">${firstName}</span>
+                            ${lastName ? `<span class="last-name" style="color: #28a745; font-weight: 500;">${lastName}</span>` : ''}
                         </div>
                     `;
-                    navUserName.title = userData?.Nome || user.email || 'Usuário';
-                    console.log('  ✅ Nome definido no elemento:', displayName);
+                    console.log(`  ✅ Nome definido no elemento: ${firstName} ${lastName}`);
                 }
-                
-                console.log('✅ Menu atualizado para usuário logado:', user.email, '| Nome:', displayName);
+
+                console.log(`✅ Menu atualizado para usuário logado: ${user.email} | Nome: ${firstName} ${lastName}`);
+
             } else {
-                console.log('❌ USUÁRIO DESLOGADO - Configurando menu para usuário não autenticado');
-                
-                // Usuário deslogado: mostrar Cadastro/Entrar, esconder Nome/Sair
+                console.log('❌ USUÁRIO NÃO LOGADO - Configurando menu para visitante');
+
+                // Mostrar opções de cadastro e login
                 if (navRegister) {
-                    navRegister.style.display = 'block';
+                    navRegister.style.display = 'flex';
                     console.log('  ✅ Cadastro mostrado');
                 }
                 if (navLogin) {
-                    navLogin.style.display = 'block';
+                    navLogin.style.display = 'flex';
                     console.log('  ✅ Login mostrado');
                 }
                 if (navUserInfo) {
@@ -458,10 +385,10 @@
                     navLogout.style.display = 'none';
                     console.log('  ✅ Logout escondido');
                 }
-                currentUserData = null;
-                console.log('ℹ️ Menu atualizado para usuário deslogado');
+
+                console.log('✅ Menu atualizado para visitante');
             }
-            
+
             console.log('🔧 === FIM DA ATUALIZAÇÃO DO MENU ===');
         }
 

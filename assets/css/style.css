@@ -177,14 +177,12 @@ body {
 /* Estilo para o nome do usuário em duas linhas */
 #nav-user-name {
     display: flex !important;
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    line-height: 1.2 !important;
-    padding: 5px 0 !important;
-    text-align: left !important;
+    align-items: center !important;
+    justify-content: center !important;
     height: auto !important;
     min-height: 40px !important;
-    justify-content: center !important;
+    padding: 5px 0 !important;
+    text-decoration: none !important;
 }
 
 .nav-user-name {
@@ -193,20 +191,19 @@ body {
     align-items: flex-start !important;
     line-height: 1.2 !important;
     padding: 0 !important;
+    gap: 2px !important;
 }
 
 .nav-user-name .first-name {
-    font-size: 0.9rem !important;
-    color: var(--text-dark) !important;
+    font-size: 0.95rem !important;
+    color: #28a745 !important;
     font-weight: 600 !important;
-    white-space: nowrap !important;
 }
 
 .nav-user-name .last-name {
-    font-size: 0.8rem !important;
-    color: var(--text-light) !important;
+    font-size: 0.85rem !important;
+    color: #28a745 !important;
     font-weight: 500 !important;
-    white-space: nowrap !important;
 }
 
 .nav-link {

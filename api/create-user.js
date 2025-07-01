@@ -94,17 +94,85 @@ export default async function handler(req, res) {
     console.log(`[API] ✅ Dados do usuário salvos no Firestore.`);
 
     // 4. Tentar enviar email via Zoho usando método de fallback direto
-    console.log(`[API] 📧 Enviando email de verificação...`);
+    console.log(`[API] 📧 Enviando email de verificação em ${language}...`);
+    
+    // Templates de email por idioma
+    const emailTemplates = {
+      'pt-br': {
+        subject: 'Atalho - Confirme seu email para ativar sua conta',
+        greeting: 'Olá!',
+        intro: `Você se cadastrou no <strong>Atalho</strong> com o email: <strong>${email}</strong>`,
+        instruction: 'Para ativar sua conta e começar a usar nossos recursos de automação, confirme seu email clicando no botão abaixo:',
+        buttonText: '✅ Confirmar Email',
+        fallbackText: 'Se o botão não funcionar, copie e cole este link no seu navegador:',
+        expiryText: '⚠️ Este link expira em 24 horas por segurança.',
+        footer: '<strong>Atalho</strong> - Automação e Produtividade'
+      },
+      'en': {
+        subject: 'Atalho - Confirm your email to activate your account',
+        greeting: 'Hello!',
+        intro: `You signed up for <strong>Atalho</strong> with the email: <strong>${email}</strong>`,
+        instruction: 'To activate your account and start using our automation features, confirm your email by clicking the button below:',
+        buttonText: '✅ Confirm Email',
+        fallbackText: 'If the button doesn\'t work, copy and paste this link in your browser:',
+        expiryText: '⚠️ This link expires in 24 hours for security.',
+        footer: '<strong>Atalho</strong> - Automation and Productivity'
+      },
+      'es': {
+        subject: 'Atalho - Confirma tu email para activar tu cuenta',
+        greeting: '¡Hola!',
+        intro: `Te registraste en <strong>Atalho</strong> con el email: <strong>${email}</strong>`,
+        instruction: 'Para activar tu cuenta y comenzar a usar nuestras funciones de automatización, confirma tu email haciendo clic en el botón de abajo:',
+        buttonText: '✅ Confirmar Email',
+        fallbackText: 'Si el botón no funciona, copia y pega este enlace en tu navegador:',
+        expiryText: '⚠️ Este enlace expira en 24 horas por seguridad.',
+        footer: '<strong>Atalho</strong> - Automatización y Productividad'
+      },
+      'fr': {
+        subject: 'Atalho - Confirmez votre email pour activer votre compte',
+        greeting: 'Bonjour !',
+        intro: `Vous vous êtes inscrit sur <strong>Atalho</strong> avec l'email : <strong>${email}</strong>`,
+        instruction: 'Pour activer votre compte et commencer à utiliser nos fonctionnalités d\'automatisation, confirmez votre email en cliquant sur le bouton ci-dessous :',
+        buttonText: '✅ Confirmer Email',
+        fallbackText: 'Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :',
+        expiryText: '⚠️ Ce lien expire dans 24 heures pour des raisons de sécurité.',
+        footer: '<strong>Atalho</strong> - Automatisation et Productivité'
+      },
+      'de': {
+        subject: 'Atalho - Bestätigen Sie Ihre E-Mail, um Ihr Konto zu aktivieren',
+        greeting: 'Hallo!',
+        intro: `Sie haben sich bei <strong>Atalho</strong> mit der E-Mail registriert: <strong>${email}</strong>`,
+        instruction: 'Um Ihr Konto zu aktivieren und unsere Automatisierungsfunktionen zu nutzen, bestätigen Sie Ihre E-Mail, indem Sie auf die Schaltfläche unten klicken:',
+        buttonText: '✅ E-Mail Bestätigen',
+        fallbackText: 'Wenn die Schaltfläche nicht funktioniert, kopieren Sie diesen Link und fügen Sie ihn in Ihren Browser ein:',
+        expiryText: '⚠️ Dieser Link läuft aus Sicherheitsgründen in 24 Stunden ab.',
+        footer: '<strong>Atalho</strong> - Automatisierung und Produktivität'
+      },
+      'it': {
+        subject: 'Atalho - Conferma la tua email per attivare il tuo account',
+        greeting: 'Ciao!',
+        intro: `Ti sei registrato su <strong>Atalho</strong> con l'email: <strong>${email}</strong>`,
+        instruction: 'Per attivare il tuo account e iniziare a utilizzare le nostre funzionalità di automazione, conferma la tua email cliccando il pulsante qui sotto:',
+        buttonText: '✅ Conferma Email',
+        fallbackText: 'Se il pulsante non funziona, copia e incolla questo link nel tuo browser:',
+        expiryText: '⚠️ Questo link scade in 24 ore per sicurezza.',
+        footer: '<strong>Atalho</strong> - Automazione e Produttività'
+      }
+    };
+
+    // Usar o template do idioma solicitado ou fallback para pt-br
+    const template = emailTemplates[language] || emailTemplates['pt-br'];
+    
     try {
       // Por enquanto, usar método de fallback que sabemos que funciona
       const verificationLink = await adminInstance.auth().generateEmailVerificationLink(email, {
-          url: 'https://atalho.me/login.html?verified=true',
+          url: `https://atalho.me/emailHandler.html?lang=${language}`,
       });
       
       await db.collection('mail').add({
           to: [email],
           message: {
-              subject: 'Atalho - Confirme seu email para ativar sua conta',
+              subject: template.subject,
               html: `
                   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 20px;">
                     <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
@@ -114,14 +182,14 @@ export default async function handler(req, res) {
                         <p style="color: #666; margin: 5px 0 0 0;">Automação e Produtividade</p>
                       </div>
                       
-                      <h2 style="color: #333; text-align: center;">✅ Confirme seu email para ativar sua conta</h2>
+                      <h2 style="color: #333; text-align: center;">${template.buttonText}</h2>
                       
                       <p style="color: #555; line-height: 1.6;">
-                        Olá! Você se cadastrou no <strong>Atalho</strong> com o email: <strong>${email}</strong>
+                        ${template.greeting} ${template.intro}
                       </p>
                       
                       <p style="color: #555; line-height: 1.6;">
-                        Para ativar sua conta e começar a usar nossos recursos de automação, confirme seu email clicando no botão abaixo:
+                        ${template.instruction}
                       </p>
                       
                       <div style="text-align: center; margin: 30px 0;">
@@ -134,24 +202,24 @@ export default async function handler(req, res) {
                                   font-weight: bold; 
                                   font-size: 16px;
                                   display: inline-block;">
-                          ✅ Confirmar Email
+                          ${template.buttonText}
                         </a>
                       </div>
                       
                       <p style="color: #888; font-size: 14px; line-height: 1.5;">
-                        Se o botão não funcionar, copie e cole este link no seu navegador:<br>
+                        ${template.fallbackText}<br>
                         <a href="${verificationLink}" style="color: #dbc9ad; word-break: break-all;">${verificationLink}</a>
                       </p>
                       
                       <p style="color: #888; font-size: 14px; line-height: 1.5; margin-top: 20px;">
-                        ⚠️ Este link expira em 24 horas por segurança.
+                        ${template.expiryText}
                       </p>
                       
                       <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
                       
                       <div style="text-align: center;">
                         <p style="color: #666; font-size: 14px; margin: 0;">
-                          <strong>Atalho</strong> - Automação e Produtividade<br>
+                          ${template.footer}<br>
                           📧 contact@atalho.me | 🌐 https://atalho.me
                         </p>
                       </div>
@@ -160,24 +228,24 @@ export default async function handler(req, res) {
               `,
           },
       });
-      console.log(`[API] ✅ Email de verificação enviado via extensão.`);
+      console.log(`[API] ✅ Email de verificação enviado via extensão em ${language}.`);
     } catch (error) {
       console.error(`[API] ❌ Erro ao enviar email:`, error);
       console.log(`[API] 🔄 Usando método de fallback simples...`);
       
       // Fallback em caso de erro
       const verificationLink = await adminInstance.auth().generateEmailVerificationLink(email, {
-          url: 'https://atalho.me/login.html?verified=true',
+          url: `https://atalho.me/emailHandler.html?lang=${language}`,
       });
       
       await db.collection('mail').add({
           to: [email],
           message: {
-              subject: '✅ Ative sua conta no Atalho!',
-              html: `Email de verificação do Atalho - Por favor, clique no link: ${verificationLink}`,
+              subject: template.subject,
+              html: `${template.greeting} Email de verificação do Atalho - Por favor, clique no link: ${verificationLink}`,
           },
       });
-      console.log(`[API] ✅ Email de fallback simples enviado.`);
+      console.log(`[API] ✅ Email de fallback simples enviado em ${language}.`);
     }
 
     // 6. Responde ao cliente com sucesso

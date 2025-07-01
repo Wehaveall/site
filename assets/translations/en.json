@@ -68,6 +68,56 @@
     "forgotPassword": "Forgot password?",
     "logoutSuccess": "Logout successful!"
   },
+  "resetPassword": {
+    "title": "Password Recovery - Atalho",
+    "heading": "Forgot your password?",
+    "subtitle": "No problem! Enter your email and we'll send you a link to reset your password.",
+    "emailLabel": "Your account email",
+    "emailPlaceholder": "Enter your registered email",
+    "sendButton": "Send Recovery Link",
+    "backToLogin": "Back to Login",
+    "success": {
+      "title": "Email sent successfully!",
+      "message": "We verified that an account exists with this email. We sent a recovery link to:",
+      "checkEmail": "Check your inbox and also your spam folder",
+      "validTime": "The link is valid for 1 hour",
+      "backToLogin": "Back to Login"
+    },
+    "newPassword": {
+      "title": "New Password - Atalho",
+      "heading": "Create New Password",
+      "subtitle": "Enter your new password below",
+      "emailLabel": "Resetting password for:",
+      "newPasswordLabel": "New Password",
+      "confirmPasswordLabel": "Confirm New Password",
+      "confirmButton": "Confirm New Password",
+      "requirements": {
+        "title": "Password requirements:",
+        "length": "Minimum 8 characters",
+        "uppercase": "At least 1 uppercase letter",
+        "lowercase": "At least 1 lowercase letter",
+        "number": "At least 1 number",
+        "symbol": "At least 1 symbol (!@#$%^&*)"
+      },
+      "success": {
+        "title": "Password changed successfully!",
+        "message": "Your password has been reset. You can now login with your new password.",
+        "redirecting": "Redirecting to login..."
+      }
+    },
+    "errors": {
+      "emptyEmail": "Please enter your email",
+      "invalidEmail": "Invalid email",
+      "userNotFound": "We couldn't find an account with this email",
+      "tooManyRequests": "Too many attempts. Try again in a few minutes",
+      "networkError": "Connection error. Check your internet",
+      "weakPassword": "Password too weak",
+      "passwordMismatch": "Passwords don't match",
+      "expiredToken": "Link expired. Request a new one",
+      "invalidToken": "Invalid or already used link",
+      "generalError": "Unexpected error. Please try again"
+    }
+  },
   "register": {
     "title": "Complete Your Registration - Atalho",
     "createAccount": "Create Your Atalho Account",

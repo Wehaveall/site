@@ -68,6 +68,56 @@
     "forgotPassword": "Esqueceu a senha?",
     "logoutSuccess": "Logout realizado com sucesso!"
   },
+  "resetPassword": {
+    "title": "Recuperar Senha - Atalho",
+    "heading": "Esqueceu sua senha?",
+    "subtitle": "Sem problemas! Digite seu email e enviaremos um link para redefinir sua senha.",
+    "emailLabel": "Email da sua conta",
+    "emailPlaceholder": "Digite seu email cadastrado",
+    "sendButton": "Enviar Link de Recuperação",
+    "backToLogin": "Voltar ao Login",
+    "success": {
+      "title": "Email enviado com sucesso!",
+      "message": "Verificamos que existe uma conta com este email. Enviamos um link de recuperação para:",
+      "checkEmail": "Verifique sua caixa de entrada e também a pasta de spam",
+      "validTime": "O link é válido por 1 hora",
+      "backToLogin": "Voltar ao Login"
+    },
+    "newPassword": {
+      "title": "Nova Senha - Atalho",
+      "heading": "Criar Nova Senha",
+      "subtitle": "Digite sua nova senha abaixo",
+      "emailLabel": "Redefinindo senha para:",
+      "newPasswordLabel": "Nova Senha",
+      "confirmPasswordLabel": "Confirmar Nova Senha",
+      "confirmButton": "Confirmar Nova Senha",
+      "requirements": {
+        "title": "Requisitos da senha:",
+        "length": "Mínimo de 8 caracteres",
+        "uppercase": "Pelo menos 1 letra maiúscula",
+        "lowercase": "Pelo menos 1 letra minúscula", 
+        "number": "Pelo menos 1 número",
+        "symbol": "Pelo menos 1 símbolo (!@#$%^&*)"
+      },
+      "success": {
+        "title": "Senha alterada com sucesso!",
+        "message": "Sua senha foi redefinida. Agora você pode fazer login com sua nova senha.",
+        "redirecting": "Redirecionando para o login..."
+      }
+    },
+    "errors": {
+      "emptyEmail": "Por favor, digite seu email",
+      "invalidEmail": "Email inválido",
+      "userNotFound": "Não encontramos uma conta com este email",
+      "tooManyRequests": "Muitas tentativas. Tente novamente em alguns minutos",
+      "networkError": "Erro de conexão. Verifique sua internet",
+      "weakPassword": "Senha muito fraca",
+      "passwordMismatch": "As senhas não coincidem",
+      "expiredToken": "Link expirado. Solicite um novo",
+      "invalidToken": "Link inválido ou já utilizado",
+      "generalError": "Erro inesperado. Tente novamente"
+    }
+  },
   "register": {
     "title": "Complete seu Cadastro - Atalho",
     "createAccount": "Crie sua Conta do Atalho",

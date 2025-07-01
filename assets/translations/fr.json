@@ -53,7 +53,7 @@
     "contact": "Contact"
   },
   "auth": {
-    "welcomeBack": "Bienvenue !",
+    "welcomeBack": "Bon retour !",
     "signIn": "Se connecter",
     "signUp": "S'inscrire",
     "email": "Email",
@@ -67,6 +67,56 @@
     "noAccount": "Vous n'avez pas de compte ?",
     "forgotPassword": "Mot de passe oublié ?",
     "logoutSuccess": "Déconnexion réussie !"
+  },
+  "resetPassword": {
+    "title": "Récupérer le Mot de Passe - Atalho",
+    "heading": "Mot de passe oublié ?",
+    "subtitle": "Pas de problème ! Entrez votre email et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+    "emailLabel": "Email de votre compte",
+    "emailPlaceholder": "Entrez votre email enregistré",
+    "sendButton": "Envoyer le Lien de Récupération",
+    "backToLogin": "Retour au Login",
+    "success": {
+      "title": "Email envoyé avec succès !",
+      "message": "Nous avons vérifié qu'un compte existe avec cet email. Nous avons envoyé un lien de récupération à :",
+      "checkEmail": "Vérifiez votre boîte de réception et aussi votre dossier spam",
+      "validTime": "Le lien est valide pendant 1 heure",
+      "backToLogin": "Retour au Login"
+    },
+    "newPassword": {
+      "title": "Nouveau Mot de Passe - Atalho",
+      "heading": "Créer un Nouveau Mot de Passe",
+      "subtitle": "Entrez votre nouveau mot de passe ci-dessous",
+      "emailLabel": "Réinitialisation du mot de passe pour :",
+      "newPasswordLabel": "Nouveau Mot de Passe",
+      "confirmPasswordLabel": "Confirmer le Nouveau Mot de Passe",
+      "confirmButton": "Confirmer le Nouveau Mot de Passe",
+      "requirements": {
+        "title": "Exigences du mot de passe :",
+        "length": "Minimum 8 caractères",
+        "uppercase": "Au moins 1 lettre majuscule",
+        "lowercase": "Au moins 1 lettre minuscule",
+        "number": "Au moins 1 chiffre",
+        "symbol": "Au moins 1 symbole (!@#$%^&*)"
+      },
+      "success": {
+        "title": "Mot de passe changé avec succès !",
+        "message": "Votre mot de passe a été réinitialisé. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+        "redirecting": "Redirection vers la connexion..."
+      }
+    },
+    "errors": {
+      "emptyEmail": "Veuillez entrer votre email",
+      "invalidEmail": "Email invalide",
+      "userNotFound": "Nous n'avons pas trouvé de compte avec cet email",
+      "tooManyRequests": "Trop de tentatives. Réessayez dans quelques minutes",
+      "networkError": "Erreur de connexion. Vérifiez votre internet",
+      "weakPassword": "Mot de passe trop faible",
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "expiredToken": "Lien expiré. Demandez-en un nouveau",
+      "invalidToken": "Lien invalide ou déjà utilisé",
+      "generalError": "Erreur inattendue. Veuillez réessayer"
+    }
   },
   "register": {
     "title": "Complétez votre Inscription - Atalho",

@@ -66,7 +66,57 @@
     "alreadyAccount": "Hai già un account?",
     "noAccount": "Non hai un account?",
     "forgotPassword": "Password dimenticata?",
-    "logoutSuccess": "Logout riuscito!"
+    "logoutSuccess": "Logout eseguito con successo!"
+  },
+  "resetPassword": {
+    "title": "Recupera Password - Atalho",
+    "heading": "Password dimenticata?",
+    "subtitle": "Nessun problema! Inserisci la tua email e ti invieremo un link per reimpostare la tua password.",
+    "emailLabel": "Email del tuo account",
+    "emailPlaceholder": "Inserisci la tua email registrata",
+    "sendButton": "Invia Link di Recupero",
+    "backToLogin": "Torna al Login",
+    "success": {
+      "title": "Email inviata con successo!",
+      "message": "Abbiamo verificato che esiste un account con questa email. Abbiamo inviato un link di recupero a:",
+      "checkEmail": "Controlla la tua casella di posta e anche la cartella spam",
+      "validTime": "Il link è valido per 1 ora",
+      "backToLogin": "Torna al Login"
+    },
+    "newPassword": {
+      "title": "Nuova Password - Atalho",
+      "heading": "Crea Nuova Password",
+      "subtitle": "Inserisci la tua nuova password qui sotto",
+      "emailLabel": "Reimpostazione password per:",
+      "newPasswordLabel": "Nuova Password",
+      "confirmPasswordLabel": "Conferma Nuova Password",
+      "confirmButton": "Conferma Nuova Password",
+      "requirements": {
+        "title": "Requisiti password:",
+        "length": "Minimo 8 caratteri",
+        "uppercase": "Almeno 1 lettera maiuscola",
+        "lowercase": "Almeno 1 lettera minuscola",
+        "number": "Almeno 1 numero",
+        "symbol": "Almeno 1 simbolo (!@#$%^&*)"
+      },
+      "success": {
+        "title": "Password cambiata con successo!",
+        "message": "La tua password è stata reimpostata. Ora puoi accedere con la tua nuova password.",
+        "redirecting": "Reindirizzamento al login..."
+      }
+    },
+    "errors": {
+      "emptyEmail": "Per favore inserisci la tua email",
+      "invalidEmail": "Email non valida",
+      "userNotFound": "Non abbiamo trovato un account con questa email",
+      "tooManyRequests": "Troppi tentativi. Riprova tra qualche minuto",
+      "networkError": "Errore di connessione. Controlla la tua internet",
+      "weakPassword": "Password troppo debole",
+      "passwordMismatch": "Le password non corrispondono",
+      "expiredToken": "Link scaduto. Richiedine uno nuovo",
+      "invalidToken": "Link non valido o già utilizzato",
+      "generalError": "Errore inaspettato. Riprova"
+    }
   },
   "register": {
     "title": "Completa la tua Registrazione - Atalho",

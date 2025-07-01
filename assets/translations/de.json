@@ -64,9 +64,59 @@
     "company": "Unternehmen",
     "acceptTerms": "Ich akzeptiere die Nutzungsbedingungen",
     "alreadyAccount": "Haben Sie bereits ein Konto?",
-    "noAccount": "Sie haben noch kein Konto?",
+    "noAccount": "Haben Sie kein Konto?",
     "forgotPassword": "Passwort vergessen?",
     "logoutSuccess": "Abmeldung erfolgreich!"
+  },
+  "resetPassword": {
+    "title": "Passwort Wiederherstellen - Atalho",
+    "heading": "Passwort vergessen?",
+    "subtitle": "Kein Problem! Geben Sie Ihre E-Mail ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
+    "emailLabel": "E-Mail Ihres Kontos",
+    "emailPlaceholder": "Geben Sie Ihre registrierte E-Mail ein",
+    "sendButton": "Wiederherstellungslink senden",
+    "backToLogin": "Zurück zum Login",
+    "success": {
+      "title": "E-Mail erfolgreich gesendet!",
+      "message": "Wir haben bestätigt, dass ein Konto mit dieser E-Mail existiert. Wir haben einen Wiederherstellungslink gesendet an:",
+      "checkEmail": "Überprüfen Sie Ihren Posteingang und auch Ihren Spam-Ordner",
+      "validTime": "Der Link ist 1 Stunde gültig",
+      "backToLogin": "Zurück zum Login"
+    },
+    "newPassword": {
+      "title": "Neues Passwort - Atalho",
+      "heading": "Neues Passwort erstellen",
+      "subtitle": "Geben Sie Ihr neues Passwort unten ein",
+      "emailLabel": "Passwort zurücksetzen für:",
+      "newPasswordLabel": "Neues Passwort",
+      "confirmPasswordLabel": "Neues Passwort bestätigen",
+      "confirmButton": "Neues Passwort bestätigen",
+      "requirements": {
+        "title": "Passwort-Anforderungen:",
+        "length": "Mindestens 8 Zeichen",
+        "uppercase": "Mindestens 1 Großbuchstabe",
+        "lowercase": "Mindestens 1 Kleinbuchstabe",
+        "number": "Mindestens 1 Zahl",
+        "symbol": "Mindestens 1 Symbol (!@#$%^&*)"
+      },
+      "success": {
+        "title": "Passwort erfolgreich geändert!",
+        "message": "Ihr Passwort wurde zurückgesetzt. Sie können sich jetzt mit Ihrem neuen Passwort anmelden.",
+        "redirecting": "Weiterleitung zum Login..."
+      }
+    },
+    "errors": {
+      "emptyEmail": "Bitte geben Sie Ihre E-Mail ein",
+      "invalidEmail": "Ungültige E-Mail",
+      "userNotFound": "Wir konnten kein Konto mit dieser E-Mail finden",
+      "tooManyRequests": "Zu viele Versuche. Versuchen Sie es in ein paar Minuten erneut",
+      "networkError": "Verbindungsfehler. Überprüfen Sie Ihr Internet",
+      "weakPassword": "Passwort zu schwach",
+      "passwordMismatch": "Passwörter stimmen nicht überein",
+      "expiredToken": "Link abgelaufen. Fordern Sie einen neuen an",
+      "invalidToken": "Ungültiger oder bereits verwendeter Link",
+      "generalError": "Unerwarteter Fehler. Bitte versuchen Sie es erneut"
+    }
   },
   "register": {
     "title": "Vervollständigen Sie Ihre Registrierung - Atalho",

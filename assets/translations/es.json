@@ -65,8 +65,58 @@
     "acceptTerms": "Acepto los términos de uso",
     "alreadyAccount": "¿Ya tienes una cuenta?",
     "noAccount": "¿No tienes una cuenta?",
-    "forgotPassword": "¿Olvidaste la contraseña?",
-    "logoutSuccess": "¡Cierre de sesión exitoso!"
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "logoutSuccess": "¡Sesión cerrada exitosamente!"
+  },
+  "resetPassword": {
+    "title": "Recuperar Contraseña - Atalho",
+    "heading": "¿Olvidaste tu contraseña?",
+    "subtitle": "¡No hay problema! Ingresa tu email y te enviaremos un enlace para restablecer tu contraseña.",
+    "emailLabel": "Email de tu cuenta",
+    "emailPlaceholder": "Ingresa tu email registrado",
+    "sendButton": "Enviar Enlace de Recuperación",
+    "backToLogin": "Volver al Login",
+    "success": {
+      "title": "¡Email enviado exitosamente!",
+      "message": "Verificamos que existe una cuenta con este email. Enviamos un enlace de recuperación a:",
+      "checkEmail": "Revisa tu bandeja de entrada y también la carpeta de spam",
+      "validTime": "El enlace es válido por 1 hora",
+      "backToLogin": "Volver al Login"
+    },
+    "newPassword": {
+      "title": "Nueva Contraseña - Atalho",
+      "heading": "Crear Nueva Contraseña",
+      "subtitle": "Ingresa tu nueva contraseña abajo",
+      "emailLabel": "Restableciendo contraseña para:",
+      "newPasswordLabel": "Nueva Contraseña",
+      "confirmPasswordLabel": "Confirmar Nueva Contraseña",
+      "confirmButton": "Confirmar Nueva Contraseña",
+      "requirements": {
+        "title": "Requisitos de contraseña:",
+        "length": "Mínimo 8 caracteres",
+        "uppercase": "Al menos 1 letra mayúscula",
+        "lowercase": "Al menos 1 letra minúscula",
+        "number": "Al menos 1 número",
+        "symbol": "Al menos 1 símbolo (!@#$%^&*)"
+      },
+      "success": {
+        "title": "¡Contraseña cambiada exitosamente!",
+        "message": "Tu contraseña ha sido restablecida. Ahora puedes iniciar sesión con tu nueva contraseña.",
+        "redirecting": "Redirigiendo al login..."
+      }
+    },
+    "errors": {
+      "emptyEmail": "Por favor, ingresa tu email",
+      "invalidEmail": "Email inválido",
+      "userNotFound": "No encontramos una cuenta con este email",
+      "tooManyRequests": "Muchos intentos. Intenta de nuevo en unos minutos",
+      "networkError": "Error de conexión. Verifica tu internet",
+      "weakPassword": "Contraseña muy débil",
+      "passwordMismatch": "Las contraseñas no coinciden",
+      "expiredToken": "Enlace expirado. Solicita uno nuevo",
+      "invalidToken": "Enlace inválido o ya utilizado",
+      "generalError": "Error inesperado. Intenta de nuevo"
+    }
   },
   "register": {
     "title": "Completa tu Registro - Atalho",

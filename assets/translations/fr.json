@@ -192,6 +192,15 @@
       "description": "Nous avons envoyé un lien de vérification à",
       "checkEmail": "Vérifiez votre boîte de réception et spam",
       "redirecting": "Redirection vers la connexion..."
+    },
+    "feedback": {
+      "creatingAccount": "⏳ Création du compte...",
+      "savingData": "⏳ Enregistrement des données supplémentaires...",
+      "sendingEmail": "⏳ Envoi de l'email de vérification...",
+      "accountCreated": "✅ Compte créé !",
+      "dataSaved": "✅ Données enregistrées !",
+      "emailSent": "✅ Email envoyé !",
+      "error": "❌ Erreur : {{message}}"
     }
   },
   "purchase": {

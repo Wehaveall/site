@@ -214,6 +214,15 @@
       "description": "Enviamos un enlace de verificación a",
       "checkEmail": "Revisa tu bandeja de entrada y spam",
       "redirecting": "Redirigiendo al login..."
+    },
+    "feedback": {
+      "creatingAccount": "⏳ Creando cuenta...",
+      "savingData": "⏳ Guardando datos adicionales...",
+      "sendingEmail": "⏳ Enviando email de verificación...",
+      "accountCreated": "✅ ¡Cuenta creada!",
+      "dataSaved": "✅ ¡Datos guardados!",
+      "emailSent": "✅ ¡Email enviado!",
+      "error": "❌ Error: {{message}}"
     }
   },
   "purchase": {

@@ -192,6 +192,15 @@
       "description": "We sent a verification link to",
       "checkEmail": "Check your inbox and spam folder",
       "redirecting": "Redirecting to login..."
+    },
+    "feedback": {
+      "creatingAccount": "⏳ Creating account...",
+      "savingData": "⏳ Saving additional data...",
+      "sendingEmail": "⏳ Sending verification email...",
+      "accountCreated": "✅ Account created!",
+      "dataSaved": "✅ Data saved!",
+      "emailSent": "✅ Email sent!",
+      "error": "❌ Error: {{message}}"
     }
   },
   "purchase": {

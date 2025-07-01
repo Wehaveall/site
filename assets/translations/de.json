@@ -214,6 +214,15 @@
       "warning": "⚠️ Geben Sie Ihre E-Mail erneut ein - Einfügen ist in diesem Feld nicht möglich",
       "match": "✅ E-Mails stimmen überein",
       "noMatch": "❌ E-Mails stimmen nicht überein"
+    },
+    "feedback": {
+      "creatingAccount": "⏳ Konto wird erstellt...",
+      "savingData": "⏳ Zusätzliche Daten werden gespeichert...",
+      "sendingEmail": "⏳ Bestätigungs-E-Mail wird gesendet...",
+      "accountCreated": "✅ Konto erstellt!",
+      "dataSaved": "✅ Daten gespeichert!",
+      "emailSent": "✅ E-Mail gesendet!",
+      "error": "❌ Fehler: {{message}}"
     }
   },
   "purchase": {

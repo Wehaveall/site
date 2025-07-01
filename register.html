@@ -1252,7 +1252,59 @@
             }
         }
 
+        // Função para atualizar o texto do botão
+        function updateSubmitButton(text, disabled = true) {
+            const submitButton = document.getElementById('complete-registration-btn');
+            if (submitButton) {
+                submitButton.textContent = text;
+                submitButton.disabled = disabled;
+            }
+        }
 
+        // Função para registrar usuário
+        async function handleRegistration(event) {
+            event.preventDefault();
+            
+            try {
+                // Obter dados do formulário
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                const name = document.getElementById('customer-name').value;
+                const phone = document.getElementById('customer-phone').value;
+                const company = document.getElementById('customer-company').value;
+                
+                // Desabilitar botão e mostrar loading
+                updateSubmitButton(i18next.t('register.feedback.creatingAccount'), true);
+                
+                // Registrar usuário
+                const registrationResult = await registerUserSimple(email, password, i18next.language, name);
+                console.log('✅ Usuário registrado:', registrationResult);
+                updateSubmitButton(i18next.t('register.feedback.accountCreated'), true);
+                
+                // Salvar dados extras
+                updateSubmitButton(i18next.t('register.feedback.savingData'), true);
+                
+                // Aqui você pode adicionar a lógica para salvar dados extras
+                // como telefone e empresa
+                
+                updateSubmitButton(i18next.t('register.feedback.dataSaved'), true);
+                
+                // Mostrar mensagem de sucesso
+                showSuccessMessage(email);
+                
+            } catch (error) {
+                console.error('❌ Erro no registro:', error);
+                
+                // Mostrar erro traduzido
+                const errorMessage = i18next.t('register.feedback.error', { message: error.message });
+                updateSubmitButton(errorMessage, false);
+                
+                // Reativar botão após 3 segundos
+                setTimeout(() => {
+                    updateSubmitButton(i18next.t('register.createAccountBtn'), false);
+                }, 3000);
+            }
+        }
 
         console.log("🚀 Página de registro simplificada carregada e aguardando Firebase...");
     </script>

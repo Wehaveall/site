@@ -49,6 +49,15 @@ class AtalhoI18n {
             }
             
             console.log(`🌍 Atalho I18n inicializado em: ${this.currentLanguage}`);
+
+            // Disparar evento customizado para notificar outros scripts
+            const event = new CustomEvent('i18n:initialized', {
+                detail: {
+                    language: this.currentLanguage,
+                    translations: this.translations
+                }
+            });
+            document.dispatchEvent(event);
             
         } catch (error) {
             console.error('❌ Erro ao inicializar i18n:', error);

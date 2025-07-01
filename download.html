@@ -143,7 +143,11 @@
                     <li id="nav-register" style="display: none;"><a href="register.html" class="nav-link" data-i18n="header.register">Cadastro</a></li>
                     <li id="nav-login" style="display: none;"><a href="login.html" class="nav-link" data-i18n="header.login">Entrar</a></li>
                     <li id="nav-user-info" style="display: none;">
-                        <a href="dashboard.html" class="nav-link" style="color: #28a745; font-weight: 600;" id="nav-user-name" data-i18n="dashboard.loading">Carregando...</a>
+                        <a href="dashboard.html" class="nav-link" style="color: #28a745; font-weight: 600;" id="nav-user-name">
+                            <div class="nav-user-name">
+                                <div class="loading-spinner" style="width: 16px; height: 16px; border: 2px solid #28a745; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                            </div>
+                        </a>
                     </li>
                     <li id="nav-logout" style="display: none;"><a href="#" class="nav-link" onclick="logout()" data-i18n="dashboard.logout">Sair</a></li>
                     <li><a href="comprar.html" class="nav-link btn-primary" data-i18n="header.buy">Comprar</a></li>

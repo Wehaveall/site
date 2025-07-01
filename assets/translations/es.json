@@ -203,6 +203,11 @@
       "match": "✓ Las contraseñas coinciden",
       "noMatch": "✗ Las contraseñas no coinciden"
     },
+    "emailConfirmation": {
+      "warning": "⚠️ Escribe tu correo nuevamente - No se permite pegar en este campo",
+      "match": "✅ Los correos coinciden",
+      "noMatch": "❌ Los correos no coinciden"
+    },
     "success": {
       "title": "¡Cuenta creada exitosamente!",
       "subtitle": "Revisa tu email para activar tu cuenta",

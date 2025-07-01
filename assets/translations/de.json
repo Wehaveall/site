@@ -209,6 +209,11 @@
       "description": "Wir haben einen Bestätigungslink gesendet an",
       "checkEmail": "Überprüfen Sie Ihren Posteingang und Spam",
       "redirecting": "Weiterleitung zur Anmeldung..."
+    },
+    "emailConfirmation": {
+      "warning": "⚠️ Geben Sie Ihre E-Mail erneut ein - Einfügen ist in diesem Feld nicht möglich",
+      "match": "✅ E-Mails stimmen überein",
+      "noMatch": "❌ E-Mails stimmen nicht überein"
     }
   },
   "purchase": {

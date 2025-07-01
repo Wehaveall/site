@@ -357,7 +357,7 @@
                         <div class="form-group">
                             <label for="confirm-email"><span style="color: #dc3545; font-weight: bold;">* </span><span data-i18n="register.confirmEmail">Confirmar E-Mail</span></label>
                             <input type="email" id="confirm-email" class="form-input" required data-i18n-placeholder="register.confirmEmailPlaceholder" autocomplete="off">
-                            <div class="email-confirmation-warning">
+                            <div class="email-confirmation-warning" data-i18n="register.emailConfirmation.warning">
                                 ⚠️ Digite novamente seu e-mail - Não é possível colar neste campo
                             </div>
                             <div id="email-match-feedback" class="password-match-feedback" style="display: none;"></div>
@@ -871,10 +871,10 @@
             feedback.style.display = 'block';
             
             if (email === confirmEmail) {
-                feedback.textContent = '✅ E-mails coincidem';
+                feedback.textContent = i18nSystem ? i18nSystem.t('register.emailConfirmation.match') : '✅ E-mails coincidem';
                 feedback.style.color = '#4CAF50';
             } else {
-                feedback.textContent = '❌ E-mails não coincidem';
+                feedback.textContent = i18nSystem ? i18nSystem.t('register.emailConfirmation.noMatch') : '❌ E-mails não coincidem';
                 feedback.style.color = '#f44336';
             }
         }

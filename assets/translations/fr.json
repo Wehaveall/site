@@ -133,28 +133,6 @@
       "validTime": "Le lien est valide pendant 1 heure",
       "backToLogin": "Retour au Login"
     },
-    "newPassword": {
-      "title": "Nouveau Mot de Passe - Atalho",
-      "heading": "Créer un Nouveau Mot de Passe",
-      "subtitle": "Entrez votre nouveau mot de passe ci-dessous",
-      "emailLabel": "Réinitialisation du mot de passe pour :",
-      "newPasswordLabel": "Nouveau Mot de Passe",
-      "confirmPasswordLabel": "Confirmer le Nouveau Mot de Passe",
-      "confirmButton": "Confirmer le Nouveau Mot de Passe",
-      "requirements": {
-        "title": "Exigences du mot de passe :",
-        "length": "Minimum 8 caractères",
-        "uppercase": "Au moins 1 lettre majuscule",
-        "lowercase": "Au moins 1 lettre minuscule",
-        "number": "Au moins 1 chiffre",
-        "symbol": "Au moins 1 symbole (!@#$%^&*)"
-      },
-      "success": {
-        "title": "Mot de passe changé avec succès !",
-        "message": "Votre mot de passe a été réinitialisé. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
-        "redirecting": "Redirection vers la connexion..."
-      }
-    },
     "errors": {
       "emptyEmail": "Veuillez entrer votre email",
       "invalidEmail": "Email invalide",
@@ -202,6 +180,11 @@
     "passwordMatch": {
       "match": "✓ Les mots de passe correspondent",
       "noMatch": "✗ Les mots de passe ne correspondent pas"
+    },
+    "emailConfirmation": {
+      "warning": "⚠️ Saisissez à nouveau votre email - Le collage n'est pas autorisé dans ce champ",
+      "match": "✅ Les emails correspondent",
+      "noMatch": "❌ Les emails ne correspondent pas"
     },
     "success": {
       "title": "Compte créé avec succès!",

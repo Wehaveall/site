@@ -261,13 +261,18 @@
 
                 if (mode === 'verifyEmail') {
                     try {
-                        // Aplicar verificação de email
+                        // 1. Obter email do usuário a partir do oobCode ANTES de aplicá-lo
+                        const actionCodeInfo = await auth.checkActionCode(oobCode);
+                        const email = actionCodeInfo.data.email;
+                        console.log(`📧 Email extraído do código: ${email}`);
+
+                        // 2. Aplicar verificação de email
                         await auth.applyActionCode(oobCode);
                         
-                        // Forçar sincronização
-                        await forceSyncVerification(oobCode);
+                        // 3. Forçar sincronização, agora com o email
+                        await forceSyncVerification(oobCode, email);
                         
-                        // Mostrar sucesso
+                        // 4. Mostrar sucesso
                         showSuccess(i18nSystem ? i18nSystem.t('emailHandler.success.message') : 'Email verificado com sucesso.');
                         
                     } catch (error) {

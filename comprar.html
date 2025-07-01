@@ -348,32 +348,73 @@
                 }
                 
                 // Definir nome a ser exibido
-                let displayName = 'Usuário';
-                if (userData && userData.Nome) {
-                    displayName = userData.Nome;
-                    console.log('  📛 Nome obtido do Firestore:', displayName);
-                } else if (user.displayName) {
-                    displayName = user.displayName;
-                    console.log('  📛 Nome obtido do Firebase Auth:', displayName);
-                } else if (user.email) {
-                    // Usar primeira parte do email como fallback
-                    displayName = user.email.split('@')[0];
-                    console.log('  📛 Nome obtido do email:', displayName);
-                }
+                let firstName = '';
+                let lastName = '';
                 
-                // Limitar tamanho do nome no menu
-                if (displayName.length > 15) {
-                    displayName = displayName.substring(0, 12) + '...';
-                    console.log('  ✂️ Nome truncado para:', displayName);
+                if (userData && userData.Nome) {
+                    // Pegar o nome completo
+                    const fullName = userData.Nome.trim();
+                    
+                    // Dividir o nome em partes
+                    const nameParts = fullName.split(' ').filter(part => part.length > 0);
+                    
+                    if (nameParts.length === 1) {
+                        // Se só tem uma palavra, usa ela na primeira linha
+                        firstName = nameParts[0];
+                    } else if (nameParts.length > 1) {
+                        // Pegar primeiro e último nome
+                        firstName = nameParts[0];
+                        lastName = nameParts[nameParts.length - 1];
+                        
+                        // Se algum dos nomes for muito grande (mais que 12 caracteres), trunca
+                        if (firstName.length > 12) {
+                            firstName = firstName.substring(0, 9) + '...';
+                        }
+                        if (lastName.length > 12) {
+                            lastName = lastName.substring(0, 9) + '...';
+                        }
+                    }
+                    
+                    console.log('  📛 Nome obtido do Firestore:', firstName, lastName);
+                } else if (user.displayName) {
+                    // Mesmo processo para displayName do Firebase Auth
+                    const fullName = user.displayName.trim();
+                    const nameParts = fullName.split(' ').filter(part => part.length > 0);
+                    
+                    if (nameParts.length === 1) {
+                        firstName = nameParts[0];
+                    } else if (nameParts.length > 1) {
+                        firstName = nameParts[0];
+                        lastName = nameParts[nameParts.length - 1];
+                        
+                        if (firstName.length > 12) {
+                            firstName = firstName.substring(0, 9) + '...';
+                        }
+                        if (lastName.length > 12) {
+                            lastName = lastName.substring(0, 9) + '...';
+                        }
+                    }
+                    
+                    console.log('  📛 Nome obtido do Firebase Auth:', firstName, lastName);
+                } else {
+                    // Usar primeira parte do email como fallback
+                    firstName = user.email.split('@')[0];
+                    console.log('  📛 Nome obtido do email:', firstName);
                 }
                 
                 if (navUserName) {
-                    navUserName.textContent = displayName;
+                    // Criar estrutura HTML para exibir o nome em duas linhas
+                    navUserName.innerHTML = `
+                        <div style="line-height: 1.2; text-align: center;">
+                            <div style="font-weight: 600;">${firstName}</div>
+                            ${lastName ? `<div style="font-size: 0.9em; opacity: 0.9;">${lastName}</div>` : ''}
+                        </div>
+                    `;
                     navUserName.title = userData?.Nome || user.email || 'Usuário'; // Tooltip com nome completo
-                    console.log('  ✅ Nome definido no elemento:', displayName);
+                    console.log('  ✅ Nome definido no elemento:', firstName, lastName);
                 }
                 
-                console.log('✅ Menu atualizado para usuário logado:', user.email, '| Nome:', displayName);
+                console.log('✅ Menu atualizado para usuário logado:', user.email, '| Nome:', firstName, lastName);
             } else {
                 console.log('❌ USUÁRIO DESLOGADO - Configurando menu para usuário não autenticado');
                 

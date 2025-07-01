@@ -205,11 +205,10 @@
     },
     "success": {
       "title": "Konto erfolgreich erstellt!",
-      "subtitle": "Überprüfen Sie Ihre E-Mails, um Ihr Konto zu aktivieren",
-      "description": "Wir haben einen Bestätigungslink an",
-      "checkEmail": "Überprüfen Sie Ihren Posteingang und Spam-Ordner",
-      "redirecting": "Weiterleitung zum Login...",
-      "understand": "Verstanden"
+      "subtitle": "Überprüfen Sie Ihre E-Mail, um Ihr Konto zu aktivieren",
+      "description": "Wir haben einen Bestätigungslink gesendet an",
+      "checkEmail": "Überprüfen Sie Ihren Posteingang und Spam",
+      "redirecting": "Weiterleitung zur Anmeldung..."
     },
     "emailConfirmation": {
       "warning": "⚠️ Geben Sie Ihre E-Mail erneut ein - Einfügen ist in diesem Feld nicht möglich",
@@ -223,7 +222,8 @@
       "accountCreated": "✅ Konto erstellt!",
       "dataSaved": "✅ Daten gespeichert!",
       "emailSent": "✅ E-Mail gesendet!",
-      "error": "❌ Fehler: {{message}}"
+      "error": "❌ Fehler: {{message}}",
+      "understand": "Verstanden"
     }
   },
   "purchase": {
@@ -302,9 +302,33 @@
     "loading": "Wird geladen...",
     "logout": "Abmelden"
   },
+  "success": {
+    "title": "Registrierung erfolgreich abgeschlossen",
+    "heading": "Registrierung erfolgreich abgeschlossen!",
+    "description": "Herzlichen Glückwunsch! Ihre Zahlung wurde bestätigt und Ihr Konto wurde erfolgreich erstellt. Sie haben jetzt vollen Zugriff auf Atalho und können mit der Optimierung Ihrer Produktivität beginnen.",
+    "loading": "Benutzerinformationen werden geladen...",
+    "nextSteps": {
+      "title": "Nächste Schritte:",
+      "downloadApp": "➤ Laden Sie die Atalho-App herunter, um loszulegen",
+      "tutorials": "➤ Greifen Sie auf den Tutorial-Bereich zu, um alle Funktionen kennenzulernen",
+      "libraries": "➤ Laden Sie die Begriffsbibliotheken für Ihr Segment herunter",
+      "email": "➤ Sie erhalten eine E-Mail mit detaillierten Anweisungen"
+    },
+    "buttons": {
+      "download": "Atalho herunterladen",
+      "home": "Zurück zur Startseite"
+    },
+    "userInfo": {
+      "email": "Registrierte E-Mail",
+      "id": "Benutzer-ID",
+      "unavailable": "Nicht verfügbar",
+      "error": "Ihre Informationen konnten nicht abgerufen werden.",
+      "checkEmail": "Überprüfen Sie Ihre E-Mail für Kontoinformationen."
+    }
+  },
   "emailVerification": {
     "title": "E-Mail-Verifizierung",
-    "loading": "E-Mail wird verifiziert...",
+    "loading": "Überprüfung Ihrer E-Mail...",
     "loginButton": "Zum Login",
     "autoVerified": {
       "title": "E-Mail automatisch verifiziert!",
@@ -323,7 +347,7 @@
     },
     "errors": {
       "title": "Verifizierungsfehler",
-      "general": "Bei der E-Mail-Verifizierung ist ein Fehler aufgetreten.",
+      "general": "Bei der Überprüfung Ihrer E-Mail ist ein Fehler aufgetreten.",
       "invalidCode": "Ungültiger oder abgelaufener Verifizierungslink. Fordern Sie eine neue Verifizierungs-E-Mail an.",
       "expiredCode": "Verifizierungslink abgelaufen. Fordern Sie eine neue Verifizierungs-E-Mail an.",
       "disabled": "Dieses Konto wurde deaktiviert. Kontaktieren Sie den Support."

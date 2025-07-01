@@ -208,8 +208,7 @@
       "subtitle": "Controlla la tua email per attivare il tuo account",
       "description": "Abbiamo inviato un link di verifica a",
       "checkEmail": "Controlla la tua casella di posta e spam",
-      "redirecting": "Reindirizzamento al login...",
-      "understand": "Capito"
+      "redirecting": "Reindirizzamento al login..."
     },
     "emailConfirmation": {
       "warning": "⚠️ Digita nuovamente la tua email - Non è possibile incollare in questo campo",
@@ -223,7 +222,8 @@
       "accountCreated": "✅ Account creato!",
       "dataSaved": "✅ Dati salvati!",
       "emailSent": "✅ Email inviata!",
-      "error": "❌ Errore: {{message}}"
+      "error": "❌ Errore: {{message}}",
+      "understand": "Ho capito"
     }
   },
   "purchase": {
@@ -301,6 +301,30 @@
     "noData": "Dati non disponibili",
     "loading": "Caricamento...",
     "logout": "Esci"
+  },
+  "success": {
+    "title": "Registrazione Completata con Successo",
+    "heading": "Registrazione completata con successo!",
+    "description": "Congratulazioni! Il tuo pagamento è stato confermato e il tuo account è stato creato con successo. Ora hai accesso completo ad Atalho e puoi iniziare a ottimizzare la tua produttività.",
+    "loading": "Caricamento informazioni utente...",
+    "nextSteps": {
+      "title": "Prossimi passi:",
+      "downloadApp": "➤ Scarica l'app Atalho per iniziare",
+      "tutorials": "➤ Accedi alla sezione tutorial per imparare a utilizzare tutte le funzionalità",
+      "libraries": "➤ Scarica le librerie di termini per il tuo segmento",
+      "email": "➤ Riceverai un'email con istruzioni dettagliate"
+    },
+    "buttons": {
+      "download": "Scarica Atalho",
+      "home": "Torna alla Home"
+    },
+    "userInfo": {
+      "email": "Email registrata",
+      "id": "ID utente",
+      "unavailable": "Non disponibile",
+      "error": "Impossibile recuperare le tue informazioni.",
+      "checkEmail": "Controlla la tua email per i dettagli dell'account."
+    }
   },
   "emailVerification": {
     "title": "Verifica Email",

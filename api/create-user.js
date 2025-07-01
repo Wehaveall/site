@@ -55,10 +55,9 @@ export default async function handler(req, res) {
       languageCode: language === 'pt-br' ? 'pt' : language // Firebase usa 'pt' ao invés de 'pt-br'
     });
 
-    // 3. Gerar link de verificação com idioma e URL de continuação correta
-    const continueUrl = `https://atalho.me/login.html?verified=true&lang=${language}`;
+    // 3. Gerar link de verificação com idioma
     const actionCodeSettings = {
-      url: `https://atalho.me/emailHandler.html?lang=${language}&continueUrl=${encodeURIComponent(continueUrl)}`,
+      url: `https://atalho.me/emailHandler.html?lang=${language}`,
       handleCodeInApp: false,
     };
 
@@ -86,7 +85,7 @@ export default async function handler(req, res) {
                 <h2 style="color: #333; text-align: center;">✅ Confirme seu email para ativar sua conta</h2>
                 
                 <div style="text-align: center; margin: 30px 0;">
-                  <a href="${verificationLink}&lang=pt-br" 
+                  <a href="${verificationLink}" 
                      style="background: linear-gradient(135deg, #dbc9ad 0%, #c8b298 100%); 
                             color: #333; 
                             padding: 15px 30px; 
@@ -101,7 +100,7 @@ export default async function handler(req, res) {
                 
                 <p style="color: #888; font-size: 14px; line-height: 1.5;">
                   Se o botão não funcionar, copie e cole este link no seu navegador:<br>
-                  <a href="${verificationLink}&lang=pt-br" style="color: #dbc9ad; word-break: break-all;">${verificationLink}&lang=pt-br</a>
+                  <a href="${verificationLink}" style="color: #dbc9ad; word-break: break-all;">${verificationLink}</a>
                 </p>
               </div>
             </div>
@@ -121,7 +120,7 @@ export default async function handler(req, res) {
                 <h2 style="color: #333; text-align: center;">✅ Confirm your email to activate your account</h2>
                 
                 <div style="text-align: center; margin: 30px 0;">
-                  <a href="${verificationLink}&lang=en" 
+                  <a href="${verificationLink}" 
                      style="background: linear-gradient(135deg, #dbc9ad 0%, #c8b298 100%); 
                             color: #333; 
                             padding: 15px 30px; 
@@ -136,14 +135,14 @@ export default async function handler(req, res) {
                 
                 <p style="color: #888; font-size: 14px; line-height: 1.5;">
                   If the button doesn't work, copy and paste this link in your browser:<br>
-                  <a href="${verificationLink}&lang=en" style="color: #dbc9ad; word-break: break-all;">${verificationLink}&lang=en</a>
+                  <a href="${verificationLink}" style="color: #dbc9ad; word-break: break-all;">${verificationLink}</a>
                 </p>
               </div>
             </div>
           `
         },
         "es": {
-          subject: "Atalho - Confirma tu email para activar tu cuenta",
+          subject: "Atalho - Confirma tu correo para activar tu cuenta",
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 20px;">
               <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
@@ -153,10 +152,10 @@ export default async function handler(req, res) {
                   <p style="color: #666; margin: 5px 0 0 0;">Automatización y Productividad</p>
                 </div>
                 
-                <h2 style="color: #333; text-align: center;">✅ Confirma tu email para activar tu cuenta</h2>
+                <h2 style="color: #333; text-align: center;">✅ Confirma tu correo para activar tu cuenta</h2>
                 
                 <div style="text-align: center; margin: 30px 0;">
-                  <a href="${verificationLink}&lang=es" 
+                  <a href="${verificationLink}" 
                      style="background: linear-gradient(135deg, #dbc9ad 0%, #c8b298 100%); 
                             color: #333; 
                             padding: 15px 30px; 
@@ -165,13 +164,13 @@ export default async function handler(req, res) {
                             font-weight: bold; 
                             font-size: 16px;
                             display: inline-block;">
-                    ✅ Confirmar Email
+                    ✅ Confirmar Correo
                   </a>
                 </div>
                 
                 <p style="color: #888; font-size: 14px; line-height: 1.5;">
                   Si el botón no funciona, copia y pega este enlace en tu navegador:<br>
-                  <a href="${verificationLink}&lang=es" style="color: #dbc9ad; word-break: break-all;">${verificationLink}&lang=es</a>
+                  <a href="${verificationLink}" style="color: #dbc9ad; word-break: break-all;">${verificationLink}</a>
                 </p>
               </div>
             </div>
@@ -191,7 +190,7 @@ export default async function handler(req, res) {
                 <h2 style="color: #333; text-align: center;">✅ Confirmez votre email pour activer votre compte</h2>
                 
                 <div style="text-align: center; margin: 30px 0;">
-                  <a href="${verificationLink}&lang=fr" 
+                  <a href="${verificationLink}" 
                      style="background: linear-gradient(135deg, #dbc9ad 0%, #c8b298 100%); 
                             color: #333; 
                             padding: 15px 30px; 
@@ -205,8 +204,8 @@ export default async function handler(req, res) {
                 </div>
                 
                 <p style="color: #888; font-size: 14px; line-height: 1.5;">
-                  Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :<br>
-                  <a href="${verificationLink}&lang=fr" style="color: #dbc9ad; word-break: break-all;">${verificationLink}&lang=fr</a>
+                  Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur:<br>
+                  <a href="${verificationLink}" style="color: #dbc9ad; word-break: break-all;">${verificationLink}</a>
                 </p>
               </div>
             </div>
@@ -226,7 +225,7 @@ export default async function handler(req, res) {
                 <h2 style="color: #333; text-align: center;">✅ Bestätigen Sie Ihre E-Mail zur Kontoaktivierung</h2>
                 
                 <div style="text-align: center; margin: 30px 0;">
-                  <a href="${verificationLink}&lang=de" 
+                  <a href="${verificationLink}" 
                      style="background: linear-gradient(135deg, #dbc9ad 0%, #c8b298 100%); 
                             color: #333; 
                             padding: 15px 30px; 
@@ -235,20 +234,20 @@ export default async function handler(req, res) {
                             font-weight: bold; 
                             font-size: 16px;
                             display: inline-block;">
-                    ✅ E-Mail bestätigen
+                    ✅ E-Mail Bestätigen
                   </a>
                 </div>
                 
                 <p style="color: #888; font-size: 14px; line-height: 1.5;">
                   Wenn der Button nicht funktioniert, kopieren Sie diesen Link in Ihren Browser:<br>
-                  <a href="${verificationLink}&lang=de" style="color: #dbc9ad; word-break: break-all;">${verificationLink}&lang=de</a>
+                  <a href="${verificationLink}" style="color: #dbc9ad; word-break: break-all;">${verificationLink}</a>
                 </p>
               </div>
             </div>
           `
         },
         "it": {
-          subject: "Atalho - Conferma la tua email per attivare l'account",
+          subject: "Atalho - Conferma la tua email per attivare il tuo account",
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 20px;">
               <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
@@ -258,10 +257,10 @@ export default async function handler(req, res) {
                   <p style="color: #666; margin: 5px 0 0 0;">Automazione e Produttività</p>
                 </div>
                 
-                <h2 style="color: #333; text-align: center;">✅ Conferma la tua email per attivare l'account</h2>
+                <h2 style="color: #333; text-align: center;">✅ Conferma la tua email per attivare il tuo account</h2>
                 
                 <div style="text-align: center; margin: 30px 0;">
-                  <a href="${verificationLink}&lang=it" 
+                  <a href="${verificationLink}" 
                      style="background: linear-gradient(135deg, #dbc9ad 0%, #c8b298 100%); 
                             color: #333; 
                             padding: 15px 30px; 
@@ -276,7 +275,7 @@ export default async function handler(req, res) {
                 
                 <p style="color: #888; font-size: 14px; line-height: 1.5;">
                   Se il pulsante non funziona, copia e incolla questo link nel tuo browser:<br>
-                  <a href="${verificationLink}&lang=it" style="color: #dbc9ad; word-break: break-all;">${verificationLink}&lang=it</a>
+                  <a href="${verificationLink}" style="color: #dbc9ad; word-break: break-all;">${verificationLink}</a>
                 </p>
               </div>
             </div>

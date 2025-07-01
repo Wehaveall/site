@@ -131,8 +131,7 @@
       "message": "Verificamos que existe uma conta com este email. Enviamos um link de recuperação para:",
       "checkEmail": "Verifique sua caixa de entrada e também a pasta de spam",
       "validTime": "O link é válido por 1 hora",
-      "backToLogin": "Voltar ao Login",
-      "understand": "Entendi"
+      "backToLogin": "Voltar ao Login"
     },
     "newPassword": {
       "title": "Nova Senha - Atalho",
@@ -152,9 +151,8 @@
       },
       "success": {
         "title": "Senha alterada com sucesso!",
-        "message": "Sua senha foi redefinida. Agora você pode fazer o login com sua nova senha.",
-        "redirecting": "Redirecionando para o login...",
-        "understand": "Entendi"
+        "message": "Sua senha foi redefinida. Agora você pode fazer login com sua nova senha.",
+        "redirecting": "Redirecionando para o login..."
       }
     },
     "errors": {
@@ -210,37 +208,17 @@
       "subtitle": "Verifique seu email para ativar sua conta",
       "description": "Enviamos um link de verificação para",
       "checkEmail": "Verifique sua caixa de entrada e spam",
-      "redirecting": "Redirecionando para o login...",
-      "understand": "Entendi"
+      "redirecting": "Redirecionando para o login..."
     },
-    "emailConfirmation": {
-      "title": "Confirmação de Email - Atalho",
-      "heading": "Verifique seu email",
-      "subtitle": "Para garantir a segurança da sua conta, precisamos que você verifique seu email.",
-      "emailLabel": "Email",
-      "emailPlaceholder": "Digite seu email",
-      "sendButton": "Enviar",
-      "backToLogin": "Voltar ao Login",
-      "success": {
-        "title": "Email enviado com sucesso!",
-        "message": "Verificamos que existe uma conta com este email. Enviamos um link de verificação para:",
-        "checkEmail": "Verifique sua caixa de entrada e também a pasta de spam",
-        "validTime": "O link é válido por 1 hora",
-        "backToLogin": "Voltar ao Login",
-        "understand": "Entendi"
-      },
-      "errors": {
-        "emptyEmail": "Por favor, digite seu email",
-        "invalidEmail": "Email inválido",
-        "userNotFound": "Não encontramos uma conta com este email",
-        "tooManyRequests": "Muitas tentativas. Tente novamente em alguns minutos",
-        "networkError": "Erro de conexão. Verifique sua internet",
-        "weakPassword": "Senha muito fraca",
-        "passwordMismatch": "As senhas não coincidem",
-        "expiredToken": "Link expirado. Solicite um novo",
-        "invalidToken": "Link inválido ou já utilizado",
-        "generalError": "Erro inesperado. Tente novamente"
-      }
+    "feedback": {
+      "creatingAccount": "⏳ Criando conta...",
+      "savingData": "⏳ Salvando dados adicionais...",
+      "sendingEmail": "⏳ Enviando email de verificação...",
+      "accountCreated": "✅ Conta criada!",
+      "dataSaved": "✅ Dados salvos!",
+      "emailSent": "✅ Email enviado!",
+      "error": "❌ Erro: {{message}}",
+      "understand": "Entendi"
     }
   },
   "purchase": {
@@ -319,33 +297,28 @@
     "loading": "Carregando...",
     "logout": "Sair"
   },
-  "emailConfirmation": {
-    "title": "Confirmação de Email - Atalho",
-    "heading": "Verifique seu email",
-    "subtitle": "Para garantir a segurança da sua conta, precisamos que você verifique seu email.",
-    "emailLabel": "Email",
-    "emailPlaceholder": "Digite seu email",
-    "sendButton": "Enviar",
-    "backToLogin": "Voltar ao Login",
-    "success": {
-      "title": "Email enviado com sucesso!",
-      "message": "Verificamos que existe uma conta com este email. Enviamos um link de verificação para:",
-      "checkEmail": "Verifique sua caixa de entrada e também a pasta de spam",
-      "validTime": "O link é válido por 1 hora",
-      "backToLogin": "Voltar ao Login",
-      "understand": "Entendi"
+  "success": {
+    "title": "Cadastro Realizado com Sucesso",
+    "heading": "Cadastro realizado com sucesso!",
+    "description": "Parabéns! Seu pagamento foi confirmado e sua conta foi criada com sucesso. Agora você tem acesso completo ao Atalho e pode começar a otimizar sua produtividade.",
+    "loading": "Carregando informações do usuário...",
+    "nextSteps": {
+      "title": "Próximos passos:",
+      "downloadApp": "➤ Baixe o aplicativo Atalho para começar a usar",
+      "tutorials": "➤ Acesse a seção de tutoriais para aprender a utilizar todas as funcionalidades",
+      "libraries": "➤ Faça o download das bibliotecas de termos para seu segmento",
+      "email": "➤ Você receberá um e-mail com instruções detalhadas"
     },
-    "errors": {
-      "emptyEmail": "Por favor, digite seu email",
-      "invalidEmail": "Email inválido",
-      "userNotFound": "Não encontramos uma conta com este email",
-      "tooManyRequests": "Muitas tentativas. Tente novamente em alguns minutos",
-      "networkError": "Erro de conexão. Verifique sua internet",
-      "weakPassword": "Senha muito fraca",
-      "passwordMismatch": "As senhas não coincidem",
-      "expiredToken": "Link expirado. Solicite um novo",
-      "invalidToken": "Link inválido ou já utilizado",
-      "generalError": "Erro inesperado. Tente novamente"
+    "buttons": {
+      "download": "Baixar Atalho",
+      "home": "Voltar ao Início"
+    },
+    "userInfo": {
+      "email": "Email cadastrado",
+      "id": "ID do usuário",
+      "unavailable": "Não disponível",
+      "error": "Não foi possível recuperar suas informações.",
+      "checkEmail": "Verifique seu e-mail para detalhes sobre sua conta."
     }
   },
   "emailVerification": {

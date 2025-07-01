@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verifica Email - Atalho</title>
+    <title data-i18n="emailVerification.title">Verifica Email - Atalho</title>
     <link rel="icon" type="image/png" href="assets/img/logo.svg">
     
     <style>
@@ -77,28 +77,30 @@
         }
 
         .btn {
-            display: inline-block;
-            padding: 12px 24px;
             background: linear-gradient(135deg, #dbc9ad 0%, #c8b298 100%);
-            color: #333;
-            text-decoration: none;
+            color: white;
+            border: none;
+            padding: 15px 30px;
             border-radius: 8px;
-            font-weight: bold;
-            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
             margin-top: 20px;
+            transition: transform 0.2s ease;
         }
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .spinner {
             border: 3px solid #f3f3f3;
-            border-top: 3px solid #dbc9ad;
+            border-top: 3px solid #1976d2;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 30px;
+            height: 30px;
             animation: spin 1s linear infinite;
             margin: 0 auto 10px;
         }
@@ -109,7 +111,6 @@
         }
     </style>
 </head>
-
 <body>
     <div class="container">
         <div class="logo"><img src="assets/img/Atalho.png" alt="Logo Atalho" style="width: 80px; height: 80px; object-fit: contain;"></div>
@@ -147,25 +148,53 @@
                 handleEmailVerification(auth);
             } catch (error) {
                 console.error("❌ Erro ao inicializar Firebase:", error);
-                showStatus('error', window.t('emailVerification.errors.general'));
+                showStatus('error', i18nSystem.t('emailVerification.errors.general'));
             }
         }
 
         // Função para forçar sincronização imediata usando oobCode
-        async function forceSyncVerification(oobCode, userEmail, auth) {
+        async function forceSyncVerification(oobCode, userEmail = null, auth = null) {
             try {
-                console.log('🔄 Forçando sincronização com oobCode...');
+                console.log('🔄 Forçando sincronização via oobCode...', oobCode);
+                console.log('📧 Email recebido como parâmetro:', userEmail);
                 
-                const response = await fetch('/api/payment-status', {
+                const url = 'https://syncemailverificationpublic-lj2of3bbgq-ue.a.run.app';
+                console.log('🌐 URL da função:', url);
+                
+                // Se não recebeu email como parâmetro, tentar fallbacks
+                if (!userEmail && auth) {
+                    console.log('⚠️ Email não fornecido, tentando fallbacks...');
+                    
+                    // Fallback: tentar usuário atual
+                    try {
+                        const currentUser = auth.currentUser;
+                        if (currentUser) {
+                            userEmail = currentUser.email;
+                            console.log('📧 Email do usuário atual (fallback):', userEmail);
+                        }
+                    } catch (e) {
+                        console.log('⚠️ Não foi possível obter usuário atual:', e.message);
+                    }
+                }
+                
+                const payload = { 
+                    oobCode,
+                    email: userEmail 
+                };
+                
+                const body = JSON.stringify(payload);
+                console.log('📤 Payload:', body);
+                
+                const response = await fetch(url, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        oobCode,
-                        email: userEmail
-                    })
+                    body: body
                 });
+
+                console.log('📡 Response status:', response.status);
+                console.log('📡 Response headers:', Object.fromEntries(response.headers.entries()));
 
                 if (!response.ok) {
                     const errorText = await response.text();
@@ -208,9 +237,8 @@
                 const mode = getUrlParameter('mode');
                 const oobCode = getUrlParameter('oobCode');
                 const continueUrl = getUrlParameter('continueUrl');
-                const lang = getUrlParameter('lang') || window.getCurrentLanguage();
 
-                console.log('🔍 Parâmetros recebidos:', { mode, oobCode, continueUrl, lang });
+                console.log('🔍 Parâmetros recebidos:', { mode, oobCode, continueUrl });
                 console.log('🔍 URL completa:', window.location.href);
                 console.log('🔍 Search params:', window.location.search);
 
@@ -219,14 +247,14 @@
                     console.log('🔄 Verificação automática detectada - redirecionando para login');
                     showStatus('success', `
                         <div style="font-size: 3rem; margin-bottom: 15px;">✅</div>
-                        <div><strong>${window.t('emailVerification.autoVerified.title')}</strong></div>
+                        <div><strong>${i18nSystem.t('emailVerification.autoVerified.title')}</strong></div>
                         <div style="margin-top: 10px; font-size: 0.9rem;">
-                            ${window.t('emailVerification.autoVerified.message')}
+                            ${i18nSystem.t('emailVerification.autoVerified.message')}
                         </div>
                     `);
                     
                     setTimeout(() => {
-                        window.location.href = `login.html?verified=true&lang=${lang}`;
+                        window.location.href = 'login.html?verified=true';
                     }, 2000);
                     return;
                 }
@@ -234,7 +262,7 @@
                 // Se não tem mode ou oobCode, redireciona para login
                 if (!mode || !oobCode) {
                     console.log('⚠️ Parâmetros mode ou oobCode não encontrados - redirecionando para login');
-                    window.location.href = `login.html?lang=${lang}`;
+                    window.location.href = 'login.html';
                     return;
                 }
 
@@ -260,9 +288,9 @@
                     // Aguardar um pouco para o Firebase Auth processar
                     showStatus('success', `
                         <div style="font-size: 2rem; margin-bottom: 10px;">✅</div>
-                        <div><strong>${window.t('emailVerification.verifying.title')}</strong></div>
+                        <div><strong>${i18nSystem.t('emailVerification.verifying.title')}</strong></div>
                         <div style="margin-top: 10px; font-size: 0.9rem;">
-                            ${window.t('emailVerification.verifying.message')}
+                            ${i18nSystem.t('emailVerification.verifying.message')}
                         </div>
                     `);
                     
@@ -273,18 +301,18 @@
                         if (syncResult && syncResult.success) {
                             showStatus('success', `
                                 <div style="font-size: 3rem; margin-bottom: 15px;">🎉</div>
-                                <div><strong>${window.t('emailVerification.verified.title')}</strong></div>
+                                <div><strong>${i18nSystem.t('emailVerification.verified.title')}</strong></div>
                                 <div style="margin-top: 10px; font-size: 0.9rem;">
-                                    ${window.t('emailVerification.verified.status')} ${syncResult.account_status === 'active' ? window.t('emailVerification.verified.active') : window.t('emailVerification.verified.pending')}<br>
-                                    ${window.t('emailVerification.verified.login')}
+                                    ${i18nSystem.t('emailVerification.verified.status')} ${syncResult.account_status === 'active' ? i18nSystem.t('emailVerification.verified.active') : i18nSystem.t('emailVerification.verified.pending')}<br>
+                                    ${i18nSystem.t('emailVerification.verified.login')}
                                 </div>
                             `);
                         } else {
                             showStatus('success', `
                                 <div style="font-size: 3rem; margin-bottom: 15px;">✅</div>
-                                <div><strong>${window.t('emailVerification.verifying.title')}</strong></div>
+                                <div><strong>${i18nSystem.t('emailVerification.verifying.title')}</strong></div>
                                 <div style="margin-top: 10px; font-size: 0.9rem;">
-                                    ${window.t('emailVerification.verified.login')}
+                                    ${i18nSystem.t('emailVerification.verified.login')}
                                 </div>
                             `);
                         }
@@ -292,7 +320,7 @@
 
                     // Redirecionar automaticamente após 6 segundos (tempo para sincronização)
                     setTimeout(() => {
-                        const redirectUrl = continueUrl || `login.html?verified=true&lang=${lang}`;
+                        const redirectUrl = continueUrl || 'login.html?verified=true';
                         window.location.href = decodeURIComponent(redirectUrl);
                     }, 6000);
 
@@ -309,19 +337,19 @@
             } catch (error) {
                 console.error('❌ Erro na verificação:', error);
                 
-                let errorMessage = window.t('emailVerification.errors.general');
+                let errorMessage = i18nSystem.t('emailVerification.errors.general');
                 
                 if (error.code === 'auth/invalid-action-code') {
-                    errorMessage = window.t('emailVerification.errors.invalidCode');
+                    errorMessage = i18nSystem.t('emailVerification.errors.invalidCode');
                 } else if (error.code === 'auth/expired-action-code') {
-                    errorMessage = window.t('emailVerification.errors.expiredCode');
+                    errorMessage = i18nSystem.t('emailVerification.errors.expiredCode');
                 } else if (error.code === 'auth/user-disabled') {
-                    errorMessage = window.t('emailVerification.errors.disabled');
+                    errorMessage = i18nSystem.t('emailVerification.errors.disabled');
                 }
 
                 showStatus('error', `
                     <div style="font-size: 3rem; margin-bottom: 15px;">❌</div>
-                    <div><strong>${window.t('emailVerification.errors.title')}</strong></div>
+                    <div><strong>${i18nSystem.t('emailVerification.errors.title')}</strong></div>
                     <div style="margin-top: 10px; font-size: 0.9rem;">
                         ${errorMessage}
                     </div>
@@ -332,6 +360,8 @@
         // Aguardar Firebase carregar e processar
         document.addEventListener('DOMContentLoaded', function() {
             console.log('📱 Página de verificação carregada');
+            
+            // Inicia o processo de configuração e verificação
             initializeApp();
         });
     </script>

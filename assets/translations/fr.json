@@ -187,21 +187,21 @@
       "noMatch": "❌ Les emails ne correspondent pas"
     },
     "success": {
-      "title": "Compte créé avec succès !",
+      "title": "Compte créé avec succès!",
       "subtitle": "Vérifiez votre email pour activer votre compte",
       "description": "Nous avons envoyé un lien de vérification à",
       "checkEmail": "Vérifiez votre boîte de réception et spam",
-      "redirecting": "Redirection vers la connexion...",
-      "understand": "Compris"
+      "redirecting": "Redirection vers la connexion..."
     },
     "feedback": {
-      "creatingAccount": "⏳ Création du compte...",
+      "creatingAccount": "⏳ Création du compte en cours...",
       "savingData": "⏳ Enregistrement des données supplémentaires...",
       "sendingEmail": "⏳ Envoi de l'email de vérification...",
       "accountCreated": "✅ Compte créé !",
       "dataSaved": "✅ Données enregistrées !",
       "emailSent": "✅ Email envoyé !",
-      "error": "❌ Erreur : {{message}}"
+      "error": "❌ Erreur : {{message}}",
+      "understand": "J'ai compris"
     }
   },
   "purchase": {
@@ -280,6 +280,30 @@
     "loading": "Chargement...",
     "logout": "Se Déconnecter"
   },
+  "success": {
+    "title": "Inscription Réussie",
+    "heading": "Inscription réussie !",
+    "description": "Félicitations ! Votre paiement a été confirmé et votre compte a été créé avec succès. Vous avez maintenant un accès complet à Atalho et pouvez commencer à optimiser votre productivité.",
+    "loading": "Chargement des informations utilisateur...",
+    "nextSteps": {
+      "title": "Prochaines étapes :",
+      "downloadApp": "➤ Téléchargez l'application Atalho pour commencer",
+      "tutorials": "➤ Accédez à la section tutoriels pour apprendre à utiliser toutes les fonctionnalités",
+      "libraries": "➤ Téléchargez les bibliothèques de termes pour votre segment",
+      "email": "➤ Vous recevrez un e-mail avec des instructions détaillées"
+    },
+    "buttons": {
+      "download": "Télécharger Atalho",
+      "home": "Retour à l'Accueil"
+    },
+    "userInfo": {
+      "email": "Email enregistré",
+      "id": "ID utilisateur",
+      "unavailable": "Non disponible",
+      "error": "Impossible de récupérer vos informations.",
+      "checkEmail": "Vérifiez votre e-mail pour les détails du compte."
+    }
+  },
   "emailVerification": {
     "title": "Vérification de l'Email",
     "loading": "Vérification de votre email...",
@@ -301,7 +325,7 @@
     },
     "errors": {
       "title": "Erreur de Vérification",
-      "general": "Une erreur s'est produite lors de la vérification de l'email.",
+      "general": "Une erreur s'est produite lors de la vérification de votre email.",
       "invalidCode": "Lien de vérification invalide ou expiré. Demandez un nouvel email de vérification.",
       "expiredCode": "Lien de vérification expiré. Demandez un nouvel email de vérification.",
       "disabled": "Ce compte a été désactivé. Contactez le support."

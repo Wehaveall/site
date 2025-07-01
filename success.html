@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro Realizado com Sucesso</title>
+    <title data-i18n="success.title">Cadastro Realizado com Sucesso</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -88,38 +88,40 @@
 <body>
     <div class="success-container">
         <div class="success-icon">✓</div>
-        <h1>Cadastro realizado com sucesso!</h1>
-        <p>
+        <h1 data-i18n="success.heading">Cadastro realizado com sucesso!</h1>
+        <p data-i18n="success.description">
             Parabéns! Seu pagamento foi confirmado e sua conta foi criada com sucesso.
             Agora você tem acesso completo ao Atalho e pode começar a otimizar sua produtividade.
         </p>
 
         <div id="user-info" class="user-info">
-            <p>Carregando informações do usuário...</p>
+            <p data-i18n="success.loading">Carregando informações do usuário...</p>
         </div>
 
         <div class="next-steps">
-            <h3>Próximos passos:</h3>
+            <h3 data-i18n="success.nextSteps.title">Próximos passos:</h3>
             <div class="next-steps-item">
-                ➤ Baixe o aplicativo Atalho para começar a usar
+                <span data-i18n="success.nextSteps.downloadApp">➤ Baixe o aplicativo Atalho para começar a usar</span>
             </div>
             <div class="next-steps-item">
-                ➤ Acesse a seção de tutoriais para aprender a utilizar todas as funcionalidades
+                <span data-i18n="success.nextSteps.tutorials">➤ Acesse a seção de tutoriais para aprender a utilizar todas as funcionalidades</span>
             </div>
             <div class="next-steps-item">
-                ➤ Faça o download das bibliotecas de termos para seu segmento
+                <span data-i18n="success.nextSteps.libraries">➤ Faça o download das bibliotecas de termos para seu segmento</span>
             </div>
             <div class="next-steps-item">
-                ➤ Você receberá um e-mail com instruções detalhadas
+                <span data-i18n="success.nextSteps.email">➤ Você receberá um e-mail com instruções detalhadas</span>
             </div>
         </div>
 
         <div style="margin-top: 30px;">
-            <a href="download.html" class="button">Baixar Atalho</a>
-            <a href="index.html" class="button button-secondary">Voltar ao Início</a>
+            <a href="download.html" class="button" data-i18n="success.buttons.download">Baixar Atalho</a>
+            <a href="index.html" class="button button-secondary" data-i18n="success.buttons.home">Voltar ao Início</a>
         </div>
     </div>
 
+    <!-- Scripts -->
+    <script src="assets/js/i18n.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Debug info
@@ -136,13 +138,13 @@
             if (userInfoDiv) {
                 if (userEmail) {
                     userInfoDiv.innerHTML = `
-                        <p>Email cadastrado: <strong>${userEmail}</strong></p>
-                        <p>ID do usuário: ${userId || 'Não disponível'}</p>
+                        <p>${i18nSystem.t('success.userInfo.email')}: <strong>${userEmail}</strong></p>
+                        <p>${i18nSystem.t('success.userInfo.id')}: ${userId || i18nSystem.t('success.userInfo.unavailable')}</p>
                     `;
                 } else {
                     userInfoDiv.innerHTML = `
-                        <p>Não foi possível recuperar suas informações.</p>
-                        <p>Verifique seu e-mail para detalhes sobre sua conta.</p>
+                        <p>${i18nSystem.t('success.userInfo.error')}</p>
+                        <p>${i18nSystem.t('success.userInfo.checkEmail')}</p>
                     `;
                 }
             }

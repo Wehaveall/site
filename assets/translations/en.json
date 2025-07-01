@@ -191,8 +191,7 @@
       "subtitle": "Check your email to activate your account",
       "description": "We sent a verification link to",
       "checkEmail": "Check your inbox and spam folder",
-      "redirecting": "Redirecting to login...",
-      "understand": "Got it"
+      "redirecting": "Redirecting to login..."
     },
     "feedback": {
       "creatingAccount": "⏳ Creating account...",
@@ -201,7 +200,8 @@
       "accountCreated": "✅ Account created!",
       "dataSaved": "✅ Data saved!",
       "emailSent": "✅ Email sent!",
-      "error": "❌ Error: {{message}}"
+      "error": "❌ Error: {{message}}",
+      "understand": "I understand"
     }
   },
   "purchase": {
@@ -280,6 +280,30 @@
     "loading": "Loading...",
     "logout": "Logout"
   },
+  "success": {
+    "title": "Registration Completed Successfully",
+    "heading": "Registration completed successfully!",
+    "description": "Congratulations! Your payment has been confirmed and your account has been created successfully. Now you have full access to Atalho and can start optimizing your productivity.",
+    "loading": "Loading user information...",
+    "nextSteps": {
+      "title": "Next steps:",
+      "downloadApp": "➤ Download the Atalho app to get started",
+      "tutorials": "➤ Access the tutorials section to learn how to use all features",
+      "libraries": "➤ Download the term libraries for your segment",
+      "email": "➤ You will receive an email with detailed instructions"
+    },
+    "buttons": {
+      "download": "Download Atalho",
+      "home": "Back to Home"
+    },
+    "userInfo": {
+      "email": "Registered email",
+      "id": "User ID",
+      "unavailable": "Not available",
+      "error": "Could not retrieve your information.",
+      "checkEmail": "Check your email for account details."
+    }
+  },
   "emailVerification": {
     "title": "Email Verification",
     "loading": "Verifying your email...",
@@ -297,13 +321,13 @@
       "status": "Status:",
       "active": "Active",
       "pending": "Pending",
-      "login": "You can now login normally."
+      "login": "You can now log in normally."
     },
     "errors": {
       "title": "Verification Error",
-      "general": "An error occurred during email verification.",
+      "general": "An error occurred while verifying your email.",
       "invalidCode": "Invalid or expired verification link. Request a new verification email.",
-      "expiredCode": "Verification link expired. Request a new verification email.",
+      "expiredCode": "Expired verification link. Request a new verification email.",
       "disabled": "This account has been disabled. Contact support."
     }
   }

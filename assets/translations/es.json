@@ -209,12 +209,11 @@
       "noMatch": "❌ Los correos no coinciden"
     },
     "success": {
-      "title": "¡Cuenta creada con éxito!",
-      "subtitle": "Revisa tu correo para activar tu cuenta",
-      "description": "Hemos enviado un enlace de verificación a",
+      "title": "¡Cuenta creada exitosamente!",
+      "subtitle": "Revisa tu email para activar tu cuenta",
+      "description": "Enviamos un enlace de verificación a",
       "checkEmail": "Revisa tu bandeja de entrada y spam",
-      "redirecting": "Redirigiendo al login...",
-      "understand": "Entendido"
+      "redirecting": "Redirigiendo al login..."
     },
     "feedback": {
       "creatingAccount": "⏳ Creando cuenta...",
@@ -223,7 +222,8 @@
       "accountCreated": "✅ ¡Cuenta creada!",
       "dataSaved": "✅ ¡Datos guardados!",
       "emailSent": "✅ ¡Email enviado!",
-      "error": "❌ Error: {{message}}"
+      "error": "❌ Error: {{message}}",
+      "understand": "Entendido"
     }
   },
   "purchase": {
@@ -302,6 +302,30 @@
     "loading": "Cargando...",
     "logout": "Salir"
   },
+  "success": {
+    "title": "Registro Completado con Éxito",
+    "heading": "¡Registro completado con éxito!",
+    "description": "¡Felicitaciones! Tu pago ha sido confirmado y tu cuenta ha sido creada con éxito. Ahora tienes acceso completo a Atalho y puedes comenzar a optimizar tu productividad.",
+    "loading": "Cargando información del usuario...",
+    "nextSteps": {
+      "title": "Próximos pasos:",
+      "downloadApp": "➤ Descarga la aplicación Atalho para comenzar",
+      "tutorials": "➤ Accede a la sección de tutoriales para aprender a usar todas las funcionalidades",
+      "libraries": "➤ Descarga las bibliotecas de términos para tu segmento",
+      "email": "➤ Recibirás un correo electrónico con instrucciones detalladas"
+    },
+    "buttons": {
+      "download": "Descargar Atalho",
+      "home": "Volver al Inicio"
+    },
+    "userInfo": {
+      "email": "Correo electrónico registrado",
+      "id": "ID de usuario",
+      "unavailable": "No disponible",
+      "error": "No se pudo recuperar tu información.",
+      "checkEmail": "Revisa tu correo electrónico para detalles de la cuenta."
+    }
+  },
   "emailVerification": {
     "title": "Verificación de Email",
     "loading": "Verificando tu email...",
@@ -323,7 +347,7 @@
     },
     "errors": {
       "title": "Error de Verificación",
-      "general": "Ocurrió un error durante la verificación del email.",
+      "general": "Ocurrió un error al verificar tu email.",
       "invalidCode": "Enlace de verificación inválido o expirado. Solicita un nuevo email de verificación.",
       "expiredCode": "Enlace de verificación expirado. Solicita un nuevo email de verificación.",
       "disabled": "Esta cuenta ha sido deshabilitada. Contacta con soporte."

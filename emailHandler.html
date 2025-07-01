@@ -327,8 +327,10 @@
                     }, 6000);
 
                 } else if (mode === 'resetPassword') {
-                    // Redirecionar para página de reset de senha
-                    window.location.href = `reset-password.html?oobCode=${oobCode}`;
+                    console.log('🔑 Redirecionando para página de nova senha...');
+                    // Redirecionar para página de definir nova senha com todos os parâmetros
+                    window.location.href = `new-password.html${window.location.search}`;
+                    return;
                     
                 } else {
                     throw new Error(`Modo não suportado: ${mode}`);

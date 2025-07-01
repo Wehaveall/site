@@ -279,6 +279,9 @@
                         console.error('❌ Erro na verificação:', error);
                         showError(i18nSystem ? i18nSystem.t('emailHandler.error.message') : 'Ocorreu um erro na verificação do email.');
                     }
+                } else if (mode === 'resetPassword') {
+                    console.log('🔑 Redirecionando para a página de nova senha...');
+                    window.location.href = `new-password.html${window.location.search}`;
                 } else {
                     throw new Error(i18nSystem ? i18nSystem.t('emailHandler.error.invalidLink') : 'Link inválido ou expirado');
                 }

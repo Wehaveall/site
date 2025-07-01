@@ -115,17 +115,9 @@
     </header>
 
     <!-- Main Content -->
-    <main style="padding-top: 100px; min-height: 100vh; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+    <main style="padding-top: 100px; min-height: 100vh; background: linear-gradient(120deg, #f0e9df 0%, #f7f3ed 20%, white 50%);">
         <div class="container" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
             
-            <!-- Boas-vindas -->
-            <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;">
-                <div style="color: #28a745; margin-bottom: 1rem;">
-                    <i class="fas fa-user-check" style="font-size: 3rem;">👤</i>
-                </div>
-                <h1 style="color: #28a745; margin-bottom: 1rem;" data-i18n="dashboard.welcome">Bem-vindo ao Dashboard</h1>
-            </div>
-
             <!-- Card de Informações Pessoais -->
             <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                 <h2 style="color: #2c3e50; margin-bottom: 1.5rem;" data-i18n="dashboard.personalInfo">👤 Informações Pessoais</h2>
@@ -138,7 +130,6 @@
                     <div>
                         <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.country">País:</strong> <span id="account-country" data-i18n="dashboard.noData">-</span></p>
                         <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.company">Empresa:</strong> <span id="account-company" data-i18n="dashboard.noData">-</span></p>
-                        <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.accountId">ID da Conta:</strong> <span id="account-id" data-i18n="dashboard.loading">Carregando...</span></p>
                     </div>
                 </div>
                 <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e9ecef;">
@@ -553,7 +544,6 @@
             document.getElementById('account-phone').textContent = customerData.phone || noDataText;
             document.getElementById('account-country').textContent = customerData.country || noDataText;
             document.getElementById('account-company').textContent = customerData.company || noDataText;
-            document.getElementById('account-id').textContent = customerData.id || customerData.payment_id || currentUser.uid;
             
             // Data de criação
             if (customerData.created_at) {

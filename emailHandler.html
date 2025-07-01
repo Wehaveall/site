@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verificação de Email - Atalho</title>
+    <title>Verifica Email - Atalho</title>
     <link rel="icon" type="image/png" href="assets/img/logo.svg">
     
     <style>
@@ -115,15 +115,15 @@
     <div class="container">
         <div class="logo"><img src="assets/img/Atalho.png" alt="Logo Atalho" style="width: 80px; height: 80px; object-fit: contain;"></div>
         <h1>Atalho</h1>
-        <p>Verificação de Email</p>
+        <p id="verificationTitle">Verificação de Email</p>
 
         <div id="status" class="status loading">
             <div class="spinner"></div>
-            <div>Verificando seu email...</div>
+            <div id="loadingText">Verificando seu email...</div>
         </div>
 
         <div id="actions" style="display: none;">
-            <a href="login.html" class="btn">Ir para Login</a>
+            <a href="login.html" class="btn" id="loginButton">Ir para Login</a>
         </div>
     </div>
 
@@ -133,9 +133,87 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
     <script src="assets/js/firebase.js"></script>
+    <script src="assets/js/i18n.js"></script>
 
     <script>
+        // Objeto de traduções
+        const translations = {
+            'pt-br': {
+                title: 'Verificação de Email',
+                loading: 'Verificando seu email...',
+                loginButton: 'Ir para Login',
+                autoVerified: {
+                    title: 'Email verificado automaticamente!',
+                    message: 'Sua conta foi ativada com sucesso. Redirecionando para login...'
+                },
+                verifying: {
+                    title: 'Email verificado com sucesso!',
+                    message: 'Sincronizando dados da conta...'
+                },
+                verified: {
+                    title: 'Conta ativada com sucesso!',
+                    status: 'Status:',
+                    active: 'Ativo',
+                    pending: 'Pendente',
+                    login: 'Agora você pode fazer login normalmente.'
+                },
+                errors: {
+                    title: 'Erro na Verificação',
+                    general: 'Ocorreu um erro na verificação do email.',
+                    invalidCode: 'Link de verificação inválido ou expirado. Solicite um novo email de verificação.',
+                    expiredCode: 'Link de verificação expirado. Solicite um novo email de verificação.',
+                    disabled: 'Esta conta foi desabilitada. Entre em contato com o suporte.'
+                }
+            },
+            'it': {
+                title: 'Verifica Email',
+                loading: 'Verifica della tua email...',
+                loginButton: 'Vai al Login',
+                autoVerified: {
+                    title: 'Email verificata automaticamente!',
+                    message: 'Il tuo account è stato attivato con successo. Reindirizzamento al login...'
+                },
+                verifying: {
+                    title: 'Email verificata con successo!',
+                    message: 'Sincronizzazione dei dati dell\'account...'
+                },
+                verified: {
+                    title: 'Account attivato con successo!',
+                    status: 'Stato:',
+                    active: 'Attivo',
+                    pending: 'In attesa',
+                    login: 'Ora puoi accedere normalmente.'
+                },
+                errors: {
+                    title: 'Errore di Verifica',
+                    general: 'Si è verificato un errore durante la verifica dell\'email.',
+                    invalidCode: 'Link di verifica non valido o scaduto. Richiedi una nuova email di verifica.',
+                    expiredCode: 'Link di verifica scaduto. Richiedi una nuova email di verifica.',
+                    disabled: 'Questo account è stato disabilitato. Contatta il supporto.'
+                }
+            }
+        };
 
+        // Função para obter a linguagem atual
+        function getCurrentLanguage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const lang = urlParams.get('lang') || 'pt-br';
+            return translations[lang] ? lang : 'pt-br';
+        }
+
+        // Função para obter texto traduzido
+        function getText(key) {
+            const lang = getCurrentLanguage();
+            const keys = key.split('.');
+            let text = translations[lang];
+            
+            for (const k of keys) {
+                text = text[k];
+                if (!text) return translations['pt-br'][key] || key;
+            }
+            
+            return text;
+        }
 
         // Função principal de inicialização
         async function initializeApp() {
@@ -145,11 +223,16 @@
                 
                 console.log("✅ Firebase inicializado para verificação de email");
                 
+                // Atualizar textos iniciais
+                document.getElementById('verificationTitle').textContent = getText('title');
+                document.getElementById('loadingText').textContent = getText('loading');
+                document.getElementById('loginButton').textContent = getText('loginButton');
+                
                 // Processar a verificação de email após a inicialização
                 handleEmailVerification(auth);
             } catch (error) {
                 console.error("❌ Erro ao inicializar Firebase:", error);
-                showStatus('error', 'Erro crítico na inicialização. Não foi possível carregar a configuração.');
+                showStatus('error', getText('errors.general'));
             }
         }
 
@@ -248,9 +331,9 @@
                     console.log('🔄 Verificação automática detectada - redirecionando para login');
                     showStatus('success', `
                         <div style="font-size: 3rem; margin-bottom: 15px;">✅</div>
-                        <div><strong>Email verificado automaticamente!</strong></div>
+                        <div><strong>${getText('autoVerified.title')}</strong></div>
                         <div style="margin-top: 10px; font-size: 0.9rem;">
-                            Sua conta foi ativada com sucesso. Redirecionando para login...
+                            ${getText('autoVerified.message')}
                         </div>
                     `);
                     
@@ -260,12 +343,11 @@
                     return;
                 }
 
-                if (!mode) {
-                    throw new Error('Parâmetro "mode" não encontrado na URL');
-                }
-                
-                if (!oobCode) {
-                    throw new Error('Parâmetro "oobCode" não encontrado na URL');
+                // Se não tem mode ou oobCode, redireciona para login
+                if (!mode || !oobCode) {
+                    console.log('⚠️ Parâmetros mode ou oobCode não encontrados - redirecionando para login');
+                    window.location.href = 'login.html';
+                    return;
                 }
 
                 if (mode === 'verifyEmail') {
@@ -290,9 +372,9 @@
                     // Aguardar um pouco para o Firebase Auth processar
                     showStatus('success', `
                         <div style="font-size: 2rem; margin-bottom: 10px;">✅</div>
-                        <div><strong>Email verificado com sucesso!</strong></div>
+                        <div><strong>${getText('verifying.title')}</strong></div>
                         <div style="margin-top: 10px; font-size: 0.9rem;">
-                            Sincronizando dados da conta...
+                            ${getText('verifying.message')}
                         </div>
                     `);
                     
@@ -303,18 +385,18 @@
                         if (syncResult && syncResult.success) {
                             showStatus('success', `
                                 <div style="font-size: 3rem; margin-bottom: 15px;">🎉</div>
-                                <div><strong>Conta ativada com sucesso!</strong></div>
+                                <div><strong>${getText('verified.title')}</strong></div>
                                 <div style="margin-top: 10px; font-size: 0.9rem;">
-                                    Status: ${syncResult.account_status === 'active' ? 'Ativo' : 'Pendente'}<br>
-                                    Agora você pode fazer login normalmente.
+                                    ${getText('verified.status')} ${syncResult.account_status === 'active' ? getText('verified.active') : getText('verified.pending')}<br>
+                                    ${getText('verified.login')}
                                 </div>
                             `);
                         } else {
                             showStatus('success', `
                                 <div style="font-size: 3rem; margin-bottom: 15px;">✅</div>
-                                <div><strong>Email verificado com sucesso!</strong></div>
+                                <div><strong>${getText('verifying.title')}</strong></div>
                                 <div style="margin-top: 10px; font-size: 0.9rem;">
-                                    Sua conta foi ativada. Agora você pode fazer login normalmente.
+                                    ${getText('verified.login')}
                                 </div>
                             `);
                         }
@@ -339,19 +421,19 @@
             } catch (error) {
                 console.error('❌ Erro na verificação:', error);
                 
-                let errorMessage = 'Ocorreu um erro na verificação do email.';
+                let errorMessage = getText('errors.general');
                 
                 if (error.code === 'auth/invalid-action-code') {
-                    errorMessage = 'Link de verificação inválido ou expirado. Solicite um novo email de verificação.';
+                    errorMessage = getText('errors.invalidCode');
                 } else if (error.code === 'auth/expired-action-code') {
-                    errorMessage = 'Link de verificação expirado. Solicite um novo email de verificação.';
+                    errorMessage = getText('errors.expiredCode');
                 } else if (error.code === 'auth/user-disabled') {
-                    errorMessage = 'Esta conta foi desabilitada. Entre em contato com o suporte.';
+                    errorMessage = getText('errors.disabled');
                 }
 
                 showStatus('error', `
                     <div style="font-size: 3rem; margin-bottom: 15px;">❌</div>
-                    <div><strong>Erro na Verificação</strong></div>
+                    <div><strong>${getText('errors.title')}</strong></div>
                     <div style="margin-top: 10px; font-size: 0.9rem;">
                         ${errorMessage}
                     </div>

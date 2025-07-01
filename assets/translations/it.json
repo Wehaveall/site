@@ -343,26 +343,16 @@
   "emailHandler": {
     "title": "Verifica Email - Atalho",
     "verifying": "Verifica in corso...",
-    "autoVerified": {
-      "title": "Email verificata automaticamente!",
-      "description": "Il tuo account è stato attivato con successo. Reindirizzamento al login..."
+    "success": {
+      "title": "✅ Email Verificata",
+      "message": "La tua email è stata verificata con successo.",
+      "goToLogin": "Vai al Login"
     },
-    "verificationSuccess": {
-      "title": "Email verificata con successo!",
-      "syncing": "Sincronizzazione dati account...",
-      "activated": "Account attivato con successo!",
-      "status": "Stato:",
-      "active": "Attivo",
-      "pending": "In attesa",
-      "canLogin": "Ora puoi accedere normalmente.",
-      "finalSuccess": "Il tuo account è stato attivato. Ora puoi accedere normalmente."
-    },
-    "errors": {
+    "error": {
       "title": "Errore di Verifica",
-      "invalidLink": "Link di verifica non valido o scaduto. Richiedi una nuova email di verifica.",
-      "expiredLink": "Link di verifica scaduto. Richiedi una nuova email di verifica.",
-      "disabledAccount": "Questo account è stato disabilitato. Contatta il supporto.",
-      "general": "Si è verificato un errore durante la verifica dell'email."
+      "message": "Si è verificato un errore durante la verifica dell'email.",
+      "invalidLink": "Il link non è valido o è scaduto.",
+      "goToLogin": "Vai al Login"
     }
   }
 } 

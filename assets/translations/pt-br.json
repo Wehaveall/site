@@ -342,26 +342,16 @@
   "emailHandler": {
     "title": "Verificação de Email - Atalho",
     "verifying": "Verificando...",
-    "autoVerified": {
-      "title": "Email verificado automaticamente!",
-      "description": "Sua conta foi ativada com sucesso. Redirecionando para login..."
+    "success": {
+      "title": "✅ Email Verificado",
+      "message": "Seu email foi verificado com sucesso.",
+      "goToLogin": "Ir para Login"
     },
-    "verificationSuccess": {
-      "title": "Email verificado com sucesso!",
-      "syncing": "Sincronizando dados da conta...",
-      "activated": "Conta ativada com sucesso!",
-      "status": "Status:",
-      "active": "Ativo",
-      "pending": "Pendente",
-      "canLogin": "Agora você pode fazer login normalmente.",
-      "finalSuccess": "Sua conta foi ativada. Agora você pode fazer login normalmente."
-    },
-    "errors": {
+    "error": {
       "title": "Erro na Verificação",
-      "invalidLink": "Link de verificação inválido ou expirado. Solicite um novo email de verificação.",
-      "expiredLink": "Link de verificação expirado. Solicite um novo email de verificação.",
-      "disabledAccount": "Esta conta foi desabilitada. Entre em contato com o suporte.",
-      "general": "Ocorreu um erro na verificação do email."
+      "message": "Ocorreu um erro na verificação do email.",
+      "invalidLink": "O link é inválido ou expirou.",
+      "goToLogin": "Ir para Login"
     }
   }
 } 

@@ -342,27 +342,17 @@
   },
   "emailHandler": {
     "title": "Vérification d'Email - Atalho",
-    "verifying": "Vérification...",
-    "autoVerified": {
-      "title": "Email vérifié automatiquement !",
-      "description": "Votre compte a été activé avec succès. Redirection vers la connexion..."
+    "verifying": "Vérification en cours...",
+    "success": {
+      "title": "✅ Email Vérifié",
+      "message": "Votre email a été vérifié avec succès.",
+      "goToLogin": "Aller à la Connexion"
     },
-    "verificationSuccess": {
-      "title": "Email vérifié avec succès !",
-      "syncing": "Synchronisation des données du compte...",
-      "activated": "Compte activé avec succès !",
-      "status": "Statut :",
-      "active": "Actif",
-      "pending": "En attente",
-      "canLogin": "Vous pouvez maintenant vous connecter normalement.",
-      "finalSuccess": "Votre compte a été activé. Vous pouvez maintenant vous connecter normalement."
-    },
-    "errors": {
+    "error": {
       "title": "Erreur de Vérification",
-      "invalidLink": "Lien de vérification invalide ou expiré. Demandez un nouvel email de vérification.",
-      "expiredLink": "Lien de vérification expiré. Demandez un nouvel email de vérification.",
-      "disabledAccount": "Ce compte a été désactivé. Contactez le support.",
-      "general": "Une erreur s'est produite lors de la vérification de l'email."
+      "message": "Une erreur s'est produite lors de la vérification de l'email.",
+      "invalidLink": "Le lien est invalide ou a expiré.",
+      "goToLogin": "Aller à la Connexion"
     }
   }
 } 

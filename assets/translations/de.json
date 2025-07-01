@@ -342,27 +342,17 @@
   },
   "emailHandler": {
     "title": "E-Mail-Verifizierung - Atalho",
-    "verifying": "Verifizierung...",
-    "autoVerified": {
-      "title": "E-Mail automatisch verifiziert!",
-      "description": "Ihr Konto wurde erfolgreich aktiviert. Weiterleitung zur Anmeldung..."
+    "verifying": "Überprüfung läuft...",
+    "success": {
+      "title": "✅ E-Mail Verifiziert",
+      "message": "Ihre E-Mail wurde erfolgreich verifiziert.",
+      "goToLogin": "Zum Login"
     },
-    "verificationSuccess": {
-      "title": "E-Mail erfolgreich verifiziert!",
-      "syncing": "Kontodaten synchronisieren...",
-      "activated": "Konto erfolgreich aktiviert!",
-      "status": "Status:",
-      "active": "Aktiv",
-      "pending": "Ausstehend",
-      "canLogin": "Sie können sich jetzt normal anmelden.",
-      "finalSuccess": "Ihr Konto wurde aktiviert. Sie können sich jetzt normal anmelden."
-    },
-    "errors": {
+    "error": {
       "title": "Verifizierungsfehler",
-      "invalidLink": "Ungültiger oder abgelaufener Verifizierungslink. Fordern Sie eine neue Verifizierungs-E-Mail an.",
-      "expiredLink": "Abgelaufener Verifizierungslink. Fordern Sie eine neue Verifizierungs-E-Mail an.",
-      "disabledAccount": "Dieses Konto wurde deaktiviert. Kontaktieren Sie den Support.",
-      "general": "Bei der E-Mail-Verifizierung ist ein Fehler aufgetreten."
+      "message": "Bei der E-Mail-Verifizierung ist ein Fehler aufgetreten.",
+      "invalidLink": "Der Link ist ungültig oder abgelaufen.",
+      "goToLogin": "Zum Login"
     }
   }
 } 

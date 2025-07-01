@@ -343,26 +343,16 @@
   "emailHandler": {
     "title": "Email Verification - Atalho",
     "verifying": "Verifying...",
-    "autoVerified": {
-      "title": "Email verified automatically!",
-      "description": "Your account has been activated successfully. Redirecting to login..."
+    "success": {
+      "title": "✅ Email Verified",
+      "message": "Your email has been successfully verified.",
+      "goToLogin": "Go to Login"
     },
-    "verificationSuccess": {
-      "title": "Email verified successfully!",
-      "syncing": "Syncing account data...",
-      "activated": "Account activated successfully!",
-      "status": "Status:",
-      "active": "Active",
-      "pending": "Pending",
-      "canLogin": "You can now log in normally.",
-      "finalSuccess": "Your account has been activated. You can now log in normally."
-    },
-    "errors": {
+    "error": {
       "title": "Verification Error",
-      "invalidLink": "Invalid or expired verification link. Request a new verification email.",
-      "expiredLink": "Expired verification link. Request a new verification email.",
-      "disabledAccount": "This account has been disabled. Contact support.",
-      "general": "An error occurred during email verification."
+      "message": "An error occurred during email verification.",
+      "invalidLink": "The link is invalid or has expired.",
+      "goToLogin": "Go to Login"
     }
   }
 } 

@@ -15,7 +15,7 @@ async function initializeFirebase() {
         const firebaseConfig = await response.json();
         console.log("✅ Configuração obtida da API");
 
-        if (!firebaseConfig || !firebaseConfig.apiKey) {
+        if (!firebaseConfig?.apiKey) {
             throw new Error("Configuração do Firebase recebida é inválida.");
         }
 
@@ -87,7 +87,7 @@ async function initializeFirebase() {
 
     } catch (error) {
         console.error("❌ Erro crítico ao inicializar o Firebase:", error);
-        return Promise.reject(error);
+        return Promise.reject(error instanceof Error ? error : new Error(error));
     }
 }
 
@@ -240,7 +240,7 @@ async function registerWithAutoLanguage(email, password) {
 
 // Função para reenviar verificação com idioma
 async function resendVerificationWithLanguage(language) {
-    if (!window.auth || !window.auth.currentUser) {
+    if (!window.auth?.currentUser) {
         throw new Error("Usuário não está logado");
     }
 
@@ -254,13 +254,10 @@ async function resendVerificationWithLanguage(language) {
 // Função para sincronizar status de email após login
 async function syncEmailVerificationStatus() {
     try {
-        if (!window.auth || !window.auth.currentUser) {
+        if (!window.auth?.currentUser) {
             return null;
         }
 
-        const user = window.auth.currentUser;
-        const idToken = await user.getIdToken();
-        
         // Verificar se Functions está disponível
         if (!window.functions) {
             console.warn("⚠️ Firebase Functions não disponível - pulando sincronização");

@@ -142,25 +142,27 @@
     </header>
 
     <!-- Main Content -->
-    <main style="padding-top: 100px; min-height: 100vh; background: linear-gradient(120deg, #f0e9df 0%, #f7f3ed 20%, white 50%);">
-        <div class="container" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+    <main class="dashboard-main">
+        <div class="dashboard-container">
             
             <!-- Card de Informações Pessoais -->
-            <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                <h2 style="color: #2c3e50; margin-bottom: 1.5rem;" data-i18n="dashboard.personalInfo">👤 Informações Pessoais</h2>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
-                    <div>
-                        <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.name">Nome:</strong> <span id="account-name" data-i18n="dashboard.loading">Carregando...</span></p>
-                        <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.email">Email:</strong> <span id="account-email" data-i18n="dashboard.loading">Carregando...</span></p>
-                        <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.phone">Telefone:</strong> <span id="account-phone" data-i18n="dashboard.noData">-</span></p>
+            <div class="card">
+                <h2 class="card-title">👤 Informações Pessoais</h2>
+                <div class="card-content">
+                    <div class="grid">
+                        <div>
+                            <p><strong data-i18n="dashboard.fields.name">Nome:</strong> <span id="account-name" data-i18n="dashboard.loading">Carregando...</span></p>
+                            <p><strong data-i18n="dashboard.fields.email">Email:</strong> <span id="account-email" data-i18n="dashboard.loading">Carregando...</span></p>
+                            <p><strong data-i18n="dashboard.fields.phone">Telefone:</strong> <span id="account-phone" data-i18n="dashboard.noData">-</span></p>
+                        </div>
+                        <div>
+                            <p><strong data-i18n="dashboard.fields.country">País:</strong> <span id="account-country" data-i18n="dashboard.noData">-</span></p>
+                            <p><strong data-i18n="dashboard.fields.company">Empresa:</strong> <span id="account-company" data-i18n="dashboard.noData">-</span></p>
+                        </div>
                     </div>
-                    <div>
-                        <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.country">País:</strong> <span id="account-country" data-i18n="dashboard.noData">-</span></p>
-                        <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.company">Empresa:</strong> <span id="account-company" data-i18n="dashboard.noData">-</span></p>
+                    <div class="mt-2 pt-2 border-top">
+                        <p><strong data-i18n="dashboard.fields.createdAt">Conta criada em:</strong> <span id="account-created" data-i18n="dashboard.loading">Carregando...</span></p>
                     </div>
-                </div>
-                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e9ecef;">
-                    <p style="margin-bottom: 0;"><strong data-i18n="dashboard.fields.createdAt">Conta criada em:</strong> <span id="account-created" data-i18n="dashboard.loading">Carregando...</span></p>
                 </div>
             </div>
 

@@ -267,24 +267,24 @@
 
         // Função para atualizar elementos para usuário logado
         async function updateLoggedInMenu(user, navElements) {
-            console.log('✅ USUÁRIO LOGADO - Configurando menu para usuário autenticado');
-            
+                console.log('✅ USUÁRIO LOGADO - Configurando menu para usuário autenticado');
+                
             // Esconder elementos de usuário não autenticado
             toggleMenuElements([navElements.register, navElements.login], false);
             
             // Mostrar elementos de usuário autenticado
             toggleMenuElements([navElements.userInfo, navElements.logout], true);
-            
-            // Carregar dados do usuário (COM CACHE)
-            let userData = currentUserData;
-            if (!userData || currentUserData?.uid !== user.uid) {
-                console.log('📊 Carregando dados do usuário do Firestore...');
-                userData = await loadUserData(user.uid);
+                
+                // Carregar dados do usuário (COM CACHE)
+                let userData = currentUserData;
+                if (!userData || currentUserData?.uid !== user.uid) {
+                    console.log('📊 Carregando dados do usuário do Firestore...');
+                    userData = await loadUserData(user.uid);
                 currentUserData = userData;
-            }
-            
+                }
+                
             // Atualizar nome do usuário
-            updateUserDisplayName(user, userData);
+                updateUserDisplayName(user, userData);
         }
 
         // Função para atualizar elementos para usuário deslogado

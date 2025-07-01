@@ -5,7 +5,7 @@ function updateUserDisplayName(user, userData = null) {
 
     // Definir nome a ser exibido
     let displayName = '';
-    if (userData && userData.Nome) {
+    if (userData?.Nome) {
         displayName = userData.Nome;
         console.log('  📛 Nome obtido do Firestore:', displayName);
     } else if (user.displayName) {

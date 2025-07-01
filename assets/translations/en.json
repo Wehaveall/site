@@ -233,6 +233,10 @@
       "emailExists": "This email is already registered. Try logging in.",
       "serverError": "Error connecting to our servers. Try reloading the page.",
       "close": "❌ Close"
+    },
+    "emailMatch": {
+      "match": "✅ Emails match",
+      "noMatch": "❌ Emails do not match"
     }
   },
   "purchase": {

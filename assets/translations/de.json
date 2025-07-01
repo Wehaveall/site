@@ -233,6 +233,10 @@
       "emailExists": "Diese E-Mail ist bereits registriert. Versuchen Sie sich anzumelden.",
       "serverError": "Fehler beim Verbinden mit unseren Servern. Versuchen Sie, die Seite neu zu laden.",
       "close": "❌ Schließen"
+    },
+    "emailMatch": {
+      "match": "✅ E-Mails stimmen überein",
+      "noMatch": "❌ E-Mails stimmen nicht überein"
     }
   },
   "purchase": {

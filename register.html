@@ -871,11 +871,20 @@
             feedback.style.display = 'block';
             
             if (email === confirmEmail) {
-                feedback.textContent = '✅ E-mails coincidem';
+                feedback.setAttribute('data-i18n', 'register.emailMatch.match');
                 feedback.style.color = '#4CAF50';
             } else {
-                feedback.textContent = '❌ E-mails não coincidem';
+                feedback.setAttribute('data-i18n', 'register.emailMatch.noMatch');
                 feedback.style.color = '#f44336';
+            }
+            
+            // Aplicar tradução
+            if (i18nSystem) {
+                i18nSystem.applyTranslations();
+            } else {
+                feedback.textContent = email === confirmEmail ? 
+                    '✅ E-mails coincidem' : 
+                    '❌ E-mails não coincidem';
             }
         }
 

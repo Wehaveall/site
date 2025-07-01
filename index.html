@@ -228,10 +228,6 @@
                 
                 if (userDoc.exists) {
                     currentUserData = userDoc.data();
-                    // Garante que o campo 'name' exista, mesmo que seja 'Nome' no Firestore
-                    if (currentUserData.Nome && !currentUserData.name) {
-                        currentUserData.name = currentUserData.Nome;
-                    }
                     console.log('✅ Dados do usuário carregados:', currentUserData);
                     return currentUserData;
                 } else {
@@ -244,10 +240,6 @@
                     
                     if (!emailQuery.empty) {
                         currentUserData = emailQuery.docs[0].data();
-                         // Garante que o campo 'name' exista
-                        if (currentUserData.Nome && !currentUserData.name) {
-                            currentUserData.name = currentUserData.Nome;
-                        }
                         console.log('✅ Dados encontrados por email:', currentUserData);
                         return currentUserData;
                     }
@@ -323,20 +315,20 @@
                     displayName = user.email.split('@')[0];
                     console.log('  📛 Nome obtido do email:', displayName);
                 }
-                
-                if (navUserName) {
-                    const nameParts = displayName.split(' ');
-                    const firstName = nameParts[0];
-                    const lastName = nameParts.slice(1).join(' ');
 
+                // Separar nome em duas linhas
+                const nameParts = displayName.split(' ');
+                const firstName = nameParts[0];
+                const lastName = nameParts.slice(1).join(' ');
+
+                if (navUserName) {
                     navUserName.innerHTML = `
                         <div class="nav-user-name">
                             <span class="first-name">${firstName}</span>
-                            <span class="last-name">${lastName}</span>
+                            ${lastName ? `<span class="last-name">${lastName}</span>` : ''}
                         </div>
                     `;
-                    navUserName.style.padding = '0'; // Remove padding do <a> para ajustar
-                    navUserName.title = displayName; // Tooltip com nome completo
+                    navUserName.title = userData?.name || user.email || 'Usuário'; // Tooltip com nome completo
                     console.log('  ✅ Nome definido no elemento:', displayName);
                 }
                 

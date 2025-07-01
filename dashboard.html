@@ -306,7 +306,7 @@
                 userNameElement.innerHTML = `
                     <div class="nav-user-name">
                         <span class="first-name">${firstName}</span>
-                        <span class="last-name">${lastName}</span>
+                        ${lastName ? `<span class="last-name">${lastName}</span>` : ''}
                     </div>
                 `;
                 userNameElement.style.padding = '0';  // Remover padding padrão do link

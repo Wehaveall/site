@@ -276,8 +276,8 @@ class AtalhoI18n {
             } else if (element.hasAttribute('placeholder')) {
                 element.placeholder = translated;
             } else {
-                // Verificar se contém HTML (como <br/>)
-                if (translated.includes('<br/>') || translated.includes('<br>')) {
+                // Verificar se contém HTML (tags HTML como <span>, <br/>, etc.)
+                if (translated.includes('<') && translated.includes('>')) {
                     element.innerHTML = translated;
                 } else {
                     element.textContent = translated;

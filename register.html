@@ -1076,14 +1076,14 @@
                         // ✨ NOVO: Detecção de idioma com prioridades
                         console.log('🌍 Iniciando detecção de idioma com prioridades...');
                         let selectedLanguage = 'pt-br';
-
+                        
                         // Prioridade 1: Idioma definido no dropdown
                         if (window.i18nSystem) {
                             selectedLanguage = window.i18nSystem.getCurrentLanguage();
                             console.log('🌍 Usando idioma do dropdown:', selectedLanguage);
                         }
                         // Prioridade 2: Idioma do navegador
-                        else {
+                            else {
                             const browserLang = navigator.language || navigator.userLanguage;
                             const browserLangMap = {
                                 'pt': 'pt-br',

@@ -6,42 +6,28 @@
   "header": {
     "home": "Home",
     "features": "Caratteristiche",
-    "tutorials": "Tutorial",
-    "downloads": "Download Librerie",
+    "tutorials": "Tutorial", 
+    "downloads": "Download<br/>Librerie",
     "register": "Registrati",
     "login": "Accedi",
+    "dashboard": "Dashboard",
     "logout": "Esci",
     "buy": "Acquista"
   },
   "hero": {
-    "title": "Trasforma la tua <span class='highlight'>produttività</span> con Atalho",
-    "subtitle": "Lo strumento definitivo per l'espansione del testo e l'automazione che accelera il tuo flusso di lavoro",
-    "description": "Trasforma il tuo modo di scrivere con l'espansione automatica del testo. Standardizza i documenti e aumenta la tua produttività in pochi secondi!",
-    "cta": "Acquista Ora",
-    "watchDemo": "Guarda Demo",
-    "trustedBy": "Fidato dai professionisti"
+    "title": "Atalho",
+    "subtitle": "Il percorso più breve tra quello che pensi e quello che digiti.",
+    "description": "Trasforma il tuo modo di scrivere con l'espansione automatica del testo. Standardizza i documenti e aumenta la tua produttività in pochi secondi!"
   },
   "features": {
-    "title": "Caratteristiche che fanno la differenza",
-    "subtitle": "Scopri come Atalho può rivoluzionare il tuo modo di lavorare",
-    "textExpansion": {
-      "title": "Espansione di Testo Intelligente",
-      "description": "Crea scorciatoie per testi, frasi o persino documenti interi. Digita meno, produci di più."
-    },
+    "title": "Caratteristiche Principali",
+    "subtitle": "Scopri come Atalho può rivoluzionare il tuo flusso di lavoro",
     "expansion": {
       "title": "Espansione Automatica",
-      "description": "Trasforma piccole scorciatoie in testi completi all'istante, risparmiando tempo prezioso ad ogni digitazione."
-    },
-    "automation": {
-      "title": "Automazione Avanzata",
-      "description": "Automatizza compiti ripetitivi e guadagna ore di produttività ogni giorno."
-    },
-    "databases": {
-      "title": "Database Personalizzabili",
-      "description": "Organizza le tue informazioni in database intelligenti e accedi rapidamente."
+      "description": "Trasforma piccole scorciatoie in testi completi istantaneamente, risparmiando tempo prezioso ad ogni digitazione."
     },
     "database": {
-      "title": "Banche Personalizzate",
+      "title": "Librerie Personalizzate", 
       "description": "Crea le tue librerie di frasi e termini tecnici, adattando Atalho al tuo flusso di lavoro."
     },
     "formatting": {
@@ -49,8 +35,8 @@
       "description": "Usa tag intelligenti per formattare automaticamente i tuoi testi con grassetto, corsivo e molto altro."
     },
     "integration": {
-      "title": "Integrazione Perfetta",
-      "description": "Funziona su qualsiasi applicazione Windows. Word, Excel, browser e molto altro."
+      "title": "Integrazione Office",
+      "description": "Compatibilità totale con Microsoft Word e altri editor, mantenendo la tua esperienza familiare."
     }
   },
   "cta": {
@@ -289,8 +275,8 @@
     "close": "Chiudi"
   },
   "dashboard": {
-    "title": "Dashboard - Atalho",
-    "welcome": "Benvenuto nella Dashboard",
+    "title": "Pannello di Controllo - Atalho",
+    "welcome": "Benvenuto nel Pannello di Controllo",
     "personalInfo": "👤 Informazioni Personali",
     "accountInfo": "Informazioni Account",
     "fields": {
@@ -304,66 +290,6 @@
     },
     "noData": "Dati non disponibili",
     "loading": "Caricamento...",
-    "logout": "Disconnetti"
-  },
-  "success": {
-    "title": "Registrazione Completata con Successo - Atalho",
-    "congratulations": "Congratulazioni! Il tuo pagamento è stato confermato e il tuo account è stato creato con successo.",
-    "fullAccess": "Ora hai accesso completo ad Atalho e puoi iniziare a ottimizzare la tua produttività.",
-    "loadingUserInfo": "Caricamento informazioni utente...",
-    "registeredEmail": "Email registrata:",
-    "userId": "ID utente:",
-    "notAvailable": "Non disponibile",
-    "noInfoRetrieved": "Non è stato possibile recuperare le tue informazioni.",
-    "checkEmailForDetails": "Controlla la tua email per i dettagli del tuo account.",
-    "nextSteps": "Prossimi passi:",
-    "downloadApp": "Scarica l'app Atalho per iniziare ad usare",
-    "accessTutorials": "Accedi alla sezione tutorial per imparare ad usare tutte le funzionalità",
-    "downloadLibraries": "Scarica le librerie di termini per il tuo settore",
-    "emailInstructions": "Riceverai un'email con istruzioni dettagliate",
-    "downloadButton": "Scarica Atalho",
-    "backToHome": "Torna alla Home"
-  },
-  "emailVerification": {
-    "title": "Verifica Email - Atalho",
-    "verifying": "Verifica della tua email...",
-    "autoVerified": {
-      "title": "Email verificata automaticamente!",
-      "message": "Il tuo account è stato attivato con successo. Reindirizzamento al login..."
-    },
-    "success": {
-      "title": "Email verificata con successo!",
-      "syncing": "Sincronizzazione dati account...",
-      "accountActivated": "Account attivato con successo!",
-      "status": "Stato:",
-      "active": "Attivo",
-      "pending": "In sospeso",
-      "canLogin": "Ora puoi fare login normalmente."
-    },
-    "error": {
-      "title": "Errore di Verifica",
-      "invalidLink": "Link di verifica non valido o scaduto. Richiedi una nuova email di verifica.",
-      "expiredLink": "Link di verifica scaduto. Richiedi una nuova email di verifica.",
-      "accountDisabled": "Questo account è stato disabilitato. Contatta il supporto.",
-      "general": "Si è verificato un errore durante la verifica dell'email."
-    },
-    "buttons": {
-      "goToLogin": "Vai al Login"
-    }
-  },
-  "pricing": {
-    "title": "Prezzi Semplici e Giusti",
-    "subtitle": "Un investimento che si ripaga in produttività",
-    "price": "19,90€",
-    "period": "licenza annuale",
-    "features": [
-      "Espansione testo illimitata",
-      "Database personalizzabili",
-      "Automazione avanzata",
-      "Integrazione Word",
-      "Supporto prioritario",
-      "Aggiornamenti a vita"
-    ],
-    "cta": "Acquista Ora"
+    "logout": "Esci"
   }
 } 

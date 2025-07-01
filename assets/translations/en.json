@@ -1,79 +1,49 @@
 {
   "meta": {
-    "title": "Atalho - Productivity and Automation Tool",
-    "description": "Increase your productivity with Atalho. Text expansion, automation and much more.",
-    "keywords": "productivity, automation, text, expansion, tool"
+    "title": "Atalho - Write more by typing less",
+    "description": "Atalho - The tool that optimizes your typing with automatic text expansion"
   },
   "header": {
     "home": "Home",
     "features": "Features",
-    "tutorials": "Tutorials",
-    "downloads": "Library Downloads",
-    "register": "Register",
-    "login": "Login",
-    "logout": "Logout",
+    "tutorials": "Tutorials", 
+    "downloads": "Library<br/>Downloads",
+    "register": "Sign Up",
+    "login": "Sign In",
+    "dashboard": "Dashboard",
+    "logout": "Sign Out",
     "buy": "Buy"
   },
   "hero": {
-    "title": "Transform your <span class='highlight'>productivity</span> with Atalho",
-    "subtitle": "The ultimate tool for text expansion and automation that accelerates your workflow",
-    "description": "Transform your way of writing with automatic text expansion. Standardize documents and increase your productivity in seconds!",
-    "cta": "Buy Now",
-    "watchDemo": "Watch Demo",
-    "trustedBy": "Trusted by professionals"
+    "title": "Atalho",
+    "subtitle": "The shortest path between what you think and what you type.",
+    "description": "Transform your writing with automatic text expansion. Standardize documents and boost your productivity in seconds!"
   },
   "features": {
-    "title": "Features that make a difference",
-    "subtitle": "Discover how Atalho can revolutionize your way of working",
-    "textExpansion": {
-      "title": "Smart Text Expansion",
-      "description": "Create shortcuts for texts, phrases or even entire documents. Type less, produce more."
-    },
+    "title": "Main Features",
+    "subtitle": "Discover how Atalho can revolutionize your workflow",
     "expansion": {
       "title": "Automatic Expansion",
-      "description": "Transform small shortcuts into complete texts instantly, saving precious time with each keystroke."
-    },
-    "automation": {
-      "title": "Advanced Automation",
-      "description": "Automate repetitive tasks and gain hours of productivity every day."
-    },
-    "databases": {
-      "title": "Customizable Databases",
-      "description": "Organize your information in smart databases and access quickly."
+      "description": "Transform small shortcuts into complete texts instantly, saving precious time with every keystroke."
     },
     "database": {
-      "title": "Custom Banks",
+      "title": "Custom Libraries", 
       "description": "Create your own libraries of phrases and technical terms, adapting Atalho to your workflow."
     },
     "formatting": {
       "title": "Advanced Formatting",
-      "description": "Use smart tags to format your texts automatically with bold, italic and much more."
+      "description": "Use smart tags to automatically format your texts with bold, italic and much more."
     },
     "integration": {
-      "title": "Perfect Integration",
-      "description": "Works on any Windows application. Word, Excel, browsers and much more."
+      "title": "Office Integration",
+      "description": "Full compatibility with Microsoft Word and other editors, maintaining your familiar experience."
     }
   },
   "cta": {
-    "title": "Ready to increase your productivity?",
+    "title": "Ready to boost your productivity?",
     "subtitle": "Join thousands of professionals who have already optimized their workflow",
-    "start": "Start Now",
+    "start": "Get Started",
     "learn": "Learn More"
-  },
-  "pricing": {
-    "title": "Simple and Fair Pricing",
-    "subtitle": "An investment that pays for itself in productivity",
-    "price": "$19.90",
-    "period": "annual license",
-    "features": [
-      "Unlimited text expansion",
-      "Customizable databases",
-      "Advanced automation",
-      "Word integration",
-      "Priority support",
-      "Lifetime updates"
-    ],
-    "cta": "Buy Now"
   },
   "footer": {
     "rights": "© 2025 Atalho App. All rights reserved.",
@@ -162,28 +132,6 @@
       "checkEmail": "Check your inbox and also your spam folder",
       "validTime": "The link is valid for 1 hour",
       "backToLogin": "Back to Login"
-    },
-    "newPassword": {
-      "title": "New Password - Atalho",
-      "heading": "Create New Password",
-      "subtitle": "Enter your new password below",
-      "emailLabel": "Resetting password for:",
-      "newPasswordLabel": "New Password",
-      "confirmPasswordLabel": "Confirm New Password",
-      "confirmButton": "Confirm New Password",
-      "requirements": {
-        "title": "Password requirements:",
-        "length": "Minimum 8 characters",
-        "uppercase": "At least 1 uppercase letter",
-        "lowercase": "At least 1 lowercase letter",
-        "number": "At least 1 number",
-        "symbol": "At least 1 symbol (!@#$%^&*)"
-      },
-      "success": {
-        "title": "Password changed successfully!",
-        "message": "Your password has been reset. You can now log in with your new password.",
-        "redirecting": "Redirecting to login..."
-      }
     },
     "errors": {
       "emptyEmail": "Please enter your email",
@@ -283,51 +231,6 @@
       "title": "Error",
       "message": "An error occurred. Please try again.",
       "close": "Close"
-    }
-  },
-  "success": {
-    "title": "Registration Completed Successfully - Atalho",
-    "congratulations": "Congratulations! Your payment has been confirmed and your account has been created successfully.",
-    "fullAccess": "You now have full access to Atalho and can start optimizing your productivity.",
-    "loadingUserInfo": "Loading user information...",
-    "registeredEmail": "Registered email:",
-    "userId": "User ID:",
-    "notAvailable": "Not available",
-    "noInfoRetrieved": "Could not retrieve your information.",
-    "checkEmailForDetails": "Check your email for details about your account.",
-    "nextSteps": "Next steps:",
-    "downloadApp": "Download the Atalho app to start using",
-    "accessTutorials": "Access the tutorials section to learn how to use all features",
-    "downloadLibraries": "Download term libraries for your industry",
-    "emailInstructions": "You will receive an email with detailed instructions",
-    "downloadButton": "Download Atalho",
-    "backToHome": "Back to Home"
-  },
-  "emailVerification": {
-    "title": "Email Verification - Atalho",
-    "verifying": "Verifying your email...",
-    "autoVerified": {
-      "title": "Email verified automatically!",
-      "message": "Your account has been activated successfully. Redirecting to login..."
-    },
-    "success": {
-      "title": "Email verified successfully!",
-      "syncing": "Syncing account data...",
-      "accountActivated": "Account activated successfully!",
-      "status": "Status:",
-      "active": "Active",
-      "pending": "Pending",
-      "canLogin": "You can now log in normally."
-    },
-    "error": {
-      "title": "Verification Error",
-      "invalidLink": "Invalid or expired verification link. Request a new verification email.",
-      "expiredLink": "Expired verification link. Request a new verification email.",
-      "accountDisabled": "This account has been disabled. Contact support.",
-      "general": "An error occurred during email verification."
-    },
-    "buttons": {
-      "goToLogin": "Go to Login"
     }
   },
   "nav": {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="emailVerification.title">Verificação de Email - Atalho</title>
+    <title>Verificação de Email - Atalho</title>
     <link rel="icon" type="image/png" href="assets/img/logo.svg">
     
     <style>
@@ -115,15 +115,15 @@
     <div class="container">
         <div class="logo"><img src="assets/img/Atalho.png" alt="Logo Atalho" style="width: 80px; height: 80px; object-fit: contain;"></div>
         <h1>Atalho</h1>
-        <p data-i18n="emailVerification.title">Verificação de Email</p>
+        <p>Verificação de Email</p>
 
         <div id="status" class="status loading">
             <div class="spinner"></div>
-            <div data-i18n="emailVerification.verifying">Verificando seu email...</div>
+            <div>Verificando seu email...</div>
         </div>
 
         <div id="actions" style="display: none;">
-            <a href="login.html" class="btn" data-i18n="emailVerification.buttons.goToLogin">Ir para Login</a>
+            <a href="login.html" class="btn">Ir para Login</a>
         </div>
     </div>
 
@@ -133,19 +133,13 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
     <script src="assets/js/firebase.js"></script>
-    
-    <!-- Sistema de Tradução -->
-    <script src="assets/js/i18n.js"></script>
 
     <script>
+
+
         // Função principal de inicialização
         async function initializeApp() {
             try {
-                // Aguardar o sistema de tradução inicializar
-                if (window.atalhoI18n) {
-                    await window.atalhoI18n.init();
-                }
-
                 // Usar a mesma abordagem assíncrona dos outros arquivos
                 const { auth } = await getFirebaseServices();
                 
@@ -155,13 +149,8 @@
                 handleEmailVerification(auth);
             } catch (error) {
                 console.error("❌ Erro ao inicializar Firebase:", error);
-                showStatus('error', t('emailVerification.error.general'));
+                showStatus('error', 'Erro crítico na inicialização. Não foi possível carregar a configuração.');
             }
-        }
-
-        // Função para obter tradução
-        function t(key, fallback = '') {
-            return window.t ? window.t(key) : fallback || key;
         }
 
         // Função para forçar sincronização imediata usando oobCode
@@ -259,9 +248,9 @@
                     console.log('🔄 Verificação automática detectada - redirecionando para login');
                     showStatus('success', `
                         <div style="font-size: 3rem; margin-bottom: 15px;">✅</div>
-                        <div><strong>${t('emailVerification.autoVerified.title')}</strong></div>
+                        <div><strong>Email verificado automaticamente!</strong></div>
                         <div style="margin-top: 10px; font-size: 0.9rem;">
-                            ${t('emailVerification.autoVerified.message')}
+                            Sua conta foi ativada com sucesso. Redirecionando para login...
                         </div>
                     `);
                     
@@ -301,9 +290,9 @@
                     // Aguardar um pouco para o Firebase Auth processar
                     showStatus('success', `
                         <div style="font-size: 2rem; margin-bottom: 10px;">✅</div>
-                        <div><strong>${t('emailVerification.success.title')}</strong></div>
+                        <div><strong>Email verificado com sucesso!</strong></div>
                         <div style="margin-top: 10px; font-size: 0.9rem;">
-                            ${t('emailVerification.success.syncing')}
+                            Sincronizando dados da conta...
                         </div>
                     `);
                     
@@ -314,18 +303,18 @@
                         if (syncResult && syncResult.success) {
                             showStatus('success', `
                                 <div style="font-size: 3rem; margin-bottom: 15px;">🎉</div>
-                                <div><strong>${t('emailVerification.success.accountActivated')}</strong></div>
+                                <div><strong>Conta ativada com sucesso!</strong></div>
                                 <div style="margin-top: 10px; font-size: 0.9rem;">
-                                    ${t('emailVerification.success.status')} ${syncResult.account_status === 'active' ? t('emailVerification.success.active') : t('emailVerification.success.pending')}<br>
-                                    ${t('emailVerification.success.canLogin')}
+                                    Status: ${syncResult.account_status === 'active' ? 'Ativo' : 'Pendente'}<br>
+                                    Agora você pode fazer login normalmente.
                                 </div>
                             `);
                         } else {
                             showStatus('success', `
                                 <div style="font-size: 3rem; margin-bottom: 15px;">✅</div>
-                                <div><strong>${t('emailVerification.success.title')}</strong></div>
+                                <div><strong>Email verificado com sucesso!</strong></div>
                                 <div style="margin-top: 10px; font-size: 0.9rem;">
-                                    ${t('emailVerification.success.canLogin')}
+                                    Sua conta foi ativada. Agora você pode fazer login normalmente.
                                 </div>
                             `);
                         }
@@ -350,19 +339,19 @@
             } catch (error) {
                 console.error('❌ Erro na verificação:', error);
                 
-                let errorMessage = t('emailVerification.error.general');
+                let errorMessage = 'Ocorreu um erro na verificação do email.';
                 
                 if (error.code === 'auth/invalid-action-code') {
-                    errorMessage = t('emailVerification.error.invalidLink');
+                    errorMessage = 'Link de verificação inválido ou expirado. Solicite um novo email de verificação.';
                 } else if (error.code === 'auth/expired-action-code') {
-                    errorMessage = t('emailVerification.error.expiredLink');
+                    errorMessage = 'Link de verificação expirado. Solicite um novo email de verificação.';
                 } else if (error.code === 'auth/user-disabled') {
-                    errorMessage = t('emailVerification.error.accountDisabled');
+                    errorMessage = 'Esta conta foi desabilitada. Entre em contato com o suporte.';
                 }
 
                 showStatus('error', `
                     <div style="font-size: 3rem; margin-bottom: 15px;">❌</div>
-                    <div><strong>${t('emailVerification.error.title')}</strong></div>
+                    <div><strong>Erro na Verificação</strong></div>
                     <div style="margin-top: 10px; font-size: 0.9rem;">
                         ${errorMessage}
                     </div>

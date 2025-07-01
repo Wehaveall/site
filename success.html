@@ -88,42 +88,50 @@
 <body>
     <div class="success-container">
         <div class="success-icon">✓</div>
-        <h1 data-i18n="success.heading">Cadastro realizado com sucesso!</h1>
-        <p data-i18n="success.description">
+        <h1 data-i18n="success.title">Cadastro realizado com sucesso!</h1>
+        <p data-i18n="success.congratulations">
             Parabéns! Seu pagamento foi confirmado e sua conta foi criada com sucesso.
+        </p>
+        <p data-i18n="success.fullAccess">
             Agora você tem acesso completo ao Atalho e pode começar a otimizar sua produtividade.
         </p>
 
         <div id="user-info" class="user-info">
-            <p data-i18n="success.loading">Carregando informações do usuário...</p>
+            <p data-i18n="success.loadingUserInfo">Carregando informações do usuário...</p>
         </div>
 
         <div class="next-steps">
-            <h3 data-i18n="success.nextSteps.title">Próximos passos:</h3>
+            <h3 data-i18n="success.nextSteps">Próximos passos:</h3>
             <div class="next-steps-item">
-                <span data-i18n="success.nextSteps.downloadApp">➤ Baixe o aplicativo Atalho para começar a usar</span>
+                <span>➤ </span><span data-i18n="success.downloadApp">Baixe o aplicativo Atalho para começar a usar</span>
             </div>
             <div class="next-steps-item">
-                <span data-i18n="success.nextSteps.tutorials">➤ Acesse a seção de tutoriais para aprender a utilizar todas as funcionalidades</span>
+                <span>➤ </span><span data-i18n="success.accessTutorials">Acesse a seção de tutoriais para aprender a utilizar todas as funcionalidades</span>
             </div>
             <div class="next-steps-item">
-                <span data-i18n="success.nextSteps.libraries">➤ Faça o download das bibliotecas de termos para seu segmento</span>
+                <span>➤ </span><span data-i18n="success.downloadLibraries">Faça o download das bibliotecas de termos para seu segmento</span>
             </div>
             <div class="next-steps-item">
-                <span data-i18n="success.nextSteps.email">➤ Você receberá um e-mail com instruções detalhadas</span>
+                <span>➤ </span><span data-i18n="success.emailInstructions">Você receberá um e-mail com instruções detalhadas</span>
             </div>
         </div>
 
         <div style="margin-top: 30px;">
-            <a href="download.html" class="button" data-i18n="success.buttons.download">Baixar Atalho</a>
-            <a href="index.html" class="button button-secondary" data-i18n="success.buttons.home">Voltar ao Início</a>
+            <a href="download.html" class="button" data-i18n="success.downloadButton">Baixar Atalho</a>
+            <a href="index.html" class="button button-secondary" data-i18n="success.backToHome">Voltar ao Início</a>
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- Sistema de Tradução -->
     <script src="assets/js/i18n.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', async function () {
+            // Aguardar o sistema de tradução inicializar
+            if (window.atalhoI18n) {
+                await window.atalhoI18n.init();
+            }
+
             // Debug info
             console.log('Success page loaded:', window.location.href);
 
@@ -137,14 +145,16 @@
             const userInfoDiv = document.getElementById('user-info');
             if (userInfoDiv) {
                 if (userEmail) {
+                    const t = window.t || ((key) => key);
                     userInfoDiv.innerHTML = `
-                        <p>${i18nSystem.t('success.userInfo.email')}: <strong>${userEmail}</strong></p>
-                        <p>${i18nSystem.t('success.userInfo.id')}: ${userId || i18nSystem.t('success.userInfo.unavailable')}</p>
+                        <p>${t('success.registeredEmail')} <strong>${userEmail}</strong></p>
+                        <p>${t('success.userId')} ${userId || t('success.notAvailable')}</p>
                     `;
                 } else {
+                    const t = window.t || ((key) => key);
                     userInfoDiv.innerHTML = `
-                        <p>${i18nSystem.t('success.userInfo.error')}</p>
-                        <p>${i18nSystem.t('success.userInfo.checkEmail')}</p>
+                        <p>${t('success.noInfoRetrieved')}</p>
+                        <p>${t('success.checkEmailForDetails')}</p>
                     `;
                 }
             }

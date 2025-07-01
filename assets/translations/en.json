@@ -1,49 +1,79 @@
 {
   "meta": {
-    "title": "Atalho - Write more by typing less",
-    "description": "Atalho - The tool that optimizes your typing with automatic text expansion"
+    "title": "Atalho - Productivity and Automation Tool",
+    "description": "Increase your productivity with Atalho. Text expansion, automation and much more.",
+    "keywords": "productivity, automation, text, expansion, tool"
   },
   "header": {
     "home": "Home",
     "features": "Features",
-    "tutorials": "Tutorials", 
-    "downloads": "Library<br/>Downloads",
-    "register": "Sign Up",
-    "login": "Sign In",
-    "dashboard": "Dashboard",
-    "logout": "Sign Out",
+    "tutorials": "Tutorials",
+    "downloads": "Library Downloads",
+    "register": "Register",
+    "login": "Login",
+    "logout": "Logout",
     "buy": "Buy"
   },
   "hero": {
-    "title": "Atalho",
-    "subtitle": "The shortest path between what you think and what you type.",
-    "description": "Transform your writing with automatic text expansion. Standardize documents and boost your productivity in seconds!"
+    "title": "Transform your <span class='highlight'>productivity</span> with Atalho",
+    "subtitle": "The ultimate tool for text expansion and automation that accelerates your workflow",
+    "description": "Transform your way of writing with automatic text expansion. Standardize documents and increase your productivity in seconds!",
+    "cta": "Buy Now",
+    "watchDemo": "Watch Demo",
+    "trustedBy": "Trusted by professionals"
   },
   "features": {
-    "title": "Main Features",
-    "subtitle": "Discover how Atalho can revolutionize your workflow",
+    "title": "Features that make a difference",
+    "subtitle": "Discover how Atalho can revolutionize your way of working",
+    "textExpansion": {
+      "title": "Smart Text Expansion",
+      "description": "Create shortcuts for texts, phrases or even entire documents. Type less, produce more."
+    },
     "expansion": {
       "title": "Automatic Expansion",
-      "description": "Transform small shortcuts into complete texts instantly, saving precious time with every keystroke."
+      "description": "Transform small shortcuts into complete texts instantly, saving precious time with each keystroke."
+    },
+    "automation": {
+      "title": "Advanced Automation",
+      "description": "Automate repetitive tasks and gain hours of productivity every day."
+    },
+    "databases": {
+      "title": "Customizable Databases",
+      "description": "Organize your information in smart databases and access quickly."
     },
     "database": {
-      "title": "Custom Libraries", 
+      "title": "Custom Banks",
       "description": "Create your own libraries of phrases and technical terms, adapting Atalho to your workflow."
     },
     "formatting": {
       "title": "Advanced Formatting",
-      "description": "Use smart tags to automatically format your texts with bold, italic and much more."
+      "description": "Use smart tags to format your texts automatically with bold, italic and much more."
     },
     "integration": {
-      "title": "Office Integration",
-      "description": "Full compatibility with Microsoft Word and other editors, maintaining your familiar experience."
+      "title": "Perfect Integration",
+      "description": "Works on any Windows application. Word, Excel, browsers and much more."
     }
   },
   "cta": {
-    "title": "Ready to boost your productivity?",
+    "title": "Ready to increase your productivity?",
     "subtitle": "Join thousands of professionals who have already optimized their workflow",
-    "start": "Get Started",
+    "start": "Start Now",
     "learn": "Learn More"
+  },
+  "pricing": {
+    "title": "Simple and Fair Pricing",
+    "subtitle": "An investment that pays for itself in productivity",
+    "price": "$19.90",
+    "period": "annual license",
+    "features": [
+      "Unlimited text expansion",
+      "Customizable databases",
+      "Advanced automation",
+      "Word integration",
+      "Priority support",
+      "Lifetime updates"
+    ],
+    "cta": "Buy Now"
   },
   "footer": {
     "rights": "© 2025 Atalho App. All rights reserved.",
@@ -133,6 +163,28 @@
       "validTime": "The link is valid for 1 hour",
       "backToLogin": "Back to Login"
     },
+    "newPassword": {
+      "title": "New Password - Atalho",
+      "heading": "Create New Password",
+      "subtitle": "Enter your new password below",
+      "emailLabel": "Resetting password for:",
+      "newPasswordLabel": "New Password",
+      "confirmPasswordLabel": "Confirm New Password",
+      "confirmButton": "Confirm New Password",
+      "requirements": {
+        "title": "Password requirements:",
+        "length": "Minimum 8 characters",
+        "uppercase": "At least 1 uppercase letter",
+        "lowercase": "At least 1 lowercase letter",
+        "number": "At least 1 number",
+        "symbol": "At least 1 symbol (!@#$%^&*)"
+      },
+      "success": {
+        "title": "Password changed successfully!",
+        "message": "Your password has been reset. You can now log in with your new password.",
+        "redirecting": "Redirecting to login..."
+      }
+    },
     "errors": {
       "emptyEmail": "Please enter your email",
       "invalidEmail": "Invalid email",
@@ -182,7 +234,9 @@
       "noMatch": "✗ Passwords don't match"
     },
     "emailConfirmation": {
-      "warning": "Please confirm your email before logging in. Check your inbox and spam folder."
+      "warning": "⚠️ Type your email again - Pasting is not allowed in this field",
+      "match": "✅ Emails match",
+      "noMatch": "❌ Emails don't match"
     },
     "success": {
       "title": "Account created successfully!",
@@ -190,16 +244,6 @@
       "description": "We sent a verification link to",
       "checkEmail": "Check your inbox and spam folder",
       "redirecting": "Redirecting to login..."
-    },
-    "feedback": {
-      "creatingAccount": "⏳ Creating account...",
-      "savingData": "⏳ Saving additional data...",
-      "sendingEmail": "⏳ Sending verification email...",
-      "accountCreated": "✅ Account created!",
-      "dataSaved": "✅ Data saved!",
-      "emailSent": "✅ Email sent!",
-      "error": "❌ Error: {{message}}",
-      "understand": "I understand"
     }
   },
   "purchase": {
@@ -241,6 +285,51 @@
       "close": "Close"
     }
   },
+  "success": {
+    "title": "Registration Completed Successfully - Atalho",
+    "congratulations": "Congratulations! Your payment has been confirmed and your account has been created successfully.",
+    "fullAccess": "You now have full access to Atalho and can start optimizing your productivity.",
+    "loadingUserInfo": "Loading user information...",
+    "registeredEmail": "Registered email:",
+    "userId": "User ID:",
+    "notAvailable": "Not available",
+    "noInfoRetrieved": "Could not retrieve your information.",
+    "checkEmailForDetails": "Check your email for details about your account.",
+    "nextSteps": "Next steps:",
+    "downloadApp": "Download the Atalho app to start using",
+    "accessTutorials": "Access the tutorials section to learn how to use all features",
+    "downloadLibraries": "Download term libraries for your industry",
+    "emailInstructions": "You will receive an email with detailed instructions",
+    "downloadButton": "Download Atalho",
+    "backToHome": "Back to Home"
+  },
+  "emailVerification": {
+    "title": "Email Verification - Atalho",
+    "verifying": "Verifying your email...",
+    "autoVerified": {
+      "title": "Email verified automatically!",
+      "message": "Your account has been activated successfully. Redirecting to login..."
+    },
+    "success": {
+      "title": "Email verified successfully!",
+      "syncing": "Syncing account data...",
+      "accountActivated": "Account activated successfully!",
+      "status": "Status:",
+      "active": "Active",
+      "pending": "Pending",
+      "canLogin": "You can now log in normally."
+    },
+    "error": {
+      "title": "Verification Error",
+      "invalidLink": "Invalid or expired verification link. Request a new verification email.",
+      "expiredLink": "Expired verification link. Request a new verification email.",
+      "accountDisabled": "This account has been disabled. Contact support.",
+      "general": "An error occurred during email verification."
+    },
+    "buttons": {
+      "goToLogin": "Go to Login"
+    }
+  },
   "nav": {
     "home": "Home",
     "features": "Features",
@@ -277,56 +366,5 @@
     "noData": "Data not available",
     "loading": "Loading...",
     "logout": "Logout"
-  },
-  "success": {
-    "title": "Registration Completed Successfully",
-    "heading": "Registration completed successfully!",
-    "description": "Congratulations! Your payment has been confirmed and your account has been created successfully. Now you have full access to Atalho and can start optimizing your productivity.",
-    "loading": "Loading user information...",
-    "nextSteps": {
-      "title": "Next steps:",
-      "downloadApp": "➤ Download the Atalho app to get started",
-      "tutorials": "➤ Access the tutorials section to learn how to use all features",
-      "libraries": "➤ Download the term libraries for your segment",
-      "email": "➤ You will receive an email with detailed instructions"
-    },
-    "buttons": {
-      "download": "Download Atalho",
-      "home": "Back to Home"
-    },
-    "userInfo": {
-      "email": "Registered email",
-      "id": "User ID",
-      "unavailable": "Not available",
-      "error": "Could not retrieve your information.",
-      "checkEmail": "Check your email for account details."
-    }
-  },
-  "emailVerification": {
-    "title": "Email Verification",
-    "loading": "Verifying your email...",
-    "loginButton": "Go to Login",
-    "autoVerified": {
-      "title": "Email automatically verified!",
-      "message": "Your account has been successfully activated. Redirecting to login..."
-    },
-    "verifying": {
-      "title": "Email successfully verified!",
-      "message": "Synchronizing account data..."
-    },
-    "verified": {
-      "title": "Account successfully activated!",
-      "status": "Status:",
-      "active": "Active",
-      "pending": "Pending",
-      "login": "You can now log in normally."
-    },
-    "errors": {
-      "title": "Verification Error",
-      "general": "An error occurred while verifying your email.",
-      "invalidCode": "Invalid or expired verification link. Request a new verification email.",
-      "expiredCode": "Expired verification link. Request a new verification email.",
-      "disabled": "This account has been disabled. Contact support."
-    }
   }
 } 

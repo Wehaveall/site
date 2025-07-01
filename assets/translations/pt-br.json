@@ -1,33 +1,48 @@
 {
   "meta": {
-    "title": "Atalho - Escreva mais digitando menos",
-    "description": "Atalho - A ferramenta que otimiza sua digitação com expansão automática de texto"
+    "title": "Atalho - Ferramenta de Produtividade e Automação",
+    "description": "Aumente sua produtividade com o Atalho. Expansão de texto, automação e muito mais.",
+    "keywords": "produtividade, automação, texto, expansão, ferramenta"
   },
   "header": {
     "home": "Início",
     "features": "Recursos",
-    "tutorials": "Tutoriais", 
-    "downloads": "Downloads<br/>Bibliotecas",
+    "tutorials": "Tutoriais",
+    "downloads": "Downloads de Bibliotecas",
     "register": "Cadastro",
     "login": "Entrar",
-    "dashboard": "Dashboard",
     "logout": "Sair",
     "buy": "Comprar"
   },
   "hero": {
-    "title": "Atalho",
-    "subtitle": "O caminho mais curto entre o que você pensa e o que digita.",
-    "description": "Transforme sua forma de escrever com expansão automática de texto. Padronize documentos e aumente sua produtividade em segundos!"
+    "title": "Transforme sua <span class='highlight'>produtividade</span> com o Atalho",
+    "subtitle": "A ferramenta definitiva para expansão de texto e automação que acelera seu fluxo de trabalho",
+    "description": "Transforme sua forma de escrever com expansão automática de texto. Padronize documentos e aumente sua produtividade em segundos!",
+    "cta": "Comprar Agora",
+    "watchDemo": "Ver Demo",
+    "trustedBy": "Confiado por profissionais"
   },
   "features": {
-    "title": "Recursos Principais",
+    "title": "Recursos que fazem a diferença",
     "subtitle": "Descubra como o Atalho pode revolucionar sua forma de trabalhar",
+    "textExpansion": {
+      "title": "Expansão de Texto Inteligente",
+      "description": "Crie atalhos para textos, frases ou até documentos inteiros. Digite menos, produza mais."
+    },
     "expansion": {
       "title": "Expansão Automática",
       "description": "Transforme pequenos atalhos em textos completos instantaneamente, economizando tempo precioso em cada digitação."
     },
+    "automation": {
+      "title": "Automação Avançada",
+      "description": "Automatize tarefas repetitivas e ganhe horas de produtividade todos os dias."
+    },
+    "databases": {
+      "title": "Bases de Dados Personalizáveis",
+      "description": "Organize suas informações em bases de dados inteligentes e acesse rapidamente."
+    },
     "database": {
-      "title": "Bancos Personalizados", 
+      "title": "Bancos Personalizados",
       "description": "Crie suas próprias bibliotecas de frases e termos técnicos, adaptando o Atalho ao seu fluxo de trabalho."
     },
     "formatting": {
@@ -35,8 +50,8 @@
       "description": "Use tags inteligentes para formatar seus textos automaticamente com negrito, itálico e muito mais."
     },
     "integration": {
-      "title": "Integração Office",
-      "description": "Compatibilidade total com Microsoft Word e outros editores, mantendo sua experiência familiar."
+      "title": "Integração Perfeita",
+      "description": "Funciona em qualquer aplicativo do Windows. Word, Excel, navegadores e muito mais."
     }
   },
   "cta": {
@@ -44,6 +59,21 @@
     "subtitle": "Junte-se a milhares de profissionais que já otimizaram seu fluxo de trabalho",
     "start": "Começar Agora",
     "learn": "Saiba Mais"
+  },
+  "pricing": {
+    "title": "Preço Simples e Justo",
+    "subtitle": "Um investimento que se paga em produtividade",
+    "price": "R$ 49,90",
+    "period": "licença anual",
+    "features": [
+      "Expansão de texto ilimitada",
+      "Bases de dados personalizáveis",
+      "Automação avançada",
+      "Integração com Word",
+      "Suporte prioritário",
+      "Atualizações vitalícias"
+    ],
+    "cta": "Comprar Agora"
   },
   "footer": {
     "rights": "© 2025 Atalho App. Todos os direitos reservados.",
@@ -203,25 +233,17 @@
       "match": "✓ As senhas coincidem",
       "noMatch": "✗ As senhas não coincidem"
     },
+    "emailConfirmation": {
+      "warning": "⚠️ Digite seu e-mail novamente - Não é permitido colar neste campo",
+      "match": "✅ E-mails coincidem",
+      "noMatch": "❌ E-mails não coincidem"
+    },
     "success": {
       "title": "Conta criada com sucesso!",
       "subtitle": "Verifique seu email para ativar sua conta",
       "description": "Enviamos um link de verificação para",
       "checkEmail": "Verifique sua caixa de entrada e spam",
       "redirecting": "Redirecionando para o login..."
-    },
-    "feedback": {
-      "creatingAccount": "⏳ Criando conta...",
-      "savingData": "⏳ Salvando dados adicionais...",
-      "sendingEmail": "⏳ Enviando email de verificação...",
-      "accountCreated": "✅ Conta criada!",
-      "dataSaved": "✅ Dados salvos!",
-      "emailSent": "✅ Email enviado!",
-      "error": "❌ Erro: {{message}}",
-      "understand": "Entendi"
-    },
-    "emailConfirmation": {
-      "warning": "Por favor, confirme seu email antes de fazer login. Verifique sua caixa de entrada e a pasta de spam."
     }
   },
   "purchase": {
@@ -263,6 +285,51 @@
       "close": "Fechar"
     }
   },
+  "success": {
+    "title": "Cadastro Realizado com Sucesso - Atalho",
+    "congratulations": "Parabéns! Seu pagamento foi confirmado e sua conta foi criada com sucesso.",
+    "fullAccess": "Agora você tem acesso completo ao Atalho e pode começar a otimizar sua produtividade.",
+    "loadingUserInfo": "Carregando informações do usuário...",
+    "registeredEmail": "Email cadastrado:",
+    "userId": "ID do usuário:",
+    "notAvailable": "Não disponível",
+    "noInfoRetrieved": "Não foi possível recuperar suas informações.",
+    "checkEmailForDetails": "Verifique seu e-mail para detalhes sobre sua conta.",
+    "nextSteps": "Próximos passos:",
+    "downloadApp": "Baixe o aplicativo Atalho para começar a usar",
+    "accessTutorials": "Acesse a seção de tutoriais para aprender a utilizar todas as funcionalidades",
+    "downloadLibraries": "Faça o download das bibliotecas de termos para seu segmento",
+    "emailInstructions": "Você receberá um e-mail com instruções detalhadas",
+    "downloadButton": "Baixar Atalho",
+    "backToHome": "Voltar ao Início"
+  },
+  "emailVerification": {
+    "title": "Verificação de Email - Atalho",
+    "verifying": "Verificando seu email...",
+    "autoVerified": {
+      "title": "Email verificado automaticamente!",
+      "message": "Sua conta foi ativada com sucesso. Redirecionando para login..."
+    },
+    "success": {
+      "title": "Email verificado com sucesso!",
+      "syncing": "Sincronizando dados da conta...",
+      "accountActivated": "Conta ativada com sucesso!",
+      "status": "Status:",
+      "active": "Ativo",
+      "pending": "Pendente",
+      "canLogin": "Agora você pode fazer login normalmente."
+    },
+    "error": {
+      "title": "Erro na Verificação",
+      "invalidLink": "Link de verificação inválido ou expirado. Solicite um novo email de verificação.",
+      "expiredLink": "Link de verificação expirado. Solicite um novo email de verificação.",
+      "accountDisabled": "Esta conta foi desabilitada. Entre em contato com o suporte.",
+      "general": "Ocorreu um erro na verificação do email."
+    },
+    "buttons": {
+      "goToLogin": "Ir para Login"
+    }
+  },
   "nav": {
     "home": "Início",
     "features": "Recursos",
@@ -299,56 +366,5 @@
     "noData": "Dados não disponíveis",
     "loading": "Carregando...",
     "logout": "Sair"
-  },
-  "success": {
-    "title": "Cadastro Realizado com Sucesso",
-    "heading": "Cadastro realizado com sucesso!",
-    "description": "Parabéns! Seu pagamento foi confirmado e sua conta foi criada com sucesso. Agora você tem acesso completo ao Atalho e pode começar a otimizar sua produtividade.",
-    "loading": "Carregando informações do usuário...",
-    "nextSteps": {
-      "title": "Próximos passos:",
-      "downloadApp": "➤ Baixe o aplicativo Atalho para começar a usar",
-      "tutorials": "➤ Acesse a seção de tutoriais para aprender a utilizar todas as funcionalidades",
-      "libraries": "➤ Faça o download das bibliotecas de termos para seu segmento",
-      "email": "➤ Você receberá um e-mail com instruções detalhadas"
-    },
-    "buttons": {
-      "download": "Baixar Atalho",
-      "home": "Voltar ao Início"
-    },
-    "userInfo": {
-      "email": "Email cadastrado",
-      "id": "ID do usuário",
-      "unavailable": "Não disponível",
-      "error": "Não foi possível recuperar suas informações.",
-      "checkEmail": "Verifique seu e-mail para detalhes sobre sua conta."
-    }
-  },
-  "emailVerification": {
-    "title": "Verificação de Email",
-    "loading": "Verificando seu email...",
-    "loginButton": "Ir para Login",
-    "autoVerified": {
-      "title": "Email verificado automaticamente!",
-      "message": "Sua conta foi ativada com sucesso. Redirecionando para login..."
-    },
-    "verifying": {
-      "title": "Email verificado com sucesso!",
-      "message": "Sincronizando dados da conta..."
-    },
-    "verified": {
-      "title": "Conta ativada com sucesso!",
-      "status": "Status:",
-      "active": "Ativo",
-      "pending": "Pendente",
-      "login": "Agora você pode fazer login normalmente."
-    },
-    "errors": {
-      "title": "Erro na Verificação",
-      "general": "Ocorreu um erro na verificação do email.",
-      "invalidCode": "Link de verificação inválido ou expirado. Solicite um novo email de verificação.",
-      "expiredCode": "Link de verificação expirado. Solicite um novo email de verificação.",
-      "disabled": "Esta conta foi desabilitada. Entre em contato com o suporte."
-    }
   }
 } 

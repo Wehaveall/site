@@ -6,28 +6,42 @@
   "header": {
     "home": "Home",
     "features": "Caratteristiche",
-    "tutorials": "Tutorial", 
-    "downloads": "Download<br/>Librerie",
+    "tutorials": "Tutorial",
+    "downloads": "Download Librerie",
     "register": "Registrati",
     "login": "Accedi",
-    "dashboard": "Dashboard",
     "logout": "Esci",
     "buy": "Acquista"
   },
   "hero": {
-    "title": "Atalho",
-    "subtitle": "Il percorso più breve tra quello che pensi e quello che digiti.",
-    "description": "Trasforma il tuo modo di scrivere con l'espansione automatica del testo. Standardizza i documenti e aumenta la tua produttività in pochi secondi!"
+    "title": "Trasforma la tua <span class='highlight'>produttività</span> con Atalho",
+    "subtitle": "Lo strumento definitivo per l'espansione del testo e l'automazione che accelera il tuo flusso di lavoro",
+    "description": "Trasforma il tuo modo di scrivere con l'espansione automatica del testo. Standardizza i documenti e aumenta la tua produttività in pochi secondi!",
+    "cta": "Acquista Ora",
+    "watchDemo": "Guarda Demo",
+    "trustedBy": "Fidato dai professionisti"
   },
   "features": {
-    "title": "Caratteristiche Principali",
-    "subtitle": "Scopri come Atalho può rivoluzionare il tuo flusso di lavoro",
+    "title": "Caratteristiche che fanno la differenza",
+    "subtitle": "Scopri come Atalho può rivoluzionare il tuo modo di lavorare",
+    "textExpansion": {
+      "title": "Espansione di Testo Intelligente",
+      "description": "Crea scorciatoie per testi, frasi o persino documenti interi. Digita meno, produci di più."
+    },
     "expansion": {
       "title": "Espansione Automatica",
-      "description": "Trasforma piccole scorciatoie in testi completi istantaneamente, risparmiando tempo prezioso ad ogni digitazione."
+      "description": "Trasforma piccole scorciatoie in testi completi all'istante, risparmiando tempo prezioso ad ogni digitazione."
+    },
+    "automation": {
+      "title": "Automazione Avanzata",
+      "description": "Automatizza compiti ripetitivi e guadagna ore di produttività ogni giorno."
+    },
+    "databases": {
+      "title": "Database Personalizzabili",
+      "description": "Organizza le tue informazioni in database intelligenti e accedi rapidamente."
     },
     "database": {
-      "title": "Librerie Personalizzate", 
+      "title": "Banche Personalizzate",
       "description": "Crea le tue librerie di frasi e termini tecnici, adattando Atalho al tuo flusso di lavoro."
     },
     "formatting": {
@@ -35,8 +49,8 @@
       "description": "Usa tag intelligenti per formattare automaticamente i tuoi testi con grassetto, corsivo e molto altro."
     },
     "integration": {
-      "title": "Integrazione Office",
-      "description": "Compatibilità totale con Microsoft Word e altri editor, mantenendo la tua esperienza familiare."
+      "title": "Integrazione Perfetta",
+      "description": "Funziona su qualsiasi applicazione Windows. Word, Excel, browser e molto altro."
     }
   },
   "cta": {
@@ -211,17 +225,9 @@
       "redirecting": "Reindirizzamento al login..."
     },
     "emailConfirmation": {
-      "warning": "Per favore, conferma la tua email prima di accedere. Controlla la tua casella di posta e la cartella spam."
-    },
-    "feedback": {
-      "creatingAccount": "⏳ Creazione account in corso...",
-      "savingData": "⏳ Salvataggio dati aggiuntivi...",
-      "sendingEmail": "⏳ Invio email di verifica...",
-      "accountCreated": "✅ Account creato!",
-      "dataSaved": "✅ Dati salvati!",
-      "emailSent": "✅ Email inviata!",
-      "error": "❌ Errore: {{message}}",
-      "understand": "Ho capito"
+      "warning": "⚠️ Digita nuovamente la tua email - Non è possibile incollare in questo campo",
+      "match": "✅ Le email coincidono",
+      "noMatch": "❌ Le email non coincidono"
     }
   },
   "purchase": {
@@ -283,8 +289,8 @@
     "close": "Chiudi"
   },
   "dashboard": {
-    "title": "Pannello di Controllo - Atalho",
-    "welcome": "Benvenuto nel Pannello di Controllo",
+    "title": "Dashboard - Atalho",
+    "welcome": "Benvenuto nella Dashboard",
     "personalInfo": "👤 Informazioni Personali",
     "accountInfo": "Informazioni Account",
     "fields": {
@@ -298,57 +304,66 @@
     },
     "noData": "Dati non disponibili",
     "loading": "Caricamento...",
-    "logout": "Esci"
+    "logout": "Disconnetti"
   },
   "success": {
-    "title": "Registrazione Completata con Successo",
-    "heading": "Registrazione completata con successo!",
-    "description": "Congratulazioni! Il tuo pagamento è stato confermato e il tuo account è stato creato con successo. Ora hai accesso completo ad Atalho e puoi iniziare a ottimizzare la tua produttività.",
-    "loading": "Caricamento informazioni utente...",
-    "nextSteps": {
-      "title": "Prossimi passi:",
-      "downloadApp": "➤ Scarica l'app Atalho per iniziare",
-      "tutorials": "➤ Accedi alla sezione tutorial per imparare a utilizzare tutte le funzionalità",
-      "libraries": "➤ Scarica le librerie di termini per il tuo segmento",
-      "email": "➤ Riceverai un'email con istruzioni dettagliate"
-    },
-    "buttons": {
-      "download": "Scarica Atalho",
-      "home": "Torna alla Home"
-    },
-    "userInfo": {
-      "email": "Email registrata",
-      "id": "ID utente",
-      "unavailable": "Non disponibile",
-      "error": "Impossibile recuperare le tue informazioni.",
-      "checkEmail": "Controlla la tua email per i dettagli dell'account."
-    }
+    "title": "Registrazione Completata con Successo - Atalho",
+    "congratulations": "Congratulazioni! Il tuo pagamento è stato confermato e il tuo account è stato creato con successo.",
+    "fullAccess": "Ora hai accesso completo ad Atalho e puoi iniziare a ottimizzare la tua produttività.",
+    "loadingUserInfo": "Caricamento informazioni utente...",
+    "registeredEmail": "Email registrata:",
+    "userId": "ID utente:",
+    "notAvailable": "Non disponibile",
+    "noInfoRetrieved": "Non è stato possibile recuperare le tue informazioni.",
+    "checkEmailForDetails": "Controlla la tua email per i dettagli del tuo account.",
+    "nextSteps": "Prossimi passi:",
+    "downloadApp": "Scarica l'app Atalho per iniziare ad usare",
+    "accessTutorials": "Accedi alla sezione tutorial per imparare ad usare tutte le funzionalità",
+    "downloadLibraries": "Scarica le librerie di termini per il tuo settore",
+    "emailInstructions": "Riceverai un'email con istruzioni dettagliate",
+    "downloadButton": "Scarica Atalho",
+    "backToHome": "Torna alla Home"
   },
   "emailVerification": {
-    "title": "Verifica Email",
-    "loading": "Verifica della tua email...",
-    "loginButton": "Vai al Login",
+    "title": "Verifica Email - Atalho",
+    "verifying": "Verifica della tua email...",
     "autoVerified": {
       "title": "Email verificata automaticamente!",
       "message": "Il tuo account è stato attivato con successo. Reindirizzamento al login..."
     },
-    "verifying": {
+    "success": {
       "title": "Email verificata con successo!",
-      "message": "Sincronizzazione dei dati dell'account..."
-    },
-    "verified": {
-      "title": "Account attivato con successo!",
+      "syncing": "Sincronizzazione dati account...",
+      "accountActivated": "Account attivato con successo!",
       "status": "Stato:",
       "active": "Attivo",
-      "pending": "In attesa",
-      "login": "Ora puoi accedere normalmente."
+      "pending": "In sospeso",
+      "canLogin": "Ora puoi fare login normalmente."
     },
-    "errors": {
+    "error": {
       "title": "Errore di Verifica",
-      "general": "Si è verificato un errore durante la verifica dell'email.",
-      "invalidCode": "Link di verifica non valido o scaduto. Richiedi una nuova email di verifica.",
-      "expiredCode": "Link di verifica scaduto. Richiedi una nuova email di verifica.",
-      "disabled": "Questo account è stato disabilitato. Contatta il supporto."
+      "invalidLink": "Link di verifica non valido o scaduto. Richiedi una nuova email di verifica.",
+      "expiredLink": "Link di verifica scaduto. Richiedi una nuova email di verifica.",
+      "accountDisabled": "Questo account è stato disabilitato. Contatta il supporto.",
+      "general": "Si è verificato un errore durante la verifica dell'email."
+    },
+    "buttons": {
+      "goToLogin": "Vai al Login"
     }
+  },
+  "pricing": {
+    "title": "Prezzi Semplici e Giusti",
+    "subtitle": "Un investimento che si ripaga in produttività",
+    "price": "19,90€",
+    "period": "licenza annuale",
+    "features": [
+      "Espansione testo illimitata",
+      "Database personalizzabili",
+      "Automazione avanzata",
+      "Integrazione Word",
+      "Supporto prioritario",
+      "Aggiornamenti a vita"
+    ],
+    "cta": "Acquista Ora"
   }
 } 

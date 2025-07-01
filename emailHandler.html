@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="emailVerification.title">Verifica Email - Atalho</title>
+    <title data-i18n="emailVerification.title">Verificação de Email - Atalho</title>
     <link rel="icon" type="image/png" href="assets/img/logo.svg">
     
     <style>
@@ -115,15 +115,15 @@
     <div class="container">
         <div class="logo"><img src="assets/img/Atalho.png" alt="Logo Atalho" style="width: 80px; height: 80px; object-fit: contain;"></div>
         <h1>Atalho</h1>
-        <p id="verificationTitle" data-i18n="emailVerification.title">Verificação de Email</p>
+        <p data-i18n="emailVerification.title">Verificação de Email</p>
 
         <div id="status" class="status loading">
             <div class="spinner"></div>
-            <div id="loadingText" data-i18n="emailVerification.loading">Verificando seu email...</div>
+            <div data-i18n="emailVerification.verifying">Verificando seu email...</div>
         </div>
 
         <div id="actions" style="display: none;">
-            <a href="login.html" class="btn" id="loginButton" data-i18n="emailVerification.loginButton">Ir para Login</a>
+            <a href="login.html" class="btn" data-i18n="emailVerification.buttons.goToLogin">Ir para Login</a>
         </div>
     </div>
 
@@ -133,12 +133,19 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
     <script src="assets/js/firebase.js"></script>
+    
+    <!-- Sistema de Tradução -->
     <script src="assets/js/i18n.js"></script>
 
     <script>
         // Função principal de inicialização
         async function initializeApp() {
             try {
+                // Aguardar o sistema de tradução inicializar
+                if (window.atalhoI18n) {
+                    await window.atalhoI18n.init();
+                }
+
                 // Usar a mesma abordagem assíncrona dos outros arquivos
                 const { auth } = await getFirebaseServices();
                 
@@ -148,8 +155,13 @@
                 handleEmailVerification(auth);
             } catch (error) {
                 console.error("❌ Erro ao inicializar Firebase:", error);
-                showStatus('error', i18nSystem.t('emailVerification.errors.general'));
+                showStatus('error', t('emailVerification.error.general'));
             }
+        }
+
+        // Função para obter tradução
+        function t(key, fallback = '') {
+            return window.t ? window.t(key) : fallback || key;
         }
 
         // Função para forçar sincronização imediata usando oobCode
@@ -247,9 +259,9 @@
                     console.log('🔄 Verificação automática detectada - redirecionando para login');
                     showStatus('success', `
                         <div style="font-size: 3rem; margin-bottom: 15px;">✅</div>
-                        <div><strong>${i18nSystem.t('emailVerification.autoVerified.title')}</strong></div>
+                        <div><strong>${t('emailVerification.autoVerified.title')}</strong></div>
                         <div style="margin-top: 10px; font-size: 0.9rem;">
-                            ${i18nSystem.t('emailVerification.autoVerified.message')}
+                            ${t('emailVerification.autoVerified.message')}
                         </div>
                     `);
                     
@@ -259,11 +271,12 @@
                     return;
                 }
 
-                // Se não tem mode ou oobCode, redireciona para login
-                if (!mode || !oobCode) {
-                    console.log('⚠️ Parâmetros mode ou oobCode não encontrados - redirecionando para login');
-                    window.location.href = 'login.html';
-                    return;
+                if (!mode) {
+                    throw new Error('Parâmetro "mode" não encontrado na URL');
+                }
+                
+                if (!oobCode) {
+                    throw new Error('Parâmetro "oobCode" não encontrado na URL');
                 }
 
                 if (mode === 'verifyEmail') {
@@ -271,10 +284,9 @@
                     
                     // PRIMEIRO: Extrair email do oobCode ANTES de aplicá-lo
                     let userEmail = null;
-                    let actionCodeInfo = null;
                     try {
                         console.log('🔍 Extraindo email do oobCode antes de aplicar...');
-                        actionCodeInfo = await auth.checkActionCode(oobCode);
+                        const actionCodeInfo = await auth.checkActionCode(oobCode);
                         userEmail = actionCodeInfo.data.email;
                         console.log('📧 Email extraído:', userEmail);
                     } catch (e) {
@@ -286,35 +298,12 @@
                     
                     console.log('✅ Email verificado com sucesso!');
                     
-                    // TERCEIRO: Atualizar status no Firestore
-                    if (userEmail) {
-                        try {
-                            const { firestore } = await getFirebaseServices();
-                            const usersRef = firestore.collection('users');
-                            const userQuery = await usersRef.where('email', '==', userEmail).get();
-                            
-                            if (!userQuery.empty) {
-                                const userDoc = userQuery.docs[0];
-                                await userDoc.ref.update({
-                                    emailVerified: true,
-                                    status: 'active',
-                                    isActive: true,
-                                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                                    'metadata.lastUpdateTime': firebase.firestore.FieldValue.serverTimestamp()
-                                });
-                                console.log('✅ Status do usuário atualizado no Firestore');
-                            }
-                        } catch (error) {
-                            console.error('❌ Erro ao atualizar status no Firestore:', error);
-                        }
-                    }
-                    
                     // Aguardar um pouco para o Firebase Auth processar
                     showStatus('success', `
                         <div style="font-size: 2rem; margin-bottom: 10px;">✅</div>
-                        <div><strong>${i18nSystem.t('emailVerification.verifying.title')}</strong></div>
+                        <div><strong>${t('emailVerification.success.title')}</strong></div>
                         <div style="margin-top: 10px; font-size: 0.9rem;">
-                            ${i18nSystem.t('emailVerification.verifying.message')}
+                            ${t('emailVerification.success.syncing')}
                         </div>
                     `);
                     
@@ -325,18 +314,18 @@
                         if (syncResult && syncResult.success) {
                             showStatus('success', `
                                 <div style="font-size: 3rem; margin-bottom: 15px;">🎉</div>
-                                <div><strong>${i18nSystem.t('emailVerification.verified.title')}</strong></div>
+                                <div><strong>${t('emailVerification.success.accountActivated')}</strong></div>
                                 <div style="margin-top: 10px; font-size: 0.9rem;">
-                                    ${i18nSystem.t('emailVerification.verified.status')} ${syncResult.account_status === 'active' ? i18nSystem.t('emailVerification.verified.active') : i18nSystem.t('emailVerification.verified.pending')}<br>
-                                    ${i18nSystem.t('emailVerification.verified.login')}
+                                    ${t('emailVerification.success.status')} ${syncResult.account_status === 'active' ? t('emailVerification.success.active') : t('emailVerification.success.pending')}<br>
+                                    ${t('emailVerification.success.canLogin')}
                                 </div>
                             `);
                         } else {
                             showStatus('success', `
                                 <div style="font-size: 3rem; margin-bottom: 15px;">✅</div>
-                                <div><strong>${i18nSystem.t('emailVerification.verifying.title')}</strong></div>
+                                <div><strong>${t('emailVerification.success.title')}</strong></div>
                                 <div style="margin-top: 10px; font-size: 0.9rem;">
-                                    ${i18nSystem.t('emailVerification.verified.login')}
+                                    ${t('emailVerification.success.canLogin')}
                                 </div>
                             `);
                         }
@@ -361,19 +350,19 @@
             } catch (error) {
                 console.error('❌ Erro na verificação:', error);
                 
-                let errorMessage = i18nSystem.t('emailVerification.errors.general');
+                let errorMessage = t('emailVerification.error.general');
                 
                 if (error.code === 'auth/invalid-action-code') {
-                    errorMessage = i18nSystem.t('emailVerification.errors.invalidCode');
+                    errorMessage = t('emailVerification.error.invalidLink');
                 } else if (error.code === 'auth/expired-action-code') {
-                    errorMessage = i18nSystem.t('emailVerification.errors.expiredCode');
+                    errorMessage = t('emailVerification.error.expiredLink');
                 } else if (error.code === 'auth/user-disabled') {
-                    errorMessage = i18nSystem.t('emailVerification.errors.disabled');
+                    errorMessage = t('emailVerification.error.accountDisabled');
                 }
 
                 showStatus('error', `
                     <div style="font-size: 3rem; margin-bottom: 15px;">❌</div>
-                    <div><strong>${i18nSystem.t('emailVerification.errors.title')}</strong></div>
+                    <div><strong>${t('emailVerification.error.title')}</strong></div>
                     <div style="margin-top: 10px; font-size: 0.9rem;">
                         ${errorMessage}
                     </div>

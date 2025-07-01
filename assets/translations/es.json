@@ -6,28 +6,42 @@
   "header": {
     "home": "Inicio",
     "features": "Características",
-    "tutorials": "Tutoriales", 
-    "downloads": "Descargas<br/>Bibliotecas",
-    "register": "Registrarse",
-    "login": "Iniciar Sesión",
-    "dashboard": "Panel",
-    "logout": "Cerrar Sesión",
+    "tutorials": "Tutoriales",
+    "downloads": "Descargas de Bibliotecas",
+    "register": "Registro",
+    "login": "Entrar",
+    "logout": "Salir",
     "buy": "Comprar"
   },
   "hero": {
-    "title": "Atalho",
-    "subtitle": "El camino más corto entre lo que piensas y lo que escribes.",
-    "description": "Transforma tu forma de escribir con expansión automática de texto. ¡Estandariza documentos y aumenta tu productividad en segundos!"
+    "title": "Transforma tu <span class='highlight'>productividad</span> con Atalho",
+    "subtitle": "La herramienta definitiva para expansión de texto y automatización que acelera tu flujo de trabajo",
+    "description": "Transforma tu forma de escribir con expansión automática de texto. ¡Estandariza documentos y aumenta tu productividad en segundos!",
+    "cta": "Comprar Ahora",
+    "watchDemo": "Ver Demo",
+    "trustedBy": "Confiado por profesionales"
   },
   "features": {
-    "title": "Características Principales",
-    "subtitle": "Descubre cómo Atalho puede revolucionar tu flujo de trabajo",
+    "title": "Características que marcan la diferencia",
+    "subtitle": "Descubre cómo Atalho puede revolucionar tu forma de trabajar",
+    "textExpansion": {
+      "title": "Expansión de Texto Inteligente",
+      "description": "Crea atajos para textos, frases o incluso documentos completos. Escribe menos, produce más."
+    },
     "expansion": {
       "title": "Expansión Automática",
       "description": "Transforma pequeños atajos en textos completos instantáneamente, ahorrando tiempo valioso en cada pulsación."
     },
+    "automation": {
+      "title": "Automatización Avanzada",
+      "description": "Automatiza tareas repetitivas y gana horas de productividad cada día."
+    },
+    "databases": {
+      "title": "Bases de Datos Personalizables",
+      "description": "Organiza tu información en bases de datos inteligentes y accede rápidamente."
+    },
     "database": {
-      "title": "Bibliotecas Personalizadas", 
+      "title": "Bancos Personalizados",
       "description": "Crea tus propias bibliotecas de frases y términos técnicos, adaptando Atalho a tu flujo de trabajo."
     },
     "formatting": {
@@ -35,15 +49,15 @@
       "description": "Usa etiquetas inteligentes para formatear tus textos automáticamente con negrita, cursiva y mucho más."
     },
     "integration": {
-      "title": "Integración Office",
-      "description": "Compatibilidad total con Microsoft Word y otros editores, manteniendo tu experiencia familiar."
+      "title": "Integración Perfecta",
+      "description": "Funciona en cualquier aplicación de Windows. Word, Excel, navegadores y mucho más."
     }
   },
   "cta": {
     "title": "¿Listo para aumentar tu productividad?",
     "subtitle": "Únete a miles de profesionales que ya han optimizado su flujo de trabajo",
     "start": "Comenzar Ahora",
-    "learn": "Saber Más"
+    "learn": "Aprender Más"
   },
   "footer": {
     "rights": "© 2025 Atalho App. Todos los derechos reservados.",
@@ -204,7 +218,9 @@
       "noMatch": "✗ Las contraseñas no coinciden"
     },
     "emailConfirmation": {
-      "warning": "Por favor, confirma tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada y la carpeta de spam."
+      "warning": "⚠️ Escribe tu correo nuevamente - No se permite pegar en este campo",
+      "match": "✅ Los correos coinciden",
+      "noMatch": "❌ Los correos no coinciden"
     },
     "success": {
       "title": "¡Cuenta creada exitosamente!",
@@ -212,16 +228,6 @@
       "description": "Enviamos un enlace de verificación a",
       "checkEmail": "Revisa tu bandeja de entrada y spam",
       "redirecting": "Redirigiendo al login..."
-    },
-    "feedback": {
-      "creatingAccount": "⏳ Creando cuenta...",
-      "savingData": "⏳ Guardando datos adicionales...",
-      "sendingEmail": "⏳ Enviando email de verificación...",
-      "accountCreated": "✅ ¡Cuenta creada!",
-      "dataSaved": "✅ ¡Datos guardados!",
-      "emailSent": "✅ ¡Email enviado!",
-      "error": "❌ Error: {{message}}",
-      "understand": "Entendido"
     }
   },
   "purchase": {
@@ -298,57 +304,66 @@
     },
     "noData": "Datos no disponibles",
     "loading": "Cargando...",
-    "logout": "Salir"
+    "logout": "Cerrar Sesión"
   },
   "success": {
-    "title": "Registro Completado con Éxito",
-    "heading": "¡Registro completado con éxito!",
-    "description": "¡Felicitaciones! Tu pago ha sido confirmado y tu cuenta ha sido creada con éxito. Ahora tienes acceso completo a Atalho y puedes comenzar a optimizar tu productividad.",
-    "loading": "Cargando información del usuario...",
-    "nextSteps": {
-      "title": "Próximos pasos:",
-      "downloadApp": "➤ Descarga la aplicación Atalho para comenzar",
-      "tutorials": "➤ Accede a la sección de tutoriales para aprender a usar todas las funcionalidades",
-      "libraries": "➤ Descarga las bibliotecas de términos para tu segmento",
-      "email": "➤ Recibirás un correo electrónico con instrucciones detalladas"
-    },
-    "buttons": {
-      "download": "Descargar Atalho",
-      "home": "Volver al Inicio"
-    },
-    "userInfo": {
-      "email": "Correo electrónico registrado",
-      "id": "ID de usuario",
-      "unavailable": "No disponible",
-      "error": "No se pudo recuperar tu información.",
-      "checkEmail": "Revisa tu correo electrónico para detalles de la cuenta."
-    }
+    "title": "Registro Completado Exitosamente - Atalho",
+    "congratulations": "¡Felicidades! Tu pago ha sido confirmado y tu cuenta ha sido creada exitosamente.",
+    "fullAccess": "Ahora tienes acceso completo a Atalho y puedes comenzar a optimizar tu productividad.",
+    "loadingUserInfo": "Cargando información del usuario...",
+    "registeredEmail": "Email registrado:",
+    "userId": "ID de usuario:",
+    "notAvailable": "No disponible",
+    "noInfoRetrieved": "No se pudo recuperar tu información.",
+    "checkEmailForDetails": "Revisa tu email para detalles sobre tu cuenta.",
+    "nextSteps": "Próximos pasos:",
+    "downloadApp": "Descarga la aplicación Atalho para comenzar a usar",
+    "accessTutorials": "Accede a la sección de tutoriales para aprender a usar todas las funcionalidades",
+    "downloadLibraries": "Descarga las bibliotecas de términos para tu sector",
+    "emailInstructions": "Recibirás un email con instrucciones detalladas",
+    "downloadButton": "Descargar Atalho",
+    "backToHome": "Volver al Inicio"
   },
   "emailVerification": {
-    "title": "Verificación de Email",
-    "loading": "Verificando tu email...",
-    "loginButton": "Ir al Login",
+    "title": "Verificación de Email - Atalho",
+    "verifying": "Verificando tu email...",
     "autoVerified": {
       "title": "¡Email verificado automáticamente!",
-      "message": "Tu cuenta ha sido activada con éxito. Redirigiendo al login..."
+      "message": "Tu cuenta ha sido activada exitosamente. Redirigiendo al login..."
     },
-    "verifying": {
-      "title": "¡Email verificado con éxito!",
-      "message": "Sincronizando datos de la cuenta..."
-    },
-    "verified": {
-      "title": "¡Cuenta activada con éxito!",
+    "success": {
+      "title": "¡Email verificado exitosamente!",
+      "syncing": "Sincronizando datos de la cuenta...",
+      "accountActivated": "¡Cuenta activada exitosamente!",
       "status": "Estado:",
       "active": "Activo",
       "pending": "Pendiente",
-      "login": "Ahora puedes iniciar sesión normalmente."
+      "canLogin": "Ahora puedes iniciar sesión normalmente."
     },
-    "errors": {
-      "title": "Error de Verificación",
-      "general": "Ocurrió un error al verificar tu email.",
-      "invalidCode": "Enlace de verificación inválido o expirado. Solicita un nuevo email de verificación.",
-      "expiredCode": "Enlace de verificación expirado. Solicita un nuevo email de verificación.",
-      "disabled": "Esta cuenta ha sido deshabilitada. Contacta con soporte."
+    "error": {
+      "title": "Error en la Verificación",
+      "invalidLink": "Enlace de verificación inválido o expirado. Solicita un nuevo email de verificación.",
+      "expiredLink": "Enlace de verificación expirado. Solicita un nuevo email de verificación.",
+      "accountDisabled": "Esta cuenta ha sido deshabilitada. Contacta al soporte.",
+      "general": "Ocurrió un error en la verificación del email."
+    },
+    "buttons": {
+      "goToLogin": "Ir al Login"
     }
+  },
+  "pricing": {
+    "title": "Precios Simples y Justos",
+    "subtitle": "Una inversión que se paga sola en productividad",
+    "price": "$19.90",
+    "period": "licencia anual",
+    "features": [
+      "Expansión de texto ilimitada",
+      "Bases de datos personalizables",
+      "Automatización avanzada",
+      "Integración con Word",
+      "Soporte prioritario",
+      "Actualizaciones de por vida"
+    ],
+    "cta": "Comprar Ahora"
   }
 } 

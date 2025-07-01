@@ -7,9 +7,6 @@
     <title data-i18n="register.title">Complete seu Cadastro - Atalho</title>
     <link rel="stylesheet" href="assets/css/style.css">
     
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
     <style>
         /* Estilos específicos para a página de registro */
         body {
@@ -605,21 +602,83 @@
 
         // Função para mostrar mensagens de sucesso com redirecionamento
         function showSuccessWithRedirect(message, email) {
-            Swal.fire({
-                icon: 'success',
-                html: message,
-                showConfirmButton: true,
-                confirmButtonText: i18nSystem ? i18nSystem.t('register.feedback.understand') : 'Entendi',
-                allowOutsideClick: false
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Salvar email para uso na página de sucesso
-                    localStorage.setItem('userEmail', email);
-                    
-                    // Redirecionar para a página de login
-                    window.location.href = 'login.html';
-                }
-            });
+            // Remove popup anterior se existir
+            const existingPopup = document.getElementById('success-popup');
+            if (existingPopup) {
+                existingPopup.remove();
+            }
+            
+            // Cria popup customizado
+            const popup = document.createElement('div');
+            popup.id = 'success-popup';
+            popup.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+                animation: fadeIn 0.3s ease;
+            `;
+            
+            popup.innerHTML = `
+                <div style="
+                    background: white;
+                    border-radius: 12px;
+                    padding: 2rem;
+                    max-width: 500px;
+                    margin: 1rem;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                    text-align: center;
+                    position: relative;
+                    animation: slideIn 0.3s ease;
+                ">
+                    <div style="margin-bottom: 1rem;">
+                        <img src="assets/img/Atalho.png" alt="Logo Atalho" style="width: 80px; height: 80px; object-fit: contain;">
+                    </div>
+                    <div style="color: #333; line-height: 1.6; margin-bottom: 2rem;">
+                        ${message}
+                    </div>
+                    <div style="display: flex; justify-content: center;">
+                        <button onclick="document.getElementById('success-popup').remove(); window.location.href='login.html?message=account-created&email=${encodeURIComponent(email)}'" 
+                                style="
+                                    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+                                    color: var(--text-dark);
+                                    border: none;
+                                    padding: 0.8rem 2rem;
+                                    border-radius: 10px;
+                                    font-size: 1rem;
+                                    font-weight: 600;
+                                    cursor: pointer;
+                                    transition: all 0.3s ease;
+                                    box-shadow: 0 3px 12px rgba(219, 201, 173, 0.4);
+                                "
+                                onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 24px rgba(219, 201, 173, 0.6)'"
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 3px 12px rgba(219, 201, 173, 0.4)'">
+                            ✅ Entendi
+                        </button>
+                    </div>
+                </div>
+                
+                <style>
+                    @keyframes fadeIn {
+                        from { opacity: 0; }
+                        to { opacity: 1; }
+                    }
+                    @keyframes slideIn {
+                        from { transform: translateY(-50px); opacity: 0; }
+                        to { transform: translateY(0); opacity: 1; }
+                    }
+                </style>
+            `;
+            
+            document.body.appendChild(popup);
+            
+            // Não remove automaticamente - usuário precisa clicar no botão
         }
 
         // Função para mostrar mensagens
@@ -1067,8 +1126,7 @@
                             console.log(`🔧 Firebase configurado para: ${selectedLanguage}`);
                         }
 
-                        // Atualizar texto do botão usando o sistema de tradução
-                        btn.textContent = i18nSystem ? i18nSystem.t('register.feedback.creatingAccount') : '⏳ Criando conta...';
+                        btn.textContent = '⏳ Criando conta...';
 
                         // ✨ NOVO: Usar API própria de registro (sem CORS)
                         if (typeof registerUserSimple === 'function') {
@@ -1079,8 +1137,7 @@
                             
                             // Salvar dados extras no Firestore (via API se necessário)
                             if (result.uid && (name || phone || company)) {
-                                // Atualizar texto do botão usando o sistema de tradução
-                                btn.textContent = i18nSystem ? i18nSystem.t('register.feedback.savingData') : '💾 Salvando dados extras...';
+                                btn.textContent = '💾 Salvando dados extras...';
                                 try {
                                     // Salvar dados extras via API
                                     await fetch('/api/update-user-profile', {
@@ -1195,59 +1252,7 @@
             }
         }
 
-        // Função para atualizar o texto do botão
-        function updateSubmitButton(text, disabled = true) {
-            const submitButton = document.getElementById('complete-registration-btn');
-            if (submitButton) {
-                submitButton.textContent = text;
-                submitButton.disabled = disabled;
-            }
-        }
 
-        // Função para registrar usuário
-        async function handleRegistration(event) {
-            event.preventDefault();
-            
-            try {
-                // Obter dados do formulário
-                const email = document.getElementById('login-email').value;
-                const password = document.getElementById('login-password').value;
-                const name = document.getElementById('customer-name').value;
-                const phone = document.getElementById('customer-phone').value;
-                const company = document.getElementById('customer-company').value;
-                
-                // Desabilitar botão e mostrar loading
-                updateSubmitButton(i18next.t('register.feedback.creatingAccount'), true);
-                
-                // Registrar usuário
-                const registrationResult = await registerUserSimple(email, password, i18next.language, name);
-                console.log('✅ Usuário registrado:', registrationResult);
-                updateSubmitButton(i18next.t('register.feedback.accountCreated'), true);
-                
-                // Salvar dados extras
-                updateSubmitButton(i18next.t('register.feedback.savingData'), true);
-                
-                // Aqui você pode adicionar a lógica para salvar dados extras
-                // como telefone e empresa
-                
-                updateSubmitButton(i18next.t('register.feedback.dataSaved'), true);
-                
-                // Mostrar mensagem de sucesso
-                showSuccessMessage(email);
-                
-            } catch (error) {
-                console.error('❌ Erro no registro:', error);
-                
-                // Mostrar erro traduzido
-                const errorMessage = i18next.t('register.feedback.error', { message: error.message });
-                updateSubmitButton(errorMessage, false);
-                
-                // Reativar botão após 3 segundos
-                setTimeout(() => {
-                    updateSubmitButton(i18next.t('register.createAccountBtn'), false);
-                }, 3000);
-            }
-        }
 
         console.log("🚀 Página de registro simplificada carregada e aguardando Firebase...");
     </script>

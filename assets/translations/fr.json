@@ -191,7 +191,8 @@
       "subtitle": "Vérifiez votre email pour activer votre compte",
       "description": "Nous avons envoyé un lien de vérification à",
       "checkEmail": "Vérifiez votre boîte de réception et spam",
-      "redirecting": "Redirection vers la connexion..."
+      "redirecting": "Redirection vers la connexion...",
+      "understand": "Je comprends"
     },
     "feedback": {
       "creatingAccount": "⏳ Création du compte...",

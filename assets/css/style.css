@@ -1372,213 +1372,167 @@ body {
 .language-selector {
     position: relative;
     display: inline-block;
-    margin-left: 10px;
-    flex-shrink: 0;
+    margin-right: 20px;
+}
+
+.language-button {
+    background: none;
+    border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #333;
+    transition: background-color 0.2s;
+}
+
+.language-button:hover {
+    background-color: #f5f5f5;
+    border-radius: 4px;
 }
 
 .language-dropdown {
-    display: flex;
-    align-items: center;
-    background: white;
-    border: 2px solid #e1e5e9;
-    border-radius: 6px;
-    padding: 6px 10px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 500;
-    color: #2c3e50;
-    transition: all 0.3s ease;
-    min-width: 70px;
-    max-width: 85px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    white-space: nowrap;
-}
-
-.language-dropdown:hover {
-    border-color: #3498db;
-    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2);
-    transform: translateY(-1px);
-}
-
-.language-dropdown.active {
-    border-color: #3498db;
-    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
-}
-
-.current-language {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    justify-content: center;
-    gap: 4px;
-}
-
-.flag-icon {
-    width: 18px;
-    height: 13px;
-    margin-right: 6px;
-    border-radius: 2px;
-    object-fit: cover;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-    flex-shrink: 0;
-}
-
-.language-name {
-    display: none; /* Ocultar nomes das línguas - só bandeiras + códigos */
-}
-
-.dropdown-arrow {
-    margin-left: 8px;
-    font-size: 12px;
-    color: #7f8c8d;
-    transition: transform 0.3s ease;
-}
-
-.language-dropdown.active .dropdown-arrow {
-    transform: rotate(180deg);
-}
-
-.language-options {
+    display: none;
     position: absolute;
-    top: 100%;
-    left: 0;
     right: 0;
+    top: 100%;
     background: white;
-    border: 2px solid #e1e5e9;
-    border-top: none;
-    border-radius: 0 0 8px 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    min-width: 150px;
     z-index: 1000;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.3s ease;
-    overflow: visible;
 }
 
-.language-options.show {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
+.language-dropdown a {
+    display: block;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #333;
+    transition: background-color 0.2s;
 }
 
-.language-option {
+.language-dropdown a:hover {
+    background-color: #f5f5f5;
+}
+
+/* Container principal */
+.content-wrapper {
+    flex: 1;
     display: flex;
+    justify-content: center;
     align-items: center;
-    justify-content: space-between;
-    padding: 8px 10px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    font-size: 12px;
-    border-bottom: 1px solid #f8f9fa;
-    white-space: nowrap;
-    gap: 6px;
+    padding: 20px;
 }
 
-.language-option:last-child {
-    border-bottom: none;
-}
-
-.language-option:hover {
-    background-color: #f8f9fa;
-}
-
-.language-option.selected {
-    background-color: #e3f2fd;
-    color: #1976d2;
-    font-weight: 600;
-}
-
-.language-option .flag-icon {
-    margin-right: 6px;
-}
-
-.language-option .language-name {
-    display: none; /* Ocultar nomes também nas opções */
-}
-
-.language-code {
-    margin-left: 4px;
-    font-size: 11px;
-    color: #2c3e50;
-    font-weight: 600;
-    min-width: 20px;
-    text-align: center;
-    flex-shrink: 0;
-}
-
-/* Nav link com quebra de linha forçada */
-.nav-link-multiline {
-    white-space: normal !important;
-    line-height: 1.2 !important;
-    text-align: center;
-    max-width: 100px;
-    word-wrap: break-word;
-    -webkit-hyphens: none;
-    hyphens: none;
-}
-
-/* Aumentar altura do header para acomodar quebras de linha */
-header {
-    min-height: 80px;
-}
-
-.header-container {
-    min-height: 80px;
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-}
-
-.nav-links {
-    align-items: center;
-    display: flex;
+/* Modal de sucesso */
+.success-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
 }
 
-.nav-links li {
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.modal-content h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+
+.email-sent-to {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.dot-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: #4CAF50;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.check-email-box {
+    background: #e8f5e9;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #2e7d32;
+}
+
+.check-icon {
+    background: #4CAF50;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 50px;
-    height: 100%;
+    font-size: 14px;
 }
 
-/* Responsive */
+.btn-understand {
+    background: linear-gradient(135deg, #dbc9ad 0%, #c8b298 100%);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+    margin-top: 20px;
+}
+
+.btn-understand:hover {
+    transform: translateY(-2px);
+}
+
+/* Responsividade */
 @media (max-width: 768px) {
-    .language-selector {
-        margin-left: 5px;
+    .modal-content {
+        padding: 30px;
+        width: 95%;
     }
     
-    .language-dropdown {
-        min-width: 60px;
-        max-width: 75px;
-        padding: 4px 6px;
-        font-size: 11px;
+    .modal-content h3 {
+        font-size: 1.5rem;
     }
     
-    .nav-link-multiline {
-        max-width: 80px;
-        font-size: 12px;
+    .email-sent-to,
+    .check-email-box {
+        font-size: 1rem;
+        padding: 12px;
     }
     
-    header {
-        min-height: 70px;
-    }
-    
-    .flag-icon {
-        width: 16px;
-        height: 12px;
-        margin-right: 4px;
-    }
-    
-    .language-code {
-        font-size: 10px;
-        min-width: 18px;
-    }
-    
-    .language-option {
-        padding: 8px 10px;
-        font-size: 12px;
+    .btn-understand {
+        padding: 10px 25px;
     }
 }

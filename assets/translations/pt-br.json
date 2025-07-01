@@ -169,46 +169,59 @@
     }
   },
   "register": {
-    "title": "Complete seu Cadastro - Atalho",
-    "createAccount": "Crie sua Conta do Atalho",
-    "subtitle": "Complete seu cadastro para começar a usar o Atalho",
-    "loginData": "🔐 Dados de Acesso",
-    "personalData": "👤 Dados Pessoais",
-    "email": "E-Mail",
-    "emailHelper": "Este será seu e-mail de login no sistema",
-    "confirmEmail": "Confirmar E-Mail",
-    "confirmEmailPlaceholder": "Digite o e-mail novamente",
-    "password": "Senha",
-    "confirmPassword": "Confirmar Senha",
-    "confirmPasswordPlaceholder": "Digite a senha novamente",
-    "fullName": "Nome Completo",
-    "fullNamePlaceholder": "Seu nome completo",
-    "phone": "Telefone (opcional)",
-    "phonePlaceholder": "(11) 99999-9999",
-    "company": "Empresa (opcional)",
-    "companyPlaceholder": "Nome da sua empresa",
-    "requiredFields": "Campos obrigatórios",
-    "acceptTermsText": "Aceito os",
-    "termsOfUse": "termos de uso",
-    "and": "e",
-    "privacyPolicy": "política de privacidade",
+    "title": "Criar Conta",
+    "subtitle": "Preencha os campos abaixo para criar sua conta",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Digite seu email",
+    "passwordLabel": "Senha",
+    "passwordPlaceholder": "Digite sua senha",
+    "confirmPasswordLabel": "Confirmar Senha",
+    "confirmPasswordPlaceholder": "Digite sua senha novamente",
+    "nameLabel": "Nome",
+    "namePlaceholder": "Digite seu nome",
+    "phoneLabel": "Telefone",
+    "phonePlaceholder": "Digite seu telefone",
+    "companyLabel": "Empresa",
+    "companyPlaceholder": "Digite o nome da sua empresa",
+    "termsText": "Eu aceito os",
+    "termsLink": "termos de uso",
+    "andText": "e",
+    "privacyLink": "política de privacidade",
     "createAccountBtn": "Criar Conta",
-    "passwordRequirements": {
-      "length": "Mínimo 8 caracteres",
-      "uppercase": "Uma letra maiúscula",
-      "number": "Um número",
-      "symbol": "Um símbolo (:$%#@!* etc.)"
-    },
-    "passwordMatch": {
-      "match": "✓ As senhas coincidem",
-      "noMatch": "✗ As senhas não coincidem"
+    "feedback": {
+      "creatingAccount": "Criando conta...",
+      "accountCreated": "Conta criada!",
+      "savingData": "Salvando dados...",
+      "dataSaved": "Dados salvos!",
+      "error": "Erro: {{message}}",
+      "logs": {
+        "userCreated": "✅ Usuário criado:",
+        "nameUpdated": "✅ Nome atualizado:",
+        "verificationEmailSent": "✅ Email de verificação enviado",
+        "registrationError": "❌ Erro no registro:",
+        "registrationSuccess": "✅ Usuário registrado:",
+        "systemLoaded": "📝 Sistema de registro simples carregado"
+      }
     },
     "success": {
       "title": "Conta criada com sucesso!",
-      "subtitle": "Verifique seu email para ativar sua conta",
-      "description": "Enviamos um link de verificação para",
-      "checkEmail": "Verifique sua caixa de entrada e spam",
-      "redirecting": "Redirecionando para o login..."
+      "subtitle": "Enviamos um link de verificação para",
+      "checkEmail": "Verifique seu email para ativar sua conta",
+      "understand": "Entendi"
+    },
+    "validation": {
+      "emailRequired": "O email é obrigatório",
+      "passwordRequired": "A senha é obrigatória",
+      "passwordMismatch": "As senhas não coincidem",
+      "nameRequired": "O nome é obrigatório",
+      "termsRequired": "Você precisa aceitar os termos de uso e política de privacidade"
+    },
+    "errors": {
+      "emailInUse": "Este email já está em uso",
+      "invalidEmail": "Email inválido",
+      "operationNotAllowed": "Operação não permitida",
+      "weakPassword": "A senha é muito fraca",
+      "generic": "Ocorreu um erro ao criar sua conta"
     }
   },
   "purchase": {
@@ -286,5 +299,55 @@
     "noData": "Dados não disponíveis",
     "loading": "Carregando...",
     "logout": "Sair"
+  },
+  "emailVerification": {
+    "title": "Verificação de Email",
+    "checking": "Verificando seu email...",
+    "loginButton": "Ir para Login",
+    "autoVerified": {
+      "title": "Email verificado automaticamente!",
+      "message": "Sua conta foi ativada com sucesso. Redirecionando para login..."
+    },
+    "verifying": {
+      "title": "Email verificado com sucesso!",
+      "message": "Sincronizando dados da conta..."
+    },
+    "verified": {
+      "title": "Conta ativada com sucesso!",
+      "status": "Status:",
+      "active": "Ativo",
+      "pending": "Pendente",
+      "login": "Agora você pode fazer login normalmente."
+    },
+    "errors": {
+      "title": "Erro na Verificação",
+      "general": "Ocorreu um erro na verificação do email.",
+      "invalidCode": "Link de verificação inválido ou expirado. Solicite um novo email de verificação.",
+      "expiredCode": "Link de verificação expirado. Solicite um novo email de verificação.",
+      "disabled": "Esta conta foi desabilitada. Entre em contato com o suporte."
+    }
+  },
+  "login": {
+    "title": "Login",
+    "subtitle": "Digite suas credenciais para acessar sua conta",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Digite seu email",
+    "passwordLabel": "Senha",
+    "passwordPlaceholder": "Digite sua senha",
+    "forgotPassword": "Esqueceu sua senha?",
+    "loginButton": "Entrar",
+    "noAccount": "Não tem uma conta?",
+    "createAccount": "Criar uma",
+    "feedback": {
+      "loggingIn": "Entrando..."
+    },
+    "errors": {
+      "invalidEmail": "Email inválido",
+      "userDisabled": "Esta conta foi desabilitada",
+      "userNotFound": "Usuário não encontrado",
+      "wrongPassword": "Senha incorreta",
+      "emailNotVerified": "Por favor, verifique seu email antes de fazer login",
+      "generic": "Ocorreu um erro ao fazer login"
+    }
   }
 } 

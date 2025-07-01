@@ -209,11 +209,6 @@
       "description": "Abbiamo inviato un link di verifica a",
       "checkEmail": "Controlla la tua casella di posta e spam",
       "redirecting": "Reindirizzamento al login..."
-    },
-    "emailConfirmation": {
-      "warning": "⚠️ Digita nuovamente la tua email - Non è possibile incollare in questo campo",
-      "match": "✅ Le email coincidono",
-      "noMatch": "❌ Le email non coincidono"
     }
   },
   "purchase": {

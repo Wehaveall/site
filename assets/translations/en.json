@@ -133,6 +133,28 @@
       "validTime": "The link is valid for 1 hour",
       "backToLogin": "Back to Login"
     },
+    "newPassword": {
+      "title": "New Password - Atalho",
+      "heading": "Create New Password",
+      "subtitle": "Enter your new password below",
+      "emailLabel": "Resetting password for:",
+      "newPasswordLabel": "New Password",
+      "confirmPasswordLabel": "Confirm New Password",
+      "confirmButton": "Confirm New Password",
+      "requirements": {
+        "title": "Password requirements:",
+        "length": "Minimum 8 characters",
+        "uppercase": "At least 1 uppercase letter",
+        "lowercase": "At least 1 lowercase letter",
+        "number": "At least 1 number",
+        "symbol": "At least 1 symbol (!@#$%^&*)"
+      },
+      "success": {
+        "title": "Password changed successfully!",
+        "message": "Your password has been reset. You can now login with your new password.",
+        "redirecting": "Redirecting to login..."
+      }
+    },
     "errors": {
       "emptyEmail": "Please enter your email",
       "invalidEmail": "Invalid email",
@@ -180,11 +202,6 @@
     "passwordMatch": {
       "match": "✓ Passwords match",
       "noMatch": "✗ Passwords don't match"
-    },
-    "emailConfirmation": {
-      "warning": "⚠️ Type your email again - Pasting is not allowed in this field",
-      "match": "✅ Emails match",
-      "noMatch": "❌ Emails don't match"
     },
     "success": {
       "title": "Account created successfully!",

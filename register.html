@@ -357,7 +357,7 @@
                         <div class="form-group">
                             <label for="confirm-email"><span style="color: #dc3545; font-weight: bold;">* </span><span data-i18n="register.confirmEmail">Confirmar E-Mail</span></label>
                             <input type="email" id="confirm-email" class="form-input" required data-i18n-placeholder="register.confirmEmailPlaceholder" autocomplete="off">
-                            <div class="email-confirmation-warning" data-i18n="register.emailConfirmation.warning">
+                            <div class="email-confirmation-warning">
                                 ⚠️ Digite novamente seu e-mail - Não é possível colar neste campo
                             </div>
                             <div id="email-match-feedback" class="password-match-feedback" style="display: none;"></div>
@@ -871,10 +871,10 @@
             feedback.style.display = 'block';
             
             if (email === confirmEmail) {
-                feedback.textContent = i18nSystem ? i18nSystem.t('register.emailConfirmation.match') : '✅ E-mails coincidem';
+                feedback.textContent = '✅ E-mails coincidem';
                 feedback.style.color = '#4CAF50';
             } else {
-                feedback.textContent = i18nSystem ? i18nSystem.t('register.emailConfirmation.noMatch') : '❌ E-mails não coincidem';
+                feedback.textContent = '❌ E-mails não coincidem';
                 feedback.style.color = '#f44336';
             }
         }
@@ -1076,14 +1076,14 @@
                         // ✨ NOVO: Detecção de idioma com prioridades
                         console.log('🌍 Iniciando detecção de idioma com prioridades...');
                         let selectedLanguage = 'pt-br';
-                        
+
                         // Prioridade 1: Idioma definido no dropdown
                         if (window.i18nSystem) {
                             selectedLanguage = window.i18nSystem.getCurrentLanguage();
                             console.log('🌍 Usando idioma do dropdown:', selectedLanguage);
                         }
                         // Prioridade 2: Idioma do navegador
-                            else {
+                        else {
                             const browserLang = navigator.language || navigator.userLanguage;
                             const browserLangMap = {
                                 'pt': 'pt-br',

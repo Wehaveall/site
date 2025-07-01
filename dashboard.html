@@ -115,9 +115,17 @@
     </header>
 
     <!-- Main Content -->
-    <main style="padding-top: 100px; min-height: 100vh; background: linear-gradient(120deg, #f0e9df 0%, #f7f3ed 20%, white 50%);">
+    <main style="padding-top: 100px; min-height: 100vh; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
         <div class="container" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
             
+            <!-- Boas-vindas -->
+            <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;">
+                <div style="color: #28a745; margin-bottom: 1rem;">
+                    <i class="fas fa-user-check" style="font-size: 3rem;">👤</i>
+                </div>
+                <h1 style="color: #28a745; margin-bottom: 1rem;" data-i18n="dashboard.welcome">Bem-vindo ao Dashboard</h1>
+            </div>
+
             <!-- Card de Informações Pessoais -->
             <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                 <h2 style="color: #2c3e50; margin-bottom: 1.5rem;" data-i18n="dashboard.personalInfo">👤 Informações Pessoais</h2>
@@ -130,6 +138,7 @@
                     <div>
                         <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.country">País:</strong> <span id="account-country" data-i18n="dashboard.noData">-</span></p>
                         <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.company">Empresa:</strong> <span id="account-company" data-i18n="dashboard.noData">-</span></p>
+                        <p style="margin-bottom: 0.5rem;"><strong data-i18n="dashboard.fields.accountId">ID da Conta:</strong> <span id="account-id" data-i18n="dashboard.loading">Carregando...</span></p>
                     </div>
                 </div>
                 <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e9ecef;">
@@ -362,73 +371,32 @@
                 }
                 
                 // Definir nome a ser exibido
-                let firstName = '';
-                let lastName = '';
-                
+                let displayName = 'Usuário';
                 if (userData && userData.Nome) {
-                    // Pegar o nome completo
-                    const fullName = userData.Nome.trim();
-                    
-                    // Dividir o nome em partes
-                    const nameParts = fullName.split(' ').filter(part => part.length > 0);
-                    
-                    if (nameParts.length === 1) {
-                        // Se só tem uma palavra, usa ela na primeira linha
-                        firstName = nameParts[0];
-                    } else if (nameParts.length > 1) {
-                        // Pegar primeiro e último nome
-                        firstName = nameParts[0];
-                        lastName = nameParts[nameParts.length - 1];
-                        
-                        // Se algum dos nomes for muito grande (mais que 12 caracteres), trunca
-                        if (firstName.length > 12) {
-                            firstName = firstName.substring(0, 9) + '...';
-                        }
-                        if (lastName.length > 12) {
-                            lastName = lastName.substring(0, 9) + '...';
-                        }
-                    }
-                    
-                    console.log('  📛 Nome obtido do Firestore:', firstName, lastName);
+                    displayName = userData.Nome;
+                    console.log('  📛 Nome obtido do Firestore:', displayName);
                 } else if (user.displayName) {
-                    // Mesmo processo para displayName do Firebase Auth
-                    const fullName = user.displayName.trim();
-                    const nameParts = fullName.split(' ').filter(part => part.length > 0);
-                    
-                    if (nameParts.length === 1) {
-                        firstName = nameParts[0];
-                    } else if (nameParts.length > 1) {
-                        firstName = nameParts[0];
-                        lastName = nameParts[nameParts.length - 1];
-                        
-                        if (firstName.length > 12) {
-                            firstName = firstName.substring(0, 9) + '...';
-                        }
-                        if (lastName.length > 12) {
-                            lastName = lastName.substring(0, 9) + '...';
-                        }
-                    }
-                    
-                    console.log('  📛 Nome obtido do Firebase Auth:', firstName, lastName);
-                } else {
+                    displayName = user.displayName;
+                    console.log('  📛 Nome obtido do Firebase Auth:', displayName);
+                } else if (user.email) {
                     // Usar primeira parte do email como fallback
-                    firstName = user.email.split('@')[0];
-                    console.log('  📛 Nome obtido do email:', firstName);
+                    displayName = user.email.split('@')[0];
+                    console.log('  📛 Nome obtido do email:', displayName);
+                }
+                
+                // Limitar tamanho do nome no menu
+                if (displayName.length > 15) {
+                    displayName = displayName.substring(0, 12) + '...';
+                    console.log('  ✂️ Nome truncado para:', displayName);
                 }
                 
                 if (navUserName) {
-                    // Criar estrutura HTML para exibir o nome em duas linhas
-                    navUserName.innerHTML = `
-                        <div style="line-height: 1.2; text-align: center;">
-                            <div style="font-weight: 600;">${firstName}</div>
-                            ${lastName ? `<div style="font-size: 0.9em; opacity: 0.9;">${lastName}</div>` : ''}
-                        </div>
-                    `;
+                    navUserName.textContent = displayName;
                     navUserName.title = userData?.Nome || user.email || 'Usuário'; // Tooltip com nome completo
-                    console.log('  ✅ Nome definido no elemento:', firstName, lastName);
+                    console.log('  ✅ Nome definido no elemento:', displayName);
                 }
                 
-                console.log('✅ Menu atualizado para usuário logado:', user.email, '| Nome:', firstName, lastName);
+                console.log('✅ Menu atualizado para usuário logado:', user.email, '| Nome:', displayName);
             } else {
                 console.log('❌ USUÁRIO DESLOGADO - Configurando menu para usuário não autenticado');
                 
@@ -585,6 +553,7 @@
             document.getElementById('account-phone').textContent = customerData.phone || noDataText;
             document.getElementById('account-country').textContent = customerData.country || noDataText;
             document.getElementById('account-company').textContent = customerData.company || noDataText;
+            document.getElementById('account-id').textContent = customerData.id || customerData.payment_id || currentUser.uid;
             
             // Data de criação
             if (customerData.created_at) {

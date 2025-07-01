@@ -409,8 +409,8 @@
                 
                 // Definir nome a ser exibido
                 let displayName = 'Usuário';
-                if (userData && userData.name) {
-                    displayName = userData.name;
+                if (userData && userData.Nome) {
+                    displayName = userData.Nome;
                     console.log('  📛 Nome obtido do Firestore:', displayName);
                 } else if (user.displayName) {
                     displayName = user.displayName;
@@ -420,16 +420,20 @@
                     displayName = user.email.split('@')[0];
                     console.log('  📛 Nome obtido do email:', displayName);
                 }
-                
-                // Limitar tamanho do nome no menu
-                if (displayName.length > 15) {
-                    displayName = displayName.substring(0, 12) + '...';
-                    console.log('  ✂️ Nome truncado para:', displayName);
-                }
-                
+
+                // Separar nome em duas linhas
+                const nameParts = displayName.split(' ');
+                const firstName = nameParts[0];
+                const lastName = nameParts.slice(1).join(' ');
+
                 if (navUserName) {
-                    navUserName.textContent = displayName;
-                    navUserName.title = userData?.name || user.email || 'Usuário'; // Tooltip com nome completo
+                    navUserName.innerHTML = `
+                        <div class="nav-user-name">
+                            <span class="first-name">${firstName}</span>
+                            ${lastName ? `<span class="last-name">${lastName}</span>` : ''}
+                        </div>
+                    `;
+                    navUserName.title = userData?.Nome || user.email || 'Usuário';
                     console.log('  ✅ Nome definido no elemento:', displayName);
                 }
                 

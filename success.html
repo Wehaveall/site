@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="success.title">Cadastro Realizado com Sucesso</title>
+    <title>Cadastro Realizado com Sucesso</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -88,50 +88,40 @@
 <body>
     <div class="success-container">
         <div class="success-icon">✓</div>
-        <h1 data-i18n="success.title">Cadastro realizado com sucesso!</h1>
-        <p data-i18n="success.congratulations">
+        <h1>Cadastro realizado com sucesso!</h1>
+        <p>
             Parabéns! Seu pagamento foi confirmado e sua conta foi criada com sucesso.
-        </p>
-        <p data-i18n="success.fullAccess">
             Agora você tem acesso completo ao Atalho e pode começar a otimizar sua produtividade.
         </p>
 
         <div id="user-info" class="user-info">
-            <p data-i18n="success.loadingUserInfo">Carregando informações do usuário...</p>
+            <p>Carregando informações do usuário...</p>
         </div>
 
         <div class="next-steps">
-            <h3 data-i18n="success.nextSteps">Próximos passos:</h3>
+            <h3>Próximos passos:</h3>
             <div class="next-steps-item">
-                <span>➤ </span><span data-i18n="success.downloadApp">Baixe o aplicativo Atalho para começar a usar</span>
+                ➤ Baixe o aplicativo Atalho para começar a usar
             </div>
             <div class="next-steps-item">
-                <span>➤ </span><span data-i18n="success.accessTutorials">Acesse a seção de tutoriais para aprender a utilizar todas as funcionalidades</span>
+                ➤ Acesse a seção de tutoriais para aprender a utilizar todas as funcionalidades
             </div>
             <div class="next-steps-item">
-                <span>➤ </span><span data-i18n="success.downloadLibraries">Faça o download das bibliotecas de termos para seu segmento</span>
+                ➤ Faça o download das bibliotecas de termos para seu segmento
             </div>
             <div class="next-steps-item">
-                <span>➤ </span><span data-i18n="success.emailInstructions">Você receberá um e-mail com instruções detalhadas</span>
+                ➤ Você receberá um e-mail com instruções detalhadas
             </div>
         </div>
 
         <div style="margin-top: 30px;">
-            <a href="download.html" class="button" data-i18n="success.downloadButton">Baixar Atalho</a>
-            <a href="index.html" class="button button-secondary" data-i18n="success.backToHome">Voltar ao Início</a>
+            <a href="download.html" class="button">Baixar Atalho</a>
+            <a href="index.html" class="button button-secondary">Voltar ao Início</a>
         </div>
     </div>
 
-    <!-- Sistema de Tradução -->
-    <script src="assets/js/i18n.js"></script>
-
     <script>
-        document.addEventListener('DOMContentLoaded', async function () {
-            // Aguardar o sistema de tradução inicializar
-            if (window.atalhoI18n) {
-                await window.atalhoI18n.init();
-            }
-
+        document.addEventListener('DOMContentLoaded', function () {
             // Debug info
             console.log('Success page loaded:', window.location.href);
 
@@ -145,16 +135,14 @@
             const userInfoDiv = document.getElementById('user-info');
             if (userInfoDiv) {
                 if (userEmail) {
-                    const t = window.t || ((key) => key);
                     userInfoDiv.innerHTML = `
-                        <p>${t('success.registeredEmail')} <strong>${userEmail}</strong></p>
-                        <p>${t('success.userId')} ${userId || t('success.notAvailable')}</p>
+                        <p>Email cadastrado: <strong>${userEmail}</strong></p>
+                        <p>ID do usuário: ${userId || 'Não disponível'}</p>
                     `;
                 } else {
-                    const t = window.t || ((key) => key);
                     userInfoDiv.innerHTML = `
-                        <p>${t('success.noInfoRetrieved')}</p>
-                        <p>${t('success.checkEmailForDetails')}</p>
+                        <p>Não foi possível recuperar suas informações.</p>
+                        <p>Verifique seu e-mail para detalhes sobre sua conta.</p>
                     `;
                 }
             }

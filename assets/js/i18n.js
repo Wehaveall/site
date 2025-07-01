@@ -457,7 +457,7 @@ class AtalhoI18n {
         selectorContainer.className = 'language-selector';
         selectorContainer.id = 'language-selector';
 
-        // Criar dropdown
+        // Dropdown principal
         const dropdown = document.createElement('div');
         dropdown.className = 'language-dropdown';
         
@@ -476,7 +476,7 @@ class AtalhoI18n {
         
         const arrow = document.createElement('span');
         arrow.className = 'dropdown-arrow';
-        arrow.textContent = '▼';
+        arrow.innerHTML = '▼';
         
         currentLang.appendChild(currentFlag);
         currentLang.appendChild(currentCode);
@@ -487,14 +487,14 @@ class AtalhoI18n {
         const options = document.createElement('div');
         options.className = 'language-options';
         
-        // Criar opções para cada idioma
         this.supportedLanguages.forEach(lang => {
             const option = document.createElement('div');
             option.className = 'language-option';
+            option.dataset.lang = lang;
+            
             if (lang === this.currentLanguage) {
                 option.classList.add('selected');
             }
-            option.dataset.lang = lang;
             
             const flag = document.createElement('img');
             flag.className = 'flag-icon';
@@ -505,20 +505,22 @@ class AtalhoI18n {
             code.className = 'language-code';
             code.textContent = lang.toUpperCase();
             
-            const name = document.createElement('span');
-            name.className = 'language-name';
-            name.textContent = this.languageData[lang].name;
-            
             option.appendChild(flag);
             option.appendChild(code);
-            option.appendChild(name);
             
+            // Event listener para mudança de idioma
             option.addEventListener('click', async (e) => {
                 e.stopPropagation();
-                if (lang !== this.currentLanguage) {
-                    await this.changeLanguage(lang);
+                const selectedLang = option.dataset.lang;
+                
+                if (selectedLang !== this.currentLanguage) {
+                    await this.changeLanguage(selectedLang);
+                    this.updateLanguageSelector();
                 }
-                this.toggleDropdown(false);
+                
+                // Fechar dropdown
+                dropdown.classList.remove('active');
+                options.classList.remove('show');
             });
             
             options.appendChild(option);
@@ -527,12 +529,14 @@ class AtalhoI18n {
         // Event listeners para abrir/fechar dropdown
         dropdown.addEventListener('click', (e) => {
             e.stopPropagation();
-            this.toggleDropdown();
+            dropdown.classList.toggle('active');
+            options.classList.toggle('show');
         });
         
         // Fechar dropdown ao clicar fora
         document.addEventListener('click', () => {
-            this.toggleDropdown(false);
+            dropdown.classList.remove('active');
+            options.classList.remove('show');
         });
         
         // Montar estrutura
@@ -541,6 +545,7 @@ class AtalhoI18n {
         
         // Inserir no DOM
         if (targetElement.tagName === 'UL') {
+            // Se for uma lista de navegação, criar um item de lista
             const li = document.createElement('li');
             li.appendChild(selectorContainer);
             targetElement.appendChild(li);
@@ -549,21 +554,6 @@ class AtalhoI18n {
         }
         
         console.log('🌍 Dropdown de idiomas inserido no DOM');
-    }
-
-    toggleDropdown(show = null) {
-        const dropdown = document.querySelector('.language-dropdown');
-        const options = document.querySelector('.language-options');
-        
-        if (!dropdown || !options) return;
-        
-        if (show === null) {
-            dropdown.classList.toggle('active');
-            options.classList.toggle('show');
-        } else {
-            dropdown.classList.toggle('active', show);
-            options.classList.toggle('show', show);
-        }
     }
 
     updateLanguageSelector() {
@@ -576,7 +566,7 @@ class AtalhoI18n {
             currentCode.textContent = this.currentLanguage.toUpperCase();
         }
         
-        // Atualizar opção selecionada
+        // Atualizar opções selecionadas
         document.querySelectorAll('.language-option').forEach(option => {
             option.classList.toggle('selected', option.dataset.lang === this.currentLanguage);
         });

@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-i18n="login.title">Login - Atalho</title>
-    <link rel="icon" type="image/png" href="assets/img/logo.svg">
     <link rel="stylesheet" href="assets/css/style.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -211,145 +210,586 @@
 </head>
 
 <body>
-    <div class="header">
-        <!-- O dropdown de idiomas será inserido aqui pelo i18n.js -->
-    </div>
-
-    <div class="content-wrapper">
-        <div class="container">
+    <!-- Header -->
+    <header class="header">
+        <div class="navbar">
             <div class="logo">
-                <img src="assets/img/Atalho.png" alt="Logo Atalho" style="width: 80px; height: 80px; object-fit: contain;">
+                <a href="index.html" class="logo-link">
+                    <img src="assets/img/Atalho.png" alt="Logo Atalho" class="logo-img" />
+                    <span class="logo-text">Atalho</span>
+                </a>
             </div>
-            <h1>Atalho</h1>
-            <p id="loginTitle" data-i18n="login.title">Login</p>
-            <p id="loginSubtitle" data-i18n="login.subtitle">Enter your credentials to access your account</p>
-
-            <form id="login-form" onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label for="login-email" data-i18n="login.emailLabel">Email</label>
-                    <input type="email" id="login-email" data-i18n-placeholder="login.emailPlaceholder" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="login-password" data-i18n="login.passwordLabel">Password</label>
-                    <input type="password" id="login-password" data-i18n-placeholder="login.passwordPlaceholder" required>
-                </div>
-
-                <div class="form-group">
-                    <a href="reset-password.html" class="forgot-password" data-i18n="login.forgotPassword">Forgot your password?</a>
-                </div>
-
-                <div id="error-message" class="error-message" style="display: none;"></div>
-
-                <button type="submit" id="login-btn" data-i18n="login.loginButton">Login</button>
-
-                <div class="register-link">
-                    <span data-i18n="login.noAccount">Don't have an account?</span>
-                    <a href="register.html" data-i18n="login.createAccount">Create one</a>
-                </div>
-            </form>
+            <nav class="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="index.html" class="nav-link" data-i18n="header.home">Início</a></li>
+                    <li><a href="comprar.html" class="nav-link btn-primary" data-i18n="header.buy">Comprar</a></li>
+                    <!-- O seletor de idiomas será inserido automaticamente aqui pelo i18n.js -->
+                </ul>
+            </nav>
         </div>
-    </div>
+    </header>
 
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
-    <script src="assets/js/firebase.js"></script>
+    <!-- Main Content -->
+    <main style="padding-top: 100px; min-height: 100vh; background: linear-gradient(120deg, #f0e9df 0%, #f7f3ed 20%, white 50%);">
+        <div class="container" style="max-width: 500px; margin: 0 auto; padding: 2rem;">
+            
+            <!-- Formulário de Login -->
+            <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow-lg);">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="color: var(--primary-dark); margin-bottom: 1rem;">
+                        <i class="fas fa-sign-in-alt" style="font-size: 3rem;"></i>
+                    </div>
+                    <h1 style="color: var(--text-dark); margin-bottom: 0.5rem;" data-i18n="login.heading">Entrar na sua Conta</h1>
+                    <p style="color: var(--text-light);" data-i18n="login.subtitle">Acesse sua licença do Atalho</p>
+                </div>
+
+                <form id="login-form">
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;" data-i18n="login.emailLabel">
+                            Email
+                        </label>
+                        <input type="email" id="login-email" required
+                               style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
+                               data-i18n-placeholder="login.emailPlaceholder"
+                               placeholder="seu@email.com">
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 500;" data-i18n="login.passwordLabel">
+                            Senha
+                        </label>
+                        <input type="password" id="login-password" required
+                               style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s ease;"
+                               data-i18n-placeholder="login.passwordPlaceholder"
+                               placeholder="Sua senha">
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" id="remember-me" style="margin-right: 0.5rem;">
+                            <span style="color: var(--text-light); font-size: 0.9rem;" data-i18n="login.rememberMe">Lembrar de mim</span>
+                        </label>
+                        <a href="reset-password.html" style="color: var(--primary-dark); text-decoration: none; font-size: 0.9rem; transition: color 0.2s ease;" data-i18n="login.forgotPassword">
+                            Esqueci minha senha
+                        </a>
+                    </div>
+
+                    <button type="submit" id="login-btn"
+                            style="width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: var(--text-dark); border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; margin-bottom: 1rem;"
+                            data-i18n="login.loginButton">
+                        🔑 Entrar
+                    </button>
+
+                    <div style="text-align: center; margin-top: 1rem;">
+                        <p style="color: var(--text-light); margin-bottom: 0.5rem;" data-i18n="login.noAccount">Ainda não tem uma conta?</p>
+                        <a href="register.html" style="color: var(--primary-dark); text-decoration: none; font-weight: 600; transition: color 0.2s ease;" data-i18n="login.signUpLink">
+                            Cadastre-se
+                        </a>
+                    </div>
+
+
+                </form>
+            </div>
+
+
+        </div>
+    </main>
+
+    <!-- Scripts -->
     <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/firebase.js"></script>
 
     <script>
-        // Inicializar i18n quando a página carregar
-        document.addEventListener('DOMContentLoaded', function() {
-            // Inicializar sistema de tradução
-            window.AtalhoI18n.init();
+        // Sistema de tradução global
+        let i18nSystem = null;
+        
+        // Envolve toda a lógica em um listener que aguarda a inicialização do Firebase
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Aguardar o sistema i18n global estar pronto
+            let attempts = 0;
+            while (!window.i18nSystem && attempts < 50) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                attempts++;
+            }
+            
+            if (window.i18nSystem) {
+                i18nSystem = window.i18nSystem;
+                console.log('🌍 Usando sistema de tradução global na página de login');
+            } else {
+                console.warn('⚠️ Sistema de tradução global não encontrado');
+            }
+            
+            getFirebaseServices().then(({ auth, db }) => {
+                console.log("✅ Serviços do Firebase prontos para o login.");
+
+                // Função para mostrar popup de sucesso animado
+                function showSuccessPopup(message) {
+                    // Remove popup anterior se existir
+                    const existingPopup = document.querySelector('.success-popup');
+                    if (existingPopup) {
+                        existingPopup.remove();
+                    }
+
+                    // Cria novo popup
+                    const popup = document.createElement('div');
+                    popup.className = 'success-popup';
+                    popup.id = 'global-success-popup';
+                    popup.innerHTML = `
+                        <div class="icon">✅</div>
+                        <div class="message">${message}</div>
+                        <button class="close-btn">&times;</button>
+                    `;
+
+                    // Adiciona ao body
+                    document.body.appendChild(popup);
+
+                    // Salva estado do popup no localStorage para persistir entre páginas
+                    const popupData = {
+                        message: message,
+                        timestamp: Date.now(),
+                        duration: 4000 // 4 segundos
+                    };
+                    localStorage.setItem('atalho-success-popup', JSON.stringify(popupData));
+
+                    // Mostra o popup com animação
+                    setTimeout(() => {
+                        popup.classList.add('show');
+                    }, 100);
+
+                    // Função para fechar o popup
+                    const closePopup = () => {
+                        popup.classList.add('hide');
+                        localStorage.removeItem('atalho-success-popup'); // Remove do localStorage
+                        setTimeout(() => {
+                            if (popup.parentNode) {
+                                popup.parentNode.removeChild(popup);
+                            }
+                        }, 400);
+                    };
+
+                    // Event listener para botão de fechar
+                    popup.querySelector('.close-btn').addEventListener('click', closePopup);
+
+                    // Auto-fechar após 4 segundos
+                    setTimeout(closePopup, 4000);
+
+                    return popup;
+                }
+
+                // Função global para restaurar popup em qualquer página
+                window.restoreSuccessPopup = function() {
+                    const popupData = localStorage.getItem('atalho-success-popup');
+                    if (popupData) {
+                        const data = JSON.parse(popupData);
+                        const elapsed = Date.now() - data.timestamp;
+                        
+                        // Se ainda não passou do tempo limite, recria o popup
+                        if (elapsed < data.duration) {
+                            const remainingTime = data.duration - elapsed;
+                            
+                            // Remove popup anterior se existir
+                            const existingPopup = document.querySelector('.success-popup');
+                            if (existingPopup) {
+                                existingPopup.remove();
+                            }
+
+                            // Cria novo popup
+                            const popup = document.createElement('div');
+                            popup.className = 'success-popup show'; // Já adiciona a classe show
+                            popup.id = 'global-success-popup';
+                            popup.innerHTML = `
+                                <div class="icon">✅</div>
+                                <div class="message">${data.message}</div>
+                                <button class="close-btn">&times;</button>
+                            `;
+
+                            // Adiciona ao body
+                            document.body.appendChild(popup);
+
+                            // Função para fechar o popup
+                            const closePopup = () => {
+                                popup.classList.add('hide');
+                                localStorage.removeItem('atalho-success-popup');
+                                setTimeout(() => {
+                                    if (popup.parentNode) {
+                                        popup.parentNode.removeChild(popup);
+                                    }
+                                }, 400);
+                            };
+
+                            // Event listener para botão de fechar
+                            popup.querySelector('.close-btn').addEventListener('click', closePopup);
+
+                            // Auto-fechar com o tempo restante
+                            setTimeout(closePopup, remainingTime);
+                        } else {
+                            // Se já passou do tempo, remove do localStorage
+                            localStorage.removeItem('atalho-success-popup');
+                        }
+                    }
+                };
+
+                // Função para mostrar mensagens de erro com modal customizado
+                function showError(message) {
+                    // Remove modal anterior se existir
+                    const existingModal = document.querySelector('.error-modal-overlay');
+                    if (existingModal) {
+                        existingModal.remove();
+                    }
+
+                    // Função auxiliar para obter tradução
+                    const t = (key, fallback) => {
+                        return i18nSystem ? i18nSystem.t(key) : fallback;
+                    };
+
+                    // Criar modal de erro
+                    const modalOverlay = document.createElement('div');
+                    modalOverlay.className = 'error-modal-overlay';
+                    
+                    // Determinar título e ação baseado na mensagem
+                    let title = t('login.errors.loginFailed', 'Erro no Login');
+                    let actionButton = '';
+                    
+                    if (message.includes('Email não verificado') || message.includes('not verified')) {
+                        title = t('login.errors.emailNotVerified.title', 'Email não verificado');
+                        message = t('login.errors.emailNotVerified.message', 'Você precisa verificar seu email antes de fazer login. Verifique sua caixa de entrada (incluindo spam) e clique no link de verificação.');
+                        actionButton = `<a href="register.html" class="btn-secondary">${t('login.errors.emailNotVerified.resendEmail', 'Reenviar Email')}</a>`;
+                    } else if (message.includes('não encontrado') || message.includes('incorreta') || message.includes('incorretos') || message.includes('invalid-login-credentials')) {
+                        title = t('login.errors.invalidCredentials.title', 'Dados incorretos');
+                        message = t('login.errors.invalidCredentials.message', 'Email ou senha incorretos. Verifique se digitou corretamente ou tente recuperar sua senha.');
+                        actionButton = `<a href="reset-password.html" class="btn-secondary">${t('login.errors.invalidCredentials.forgotPassword', 'Esqueci minha senha')}</a>`;
+                    } else if (message.includes('Muitas tentativas') || message.includes('too-many-requests')) {
+                        title = t('login.errors.tooManyAttempts.title', 'Muitas tentativas');
+                        message = t('login.errors.tooManyAttempts.message', 'Você fez muitas tentativas de login. Aguarde alguns minutos antes de tentar novamente.');
+                    }
+                    
+                    modalOverlay.innerHTML = `
+                        <div class="error-modal">
+                            <div class="icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <h3>${title}</h3>
+                            <p>${message}</p>
+                            <div class="error-modal-actions">
+                                <button class="btn-primary" onclick="this.closest('.error-modal-overlay').remove()">
+                                    ${t('login.errors.understand', 'Entendi')}
+                                </button>
+                                ${actionButton}
+                            </div>
+                        </div>
+                    `;
+
+                    // Adicionar ao DOM
+                    document.body.appendChild(modalOverlay);
+
+                    // Mostrar modal com animação
+                    setTimeout(() => {
+                        modalOverlay.classList.add('show');
+                    }, 100);
+
+                    // Fechar ao clicar no overlay
+                    modalOverlay.addEventListener('click', (e) => {
+                        if (e.target === modalOverlay) {
+                            modalOverlay.classList.remove('show');
+                            setTimeout(() => modalOverlay.remove(), 300);
+                        }
+                    });
+
+                    // Fechar com ESC
+                    const handleEsc = (e) => {
+                        if (e.key === 'Escape') {
+                            modalOverlay.classList.remove('show');
+                            setTimeout(() => modalOverlay.remove(), 300);
+                            document.removeEventListener('keydown', handleEsc);
+                        }
+                    };
+                    document.addEventListener('keydown', handleEsc);
+                    
+                    console.log('🚨 Modal de erro exibido:', title);
+                }
+
+                // Variável para controlar se está no processo de login
+                let isLoginInProgress = false;
+
+                // Função para fazer login
+                async function login(email, password) {
+                    try {
+                        console.log('🔐 Tentando fazer login...');
+                        
+                        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                        const user = userCredential.user;
+                        
+                        // Verifica se o email foi verificado
+                        if (!user.emailVerified) {
+                            console.warn('⚠️ Email não verificado para:', user.email);
+                            
+                            // Faz logout imediatamente
+                            await auth.signOut();
+                            
+                            // Função auxiliar para obter tradução
+                            const t = (key, fallback) => {
+                                return i18nSystem ? i18nSystem.t(key) : fallback;
+                            };
+                            
+                            throw new Error(t('login.errors.emailNotVerified.message', 'Email não verificado'));
+                        }
+                        
+                        console.log('✅ Login realizado com sucesso:', user.uid);
+                        console.log('✅ Email verificado:', user.emailVerified);
+                        return user;
+                        
+                    } catch (error) {
+                        console.error('❌ Erro no login:', error);
+                        
+                        // Se é nosso erro customizado sobre email não verificado, repassa direto
+                        if (error.message.includes('Email não verificado')) {
+                            throw error;
+                        }
+                        
+                        // Função auxiliar para obter tradução
+                        const t = (key, fallback) => {
+                            return i18nSystem ? i18nSystem.t(key) : fallback;
+                        };
+                        
+                        // Traduz erros comuns do Firebase
+                        switch (error.code) {
+                            case 'auth/user-not-found':
+                                throw new Error(t('login.errors.userNotFound', 'Email não encontrado. Verifique se você já tem uma conta.'));
+                            case 'auth/wrong-password':
+                                throw new Error(t('login.errors.wrongPassword', 'Senha incorreta. Tente novamente ou use "Esqueci minha senha".'));
+                            case 'auth/invalid-login-credentials':
+                                throw new Error(t('login.errors.invalidCredentials.message', 'Email ou senha incorretos. Verifique se digitou corretamente.'));
+                            case 'auth/invalid-email':
+                                throw new Error(t('login.errors.invalidEmail', 'Email inválido.'));
+                            case 'auth/user-disabled':
+                                throw new Error(t('login.errors.userDisabled', 'Esta conta foi desabilitada. Entre em contato com o suporte.'));
+                            case 'auth/too-many-requests':
+                                throw new Error(t('login.errors.tooManyAttempts.message', 'Muitas tentativas de login. Tente novamente mais tarde.'));
+                            default:
+                                throw new Error(t('login.errors.invalidCredentials.message', 'Email ou senha incorretos. Verifique se digitou corretamente.'));
+                        }
+                    }
+                }
+
+                // Função para logout completo
+                window.logout = async function() {
+                    try {
+                        console.log('🚪 Iniciando logout completo...');
+                        
+                        await auth.signOut();
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        
+                        console.log('✅ Logout completo realizado');
+                        
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 500);
+                        
+                    } catch (error) {
+                        console.error('❌ Erro no logout:', error);
+                        showError('Erro ao fazer logout: ' + error.message);
+                    }
+                }
+
+                // Verifica se usuário já está logado (MODIFICADO para evitar tela intermediária)
+                auth.onAuthStateChanged(function(user) {
+                    // Se está no processo de login, não faz nada para evitar tela intermediária
+                    if (isLoginInProgress) {
+                        console.log('🔄 Login em progresso, ignorando onAuthStateChanged');
+                        return;
+                    }
+
+                    if (user) {
+                        console.log('ℹ️ Usuário detectado:', {
+                            uid: user.uid,
+                            email: user.email,
+                            isAnonymous: user.isAnonymous,
+                            displayName: user.displayName
+                        });
+                        
+                        if (user.isAnonymous) {
+                            console.log('🔄 Usuário anônimo detectado, fazendo logout...');
+                            window.logout();
+                            return;
+                        }
+                        
+                        // Função auxiliar para obter tradução
+                        const t = (key, fallback) => {
+                            return i18nSystem ? i18nSystem.t(key) : fallback;
+                        };
+                        
+                        const loginForm = document.getElementById('login-form');
+                        loginForm.innerHTML = `
+                            <div style="text-align: center; padding: 2rem;">
+                                <div style="color: #28a745; margin-bottom: 1rem;">
+                                    <i class="fas fa-user-check" style="font-size: 3rem;"></i>
+                                </div>
+                                <h3 style="color: #28a745; margin-bottom: 1rem;">${t('login.alreadyLogged.title', 'Você já está logado!')}</h3>
+                                <p style="color: #6c757d; margin-bottom: 1.5rem;">
+                                    ${t('login.alreadyLogged.email', 'Email:')} <strong>${user.email || 'Não disponível'}</strong>
+                                </p>
+                                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                                    <button onclick="window.location.href='dashboard.html'" 
+                                            style="padding: 0.75rem 1.5rem; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                                        ${t('login.alreadyLogged.dashboard', '🏠 Ir para Dashboard')}
+                                    </button>
+                                    <button onclick="logout()" 
+                                            style="padding: 0.75rem 1.5rem; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                                        ${t('login.alreadyLogged.logout', '🚪 Fazer Logout')}
+                                    </button>
+                                </div>
+                                <div style="margin-top: 1rem;">
+                                    <button onclick="forceLogout()" 
+                                            style="padding: 0.5rem 1rem; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">
+                                        ${t('login.alreadyLogged.forceLogout', '🔧 Forçar Logout Completo')}
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        console.log('ℹ️ Nenhum usuário logado, mostrando formulário de login');
+                    }
+                });
+
+                // Função para forçar logout completo (caso haja problemas)
+                window.forceLogout = async function() {
+                    try {
+                        console.log('⚡ Forçando logout completo...');
+                        
+                        await auth.signOut();
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        
+                        document.cookie.split(";").forEach(function(c) { 
+                            document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                        });
+                        
+                        console.log('✅ Logout forçado concluído');
+                        alert('Logout forçado realizado! A página será recarregada.');
+                        
+                        window.location.reload();
+                        
+                    } catch (error) {
+                        console.error('❌ Erro no logout forçado:', error);
+                        alert('Erro no logout forçado. Tente fechar e abrir o navegador.');
+                    }
+                }
+
+                // Manipulador do formulário de login
+                document.getElementById('login-form').addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    // Função auxiliar para obter tradução
+                    const t = (key, fallback) => {
+                        return i18nSystem ? i18nSystem.t(key) : fallback;
+                    };
+                    
+                    const email = document.getElementById('login-email').value.trim();
+                    const password = document.getElementById('login-password').value;
+                    
+                    if (!email || !password) {
+                        showError(t('login.errors.fillFields', 'Por favor, preencha email e senha.'));
+                        return;
+                    }
+
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
+                        showError(t('login.errors.invalidEmail', 'Por favor, insira um email válido.'));
+                        return;
+                    }
+
+                    const btn = document.getElementById('login-btn');
+                    const originalText = btn.textContent;
+                    btn.disabled = true;
+                    btn.textContent = t('login.loginButtonLoading', '⏳ Entrando...');
+
+                    try {
+                        // Marca que o login está em progresso
+                        isLoginInProgress = true;
+                        
+                        const user = await login(email, password);
+                        
+                        // Mostra popup de sucesso
+                        showSuccessPopup(t('login.success.loginSuccessful', 'Login realizado com sucesso!'));
+                        
+                        // Redireciona após 1 segundo (o popup continua na próxima página)
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.html';
+                        }, 1000);
+
+                    } catch (error) {
+                        console.error("Erro no login:", error);
+                        showError(error.message);
+                        isLoginInProgress = false; // Reset da flag em caso de erro
+                    } finally {
+                        btn.disabled = false;
+                        btn.textContent = originalText;
+                    }
+                });
+
+                checkUrlParams();
+                document.getElementById('login-email').focus();
+            
+            }).catch(error => {
+                console.error("❌ Falha crítica na inicialização do Firebase:", error);
+                // Função auxiliar para obter tradução
+                const t = (key, fallback) => {
+                    return i18nSystem ? i18nSystem.t(key) : fallback;
+                };
+                showError(t('login.errors.networkError', 'Erro ao conectar com nossos servidores. Tente recarregar a página.'));
+            });
+
+            // Funções que não dependem do Firebase podem ficar aqui
+            function checkUrlParams() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const message = urlParams.get('message');
+                const email = urlParams.get('email');
+                const verified = urlParams.get('verified');
+                
+                if (message === 'account-created') {
+                    // Apenas pré-preenche o email sem mostrar mensagem repetida
+                    if (email) {
+                        document.getElementById('login-email').value = decodeURIComponent(email);
+                    }
+                }
+                
+                if (verified === 'true') {
+                    // Função auxiliar para obter tradução
+                    const t = (key, fallback) => {
+                        return i18nSystem ? i18nSystem.t(key) : fallback;
+                    };
+                    
+                    const container = document.querySelector('.container');
+                    const alertDiv = document.createElement('div');
+                    alertDiv.style.cssText = `
+                        background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+                        border: 2px solid #17a2b8;
+                        border-radius: 12px;
+                        padding: 1.5rem;
+                        margin-bottom: 2rem;
+                        text-align: center;
+                        box-shadow: var(--shadow-md);
+                    `;
+                    alertDiv.innerHTML = `
+                        <div style="color: #0c5460; margin-bottom: 1rem;">
+                            <i class="fas fa-check-circle" style="font-size: 2rem;"></i>
+                        </div>
+                        <h3 style="color: #0c5460; margin-bottom: 0.5rem;">🎉 ${t('common.success', 'Email verificado!')}</h3>
+                        <p style="color: #0c5460; margin-bottom: 1rem;">
+                            ${t('register.success.description', 'Sua conta foi ativada com sucesso. Agora você pode fazer login.')}
+                        </p>
+                        <button onclick="this.parentElement.remove()" 
+                                style="background: #17a2b8; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
+                            ${t('login.loginButton', 'Fazer Login')} ✓
+                        </button>
+                    `;
+                    container.insertBefore(alertDiv, container.firstChild);
+                }
+            }
         });
 
-        // Função para fazer login
-        async function handleLogin(event) {
-            event.preventDefault();
-            
-            const submitButton = document.getElementById('login-btn');
-            const originalText = submitButton.textContent;
-            
-            try {
-                // Obter dados do formulário
-                const email = document.getElementById('login-email').value;
-                const password = document.getElementById('login-password').value;
-                
-                // Desabilitar botão e mostrar loading
-                submitButton.disabled = true;
-                submitButton.textContent = i18next.t('login.feedback.loggingIn');
-                
-                // Obter serviços do Firebase
-                const { auth } = await getFirebaseServices();
-                
-                // Fazer login
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                console.log('✅ Login bem sucedido:', userCredential);
-                
-                // Verificar se o email está verificado
-                if (!userCredential.user.emailVerified) {
-                    // Enviar novo email de verificação
-                    await userCredential.user.sendEmailVerification({
-                        url: window.location.origin + '/emailHandler.html?lang=' + i18next.language
-                    });
-                    
-                    // Mostrar mensagem de verificação pendente
-                    showError(i18next.t('login.errors.emailNotVerified'));
-                    submitButton.disabled = false;
-                    submitButton.textContent = originalText;
-                    return;
-                }
-                
-                // Redirecionar para dashboard
-                window.location.href = 'dashboard.html';
-                
-            } catch (error) {
-                console.error('❌ Erro no login:', error);
-                
-                // Traduzir mensagens de erro comuns
-                let errorMessage = '';
-                
-                switch (error.code) {
-                    case 'auth/invalid-email':
-                        errorMessage = i18next.t('login.errors.invalidEmail');
-                        break;
-                    case 'auth/user-disabled':
-                        errorMessage = i18next.t('login.errors.userDisabled');
-                        break;
-                    case 'auth/user-not-found':
-                        errorMessage = i18next.t('login.errors.userNotFound');
-                        break;
-                    case 'auth/wrong-password':
-                        errorMessage = i18next.t('login.errors.wrongPassword');
-                        break;
-                    default:
-                        errorMessage = i18next.t('login.errors.generic');
-                }
-                
-                showError(errorMessage);
-                submitButton.disabled = false;
-                submitButton.textContent = originalText;
-            }
-        }
-
-        // Função para mostrar erro
-        function showError(message) {
-            const errorDiv = document.getElementById('error-message');
-            if (errorDiv) {
-                errorDiv.textContent = message;
-                errorDiv.style.display = 'block';
-                
-                // Esconder após 5 segundos
-                setTimeout(() => {
-                    errorDiv.style.display = 'none';
-                }, 5000);
-            }
-        }
-
-        console.log('🚀 Página de login carregada e aguardando Firebase...');
+        console.log("🚀 Página de login carregada e aguardando Firebase...");
     </script>
 </body>
 

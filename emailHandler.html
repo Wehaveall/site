@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Verification - Atalho</title>
+    <title>Verifica Email - Atalho</title>
     <link rel="icon" type="image/png" href="assets/img/logo.svg">
-    <link rel="stylesheet" href="assets/css/style.css">
     
     <style>
         * {
@@ -18,21 +17,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f5f5;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .header {
-            background: white;
-            padding: 1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-        }
-
-        .content-wrapper {
-            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -128,26 +112,18 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <!-- O dropdown de idiomas será inserido aqui pelo i18n.js -->
-    </div>
+    <div class="container">
+        <div class="logo"><img src="assets/img/Atalho.png" alt="Logo Atalho" style="width: 80px; height: 80px; object-fit: contain;"></div>
+        <h1>Atalho</h1>
+        <p id="verificationTitle">Verificação de Email</p>
 
-    <div class="content-wrapper">
-        <div class="container">
-            <div class="logo">
-                <img src="assets/img/Atalho.png" alt="Logo Atalho" style="width: 80px; height: 80px; object-fit: contain;">
-            </div>
-            <h1>Atalho</h1>
-            <p id="verificationTitle" data-i18n="emailVerification.title">Email Verification</p>
+        <div id="status" class="status loading">
+            <div class="spinner"></div>
+            <div id="loadingText">Verificando seu email...</div>
+        </div>
 
-            <div id="status" class="status loading">
-                <div class="spinner"></div>
-                <div id="loadingText" data-i18n="emailVerification.checking">Checking your email...</div>
-            </div>
-
-            <div id="actions" style="display: none;">
-                <a href="login.html" class="btn" id="loginButton" data-i18n="emailVerification.loginButton">Go to Login</a>
-            </div>
+        <div id="actions" style="display: none;">
+            <a href="login.html" class="btn" id="loginButton">Ir para Login</a>
         </div>
     </div>
 
@@ -160,22 +136,11 @@
     <script src="assets/js/i18n.js"></script>
 
     <script>
-        // Inicializar i18n quando a página carregar
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('📱 Página de verificação carregada');
-            
-            // Inicializar sistema de tradução
-            window.AtalhoI18n.init();
-            
-            // Inicia o processo de configuração e verificação
-            initializeApp();
-        });
-
         // Objeto de traduções
         const translations = {
             'pt-br': {
                 title: 'Verificação de Email',
-                checking: 'Verificando seu email...',
+                loading: 'Verificando seu email...',
                 loginButton: 'Ir para Login',
                 autoVerified: {
                     title: 'Email verificado automaticamente!',
@@ -200,117 +165,9 @@
                     disabled: 'Esta conta foi desabilitada. Entre em contato com o suporte.'
                 }
             },
-            'en': {
-                title: 'Email Verification',
-                checking: 'Checking your email...',
-                loginButton: 'Go to Login',
-                autoVerified: {
-                    title: 'Email automatically verified!',
-                    message: 'Your account has been successfully activated. Redirecting to login...'
-                },
-                verifying: {
-                    title: 'Email successfully verified!',
-                    message: 'Syncing account data...'
-                },
-                verified: {
-                    title: 'Account successfully activated!',
-                    status: 'Status:',
-                    active: 'Active',
-                    pending: 'Pending',
-                    login: 'You can now log in normally.'
-                },
-                errors: {
-                    title: 'Verification Error',
-                    general: 'An error occurred while verifying your email.',
-                    invalidCode: 'Invalid or expired verification link. Request a new verification email.',
-                    expiredCode: 'Verification link expired. Request a new verification email.',
-                    disabled: 'This account has been disabled. Contact support.'
-                }
-            },
-            'es': {
-                title: 'Verificación de Email',
-                checking: 'Verificando tu email...',
-                loginButton: 'Ir al Login',
-                autoVerified: {
-                    title: '¡Email verificado automáticamente!',
-                    message: 'Tu cuenta ha sido activada con éxito. Redirigiendo al login...'
-                },
-                verifying: {
-                    title: '¡Email verificado con éxito!',
-                    message: 'Sincronizando datos de la cuenta...'
-                },
-                verified: {
-                    title: '¡Cuenta activada con éxito!',
-                    status: 'Estado:',
-                    active: 'Activo',
-                    pending: 'Pendiente',
-                    login: 'Ahora puedes iniciar sesión normalmente.'
-                },
-                errors: {
-                    title: 'Error de Verificación',
-                    general: 'Ocurrió un error al verificar tu email.',
-                    invalidCode: 'Link de verificación inválido o expirado. Solicita un nuevo email de verificación.',
-                    expiredCode: 'Link de verificación expirado. Solicita un nuevo email de verificación.',
-                    disabled: 'Esta cuenta ha sido deshabilitada. Contacta con soporte.'
-                }
-            },
-            'fr': {
-                title: 'Vérification Email',
-                checking: 'Vérification de votre email...',
-                loginButton: 'Aller au Login',
-                autoVerified: {
-                    title: 'Email vérifié automatiquement !',
-                    message: 'Votre compte a été activé avec succès. Redirection vers le login...'
-                },
-                verifying: {
-                    title: 'Email vérifié avec succès !',
-                    message: 'Synchronisation des données du compte...'
-                },
-                verified: {
-                    title: 'Compte activé avec succès !',
-                    status: 'Statut :',
-                    active: 'Actif',
-                    pending: 'En attente',
-                    login: 'Vous pouvez maintenant vous connecter normalement.'
-                },
-                errors: {
-                    title: 'Erreur de Vérification',
-                    general: 'Une erreur est survenue lors de la vérification de votre email.',
-                    invalidCode: 'Lien de vérification invalide ou expiré. Demandez un nouvel email de vérification.',
-                    expiredCode: 'Lien de vérification expiré. Demandez un nouvel email de vérification.',
-                    disabled: 'Ce compte a été désactivé. Contactez le support.'
-                }
-            },
-            'de': {
-                title: 'E-Mail-Verifizierung',
-                checking: 'Überprüfe deine E-Mail...',
-                loginButton: 'Zum Login',
-                autoVerified: {
-                    title: 'E-Mail automatisch verifiziert!',
-                    message: 'Dein Konto wurde erfolgreich aktiviert. Weiterleitung zum Login...'
-                },
-                verifying: {
-                    title: 'E-Mail erfolgreich verifiziert!',
-                    message: 'Kontodaten werden synchronisiert...'
-                },
-                verified: {
-                    title: 'Konto erfolgreich aktiviert!',
-                    status: 'Status:',
-                    active: 'Aktiv',
-                    pending: 'Ausstehend',
-                    login: 'Du kannst dich jetzt normal anmelden.'
-                },
-                errors: {
-                    title: 'Verifizierungsfehler',
-                    general: 'Bei der Überprüfung deiner E-Mail ist ein Fehler aufgetreten.',
-                    invalidCode: 'Ungültiger oder abgelaufener Verifizierungslink. Fordere eine neue Verifizierungs-E-Mail an.',
-                    expiredCode: 'Verifizierungslink abgelaufen. Fordere eine neue Verifizierungs-E-Mail an.',
-                    disabled: 'Dieses Konto wurde deaktiviert. Kontaktiere den Support.'
-                }
-            },
             'it': {
                 title: 'Verifica Email',
-                checking: 'Verifica della tua email...',
+                loading: 'Verifica della tua email...',
                 loginButton: 'Vai al Login',
                 autoVerified: {
                     title: 'Email verificata automaticamente!',
@@ -368,7 +225,7 @@
                 
                 // Atualizar textos iniciais
                 document.getElementById('verificationTitle').textContent = getText('title');
-                document.getElementById('loadingText').textContent = getText('checking');
+                document.getElementById('loadingText').textContent = getText('loading');
                 document.getElementById('loginButton').textContent = getText('loginButton');
                 
                 // Processar a verificação de email após a inicialização
@@ -583,6 +440,15 @@
                 `);
             }
         }
+
+        // Aguardar Firebase carregar e processar
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📱 Página de verificação carregada');
+            
+            // Inicia o processo de configuração e verificação
+            // Nota: Não inicializamos o i18n com dropdown aqui para evitar quebrar o layout
+            initializeApp();
+        });
     </script>
 </body>
 </html> 

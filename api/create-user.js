@@ -55,9 +55,10 @@ export default async function handler(req, res) {
       languageCode: language === 'pt-br' ? 'pt' : language // Firebase usa 'pt' ao invés de 'pt-br'
     });
 
-    // 3. Gerar link de verificação com idioma
+    // 3. Gerar link de verificação com idioma e URL de continuação correta
+    const continueUrl = `https://atalho.me/login.html?verified=true&lang=${language}`;
     const actionCodeSettings = {
-      url: `https://atalho.me/emailHandler.html?lang=${language}`,
+      url: `https://atalho.me/emailHandler.html?lang=${language}&continueUrl=${encodeURIComponent(continueUrl)}`,
       handleCodeInApp: false,
     };
 

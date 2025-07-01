@@ -208,7 +208,8 @@
       "subtitle": "Controlla la tua email per attivare il tuo account",
       "description": "Abbiamo inviato un link di verifica a",
       "checkEmail": "Controlla la tua casella di posta e spam",
-      "understand": "Ho capito"
+      "redirecting": "Reindirizzamento al login...",
+      "understand": "Capito"
     },
     "emailConfirmation": {
       "warning": "⚠️ Digita nuovamente la tua email - Non è possibile incollare in questo campo",

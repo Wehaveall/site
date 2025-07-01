@@ -169,51 +169,61 @@
     }
   },
   "register": {
-    "title": "Crear Cuenta",
-    "subtitle": "Complete los campos a continuación para crear su cuenta",
-    "emailLabel": "Email",
-    "emailPlaceholder": "Ingrese su email",
-    "passwordLabel": "Contraseña",
-    "passwordPlaceholder": "Ingrese su contraseña",
-    "confirmPasswordLabel": "Confirmar Contraseña",
-    "confirmPasswordPlaceholder": "Ingrese su contraseña nuevamente",
-    "nameLabel": "Nombre",
-    "namePlaceholder": "Ingrese su nombre",
-    "phoneLabel": "Teléfono",
-    "phonePlaceholder": "Ingrese su teléfono",
-    "companyLabel": "Empresa",
-    "companyPlaceholder": "Ingrese el nombre de su empresa",
-    "termsText": "Acepto los",
-    "termsLink": "términos de uso",
-    "andText": "y",
-    "privacyLink": "política de privacidad",
+    "title": "Completa tu Registro - Atalho",
+    "createAccount": "Crea tu Cuenta de Atalho",
+    "subtitle": "Completa tu registro para comenzar a usar Atalho",
+    "loginData": "🔐 Datos de Acceso",
+    "personalData": "👤 Datos Personales",
+    "email": "Email",
+    "emailHelper": "Este será tu email de acceso al sistema",
+    "confirmEmail": "Confirmar Email",
+    "confirmEmailPlaceholder": "Escriba el email nuevamente",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "confirmPasswordPlaceholder": "Ingresa la contraseña nuevamente",
+    "fullName": "Nombre Completo",
+    "fullNamePlaceholder": "Tu nombre completo",
+    "phone": "Teléfono (opcional)",
+    "phonePlaceholder": "(11) 99999-9999",
+    "company": "Empresa (opcional)",
+    "companyPlaceholder": "Nombre de tu empresa",
+    "requiredFields": "Campos obligatorios",
+    "acceptTermsText": "Acepto los",
+    "termsOfUse": "términos de uso",
+    "and": "y",
+    "privacyPolicy": "política de privacidad",
     "createAccountBtn": "Crear Cuenta",
-    "feedback": {
-      "creatingAccount": "Creando cuenta...",
-      "accountCreated": "¡Cuenta creada!",
-      "savingData": "Guardando datos...",
-      "dataSaved": "¡Datos guardados!",
-      "error": "Error: {{message}}"
+    "passwordRequirements": {
+      "length": "Mínimo 8 caracteres",
+      "uppercase": "Una letra mayúscula",
+      "number": "Un número",
+      "symbol": "Un símbolo (:$%#@!* etc.)"
+    },
+    "passwordMatch": {
+      "match": "✓ Las contraseñas coinciden",
+      "noMatch": "✗ Las contraseñas no coinciden"
+    },
+    "emailConfirmation": {
+      "warning": "⚠️ Escribe tu correo nuevamente - No se permite pegar en este campo",
+      "match": "✅ Los correos coinciden",
+      "noMatch": "❌ Los correos no coinciden"
     },
     "success": {
       "title": "¡Cuenta creada con éxito!",
-      "subtitle": "Enviamos un enlace de verificación a",
-      "checkEmail": "Verifique su email para activar su cuenta",
-      "understand": "Entiendo"
+      "subtitle": "Revisa tu correo para activar tu cuenta",
+      "description": "Hemos enviado un enlace de verificación a",
+      "checkEmail": "Revisa tu bandeja de entrada y spam",
+      "redirecting": "Redirigiendo al login...",
+      "understand": "Entendido"
     },
-    "validation": {
-      "emailRequired": "El email es obligatorio",
-      "passwordRequired": "La contraseña es obligatoria",
-      "passwordMismatch": "Las contraseñas no coinciden",
-      "nameRequired": "El nombre es obligatorio",
-      "termsRequired": "Debe aceptar los términos de uso y la política de privacidad"
-    },
-    "errors": {
-      "emailInUse": "Este email ya está en uso",
-      "invalidEmail": "Email inválido",
-      "operationNotAllowed": "Operación no permitida",
-      "weakPassword": "La contraseña es muy débil",
-      "generic": "Ocurrió un error al crear su cuenta"
+    "feedback": {
+      "creatingAccount": "⏳ Creando cuenta...",
+      "savingData": "⏳ Guardando datos adicionales...",
+      "sendingEmail": "⏳ Enviando email de verificación...",
+      "accountCreated": "✅ ¡Cuenta creada!",
+      "dataSaved": "✅ ¡Datos guardados!",
+      "emailSent": "✅ ¡Email enviado!",
+      "error": "❌ Error: {{message}}"
     }
   },
   "purchase": {
@@ -291,55 +301,5 @@
     "noData": "Datos no disponibles",
     "loading": "Cargando...",
     "logout": "Salir"
-  },
-  "emailVerification": {
-    "title": "Verificación de Email",
-    "checking": "Verificando tu email...",
-    "loginButton": "Ir al Login",
-    "autoVerified": {
-      "title": "¡Email verificado automáticamente!",
-      "message": "Tu cuenta ha sido activada con éxito. Redirigiendo al login..."
-    },
-    "verifying": {
-      "title": "¡Email verificado con éxito!",
-      "message": "Sincronizando datos de la cuenta..."
-    },
-    "verified": {
-      "title": "¡Cuenta activada con éxito!",
-      "status": "Estado:",
-      "active": "Activo",
-      "pending": "Pendiente",
-      "login": "Ahora puedes iniciar sesión normalmente."
-    },
-    "errors": {
-      "title": "Error de Verificación",
-      "general": "Ocurrió un error al verificar tu email.",
-      "invalidCode": "Link de verificación inválido o expirado. Solicita un nuevo email de verificación.",
-      "expiredCode": "Link de verificación expirado. Solicita un nuevo email de verificación.",
-      "disabled": "Esta cuenta ha sido deshabilitada. Contacta con soporte."
-    }
-  },
-  "login": {
-    "title": "Login",
-    "subtitle": "Ingrese sus credenciales para acceder a su cuenta",
-    "emailLabel": "Email",
-    "emailPlaceholder": "Ingrese su email",
-    "passwordLabel": "Contraseña",
-    "passwordPlaceholder": "Ingrese su contraseña",
-    "forgotPassword": "¿Olvidó su contraseña?",
-    "loginButton": "Ingresar",
-    "noAccount": "¿No tiene una cuenta?",
-    "createAccount": "Crear una",
-    "feedback": {
-      "loggingIn": "Ingresando..."
-    },
-    "errors": {
-      "invalidEmail": "Email inválido",
-      "userDisabled": "Esta cuenta ha sido deshabilitada",
-      "userNotFound": "Usuario no encontrado",
-      "wrongPassword": "Contraseña incorrecta",
-      "emailNotVerified": "Por favor, verifique su email antes de iniciar sesión",
-      "generic": "Ocurrió un error al iniciar sesión"
-    }
   }
 } 

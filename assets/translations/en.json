@@ -147,59 +147,61 @@
     }
   },
   "register": {
-    "title": "Create Account",
-    "subtitle": "Fill in the fields below to create your account",
-    "emailLabel": "Email",
-    "emailPlaceholder": "Enter your email",
-    "passwordLabel": "Password",
-    "passwordPlaceholder": "Enter your password",
-    "confirmPasswordLabel": "Confirm Password",
-    "confirmPasswordPlaceholder": "Enter your password again",
-    "nameLabel": "Name",
-    "namePlaceholder": "Enter your name",
-    "phoneLabel": "Phone",
-    "phonePlaceholder": "Enter your phone",
-    "companyLabel": "Company",
-    "companyPlaceholder": "Enter your company name",
-    "termsText": "I accept the",
-    "termsLink": "terms of use",
-    "andText": "and",
-    "privacyLink": "privacy policy",
+    "title": "Complete Your Registration - Atalho",
+    "createAccount": "Create Your Atalho Account",
+    "subtitle": "Complete your registration to start using Atalho",
+    "loginData": "🔐 Login Information",
+    "personalData": "👤 Personal Information",
+    "email": "Email",
+    "emailHelper": "This will be your login email for the system",
+    "confirmEmail": "Confirm Email",
+    "confirmEmailPlaceholder": "Type the email again",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Enter password again",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "Your full name",
+    "phone": "Phone (optional)",
+    "phonePlaceholder": "(11) 99999-9999",
+    "company": "Company (optional)",
+    "companyPlaceholder": "Your company name",
+    "requiredFields": "Required fields",
+    "acceptTermsText": "I accept the",
+    "termsOfUse": "terms of use",
+    "and": "and",
+    "privacyPolicy": "privacy policy",
     "createAccountBtn": "Create Account",
-    "feedback": {
-      "creatingAccount": "Creating account...",
-      "accountCreated": "Account created!",
-      "savingData": "Saving data...",
-      "dataSaved": "Data saved!",
-      "error": "Error: {{message}}",
-      "logs": {
-        "userCreated": "✅ User created:",
-        "nameUpdated": "✅ Name updated:",
-        "verificationEmailSent": "✅ Verification email sent",
-        "registrationError": "❌ Registration error:",
-        "registrationSuccess": "✅ User registered:",
-        "systemLoaded": "📝 Simple registration system loaded"
-      }
+    "passwordRequirements": {
+      "length": "Minimum 8 characters",
+      "uppercase": "One uppercase letter",
+      "number": "One number",
+      "symbol": "One symbol (:$%#@!* etc.)"
+    },
+    "passwordMatch": {
+      "match": "✓ Passwords match",
+      "noMatch": "✗ Passwords don't match"
+    },
+    "emailConfirmation": {
+      "warning": "⚠️ Type your email again - Pasting is not allowed in this field",
+      "match": "✅ Emails match",
+      "noMatch": "❌ Emails don't match"
     },
     "success": {
       "title": "Account created successfully!",
-      "subtitle": "We sent a verification link to",
-      "checkEmail": "Check your email to activate your account",
-      "understand": "I understand"
+      "subtitle": "Check your email to activate your account",
+      "description": "We sent a verification link to",
+      "checkEmail": "Check your inbox and spam folder",
+      "redirecting": "Redirecting to login...",
+      "understand": "Got it"
     },
-    "validation": {
-      "emailRequired": "Email is required",
-      "passwordRequired": "Password is required",
-      "passwordMismatch": "Passwords do not match",
-      "nameRequired": "Name is required",
-      "termsRequired": "You must accept the terms of use and privacy policy"
-    },
-    "errors": {
-      "emailInUse": "This email is already in use",
-      "invalidEmail": "Invalid email",
-      "operationNotAllowed": "Operation not allowed",
-      "weakPassword": "The password is too weak",
-      "generic": "An error occurred while creating your account"
+    "feedback": {
+      "creatingAccount": "⏳ Creating account...",
+      "savingData": "⏳ Saving additional data...",
+      "sendingEmail": "⏳ Sending verification email...",
+      "accountCreated": "✅ Account created!",
+      "dataSaved": "✅ Data saved!",
+      "emailSent": "✅ Email sent!",
+      "error": "❌ Error: {{message}}"
     }
   },
   "purchase": {
@@ -277,55 +279,5 @@
     "noData": "Data not available",
     "loading": "Loading...",
     "logout": "Logout"
-  },
-  "emailVerification": {
-    "title": "Email Verification",
-    "checking": "Checking your email...",
-    "loginButton": "Go to Login",
-    "autoVerified": {
-      "title": "Email automatically verified!",
-      "message": "Your account has been successfully activated. Redirecting to login..."
-    },
-    "verifying": {
-      "title": "Email successfully verified!",
-      "message": "Syncing account data..."
-    },
-    "verified": {
-      "title": "Account successfully activated!",
-      "status": "Status:",
-      "active": "Active",
-      "pending": "Pending",
-      "login": "You can now log in normally."
-    },
-    "errors": {
-      "title": "Verification Error",
-      "general": "An error occurred while verifying your email.",
-      "invalidCode": "Invalid or expired verification link. Request a new verification email.",
-      "expiredCode": "Verification link expired. Request a new verification email.",
-      "disabled": "This account has been disabled. Contact support."
-    }
-  },
-  "login": {
-    "title": "Login",
-    "subtitle": "Enter your credentials to access your account",
-    "emailLabel": "Email",
-    "emailPlaceholder": "Enter your email",
-    "passwordLabel": "Password",
-    "passwordPlaceholder": "Enter your password",
-    "forgotPassword": "Forgot your password?",
-    "loginButton": "Login",
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create one",
-    "feedback": {
-      "loggingIn": "Logging in..."
-    },
-    "errors": {
-      "invalidEmail": "Invalid email",
-      "userDisabled": "This account has been disabled",
-      "userNotFound": "User not found",
-      "wrongPassword": "Incorrect password",
-      "emailNotVerified": "Please verify your email before logging in",
-      "generic": "An error occurred while logging in"
-    }
   }
 } 

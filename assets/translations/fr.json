@@ -187,12 +187,12 @@
       "noMatch": "❌ Les emails ne correspondent pas"
     },
     "success": {
-      "title": "Compte créé avec succès!",
+      "title": "Compte créé avec succès !",
       "subtitle": "Vérifiez votre email pour activer votre compte",
       "description": "Nous avons envoyé un lien de vérification à",
       "checkEmail": "Vérifiez votre boîte de réception et spam",
       "redirecting": "Redirection vers la connexion...",
-      "understand": "Je comprends"
+      "understand": "Compris"
     },
     "feedback": {
       "creatingAccount": "⏳ Création du compte...",

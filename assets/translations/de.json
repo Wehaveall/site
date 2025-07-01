@@ -205,11 +205,11 @@
     },
     "success": {
       "title": "Konto erfolgreich erstellt!",
-      "subtitle": "Überprüfen Sie Ihre E-Mail, um Ihr Konto zu aktivieren",
-      "description": "Wir haben einen Bestätigungslink gesendet an",
-      "checkEmail": "Überprüfen Sie Ihren Posteingang und Spam",
-      "redirecting": "Weiterleitung zur Anmeldung...",
-      "understand": "Ich verstehe"
+      "subtitle": "Überprüfen Sie Ihre E-Mails, um Ihr Konto zu aktivieren",
+      "description": "Wir haben einen Bestätigungslink an",
+      "checkEmail": "Überprüfen Sie Ihren Posteingang und Spam-Ordner",
+      "redirecting": "Weiterleitung zum Login...",
+      "understand": "Verstanden"
     },
     "emailConfirmation": {
       "warning": "⚠️ Geben Sie Ihre E-Mail erneut ein - Einfügen ist in diesem Feld nicht möglich",

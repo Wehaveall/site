@@ -219,6 +219,9 @@
       "emailSent": "✅ Email enviado!",
       "error": "❌ Erro: {{message}}",
       "understand": "Entendi"
+    },
+    "emailConfirmation": {
+      "warning": "Por favor, confirme seu email antes de fazer login. Verifique sua caixa de entrada e a pasta de spam."
     }
   },
   "purchase": {

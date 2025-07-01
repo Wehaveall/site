@@ -182,9 +182,7 @@
       "noMatch": "✗ Les mots de passe ne correspondent pas"
     },
     "emailConfirmation": {
-      "warning": "⚠️ Saisissez à nouveau votre email - Le collage n'est pas autorisé dans ce champ",
-      "match": "✅ Les emails correspondent",
-      "noMatch": "❌ Les emails ne correspondent pas"
+      "warning": "Veuillez confirmer votre email avant de vous connecter. Vérifiez votre boîte de réception et le dossier spam."
     },
     "success": {
       "title": "Compte créé avec succès!",

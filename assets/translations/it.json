@@ -211,9 +211,7 @@
       "redirecting": "Reindirizzamento al login..."
     },
     "emailConfirmation": {
-      "warning": "⚠️ Digita nuovamente la tua email - Non è possibile incollare in questo campo",
-      "match": "✅ Le email coincidono",
-      "noMatch": "❌ Le email non coincidono"
+      "warning": "Per favore, conferma la tua email prima di accedere. Controlla la tua casella di posta e la cartella spam."
     },
     "feedback": {
       "creatingAccount": "⏳ Creazione account in corso...",

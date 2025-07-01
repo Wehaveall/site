@@ -182,9 +182,7 @@
       "noMatch": "✗ Passwords don't match"
     },
     "emailConfirmation": {
-      "warning": "⚠️ Type your email again - Pasting is not allowed in this field",
-      "match": "✅ Emails match",
-      "noMatch": "❌ Emails don't match"
+      "warning": "Please confirm your email before logging in. Check your inbox and spam folder."
     },
     "success": {
       "title": "Account created successfully!",

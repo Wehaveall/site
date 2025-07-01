@@ -211,9 +211,7 @@
       "redirecting": "Weiterleitung zur Anmeldung..."
     },
     "emailConfirmation": {
-      "warning": "⚠️ Geben Sie Ihre E-Mail erneut ein - Einfügen ist in diesem Feld nicht möglich",
-      "match": "✅ E-Mails stimmen überein",
-      "noMatch": "❌ E-Mails stimmen nicht überein"
+      "warning": "Bitte bestätigen Sie Ihre E-Mail vor dem Login. Überprüfen Sie Ihren Posteingang und den Spam-Ordner."
     },
     "feedback": {
       "creatingAccount": "⏳ Konto wird erstellt...",

@@ -204,9 +204,7 @@
       "noMatch": "✗ Las contraseñas no coinciden"
     },
     "emailConfirmation": {
-      "warning": "⚠️ Escribe tu correo nuevamente - No se permite pegar en este campo",
-      "match": "✅ Los correos coinciden",
-      "noMatch": "❌ Los correos no coinciden"
+      "warning": "Por favor, confirma tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada y la carpeta de spam."
     },
     "success": {
       "title": "¡Cuenta creada exitosamente!",

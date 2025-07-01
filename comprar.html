@@ -226,6 +226,7 @@
     <script src="assets/js/config-loader.js"></script>
     <script src="assets/js/firebase.js"></script>
     <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/user-display.js"></script>
     <script src="assets/js/mercadopago-service.js"></script>
     <script src="assets/js/pix-modal.js"></script>
     <script src="assets/js/payment.js"></script>
@@ -347,33 +348,10 @@
                     console.log('⚡ Usando dados em cache do usuário');
                 }
                 
-                // Definir nome a ser exibido
-                let displayName = 'Usuário';
-                if (userData && userData.Nome) {
-                    displayName = userData.Nome;
-                    console.log('  📛 Nome obtido do Firestore:', displayName);
-                } else if (user.displayName) {
-                    displayName = user.displayName;
-                    console.log('  📛 Nome obtido do Firebase Auth:', displayName);
-                } else if (user.email) {
-                    // Usar primeira parte do email como fallback
-                    displayName = user.email.split('@')[0];
-                    console.log('  📛 Nome obtido do email:', displayName);
-                }
+                // Usar a nova função global para atualizar o nome
+                updateUserDisplayName(user, userData);
                 
-                // Limitar tamanho do nome no menu
-                if (displayName.length > 15) {
-                    displayName = displayName.substring(0, 12) + '...';
-                    console.log('  ✂️ Nome truncado para:', displayName);
-                }
-                
-                if (navUserName) {
-                    navUserName.textContent = displayName;
-                    navUserName.title = userData?.Nome || user.email || 'Usuário'; // Tooltip com nome completo
-                    console.log('  ✅ Nome definido no elemento:', displayName);
-                }
-                
-                console.log('✅ Menu atualizado para usuário logado:', user.email, '| Nome:', displayName);
+                console.log('✅ Menu atualizado para usuário logado:', user.email, '| Nome:', userData?.Nome || user.email || 'Usuário');
             } else {
                 console.log('❌ USUÁRIO DESLOGADO - Configurando menu para usuário não autenticado');
                 

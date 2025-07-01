@@ -162,7 +162,7 @@
     <!-- Scripts -->
     <script src="assets/js/firebase.js"></script>
     <script src="assets/js/i18n.js"></script>
-
+    <script src="assets/js/user-display.js"></script>
     <script>
         let currentUser = null;
         let customerData = null;
@@ -333,37 +333,10 @@
                     console.log('  ✅ Logout mostrado');
                 }
 
-                // Definir nome a ser exibido
-                let displayName = 'Usuário';
-                if (userData && userData.Nome) {
-                    displayName = userData.Nome;
-                    console.log('  📛 Nome obtido do Firestore:', displayName);
-                } else if (user.displayName) {
-                    displayName = user.displayName;
-                    console.log('  📛 Nome obtido do Firebase Auth:', displayName);
-                } else if (user.email) {
-                    // Usar primeira parte do email como fallback
-                    displayName = user.email.split('@')[0];
-                    console.log('  📛 Nome obtido do email:', displayName);
-                }
+                // Usar a nova função global para atualizar o nome
+                updateUserDisplayName(user, userData);
 
-                // Separar nome em primeiro e último
-                const nameParts = displayName.split(' ').filter(part => part.length > 0);
-                const firstName = nameParts[0];
-                const lastName = nameParts[nameParts.length - 1];
-
-                // Atualizar nome no header
-                if (navUserName) {
-                    navUserName.innerHTML = `
-                        <div class="nav-user-name">
-                            <span class="first-name" style="color: #28a745; font-weight: 600;">${firstName}</span>
-                            ${lastName ? `<span class="last-name" style="color: #28a745; font-weight: 500;">${lastName}</span>` : ''}
-                        </div>
-                    `;
-                    console.log(`  ✅ Nome definido no elemento: ${firstName} ${lastName}`);
-                }
-
-                console.log(`✅ Menu atualizado para usuário logado: ${user.email} | Nome: ${firstName} ${lastName}`);
+                console.log(`✅ Menu atualizado para usuário logado: ${user.email} | Nome: ${user.displayName}`);
 
             } else {
                 console.log('❌ USUÁRIO NÃO LOGADO - Configurando menu para visitante');

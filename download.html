@@ -165,7 +165,7 @@
     <!-- Scripts -->
     <script src="assets/js/firebase.js"></script>
     <script src="assets/js/i18n.js"></script>
-
+    <script src="assets/js/user-display.js"></script>
     <script>
         // Variáveis globais
         let currentUser = null;
@@ -268,27 +268,8 @@
                     console.log('⚡ Usando dados em cache do usuário');
                 }
                 
-                // Definir nome a ser exibido
-                let displayName = 'Usuário';
-                if (userData && userData.Nome) {
-                    displayName = userData.Nome;
-                } else if (user.displayName) {
-                    displayName = user.displayName;
-                } else if (user.email) {
-                    displayName = user.email.split('@')[0];
-                }
-                
-                // Limitar tamanho do nome no menu
-                if (displayName.length > 15) {
-                    displayName = displayName.substring(0, 12) + '...';
-                }
-                
-                if (navUserName) {
-                    navUserName.textContent = displayName;
-                    navUserName.title = userData?.Nome || user.email || 'Usuário';
-                }
-                
-                console.log('✅ Menu atualizado para usuário logado:', user.email, '| Nome:', displayName);
+                // Usar a nova função global para atualizar o nome
+                updateUserDisplayName(user, userData);
             } else {
                 console.log('❌ USUÁRIO DESLOGADO - Configurando menu para usuário não autenticado');
                 

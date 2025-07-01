@@ -175,6 +175,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
     <script src="assets/js/firebase.js"></script>
     
+    <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/user-display.js"></script>
     <script>
         // 🌍 INTEGRAÇÃO COM SISTEMA I18N
         
@@ -302,37 +304,10 @@
                     console.log('⚡ Usando dados em cache do usuário');
                 }
                 
-                // Definir nome a ser exibido
-                let displayName = 'Usuário';
-                if (userData && userData.name) {
-                    displayName = userData.name;
-                    console.log('  📛 Nome obtido do Firestore:', displayName);
-                } else if (user.displayName) {
-                    displayName = user.displayName;
-                    console.log('  📛 Nome obtido do Firebase Auth:', displayName);
-                } else if (user.email) {
-                    // Usar primeira parte do email como fallback
-                    displayName = user.email.split('@')[0];
-                    console.log('  📛 Nome obtido do email:', displayName);
-                }
-
-                // Separar nome em duas linhas
-                const nameParts = displayName.split(' ');
-                const firstName = nameParts[0];
-                const lastName = nameParts.slice(1).join(' ');
-
-                if (navUserName) {
-                    navUserName.innerHTML = `
-                        <div class="nav-user-name">
-                            <span class="first-name">${firstName}</span>
-                            ${lastName ? `<span class="last-name">${lastName}</span>` : ''}
-                        </div>
-                    `;
-                    navUserName.title = userData?.name || user.email || 'Usuário'; // Tooltip com nome completo
-                    console.log('  ✅ Nome definido no elemento:', displayName);
-                }
+                // Usar a nova função global para atualizar o nome
+                updateUserDisplayName(user, userData);
                 
-                console.log('✅ Menu atualizado para usuário logado:', user.email, '| Nome:', displayName);
+                console.log('✅ Menu atualizado para usuário logado:', user.email, '| Nome:', userData?.name || user.email || 'Usuário');
             } else {
                 console.log('❌ USUÁRIO DESLOGADO - Configurando menu para usuário não autenticado');
                 

@@ -311,11 +311,9 @@ exports.syncEmailVerificationPublic = onRequest({
     if (targetEmail) {
       try {
         userRecord = await auth.getUserByEmail(targetEmail);
-        logger.info(`[Public Sync] Usuário encontrado via email: ${
-          userRecord.uid}`);
+        logger.info(`[Public Sync] Usuário encontrado: ${userRecord.uid}`);
       } catch (error) {
-        logger.error(`[Public Sync] Usuário não encontrado para email: ${
-          targetEmail}`);
+        logger.error(`[Public Sync] Usuário não encontrado: ${targetEmail}`);
         throw new Error(`Usuário não encontrado para o email fornecido`);
       }
     } else {
@@ -347,8 +345,7 @@ exports.syncEmailVerificationPublic = onRequest({
     if (userDoc.exists) {
       // Atualizar documento existente
       await userRef.update(updateData);
-      logger.info(`[Public Sync] Documento atualizado para ${
-        userRecord.email}`);
+      logger.info(`[Public Sync] Documento atualizado: ${userRecord.email}`);
     } else {
       // Criar documento se não existir
       const newUserData = {
@@ -359,8 +356,7 @@ exports.syncEmailVerificationPublic = onRequest({
       };
 
       await userRef.set(newUserData);
-      logger.info(`[Public Sync] Documento criado para ${
-        userRecord.email}`);
+      logger.info(`[Public Sync] Documento criado: ${userRecord.email}`);
     }
 
     response.json({
@@ -417,19 +413,29 @@ exports.sendCustomEmailVerification = onCall({
       "pt-br": {
         subject: "Atalho - Confirme seu email para ativar sua conta",
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 20px;">
-            <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+          <div style="font-family: Arial, sans-serif; max-width: 600px; 
+               margin: 0 auto; background: #f8f9fa; padding: 20px;">
+            <div style="background: white; padding: 30px; border-radius: 10px; 
+                 box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
               <div style="text-align: center; margin-bottom: 30px;">
-                <img src="https://atalho.me/assets/img/Atalho.png" alt="Logo Atalho" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px;">
+                <img src="https://atalho.me/assets/img/Atalho.png" 
+                     alt="Logo Atalho" 
+                     style="width: 80px; height: 80px; 
+                            object-fit: contain; margin-bottom: 10px;">
                 <h1 style="color: #dbc9ad; margin: 0;">Atalho</h1>
-                <p style="color: #666; margin: 5px 0 0 0;">Automação e Produtividade</p>
+                <p style="color: #666; margin: 5px 0 0 0;">
+                  Automação e Produtividade
+                </p>
               </div>
               
-              <h2 style="color: #333; text-align: center;">✅ Confirme seu email para ativar sua conta</h2>
+              <h2 style="color: #333; text-align: center;">
+                ✅ Confirme seu email para ativar sua conta
+              </h2>
               
               <div style="text-align: center; margin: 30px 0;">
                 <a href="${verificationLink}" 
-                   style="background: linear-gradient(135deg, #dbc9ad 0%, #c8b298 100%); 
+                   style="background: linear-gradient(
+                            135deg, #dbc9ad 0%, #c8b298 100%); 
                           color: #333; 
                           padding: 15px 30px; 
                           text-decoration: none; 
@@ -442,8 +448,11 @@ exports.sendCustomEmailVerification = onCall({
               </div>
               
               <p style="color: #888; font-size: 14px; line-height: 1.5;">
-                Se o botão não funcionar, copie e cole este link no seu navegador:<br>
-                <a href="${verificationLink}" style="color: #dbc9ad; word-break: break-all;">${verificationLink}</a>
+                Se o botão não funcionar, copie e cole este link:<br>
+                <a href="${verificationLink}" 
+                   style="color: #dbc9ad; word-break: break-all;">
+                  ${verificationLink}
+                </a>
               </p>
             </div>
           </div>

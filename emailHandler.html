@@ -270,23 +270,10 @@
                         await auth.applyActionCode(oobCode);
                         
                         // 3. Forçar sincronização, agora com o email
-                        console.log('🔄 Iniciando processo de sincronização...');
-                        const syncResult = await forceSyncVerification(oobCode, email);
-                        console.log('📋 Resultado da sincronização:', syncResult);
+                        await forceSyncVerification(oobCode, email);
                         
-                        // 4. Verificar se a sincronização foi bem-sucedida
-                        if (syncResult && syncResult.success) {
-                            console.log('✅ Sincronização confirmada pelo servidor');
-                            showSuccess(i18nSystem ? i18nSystem.t('emailHandler.success.message') : 'Email verificado e conta ativada com sucesso!');
-                        } else {
-                            console.log('⚠️ Sincronização falhou, mas email foi verificado');
-                            showSuccess(i18nSystem ? i18nSystem.t('emailHandler.success.message') : 'Email verificado com sucesso! Sua conta será ativada em alguns minutos.');
-                        }
-                        
-                        // 5. Aguardar um pouco e verificar manualmente no Firestore
-                        setTimeout(async () => {
-                            await verifyFirestoreSync(email);
-                        }, 3000);
+                        // 4. Mostrar sucesso
+                        showSuccess(i18nSystem ? i18nSystem.t('emailHandler.success.message') : 'Email verificado com sucesso.');
                         
                     } catch (error) {
                         console.error('❌ Erro na verificação:', error);
@@ -304,14 +291,10 @@
             }
         }
 
-        // Função para forçar sincronização com múltiplas estratégias
+        // Função para forçar sincronização
         async function forceSyncVerification(oobCode, userEmail = null, auth = null) {
-            console.log(`🔄 Iniciando sincronização para email: ${userEmail}`);
-            
-            // Estratégia 1: Sincronização via Cloud Function pública
             try {
-                console.log('🚀 Tentativa 1: Sincronização via Cloud Function pública');
-                const url = '/api/sync-email-verification';
+                const url = 'https://us-east1-shortcut-6256b.cloudfunctions.net/syncEmailVerificationPublic';
                 
                 const payload = { 
                     oobCode,
@@ -326,156 +309,16 @@
                     body: JSON.stringify(payload)
                 });
 
-                if (response.ok) {
-                    const result = await response.json();
-                    console.log('✅ Sincronização pública bem-sucedida:', result);
-                    return result;
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
                 }
-                
-                console.warn('⚠️ Sincronização pública falhou, tentando método alternativo');
-            } catch (error) {
-                console.warn('⚠️ Erro na sincronização pública:', error);
-            }
 
-            // Estratégia 2: Sincronização manual via Firestore direta
-            try {
-                console.log('🚀 Tentativa 2: Sincronização manual via Firestore');
-                
-                if (!firebase.auth().currentUser) {
-                    // Tentar fazer login temporário para sincronizar
-                    console.log('🔑 Usuário não autenticado, tentando sincronização offline');
-                    return await syncOfflineToFirestore(userEmail);
-                }
-                
-                const user = firebase.auth().currentUser;
-                await user.reload(); // Recarregar dados do usuário
-                
-                const db = firebase.firestore();
-                const userDoc = db.collection('users').doc(user.uid);
-                
-                const updateData = {
-                    email_verified: user.emailVerified,
-                    account_status: user.emailVerified ? 'active' : 'pending_verification',
-                    updated_at: new Date().toISOString(),
-                    sync_method: 'manual_frontend',
-                    last_verification_sync: new Date().toISOString()
-                };
-                
-                if (user.emailVerified) {
-                    updateData.email_verified_at = new Date().toISOString();
-                }
-                
-                await userDoc.update(updateData);
-                console.log('✅ Sincronização manual bem-sucedida');
-                
-                return { 
-                    success: true, 
-                    email_verified: user.emailVerified,
-                    account_status: updateData.account_status,
-                    sync_method: 'manual_frontend'
-                };
-                
+                return await response.json();
             } catch (error) {
-                console.warn('⚠️ Erro na sincronização manual:', error);
-            }
-
-            // Estratégia 3: Sincronização offline para posterior processamento
-            try {
-                console.log('🚀 Tentativa 3: Sincronização offline');
-                return await syncOfflineToFirestore(userEmail);
-            } catch (error) {
-                console.error('❌ Todas as estratégias de sincronização falharam:', error);
+                console.error('❌ Erro na sincronização:', error);
                 return { success: false, error: error.message };
             }
         }
-
-                 // Função auxiliar para sincronização offline
-         async function syncOfflineToFirestore(userEmail) {
-             try {
-                 const db = firebase.firestore();
-                 
-                 // Buscar usuário por email (limitação: requer index)
-                 const usersQuery = await db.collection('users')
-                     .where('email', '==', userEmail)
-                     .limit(1)
-                     .get();
-                 
-                 if (!usersQuery.empty) {
-                     const userDoc = usersQuery.docs[0];
-                     const userRef = userDoc.ref;
-                     
-                     const updateData = {
-                         email_verified: true, // Assumimos que chegou aqui porque a verificação foi bem-sucedida
-                         account_status: 'active',
-                         updated_at: new Date().toISOString(),
-                         sync_method: 'offline_frontend',
-                         last_verification_sync: new Date().toISOString(),
-                         email_verified_at: new Date().toISOString()
-                     };
-                     
-                     await userRef.update(updateData);
-                     console.log('✅ Sincronização offline bem-sucedida');
-                     
-                     return { 
-                         success: true, 
-                         email_verified: true,
-                         account_status: 'active',
-                         sync_method: 'offline_frontend'
-                     };
-                 } else {
-                     console.warn('⚠️ Usuário não encontrado no Firestore para sincronização offline');
-                     return { success: false, error: 'Usuário não encontrado' };
-                 }
-                 
-             } catch (error) {
-                 console.error('❌ Erro na sincronização offline:', error);
-                 return { success: false, error: error.message };
-             }
-         }
-
-         // Função para verificar se a sincronização do Firestore foi bem-sucedida
-         async function verifyFirestoreSync(userEmail) {
-             try {
-                 console.log(`🔍 Verificando sincronização do Firestore para: ${userEmail}`);
-                 const db = firebase.firestore();
-                 
-                 // Buscar usuário por email
-                 const usersQuery = await db.collection('users')
-                     .where('email', '==', userEmail)
-                     .limit(1)
-                     .get();
-                 
-                 if (!usersQuery.empty) {
-                     const userDoc = usersQuery.docs[0];
-                     const userData = userDoc.data();
-                     
-                     console.log('📋 Dados atuais no Firestore:', {
-                         email_verified: userData.email_verified,
-                         account_status: userData.account_status,
-                         last_verification_sync: userData.last_verification_sync
-                     });
-                     
-                     // Se ainda não foi sincronizado, tentar sincronização direta
-                     if (!userData.email_verified || userData.account_status !== 'active') {
-                         console.log('🔄 Dados não sincronizados, forçando atualização...');
-                         const result = await syncOfflineToFirestore(userEmail);
-                         
-                         if (result.success) {
-                             console.log('✅ Sincronização manual bem-sucedida após verificação');
-                         } else {
-                             console.warn('⚠️ Falha na sincronização manual após verificação');
-                         }
-                     } else {
-                         console.log('✅ Dados já sincronizados corretamente no Firestore');
-                     }
-                 } else {
-                     console.warn('⚠️ Usuário não encontrado no Firestore durante verificação');
-                 }
-                 
-             } catch (error) {
-                 console.error('❌ Erro ao verificar sincronização do Firestore:', error);
-             }
-         }
     </script>
 </body>
 </html> 

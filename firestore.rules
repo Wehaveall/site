@@ -15,10 +15,6 @@ service cloud.firestore {
       allow create, update: if request.auth != null 
                            && request.auth.uid == userId
                            && validateUserData(request.resource.data);
-      
-      // NOVA: Permitir atualizações de verificação de email sem autenticação
-      // Especificamente para sincronização após verificação de email
-      allow update: if isEmailVerificationUpdate(request.resource.data, resource.data);
     }
     
     // =====================================
@@ -66,29 +62,6 @@ service cloud.firestore {
       
       // Validar que o email no documento corresponde ao email do usuário autenticado
       && data.email == request.auth.token.email;
-    }
-    
-    // Função para validar atualizações de verificação de email
-    function isEmailVerificationUpdate(newData, existingData) {
-      // Verificar se apenas campos relacionados à verificação estão sendo alterados
-      let changedFields = newData.diff(existingData).changedKeys();
-      
-      // Campos permitidos para atualização sem autenticação
-      let allowedFields = ['email_verified', 'account_status', 'updated_at', 
-                          'sync_method', 'last_verification_sync', 'email_verified_at'].toSet();
-      
-      // Verificar se todos os campos alterados estão na lista permitida
-      return changedFields.hasAny(allowedFields) 
-             && changedFields.hasOnly(allowedFields)
-             
-             // Validar valores específicos
-             && (newData.email_verified == true || newData.email_verified == false)
-             && (newData.account_status == 'active' || newData.account_status == 'pending_verification')
-             
-             // Garantir que campos críticos não foram alterados
-             && newData.email == existingData.email
-             && newData.Nome == existingData.Nome
-             && newData.id == existingData.id;
     }
   }
 } 

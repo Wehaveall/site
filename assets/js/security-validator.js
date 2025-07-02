@@ -9,12 +9,8 @@ class SecurityValidator {
         // Detectar tipo da página
         this.isRegistrationPage = window.location.pathname.includes('register.html');
         this.isPaymentPage = window.location.pathname.includes('comprar.html');
-        this.isLoginPage = window.location.pathname.includes('login.html');
         
-        // Inicializar proteções
         this.initializeValidations();
-        this.setupCSRFProtection();
-        this.setupClickjackingProtection();
     }
 
     // =====================================
@@ -22,196 +18,48 @@ class SecurityValidator {
     // =====================================
 
     initializeValidations() {
+        // Validações básicas para melhorar UX
         this.validatePageIntegrity();
         this.monitorDOMForBasicIntegrity();
-        this.setupInputValidation();
-        this.setupFormProtection();
-    }
-
-    // =====================================
-    // 🛡️ PROTEÇÕES DE SEGURANÇA
-    // =====================================
-
-    setupCSRFProtection() {
-        // Gerar token CSRF
-        const csrfToken = this.generateCSRFToken();
         
-        // Adicionar token a todos os forms
-        document.querySelectorAll('form').forEach(form => {
-            const tokenInput = document.createElement('input');
-            tokenInput.type = 'hidden';
-            tokenInput.name = 'csrf_token';
-            tokenInput.value = csrfToken;
-            form.appendChild(tokenInput);
-        });
-        
-        // Adicionar token ao localStorage
-        localStorage.setItem('csrf_token', csrfToken);
-    }
-
-    generateCSRFToken() {
-        return Array.from(crypto.getRandomValues(new Uint8Array(32)))
-            .map(b => b.toString(16).padStart(2, '0'))
-            .join('');
-    }
-
-    setupClickjackingProtection() {
-        // Verificar se estamos em um iframe
-        if (window !== window.top) {
-            // Se estiver em um iframe não autorizado, redirecionar para a página principal
-            const allowedParents = ['atalho.me'];
-            try {
-                const parentHost = new URL(document.referrer).host;
-                if (!allowedParents.includes(parentHost)) {
-                    window.top.location = window.location;
-                }
-            } catch (e) {
-                window.top.location = window.location;
-            }
-        }
-    }
-
-    setupInputValidation() {
-        // Adicionar validação em tempo real para campos sensíveis
-        document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('input', (e) => {
-                const type = e.target.type || 'text';
-                const value = e.target.value;
-                
-                if (!this.validateInput(value, type)) {
-                    e.target.classList.add('invalid');
-                    this.showInputError(e.target);
-                } else {
-                    e.target.classList.remove('invalid');
-                    this.hideInputError(e.target);
-                }
-            });
-        });
-    }
-
-    setupFormProtection() {
-        document.querySelectorAll('form').forEach(form => {
-            form.addEventListener('submit', (e) => {
-                // Prevenir múltiplos submits
-                if (form.dataset.submitting === 'true') {
-                    e.preventDefault();
-                    return;
-                }
-                
-                // Validar CSRF token
-                const formToken = form.querySelector('input[name="csrf_token"]')?.value;
-                const storedToken = localStorage.getItem('csrf_token');
-                
-                if (!formToken || formToken !== storedToken) {
-                    e.preventDefault();
-                    console.error('Erro de validação CSRF');
-                    return;
-                }
-                
-                // Marcar form como em submissão
-                form.dataset.submitting = 'true';
-                
-                // Resetar após timeout
-                setTimeout(() => {
-                    form.dataset.submitting = 'false';
-                }, 5000);
-            });
-        });
+        console.log('🔒 Validações de UX ativadas');
     }
 
     // =====================================
-    // 🔍 VALIDAÇÃO DE ENTRADA
+    // 🔍 VALIDAÇÃO BÁSICA DE ENTRADA (UX)
     // =====================================
 
     validateInput(input, type = 'text') {
         if (typeof input !== 'string') return false;
         
-        const patterns = {
-            email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-            password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
-            name: /^[a-zA-ZÀ-ÿ\s'-]{2,100}$/,
-            phone: /^\+?[\d\s-()]{8,20}$/,
-            url: /^https:\/\/[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\/[^\s]*)?$/,
-            number: /^\d+$/
-        };
-        
-        // Validações específicas por tipo
+        // Validações básicas para diferentes tipos
         switch (type) {
             case 'email':
-                return patterns.email.test(input) && input.length <= 255;
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(input) && input.length <= 255;
                 
             case 'password':
-                return patterns.password.test(input) && 
-                       input.length >= 8 && 
-                       input.length <= 128;
+                return input.length >= 8 && input.length <= 128;
                 
             case 'name':
-                return patterns.name.test(input) && 
-                       input.length >= 2 && 
-                       input.length <= 100;
+                // Permite letras, espaços, acentos, mas remove caracteres perigosos
+                const nameRegex = /^[a-zA-ZÀ-ÿ\s'-]+$/;
+                return nameRegex.test(input) && input.length >= 2 && input.length <= 100;
                 
             case 'phone':
-                return patterns.phone.test(input) && 
-                       input.length >= 8 && 
-                       input.length <= 20;
-                
-            case 'url':
-                return patterns.url.test(input) && 
-                       input.length <= 2048;
-                
-            case 'number':
-                return patterns.number.test(input) && 
-                       input.length <= 20;
+                // Permite números, espaços, +, -, (, )
+                const phoneRegex = /^[\d\s+()-]+$/;
+                return phoneRegex.test(input) && input.length >= 8 && input.length <= 20;
                 
             default:
-                // Sanitização padrão para texto
-                return !input.includes('<') && 
-                       !input.includes('>') && 
-                       !input.includes('javascript:') && 
-                       !input.includes('data:') && 
-                       !input.includes('vbscript:') && 
-                       input.length <= 255;
-        }
-    }
-
-    showInputError(input) {
-        let errorMessage = 'Formato inválido';
-        
-        switch (input.type) {
-            case 'email':
-                errorMessage = 'Email inválido';
-                break;
-            case 'password':
-                errorMessage = 'A senha deve ter pelo menos 8 caracteres, incluindo letras, números e caracteres especiais';
-                break;
-            case 'tel':
-                errorMessage = 'Telefone inválido';
-                break;
-            case 'url':
-                errorMessage = 'URL inválida';
-                break;
-        }
-        
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'input-error';
-        errorDiv.textContent = errorMessage;
-        
-        // Remover erro anterior se existir
-        this.hideInputError(input);
-        
-        // Adicionar novo erro
-        input.parentNode.insertBefore(errorDiv, input.nextSibling);
-    }
-
-    hideInputError(input) {
-        const errorDiv = input.parentNode.querySelector('.input-error');
-        if (errorDiv) {
-            errorDiv.remove();
+                // Validação geral: sem caracteres perigosos
+                return !input.includes('<') && !input.includes('>') && 
+                       !input.includes('javascript:') && input.length <= 255;
         }
     }
 
     // =====================================
-    // 📝 VALIDAÇÃO DE FORMULÁRIOS
+    // 📝 HELPERS PARA FORMULÁRIOS
     // =====================================
 
     validateFormData(formData, requiredFields = []) {
@@ -224,22 +72,22 @@ class SecurityValidator {
             }
         });
         
-        // Validar tipos específicos
-        Object.entries(formData).forEach(([field, value]) => {
-            if (value) {
-                let type = 'text';
-                
-                if (field.includes('email')) type = 'email';
-                if (field.includes('password')) type = 'password';
-                if (field.includes('name')) type = 'name';
-                if (field.includes('phone')) type = 'phone';
-                if (field.includes('url')) type = 'url';
-                
-                if (!this.validateInput(value, type)) {
-                    errors.push(`Campo ${field} contém valor inválido`);
-                }
-            }
-        });
+        // Validar tipos específicos se presentes
+        if (formData.email && !this.validateInput(formData.email, 'email')) {
+            errors.push('Formato de email inválido');
+        }
+        
+        if (formData.password && !this.validateInput(formData.password, 'password')) {
+            errors.push('Senha deve ter pelo menos 8 caracteres');
+        }
+        
+        if (formData.name && !this.validateInput(formData.name, 'name')) {
+            errors.push('Nome contém caracteres inválidos ou é muito curto');
+        }
+        
+        if (formData.phone && !this.validateInput(formData.phone, 'phone')) {
+            errors.push('Formato de telefone inválido');
+        }
         
         return errors;
     }
@@ -256,7 +104,7 @@ class SecurityValidator {
         container.innerHTML = `
             <div class="alert alert-danger">
                 <ul class="mb-0">
-                    ${errors.map(error => `<li>${this.sanitizeHTML(error)}</li>`).join('')}
+                    ${errors.map(error => `<li>${error}</li>`).join('')}
                 </ul>
             </div>
         `;
@@ -264,74 +112,65 @@ class SecurityValidator {
     }
 
     // =====================================
-    // 🔍 VALIDAÇÃO DE INTEGRIDADE
+    // 🔍 VALIDAÇÃO BÁSICA DE INTEGRIDADE
     // =====================================
 
     validatePageIntegrity() {
-        // Elementos críticos específicos da página
-        let criticalElements = ['script[src*="firebase"]'];
+        // Detectar que tipo de página estamos
+        const isPaymentPage = window.location.pathname.includes('comprar.html');
+        const isRegistrationPage = window.location.pathname.includes('register.html');
         
-        if (this.isPaymentPage) {
-            criticalElements = criticalElements.concat([
+        // Elementos críticos específicos da página
+        let criticalElements = [];
+        
+        if (isPaymentPage) {
+            criticalElements = [
+                'script[src*="firebase"]',
                 'script[src*="mercadopago"]',
                 '.payment-option'
-            ]);
-        } else if (this.isRegistrationPage) {
-            criticalElements = criticalElements.concat([
+            ];
+        } else if (isRegistrationPage) {
+            criticalElements = [
+                'script[src*="firebase"]',
                 'form#customer-registration-form'
-            ]);
-        } else if (this.isLoginPage) {
-            criticalElements = criticalElements.concat([
-                'form#login-form'
-            ]);
+            ];
+        } else {
+            // Página genérica - verificações mínimas
+            criticalElements = [
+                'script[src*="firebase"]'
+            ];
         }
         
+        const self = this;
+
         criticalElements.forEach(selector => {
             const elements = document.querySelectorAll(selector);
             if (elements.length === 0) {
-                console.warn(`Elemento crítico não encontrado: ${selector}`);
-                this.handleIntegrityViolation();
+                console.warn(`⚠️ Elemento crítico não encontrado: ${selector}`);
             }
         });
 
-        // Verificar integridade periodicamente
-        setInterval(() => this.checkBasicDOMIntegrity(), 5000);
+        // Verificar integridade do DOM ocasionalmente
+        setTimeout(() => {
+            self.checkBasicDOMIntegrity();
+        }, 5000);
     }
 
     checkBasicDOMIntegrity() {
+        // Verificar se elementos críticos ainda existem
         if (this.isPaymentPage) {
             const paymentButtons = document.querySelectorAll('.payment-option');
             if (paymentButtons.length === 0) {
-                this.handleIntegrityViolation();
+                console.warn('⚠️ Botões de pagamento foram removidos');
             }
         }
         
-        if (this.isRegistrationPage || this.isLoginPage) {
-            const form = document.querySelector(
-                this.isRegistrationPage ? '#customer-registration-form' : '#login-form'
-            );
-            if (!form) {
-                this.handleIntegrityViolation();
+        if (this.isRegistrationPage) {
+            const registrationForm = document.querySelector('#customer-registration-form');
+            if (!registrationForm) {
+                console.warn('⚠️ Formulário de registro foi removido');
             }
         }
-    }
-
-    handleIntegrityViolation() {
-        // Registrar violação
-        console.error('Violação de integridade detectada');
-        
-        // Tentar recuperar estado
-        window.location.reload();
-    }
-
-    // =====================================
-    // 🛡️ UTILITÁRIOS DE SEGURANÇA
-    // =====================================
-
-    sanitizeHTML(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
     }
 
     isAllowedScript(src) {
@@ -343,36 +182,37 @@ class SecurityValidator {
             window.location.origin
         ];
 
-        try {
-            const url = new URL(src);
-            return allowedDomains.some(domain => url.hostname.endsWith(domain));
-        } catch {
-            return false;
-        }
+        return allowedDomains.some(domain => src.includes(domain));
     }
 
     // =====================================
-    // 👁️ MONITORAMENTO DO DOM
+    // 👁️ MONITORAMENTO BÁSICO DO DOM
     // =====================================
 
     monitorDOMForBasicIntegrity() {
+        const self = this;
+        
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
-                if (mutation.type === 'childList') {
-                    mutation.addedNodes.forEach((node) => {
-                        if (node.tagName === 'SCRIPT') {
-                            const src = node.src;
-                            if (src && !this.isAllowedScript(src)) {
-                                console.warn('Script não autorizado detectado:', src);
-                                node.remove();
+                try {
+                    // Detectar apenas adição de scripts externos suspeitos
+                    if (mutation.type === 'childList') {
+                        mutation.addedNodes.forEach((node) => {
+                            if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'SCRIPT') {
+                                if (node.src && !self.isAllowedScript(node.src)) {
+                                    console.warn('⚠️ Script não autorizado detectado:', node.src);
+                                    // Apenas log, não remover (pode quebrar funcionalidades)
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
+                } catch (error) {
+                    // Silenciar erros para não afetar UX
                 }
             });
         });
-        
-        observer.observe(document.documentElement, {
+
+        observer.observe(document.body, {
             childList: true,
             subtree: true
         });
@@ -436,5 +276,4 @@ if (!window.securityValidator) {
     console.log('📋 Security Validator já foi inicializado anteriormente');
 }
 
-console.log('📋 UX Validator inicializado'); 
 console.log('📋 UX Validator inicializado'); 

@@ -16,99 +16,12 @@
     }
   ],
   "hosting": {
-    "public": ".",
+    "public": "public",
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**",
-      "functions/**"
-    ],
-    "headers": [
-      {
-        "source": "**",
-        "headers": [
-          {
-            "key": "X-Content-Type-Options",
-            "value": "nosniff"
-          },
-          {
-            "key": "X-Frame-Options",
-            "value": "DENY"
-          },
-          {
-            "key": "X-XSS-Protection",
-            "value": "1; mode=block"
-          },
-          {
-            "key": "Content-Security-Policy",
-            "value": "default-src 'self' https://atalho.me; script-src 'self' https://www.gstatic.com https://firebase.googleapis.com https://sdk.mercadopago.com https://cdnjs.cloudflare.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://firestore.googleapis.com https://firebase.googleapis.com https://api.mercadopago.com https://atalho.me; frame-src https://js.stripe.com https://hooks.stripe.com; form-action 'self'; upgrade-insecure-requests; block-all-mixed-content"
-          },
-          {
-            "key": "Strict-Transport-Security",
-            "value": "max-age=31536000; includeSubDomains; preload"
-          },
-          {
-            "key": "Referrer-Policy",
-            "value": "strict-origin-when-cross-origin"
-          },
-          {
-            "key": "Permissions-Policy",
-            "value": "geolocation=(), microphone=(), camera=(), payment=(), usb=(), bluetooth=(), midi=(), notifications=()"
-          }
-        ]
-      }
-    ],
-    "redirects": [
-      {
-        "source": "/admin",
-        "destination": "/login",
-        "type": 301
-      },
-      {
-        "source": "/admin/*",
-        "destination": "/login",
-        "type": 301
-      }
+      "**/node_modules/**"
     ]
   },
-  "extensions": {},
-  "firestore": {
-    "rules": {
-      "rules_version": "2",
-      "service": "cloud.firestore",
-      "match": {
-        "/databases/{database}/documents": {
-          "match": {
-            "/{document=**}": {
-              "allow": {
-                "read": false,
-                "write": false
-              }
-            },
-            "/users/{userId}": {
-              "allow": {
-                "read": "request.auth != null && request.auth.uid == userId",
-                "create": "request.auth != null && request.auth.uid == userId && request.resource.data.email == request.auth.token.email && request.resource.data.Nome is string && request.resource.data.Nome.size() >= 2 && request.resource.data.Nome.size() <= 100",
-                "update": "request.auth != null && request.auth.uid == userId && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['email', 'user.uid', 'created_at']))"
-              }
-            },
-            "/payments/{paymentId}": {
-              "allow": {
-                "read": "request.auth != null && resource.data.userId == request.auth.uid",
-                "create": "request.auth != null && request.resource.data.userId == request.auth.uid && request.resource.data.amount is number && request.resource.data.amount > 0 && request.resource.data.currency is string && request.resource.data.status in ['pending', 'completed', 'failed']",
-                "update": false,
-                "delete": false
-              }
-            },
-            "/audit_logs/{logId}": {
-              "allow": {
-                "read": "request.auth != null && request.auth.token.admin == true",
-                "write": false
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+  "extensions": {}
 }

@@ -1,15 +1,12 @@
 const admin = require('firebase-admin');
 
-// Função para sanitizar dados de entrada
+// ✅ Função para sanitizar dados de entrada (CORRIGIDA: mais robusta)
 function sanitizeInput(input) {
   if (typeof input !== 'string') return input;
   
-  // Remove caracteres perigosos que podem ser usados para XSS
+  // Usa whitelist approach - apenas caracteres alfanuméricos, espaços e alguns símbolos seguros
   return input
-    .replace(/[<>]/g, '') // Remove < e >
-    .replace(/javascript:/gi, '') // Remove javascript:
-    .replace(/on\w+=/gi, '') // Remove event handlers como onclick=
-    .replace(/['"]/g, '') // Remove aspas simples e duplas
+    .replace(/[^\w\s\-\.@áéíóúàèìòùâêîôûãõçñü]/gi, '') // Permite apenas caracteres seguros
     .trim()
     .substring(0, 255); // Limita o tamanho
 }

@@ -1,5 +1,6 @@
 // api/create-pix.js - Vercel Serverless Function SEGURA
 const { MercadoPagoConfig, Payment } = require('mercadopago');
+const admin = require('firebase-admin');
 
 // ✅ CONFIGURAÇÃO SEGURA - Token via variável de ambiente
 const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
@@ -16,6 +17,39 @@ const client = new MercadoPagoConfig({
 });
 
 const payment = new Payment(client);
+
+// ✅ INICIALIZAR FIREBASE ADMIN (PARA VERIFICAÇÃO DE AUTENTICAÇÃO)
+function initializeFirebaseAdmin() {
+    if (!admin.apps.length) {
+        try {
+            const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+            admin.initializeApp({
+                credential: admin.credential.cert(serviceAccount),
+                databaseURL: "https://shortcut-6256b-default-rtdb.firebaseio.com"
+            });
+        } catch (error) {
+            console.error('Falha na inicialização do Firebase Admin SDK:', error);
+        }
+    }
+    return admin;
+}
+
+// ✅ VERIFICAÇÃO DE AUTENTICAÇÃO
+async function verifyAuthToken(authHeader) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        throw new Error('Token de autenticação não fornecido');
+    }
+    
+    const idToken = authHeader.split('Bearer ')[1];
+    const adminInstance = initializeFirebaseAdmin();
+    
+    try {
+        const decodedToken = await adminInstance.auth().verifyIdToken(idToken);
+        return decodedToken;
+    } catch (error) {
+        throw new Error('Token de autenticação inválido');
+    }
+}
 
 // ✅ DOMÍNIOS PERMITIDOS (CORS SEGURO)
 const ALLOWED_ORIGINS = [
@@ -107,6 +141,18 @@ module.exports = async (req, res) => {
             return res.status(405).json({ error: 'Método não permitido' });
         }
 
+        // ✅ VERIFICAÇÃO DE AUTENTICAÇÃO (CORRIGIDO: obrigatória)
+        let decodedToken;
+        try {
+            decodedToken = await verifyAuthToken(req.headers.authorization);
+        } catch (authError) {
+            console.warn(`🚫 Tentativa de acesso não autenticada: ${authError.message}`);
+            return res.status(401).json({
+                success: false,
+                error: 'Autenticação necessária para criar pagamento'
+            });
+        }
+
         // ✅ RATE LIMITING
         const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'unknown';
         if (!checkRateLimit(clientIP)) {
@@ -117,48 +163,36 @@ module.exports = async (req, res) => {
             });
         }
 
-        // ✅ VALIDAÇÃO DE ENTRADA
-        const { email, firstName, lastName } = req.body || {};
+        // ✅ DADOS DO USUÁRIO AUTENTICADO (não mais do body da requisição)
+        const userEmail = decodedToken.email;
+        const userName = decodedToken.name || 'Cliente';
+        const userId = decodedToken.uid;
         
-        // Verificar se há conteúdo suspeito
-        if (containsSuspiciousContent(JSON.stringify(req.body))) {
-            console.warn(`🚨 Conteúdo suspeito detectado de IP: ${clientIP}`);
-            return res.status(400).json({
-                success: false,
-                error: 'Dados inválidos detectados'
-            });
-        }
-
-        // Validar email se fornecido
-        if (email && !isValidEmail(email)) {
-            return res.status(400).json({
-                success: false,
-                error: 'Email inválido'
-            });
-        }
-
-        console.log(`🔒 VERCEL SEGURO: Criando pagamento PIX para IP: ${clientIP}`);
+        console.log(`🔒 VERCEL SEGURO: Criando pagamento PIX para usuário: ${userId} (${userEmail})`);
 
         // ✅ CONFIGURAR EXPIRAÇÃO (20 MINUTOS)
         const expirationDate = new Date();
         expirationDate.setMinutes(expirationDate.getMinutes() + 20);
 
-        // ✅ DADOS DO PAGAMENTO (SANITIZADOS)
+        // ✅ DADOS DO PAGAMENTO (USANDO DADOS DO USUÁRIO AUTENTICADO)
         const paymentBody = {
             transaction_amount: 49.90, // Valor fixo (não vem do cliente)
             description: 'Licença Anual do Atalho - Software de Expansão de Texto',
             payment_method_id: 'pix',
             date_of_expiration: expirationDate.toISOString(),
             payer: {
-                email: email || 'cliente@atalho.me',
-                first_name: firstName || 'Cliente',
-                last_name: lastName || 'Atalho',
+                email: userEmail,
+                first_name: userName.split(' ')[0] || 'Cliente',
+                last_name: userName.split(' ').slice(1).join(' ') || 'Atalho',
                 identification: {
                     type: 'CPF',
                     number: generateValidCPF()
                 }
             },
-            notification_url: `${origin || 'https://atalho.me'}/api/webhook`
+            notification_url: `${origin || 'https://atalho.me'}/api/webhook`,
+            metadata: {
+                user_id: userId // Associar pagamento ao usuário
+            }
         };
 
         // ✅ CRIAR PAGAMENTO COM IDEMPOTÊNCIA

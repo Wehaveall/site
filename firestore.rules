@@ -1,0 +1,67 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // =====================================
+    // 🔒 REGRAS PARA COLEÇÃO DE USUÁRIOS
+    // =====================================
+    
+    match /users/{userId} {
+      // Usuários podem apenas ler seus próprios documentos
+      allow read: if request.auth != null && request.auth.uid == userId;
+      
+      // Escrita apenas com validação (CORRIGIDO: removida regra duplicada)
+      allow create, update: if request.auth != null 
+                           && request.auth.uid == userId
+                           && validateUserData(request.resource.data);
+    }
+    
+    // =====================================
+    // 🔒 REGRAS PARA COLEÇÃO DE EMAIL
+    // =====================================
+    
+    match /mail/{emailId} {
+      // Apenas o sistema pode escrever emails (via Admin SDK)
+      // Usuários não podem ler ou escrever emails diretamente
+      allow read, write: if false;
+    }
+    
+    // =====================================
+    // 🔒 REGRAS PARA OUTRAS COLEÇÕES
+    // =====================================
+    
+    // Qualquer outra coleção não especificada é bloqueada por padrão
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    
+    // =====================================
+    // 🔧 FUNÇÕES DE VALIDAÇÃO
+    // =====================================
+    
+    function validateUserData(data) {
+      // Validar campos obrigatórios
+      return data.keys().hasAll(['Nome', 'email', 'created_at'])
+      
+      // Validar tipos de dados
+      && data.Nome is string
+      && data.email is string
+      && data.email.matches('.*@.*\\..*') // Formato básico de email
+      
+      // Validar tamanhos
+      && data.Nome.size() > 0 && data.Nome.size() <= 100
+      && data.email.size() > 0 && data.email.size() <= 255
+      
+      // Validar campos opcionais se presentes
+      && (data.phone == null || (data.phone is string && data.phone.size() <= 20))
+      && (data.country == null || (data.country is string && data.country.size() <= 50))
+      
+      // Validar que UID corresponde ao documento (CORRIGIDO: suporte para criação)
+      && data.id == userId
+      
+      // Validar que o email no documento corresponde ao email do usuário autenticado
+      && data.email == request.auth.token.email;
+    }
+  }
+} 

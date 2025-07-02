@@ -88,10 +88,19 @@ class MercadoPagoService {
         try {
             console.log("🎯 Criando pagamento PIX...");
 
+            // ✅ OBTER TOKEN DE AUTENTICAÇÃO (CORRIGIDO: autenticação obrigatória)
+            let authToken = null;
+            if (window.auth && window.auth.currentUser) {
+                authToken = await window.auth.currentUser.getIdToken();
+            } else {
+                throw new Error('Usuário não autenticado');
+            }
+
             const response = await fetch(`${this.apiBaseUrl}/create-pix`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}` // Token de autenticação
                 },
                 body: JSON.stringify({
                     amount: 49.90,

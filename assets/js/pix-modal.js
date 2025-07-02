@@ -233,8 +233,10 @@ class PixModalController {
     }
 
     generateRegistrationToken() {
-        // Gera um token único para o cadastro
-        return 'reg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        // Gera um token criptograficamente seguro para o cadastro (CORRIGIDO)
+        const array = new Uint8Array(32);
+        window.crypto.getRandomValues(array);
+        return 'reg_' + Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
     }
 
     async sendConfirmationEmail(paymentId, registrationToken) {
@@ -372,7 +374,7 @@ class PixModalController {
                     <p style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; color: #2e8b57;">💰 Valor: R$ 49,90</p>
                     
                     <div style="margin-top: 1rem; margin-bottom: 1rem;">
-                        <button id="copy-pix-button" onclick="navigator.clipboard.writeText('${qrCodeText}').then(() => document.getElementById('copy-pix-button').textContent = 'Código Copiado!')"
+                        <button id="copy-pix-button"
                                 style="padding: 0.5rem 1rem; background-color: #e9ecef; color: #333; border-radius: 0.25rem; border: none; cursor: pointer; width: 80%; margin: 0 auto; display: block;">
                             📋 Copiar Código PIX
                         </button>
@@ -412,6 +414,24 @@ class PixModalController {
                 </div>
             </div>
         `;
+        
+        // ✅ ADICIONAR EVENT LISTENER SEGURO (CORRIGIDO: sem XSS)
+        setTimeout(() => {
+            const copyButton = document.getElementById('copy-pix-button');
+            if (copyButton) {
+                copyButton.addEventListener('click', () => {
+                    navigator.clipboard.writeText(qrCodeText).then(() => {
+                        copyButton.textContent = 'Código Copiado!';
+                        setTimeout(() => {
+                            copyButton.textContent = '📋 Copiar Código PIX';
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Erro ao copiar:', err);
+                        copyButton.textContent = 'Erro ao copiar';
+                    });
+                });
+            }
+        }, 100);
     }
 }
 

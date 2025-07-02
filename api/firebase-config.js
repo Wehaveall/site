@@ -3,18 +3,8 @@ export default async function handler(req, res) {
     console.log('🌍 NODE_ENV:', process.env.NODE_ENV);
     console.log('🌍 VERCEL_ENV:', process.env.VERCEL_ENV);
 
-    // Log de TODAS as variáveis de ambiente para debug
-    const allEnvVars = Object.keys(process.env).filter(key => key.includes('FIREBASE'));
-    console.log('🔍 QUALQUER coisa com firebase:', allEnvVars);
-    
-    // Verificar as específicas (SEM NEXT_PUBLIC_)
-    const testVars = {
-        'FIREBASE_API_KEY': process.env.FIREBASE_API_KEY,
-        'FIREBASE_PROJECT_ID': process.env.FIREBASE_PROJECT_ID,
-        'FIREBASE_AUTH_DOMAIN': process.env.FIREBASE_AUTH_DOMAIN,
-    };
-    
-    console.log('🔍 Teste das 3 principais:', JSON.stringify(testVars, null, 2));
+    // ✅ LOGS SEGUROS (CORRIGIDO: sem vazar informações sensíveis)
+    console.log('🔍 Verificando disponibilidade das configurações Firebase...');
 
     // Configuração APENAS via variáveis de ambiente (SEM NEXT_PUBLIC_)
     const firebaseConfig = {
@@ -28,10 +18,11 @@ export default async function handler(req, res) {
         measurementId: process.env.FIREBASE_MEASUREMENT_ID,
     };
 
+    // ✅ LOG SEGURO (CORRIGIDO: sem vazar chaves)
     console.log('🔍 Configuração carregada:', {
-        apiKey: firebaseConfig.apiKey ? firebaseConfig.apiKey.substring(0, 10) + '...' : 'MISSING',
-        authDomain: firebaseConfig.authDomain || 'MISSING',
-        projectId: firebaseConfig.projectId || 'MISSING'
+        hasApiKey: !!firebaseConfig.apiKey,
+        hasAuthDomain: !!firebaseConfig.authDomain,
+        hasProjectId: !!firebaseConfig.projectId
     });
 
     // Verificar se as configurações críticas estão disponíveis
@@ -43,8 +34,15 @@ export default async function handler(req, res) {
         });
     }
 
-    // Retornar configuração
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    // ✅ CORS SEGURO (CORRIGIDO: apenas domínios permitidos)
+    const origin = req.headers.origin;
+    const allowedOrigins = ['https://atalho.me', 'https://www.atalho.me'];
+    
+    if (origin && allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    } else {
+        res.setHeader('Access-Control-Allow-Origin', 'https://atalho.me');
+    }
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     

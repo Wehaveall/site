@@ -1,143 +1,266 @@
-// VALIDADOR DE SEGURANÇA FRONTEND - ATALHO
+// VALIDADOR DE ENTRADA E UX - ATALHO
 // ==========================================
-// ✅ Proteções contra manipulação client-side
+// ✅ Validações de UX e integridade básica
+// ⚠️  NOTA: Segurança real deve ser implementada no servidor
 // ==========================================
 
 class SecurityValidator {
     constructor() {
-        this.maxAttempts = 5;
-        this.attempts = new Map();
-        this.blockedIPs = new Set();
-        
-        // Detectar modo da página
+        // Detectar tipo da página
         this.isRegistrationPage = window.location.pathname.includes('register.html');
         this.isPaymentPage = window.location.pathname.includes('comprar.html');
+        this.isLoginPage = window.location.pathname.includes('login.html');
         
-        this.initializeProtections();
+        // Inicializar proteções
+        this.initializeValidations();
+        this.setupCSRFProtection();
+        this.setupClickjackingProtection();
     }
 
     // =====================================
-    // 🔒 INICIALIZAÇÃO DAS PROTEÇÕES
+    // 🔒 INICIALIZAÇÃO DAS VALIDAÇÕES
     // =====================================
 
-    initializeProtections() {
-        // Modo especial para página de registro - proteções mínimas
-        if (this.isRegistrationPage) {
-            console.log('🔒 Modo registro ativado - proteções mínimas');
-            this.setupCSRFProtection(); // Apenas CSRF
-            return; // Não ativar outras proteções
+    initializeValidations() {
+        this.validatePageIntegrity();
+        this.monitorDOMForBasicIntegrity();
+        this.setupInputValidation();
+        this.setupFormProtection();
+    }
+
+    // =====================================
+    // 🛡️ PROTEÇÕES DE SEGURANÇA
+    // =====================================
+
+    setupCSRFProtection() {
+        // Gerar token CSRF
+        const csrfToken = this.generateCSRFToken();
+        
+        // Adicionar token a todos os forms
+        document.querySelectorAll('form').forEach(form => {
+            const tokenInput = document.createElement('input');
+            tokenInput.type = 'hidden';
+            tokenInput.name = 'csrf_token';
+            tokenInput.value = csrfToken;
+            form.appendChild(tokenInput);
+        });
+        
+        // Adicionar token ao localStorage
+        localStorage.setItem('csrf_token', csrfToken);
+    }
+
+    generateCSRFToken() {
+        return Array.from(crypto.getRandomValues(new Uint8Array(32)))
+            .map(b => b.toString(16).padStart(2, '0'))
+            .join('');
+    }
+
+    setupClickjackingProtection() {
+        // Verificar se estamos em um iframe
+        if (window !== window.top) {
+            // Se estiver em um iframe não autorizado, redirecionar para a página principal
+            const allowedParents = ['atalho.me'];
+            try {
+                const parentHost = new URL(document.referrer).host;
+                if (!allowedParents.includes(parentHost)) {
+                    window.top.location = window.location;
+                }
+            } catch (e) {
+                window.top.location = window.location;
+            }
+        }
+    }
+
+    setupInputValidation() {
+        // Adicionar validação em tempo real para campos sensíveis
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', (e) => {
+                const type = e.target.type || 'text';
+                const value = e.target.value;
+                
+                if (!this.validateInput(value, type)) {
+                    e.target.classList.add('invalid');
+                    this.showInputError(e.target);
+                } else {
+                    e.target.classList.remove('invalid');
+                    this.hideInputError(e.target);
+                }
+            });
+        });
+    }
+
+    setupFormProtection() {
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', (e) => {
+                // Prevenir múltiplos submits
+                if (form.dataset.submitting === 'true') {
+                    e.preventDefault();
+                    return;
+                }
+                
+                // Validar CSRF token
+                const formToken = form.querySelector('input[name="csrf_token"]')?.value;
+                const storedToken = localStorage.getItem('csrf_token');
+                
+                if (!formToken || formToken !== storedToken) {
+                    e.preventDefault();
+                    console.error('Erro de validação CSRF');
+                    return;
+                }
+                
+                // Marcar form como em submissão
+                form.dataset.submitting = 'true';
+                
+                // Resetar após timeout
+                setTimeout(() => {
+                    form.dataset.submitting = 'false';
+                }, 5000);
+            });
+        });
+    }
+
+    // =====================================
+    // 🔍 VALIDAÇÃO DE ENTRADA
+    // =====================================
+
+    validateInput(input, type = 'text') {
+        if (typeof input !== 'string') return false;
+        
+        const patterns = {
+            email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+            password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+            name: /^[a-zA-ZÀ-ÿ\s'-]{2,100}$/,
+            phone: /^\+?[\d\s-()]{8,20}$/,
+            url: /^https:\/\/[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\/[^\s]*)?$/,
+            number: /^\d+$/
+        };
+        
+        // Validações específicas por tipo
+        switch (type) {
+            case 'email':
+                return patterns.email.test(input) && input.length <= 255;
+                
+            case 'password':
+                return patterns.password.test(input) && 
+                       input.length >= 8 && 
+                       input.length <= 128;
+                
+            case 'name':
+                return patterns.name.test(input) && 
+                       input.length >= 2 && 
+                       input.length <= 100;
+                
+            case 'phone':
+                return patterns.phone.test(input) && 
+                       input.length >= 8 && 
+                       input.length <= 20;
+                
+            case 'url':
+                return patterns.url.test(input) && 
+                       input.length <= 2048;
+                
+            case 'number':
+                return patterns.number.test(input) && 
+                       input.length <= 20;
+                
+            default:
+                // Sanitização padrão para texto
+                return !input.includes('<') && 
+                       !input.includes('>') && 
+                       !input.includes('javascript:') && 
+                       !input.includes('data:') && 
+                       !input.includes('vbscript:') && 
+                       input.length <= 255;
+        }
+    }
+
+    showInputError(input) {
+        let errorMessage = 'Formato inválido';
+        
+        switch (input.type) {
+            case 'email':
+                errorMessage = 'Email inválido';
+                break;
+            case 'password':
+                errorMessage = 'A senha deve ter pelo menos 8 caracteres, incluindo letras, números e caracteres especiais';
+                break;
+            case 'tel':
+                errorMessage = 'Telefone inválido';
+                break;
+            case 'url':
+                errorMessage = 'URL inválida';
+                break;
         }
         
-        this.preventDevToolsManipulation();
-        this.preventConsoleManipulationSafe();
-        this.validatePageIntegrity();
-        this.setupCSRFProtection();
-        this.monitorDOMChangesSafe();
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'input-error';
+        errorDiv.textContent = errorMessage;
         
-        console.log('🔒 Proteções de segurança ativadas (modo completo)');
+        // Remover erro anterior se existir
+        this.hideInputError(input);
+        
+        // Adicionar novo erro
+        input.parentNode.insertBefore(errorDiv, input.nextSibling);
+    }
+
+    hideInputError(input) {
+        const errorDiv = input.parentNode.querySelector('.input-error');
+        if (errorDiv) {
+            errorDiv.remove();
+        }
     }
 
     // =====================================
-    // 🛡️ PROTEÇÃO CONTRA DEV TOOLS
+    // 📝 VALIDAÇÃO DE FORMULÁRIOS
     // =====================================
 
-    preventDevToolsManipulation() {
-        // Detectar abertura do DevTools
-        let devtools = {
-            open: false,
-            orientation: null
-        };
-
-        const threshold = 160;
-        const self = this;
-
-        setInterval(() => {
-            if (window.outerHeight - window.innerHeight > threshold || 
-                window.outerWidth - window.innerWidth > threshold) {
-                if (!devtools.open) {
-                    devtools.open = true;
-                    console.warn('🚨 DevTools detectado - Monitoramento ativo');
-                    self.logSecurityEventSafe('devtools_opened');
+    validateFormData(formData, requiredFields = []) {
+        const errors = [];
+        
+        // Verificar campos obrigatórios
+        requiredFields.forEach(field => {
+            if (!formData[field] || formData[field].trim() === '') {
+                errors.push(`Campo ${field} é obrigatório`);
+            }
+        });
+        
+        // Validar tipos específicos
+        Object.entries(formData).forEach(([field, value]) => {
+            if (value) {
+                let type = 'text';
+                
+                if (field.includes('email')) type = 'email';
+                if (field.includes('password')) type = 'password';
+                if (field.includes('name')) type = 'name';
+                if (field.includes('phone')) type = 'phone';
+                if (field.includes('url')) type = 'url';
+                
+                if (!this.validateInput(value, type)) {
+                    errors.push(`Campo ${field} contém valor inválido`);
                 }
-            } else {
-                devtools.open = false;
-            }
-        }, 2000);
-
-        // Bloquear F12, Ctrl+Shift+I, etc.
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'F12' || 
-                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
-                (e.ctrlKey && e.shiftKey && e.key === 'C') ||
-                (e.ctrlKey && e.key === 'U')) {
-                e.preventDefault();
-                self.logSecurityEventSafe('devtools_attempt');
-                return false;
             }
         });
-
-        // Bloquear menu de contexto
-        document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            self.logSecurityEventSafe('context_menu_attempt');
-        });
+        
+        return errors;
     }
 
-    // =====================================
-    // 🔐 PROTEÇÃO DO CONSOLE
-    // =====================================
-
-    preventConsoleManipulationSafe() {
-        // Sobrescrever console methods críticos de forma segura
-        const originalLog = console.log;
-        const originalError = console.error;
-        const originalWarn = console.warn;
-        const self = this;
-
-        // Salvar referências originais para uso seguro
-        this.originalLog = originalLog;
-        this.originalError = originalError;
-        this.originalWarn = originalWarn;
-
-        // Flag para evitar loops recursivos
-        this.loggingSecurityEvent = false;
-
-        // Interceptar console.log apenas se não estiver logando evento de segurança
-        // Modo menos agressivo para desenvolvimento
-        console.log = (...args) => {
-            if (!self.loggingSecurityEvent && Math.random() < 0.1) {
-                // Log apenas 10% das tentativas para reduzir spam
-                self.logSecurityEventSafe('console_access');
-            }
-            return originalLog.apply(console, args);
-        };
-
-        // Detectar tentativas de modificação do console (sem interceptar acesso de leitura)
-        let consoleAccessCount = 0;
-        const originalConsole = window.console;
+    showValidationErrors(errors, containerId = 'validation-errors') {
+        const container = document.getElementById(containerId);
+        if (!container) return;
         
-        Object.defineProperty(window, 'console', {
-            get() {
-                consoleAccessCount++;
-                // Log apenas se houver muitos acessos suspeitos (mais de 50 por minuto)
-                if (consoleAccessCount > 50 && !self.loggingSecurityEvent) {
-                    self.logSecurityEventSafe('excessive_console_access');
-                    consoleAccessCount = 0; // Reset counter
-                }
-                return originalConsole;
-            },
-            set(value) {
-                if (!self.loggingSecurityEvent) {
-                    self.logSecurityEventSafe('console_override_attempt');
-                }
-                return value;
-            }
-        });
-
-        // Reset counter a cada minuto
-        setInterval(() => {
-            consoleAccessCount = 0;
-        }, 60000);
+        if (errors.length === 0) {
+            container.style.display = 'none';
+            return;
+        }
+        
+        container.innerHTML = `
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    ${errors.map(error => `<li>${this.sanitizeHTML(error)}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+        container.style.display = 'block';
     }
 
     // =====================================
@@ -145,82 +268,70 @@ class SecurityValidator {
     // =====================================
 
     validatePageIntegrity() {
-        // Detectar que tipo de página estamos
-        const isPaymentPage = window.location.pathname.includes('comprar.html');
-        const isRegistrationPage = window.location.pathname.includes('register.html');
-        
         // Elementos críticos específicos da página
-        let criticalElements = [];
+        let criticalElements = ['script[src*="firebase"]'];
         
-        if (isPaymentPage) {
-            criticalElements = [
-                'script[src*="firebase"]',
+        if (this.isPaymentPage) {
+            criticalElements = criticalElements.concat([
                 'script[src*="mercadopago"]',
                 '.payment-option'
-            ];
-        } else if (isRegistrationPage) {
-            criticalElements = [
-                'script[src*="firebase"]',
+            ]);
+        } else if (this.isRegistrationPage) {
+            criticalElements = criticalElements.concat([
                 'form#customer-registration-form'
-            ];
-        } else {
-            // Página genérica - verificações mínimas
-            criticalElements = [
-                'script[src*="firebase"]'
-            ];
+            ]);
+        } else if (this.isLoginPage) {
+            criticalElements = criticalElements.concat([
+                'form#login-form'
+            ]);
         }
         
-        const self = this;
-
         criticalElements.forEach(selector => {
             const elements = document.querySelectorAll(selector);
             if (elements.length === 0) {
-                self.logSecurityEventSafe('critical_element_missing', { 
-                    selector, 
-                    page: window.location.pathname,
-                    severity: 'warning' // Reduzir gravidade
-                });
+                console.warn(`Elemento crítico não encontrado: ${selector}`);
+                this.handleIntegrityViolation();
             }
         });
 
-        // Verificar integridade do DOM a cada 2 minutos (menos agressivo)
-        setInterval(() => {
-            self.checkDOMIntegrity();
-        }, 120000);
+        // Verificar integridade periodicamente
+        setInterval(() => this.checkBasicDOMIntegrity(), 5000);
     }
 
-    checkDOMIntegrity() {
-        // Detectar que tipo de página estamos
-        const isPaymentPage = window.location.pathname.includes('comprar.html');
-        const isRegistrationPage = window.location.pathname.includes('register.html');
-        
-        // Verificar elementos críticos baseados na página
-        if (isPaymentPage) {
+    checkBasicDOMIntegrity() {
+        if (this.isPaymentPage) {
             const paymentButtons = document.querySelectorAll('.payment-option');
             if (paymentButtons.length === 0) {
-                this.logSecurityEventSafe('payment_buttons_removed');
-                this.blockUserActions('Elementos críticos foram removidos');
-                return;
+                this.handleIntegrityViolation();
             }
         }
         
-        if (isRegistrationPage) {
-            const registrationForm = document.querySelector('#customer-registration-form');
-            if (!registrationForm) {
-                this.logSecurityEventSafe('registration_form_removed');
-                this.blockUserActions('Formulário de registro foi removido');
-                return;
+        if (this.isRegistrationPage || this.isLoginPage) {
+            const form = document.querySelector(
+                this.isRegistrationPage ? '#customer-registration-form' : '#login-form'
+            );
+            if (!form) {
+                this.handleIntegrityViolation();
             }
         }
+    }
 
-        // Verificar se há scripts maliciosos injetados
-        const scripts = document.querySelectorAll('script');
-        scripts.forEach(script => {
-            if (script.src && !this.isAllowedScript(script.src)) {
-                this.logSecurityEventSafe('unauthorized_script', { src: script.src });
-                script.remove();
-            }
-        });
+    handleIntegrityViolation() {
+        // Registrar violação
+        console.error('Violação de integridade detectada');
+        
+        // Tentar recuperar estado
+        window.location.reload();
+    }
+
+    // =====================================
+    // 🛡️ UTILITÁRIOS DE SEGURANÇA
+    // =====================================
+
+    sanitizeHTML(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
     }
 
     isAllowedScript(src) {
@@ -232,347 +343,98 @@ class SecurityValidator {
             window.location.origin
         ];
 
-        return allowedDomains.some(domain => src.includes(domain));
-    }
-
-    // =====================================
-    // 🛡️ PROTEÇÃO CSRF
-    // =====================================
-
-    setupCSRFProtection() {
-        // Gerar token CSRF único para a sessão
-        this.csrfToken = this.generateCSRFToken();
-        
-        // Adicionar token a todas as requisições
-        const originalFetch = window.fetch;
-        window.fetch = async (url, options = {}) => {
-            if (options.method && options.method.toUpperCase() !== 'GET') {
-                options.headers = {
-                    ...options.headers,
-                    'X-CSRF-Token': this.csrfToken,
-                    'X-Requested-With': 'XMLHttpRequest'
-                };
-            }
-            return originalFetch(url, options);
-        };
-    }
-
-    generateCSRFToken() {
-        const array = new Uint8Array(32);
-        crypto.getRandomValues(array);
-        return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-    }
-
-    // =====================================
-    // 👁️ MONITORAMENTO DE MUDANÇAS NO DOM
-    // =====================================
-
-    monitorDOMChangesSafe() {
-        const self = this;
-        let mutationCount = 0;
-        let lastMutationTime = Date.now();
-
-        const observer = new MutationObserver((mutations) => {
-            const now = Date.now();
-            
-            // Rate limiting: máximo 100 mutações por segundo
-            if (now - lastMutationTime < 1000) {
-                mutationCount += mutations.length;
-                if (mutationCount > 100) {
-                    self.logSecurityEventSafe('excessive_dom_mutations');
-                    return; // Ignorar mutações excessivas
-                }
-            } else {
-                mutationCount = 0;
-                lastMutationTime = now;
-            }
-
-            mutations.forEach((mutation) => {
-                try {
-                    // Ignorar mudanças nos requisitos de senha na página de registro
-                    if (self.isRegistrationPage && mutation.target && mutation.target.id && 
-                        mutation.target.id.startsWith('req-')) {
-                        return; // Permitir mudanças nos requisitos de senha
-                    }
-                    
-                    // Detectar injeção de scripts maliciosos
-                    if (mutation.type === 'childList') {
-                        mutation.addedNodes.forEach((node) => {
-                            if (node.nodeType === Node.ELEMENT_NODE) {
-                                if (node.tagName === 'SCRIPT') {
-                                    self.validateAddedScriptSafe(node);
-                                }
-                                
-                                // Verificar se há tentativas de modificar formulários
-                                if (node.tagName === 'FORM' || (node.querySelector && node.querySelector('form'))) {
-                                    self.logSecurityEventSafe('form_injection_attempt');
-                                }
-                            }
-                        });
-                    }
-
-                    // Detectar modificações em atributos críticos apenas em elementos importantes
-                    if (mutation.type === 'attributes' && mutation.target) {
-                        const target = mutation.target;
-                        
-                        // Ignorar mudanças nos requisitos de senha na página de registro
-                        if (self.isRegistrationPage && target.id && 
-                            (target.id.startsWith('req-') || target.classList.contains('requirement-item'))) {
-                            return; // Permitir mudanças nos requisitos de senha
-                        }
-                        
-                        if (target.classList && target.classList.contains('payment-option') || 
-                            target.tagName === 'FORM') {
-                            self.logSecurityEventSafe('critical_attribute_modified', {
-                                element: target.tagName,
-                                attribute: mutation.attributeName
-                            });
-                        }
-                    }
-                } catch (error) {
-                    // Silenciar erros para evitar problemas
-                }
-            });
-        });
-
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-            attributeFilter: ['action', 'method', 'src', 'href', 'onclick']
-        });
-    }
-
-    validateAddedScript(scriptElement) {
-        this.validateAddedScriptSafe(scriptElement);
-    }
-
-    validateAddedScriptSafe(scriptElement) {
         try {
-            const src = scriptElement.src;
-            const content = scriptElement.textContent;
-
-            // Verificar se é um script permitido
-            if (src && !this.isAllowedScript(src)) {
-                this.logSecurityEventSafe('malicious_script_blocked', { src });
-                scriptElement.remove();
-                return;
-            }
-
-            // Verificar conteúdo suspeito
-            const suspiciousPatterns = [
-                /eval\s*\(/i,
-                /document\.write/i,
-                /innerHTML\s*=/i,
-                /window\.location/i,
-                /bitcoin|crypto|wallet/i
-            ];
-
-            if (content && suspiciousPatterns.some(pattern => pattern.test(content))) {
-                this.logSecurityEventSafe('suspicious_script_content', { 
-                    content: content.substring(0, 100) 
-                });
-                scriptElement.remove();
-            }
-        } catch (error) {
-            // Silenciar erros para evitar problemas
+            const url = new URL(src);
+            return allowedDomains.some(domain => url.hostname.endsWith(domain));
+        } catch {
+            return false;
         }
     }
 
     // =====================================
-    // 🔒 VALIDAÇÃO DE FORMULÁRIOS
+    // 👁️ MONITORAMENTO DO DOM
+    // =====================================
+
+    monitorDOMForBasicIntegrity() {
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'childList') {
+                    mutation.addedNodes.forEach((node) => {
+                        if (node.tagName === 'SCRIPT') {
+                            const src = node.src;
+                            if (src && !this.isAllowedScript(src)) {
+                                console.warn('Script não autorizado detectado:', src);
+                                node.remove();
+                            }
+                        }
+                    });
+                }
+            });
+        });
+        
+        observer.observe(document.documentElement, {
+            childList: true,
+            subtree: true
+        });
+    }
+
+    // =====================================
+    // 🔒 VALIDAÇÃO DE FORMULÁRIOS (UX)
     // =====================================
 
     validateFormSubmission(formData, formType) {
-        const violations = [];
-
         if (formType === 'registration') {
-            // Validar email
-            if (!this.isValidEmail(formData.email)) {
-                violations.push('email_invalid');
-            }
-
-            // Validar senha
-            if (!this.isValidPassword(formData.password)) {
-                violations.push('password_weak');
-            }
-
-            // Verificar se não há tentativas de injeção
-            Object.values(formData).forEach(value => {
-                if (this.containsSuspiciousContent(value)) {
-                    violations.push('injection_attempt');
-                }
-            });
+            return this.validateFormData(formData, ['email', 'password', 'name']);
         }
-
-        if (violations.length > 0) {
-            this.logSecurityEventSafe('form_validation_failed', { violations });
-            return false;
+        
+        if (formType === 'login') {
+            return this.validateFormData(formData, ['email', 'password']);
         }
-
-        return true;
-    }
-
-    isValidEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email) && email.length <= 254;
-    }
-
-    isValidPassword(password) {
-        return password.length >= 8 &&
-               /[A-Z]/.test(password) &&
-               /[0-9]/.test(password) &&
-               /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(password);
-    }
-
-    containsSuspiciousContent(value) {
-        const suspiciousPatterns = [
-            /<script/i,
-            /javascript:/i,
-            /on\w+\s*=/i,
-            /eval\s*\(/i,
-            /document\./i,
-            /window\./i
-        ];
-
-        return suspiciousPatterns.some(pattern => pattern.test(value));
+        
+        return [];
     }
 
     // =====================================
-    // 📊 LOGGING E MONITORAMENTO
+    // 🛡️ INTERFACE PÚBLICA PARA UX
     // =====================================
 
-    logSecurityEvent(eventType, details = {}) {
-        this.logSecurityEventSafe(eventType, details);
-    }
-
-    logSecurityEventSafe(eventType, details = {}) {
-        // Evitar loops recursivos
-        if (this.loggingSecurityEvent) {
-            return;
+    validatePaymentForm(paymentData) {
+        // Validação básica apenas para UX - segurança real é no servidor
+        if (!paymentData || typeof paymentData !== 'object') {
+            return { valid: false, errors: ['Dados de pagamento inválidos'] };
         }
 
-        this.loggingSecurityEvent = true;
-
-        try {
-            const event = {
-                type: eventType,
-                timestamp: new Date().toISOString(),
-                userAgent: navigator.userAgent,
-                url: window.location.href,
-                details
-            };
-
-            // Usar método original do console para evitar interceptação
-            if (this.originalWarn) {
-                this.originalWarn.call(console, '🚨 Evento de Segurança:', event);
-            }
-
-            // Enviar para servidor (implementar se necessário)
-            // this.sendSecurityEvent(event);
-
-            // Incrementar contador de tentativas suspeitas
-            const key = `${eventType}_${Date.now()}`;
-            this.attempts.set(key, event);
-
-            // Limpar eventos antigos
-            setTimeout(() => {
-                this.attempts.delete(key);
-            }, 300000); // 5 minutos
-        } catch (error) {
-            // Silenciar erros para evitar loops
-        } finally {
-            this.loggingSecurityEvent = false;
-        }
+        return { valid: true, errors: [] };
     }
 
-    blockUserActions(reason) {
-        console.error('🚫 Ações bloqueadas:', reason);
-        
-        // Desabilitar todos os botões de pagamento
-        document.querySelectorAll('.payment-option').forEach(btn => {
-            btn.disabled = true;
-            btn.style.opacity = '0.5';
-        });
-
-        // Mostrar mensagem de erro
-        alert('Por motivos de segurança, as ações foram temporariamente bloqueadas. Recarregue a página.');
+    validateRegistrationForm(formData) {
+        const errors = this.validateFormSubmission(formData, 'registration');
+        return {
+            valid: errors.length === 0,
+            errors: errors
+        };
     }
 
     // =====================================
-    // 🔍 VERIFICAÇÃO DE RATE LIMITING
+    // 📊 LOGGING SIMPLES
     // =====================================
 
-    checkRateLimit(action) {
-        const now = Date.now();
-        const key = `${action}_${Math.floor(now / 60000)}`; // Por minuto
-        
-        const count = this.attempts.get(key) || 0;
-        if (count >= this.maxAttempts) {
-            this.logSecurityEventSafe('rate_limit_exceeded', { action });
-            return false;
-        }
-
-        this.attempts.set(key, count + 1);
-        return true;
-    }
-
-    // =====================================
-    // 🛡️ INTERFACE PÚBLICA
-    // =====================================
-
-    validatePaymentAttempt(paymentData) {
-        // Verificar rate limiting
-        if (!this.checkRateLimit('payment_attempt')) {
-            return { valid: false, reason: 'rate_limit' };
-        }
-
-        // Validar dados
-        if (this.containsSuspiciousContent(JSON.stringify(paymentData))) {
-            this.logSecurityEventSafe('payment_data_suspicious');
-            return { valid: false, reason: 'suspicious_data' };
-        }
-
-        return { valid: true };
-    }
-
-    validateRegistrationAttempt(formData) {
-        // Validação simplificada para não interferir com UX
-        if (!formData || typeof formData !== 'object') {
-            return false;
-        }
-        
-        // Verificar apenas padrões muito suspeitos
-        const suspiciousPatterns = [
-            /<script[\s\S]*?>[\s\S]*?<\/script>/gi,
-            /javascript\s*:/gi,
-            /on\w+\s*=\s*["'][^"']*["']/gi,
-            /eval\s*\(/gi
-        ];
-        
-        const allValues = Object.values(formData).join(' ');
-        const hasSuspiciousContent = suspiciousPatterns.some(pattern => pattern.test(allValues));
-        
-        if (hasSuspiciousContent) {
-            this.logSecurityEventSafe('registration_suspicious_content');
-            return false;
-        }
-        
-        return true; // Permitir registro na maioria dos casos
+    logEvent(eventType, details = {}) {
+        // Log simples apenas para desenvolvimento/debug
+        console.log(`📊 Evento: ${eventType}`, details);
     }
 }
 
-// Inicializar validador de segurança (apenas uma vez)
+// Inicializar validador automaticamente
 if (!window.securityValidator) {
     const securityValidator = new SecurityValidator();
-    
-    // Exportar para uso global
-    window.SecurityValidator = SecurityValidator;
     window.securityValidator = securityValidator;
+    
+    // Disponibilizar globalmente para uso em formulários
+    window.SecurityValidator = SecurityValidator;
 } else {
-    console.log('🔒 Security Validator já foi inicializado anteriormente');
+    console.log('📋 Security Validator já foi inicializado anteriormente');
 }
 
-console.log('🔒 Sistema de segurança frontend inicializado');
-console.log('🛡️ Proteções ativas: DevTools, Console, DOM, CSRF, Rate Limiting');
-console.log('✅ Todas as proteções foram restauradas com melhorias de estabilidade'); 
+console.log('📋 UX Validator inicializado'); 
+console.log('📋 UX Validator inicializado'); 

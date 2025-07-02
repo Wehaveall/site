@@ -1070,9 +1070,20 @@
                     const termsAccepted = document.getElementById('terms-accept').checked;
 
                     // Validações de segurança e de campos (existentes)
-                    if (window.securityValidator && !window.securityValidator.validateRegistrationAttempt({ name, email: loginEmail, password: loginPassword, phone, company })) {
-                        showError(i18nSystem ? i18nSystem.t('register.errors.invalidData') : 'Dados inválidos detectados. Por favor, verifique as informações.');
-                        return;
+                    if (window.securityValidator) {
+                        const validationResult = window.securityValidator.validateRegistrationForm({ 
+                            name, 
+                            email: loginEmail, 
+                            password: loginPassword, 
+                            phone, 
+                            company 
+                        });
+                        
+                        if (!validationResult.valid) {
+                            const errorMessage = validationResult.errors.join('. ');
+                            showError(i18nSystem ? i18nSystem.t('register.errors.invalidData') : errorMessage || 'Dados inválidos detectados. Por favor, verifique as informações.');
+                            return;
+                        }
                     }
 
                     // Validação específica para confirmação de email

@@ -382,7 +382,9 @@
                     <div style="background-color: #fff3cd; padding: 20px; border-radius: 8px; margin: 20px 0;">
                         <h3>🔧 Informações de Debug</h3>
                         <p><strong>Email:</strong> ${userData.email || 'N/A'}</p>
-                        <p><strong>Status atual:</strong> <code>${userData.status || 'undefined'}</code></p>
+                        <p><strong>Status atual:</strong> <code>${userData.account_status || userData.status || 'undefined'}</code></p>
+                        <p><strong>Status de pagamento:</strong> <code>${userData.payment_status || 'undefined'}</code></p>
+                        <p><strong>Licença ativa:</strong> <code>${userData.license_active || 'undefined'}</code></p>
                         <p><strong>Data de término:</strong> ${userData.sub_end || 'N/A'}</p>
                         <p><strong>Última atualização:</strong> ${userData.updated_at || 'N/A'}</p>
                         
@@ -518,11 +520,14 @@
                                 console.log('Dados do usuário:', userData);
                                 
                                 // 🔧 DEBUG: Mostrar todos os dados do usuário
-                                console.log('🔍 Debug - Status atual:', userData.status);
+                                console.log('🔍 Debug - Account Status:', userData.account_status);
+                                console.log('🔍 Debug - Status (antigo):', userData.status);
+                                console.log('🔍 Debug - Payment Status:', userData.payment_status);
+                                console.log('🔍 Debug - License Active:', userData.license_active);
                                 console.log('🔍 Debug - Dados completos:', JSON.stringify(userData, null, 2));
 
                                 // Verificar se o usuário tem status ativo
-                                if (userData.status === 'active') {
+                                if (userData.account_status === 'active' || userData.status === 'active') {
                                     // Verificar se a assinatura está válida
                                     const subEnd = new Date(userData.sub_end);
                                     const now = new Date();
@@ -535,7 +540,7 @@
                                         showUnauthorizedError();
                                     }
                                 } else {
-                                    console.log('Status do usuário não é ativo. Status atual:', userData.status);
+                                    console.log('Status do usuário não é ativo. Status atual:', userData.status || userData.account_status);
                                     
                                     // 🔧 TEMPORÁRIO: Mostrar página de ativação manual
                                     showActivationPage(userData, user);

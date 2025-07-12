@@ -93,7 +93,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-hashes' https://www.gstatic.com https://cdnjs.cloudflare.com https://atalho.me; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com data:; img-src 'self' data: https: blob:; frame-src 'self' https://shortcut-6256b.firebaseapp.com https://www.youtube.com https://youtube.com; connect-src 'self' https://firestore.googleapis.com wss://firestore.googleapis.com https://identitytoolkit.googleapis.com https://www.google-analytics.com;"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-hashes' https://www.gstatic.com https://cdnjs.cloudflare.com https://atalho.me; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com data:; img-src 'self' data: https: blob:; frame-src 'self' https://shortcut-6256b.firebaseapp.com https://www.youtube.com https://youtube.com; connect-src 'self' https://firestore.googleapis.com wss://firestore.googleapis.com https://identitytoolkit.googleapis.com https://www.google-analytics.com;"
         }
       ]
     }

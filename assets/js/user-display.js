@@ -32,14 +32,31 @@ function updateUserDisplayName(user, userData = null) {
     const firstName = nameParts[0];
     const lastName = nameParts[nameParts.length - 1];
 
-    // Atualizar nome no header
-    navUserName.innerHTML = `
-        <div class="nav-user-name">
-            <span class="first-name">${firstName}</span>
-            ${lastName && lastName !== firstName ? `<span class="last-name">${lastName}</span>` : ''}
-        </div>
-    `;
-    console.log(`  ✅ Nome definido no elemento: ${firstName} ${lastName}`);
+    // Limpar conteúdo anterior para evitar duplicatas
+    navUserName.innerHTML = '';
+
+    // Criar container seguro
+    const container = document.createElement('div');
+    container.className = 'nav-user-name';
+
+    // Criar e popular o primeiro nome de forma segura
+    const firstNameSpan = document.createElement('span');
+    firstNameSpan.className = 'first-name';
+    firstNameSpan.textContent = firstName; // ✅ SEGURO: Previne XSS
+    container.appendChild(firstNameSpan);
+
+    // Criar e popular o último nome de forma segura, se existir
+    if (lastName && lastName !== firstName) {
+        const lastNameSpan = document.createElement('span');
+        lastNameSpan.className = 'last-name';
+        lastNameSpan.textContent = lastName; // ✅ SEGURO: Previne XSS
+        container.appendChild(lastNameSpan);
+    }
+
+    // Adicionar o container seguro ao elemento do header
+    navUserName.appendChild(container);
+
+    console.log(`  ✅ Nome definido com segurança no elemento: ${firstName} ${lastName}`);
 }
 
 // Exportar função globalmente

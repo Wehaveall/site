@@ -14,6 +14,12 @@
     },
     "api/create-user.js": {
       "maxDuration": 30
+    },
+    "api/webhook.js": {
+      "maxDuration": 30
+    },
+    "api/webhook-metrics.js": {
+      "maxDuration": 30
     }
   },
   "rewrites": [
@@ -87,6 +93,10 @@
         {
           "key": "Referrer-Policy",
           "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' https://www.gstatic.com https://cdnjs.cloudflare.com https://atalho.me; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data:; frame-src 'self' https://shortcut-6256b.firebaseapp.com; connect-src 'self' https://firestore.googleapis.com wss://firestore.googleapis.com https://identitytoolkit.googleapis.com https://www.google-analytics.com;"
         }
       ]
     }

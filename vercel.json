@@ -9,9 +9,6 @@
     "api/payment-status.js": {
       "maxDuration": 30
     },
-    "api/simulate-payment.js": {
-      "maxDuration": 30
-    },
     "api/create-user.js": {
       "maxDuration": 30
     },

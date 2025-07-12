@@ -385,7 +385,7 @@
         "title": "Arquivos disponíveis",
         "downloadBtn": "Baixar",
         "size": "Tamanho",
-        "modified": "Modificado",
+        "modified": "Última atualização em",
         "noFiles": "Nenhum arquivo disponível para esta categoria no idioma selecionado"
       }
     },

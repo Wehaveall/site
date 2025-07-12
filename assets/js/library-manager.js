@@ -306,7 +306,7 @@ class LibraryManager {
             fileListTitle = 'Arquivos disponíveis';
             noFilesText = 'Nenhum arquivo disponível para esta categoria no idioma selecionado';
             sizeText = 'Tamanho';
-            modifiedText = 'Modificado';
+            modifiedText = 'Última atualização em';
             downloadBtnText = 'Baixar';
         }
         

@@ -1607,6 +1607,7 @@ header {
 /* ===================== */
 
 .libraries-section {
+    background-color: var(--background);
     border-radius: 12px;
     padding: 2rem;
     margin-top: 2rem;
@@ -1722,18 +1723,20 @@ header {
 }
 
 .file-count {
-    color: var(--primary);
+    color: var(--text-dark);
     font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: 600;
     padding: 0.25rem 0.75rem;
     background-color: var(--primary-light);
     border-radius: 20px;
     display: inline-block;
+    border: 1px solid var(--primary);
 }
 
 .category-card.disabled .file-count {
     background-color: #f5f5f5;
-    color: #999;
+    color: #666;
+    border: 1px solid #ddd;
 }
 
 /* Lista de arquivos */
@@ -1762,6 +1765,7 @@ header {
 }
 
 .btn-back {
+    background-color: transparent;
     border: 1px solid var(--border-color);
     color: var(--text-dark);
     padding: 0.5rem 1rem;
@@ -1783,6 +1787,7 @@ header {
 }
 
 .file-item {
+    background-color: var(--background);
     display: flex;
     justify-content: space-between;
     align-items: center;

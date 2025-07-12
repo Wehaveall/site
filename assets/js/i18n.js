@@ -205,6 +205,20 @@ class AtalhoI18n {
                 console.warn(`⚠️ Seção 'register' não encontrada para ${this.currentLanguage}`);
             }
             
+            // Debug: mostrar as chaves principais carregadas
+            const mainKeys = Object.keys(this.translations);
+            console.log(`📋 Chaves principais carregadas: ${mainKeys.slice(0, 8).join(', ')}`);
+            
+            // Verificar se as traduções específicas estão carregadas
+            const testKeys = ['header', 'download', 'dashboard'];
+            testKeys.forEach(key => {
+                if (this.translations[key]) {
+                    console.log(`✅ Seção '${key}' carregada com ${Object.keys(this.translations[key]).length} itens`);
+                } else {
+                    console.warn(`⚠️ Seção '${key}' não encontrada`);
+                }
+            });
+            
             // Salvar no cache
             this.translationCache.set(cacheKey, this.translations);
             console.log(`🔄 Traduções recarregadas para: ${this.currentLanguage}`);
@@ -226,15 +240,26 @@ class AtalhoI18n {
      */
     t(key, variables = {}) {
         try {
+            // Verificar se as traduções foram carregadas
+            if (!this.translations || Object.keys(this.translations).length === 0) {
+                console.warn(`⚠️ Traduções não carregadas ainda para: ${key}`);
+                return key;
+            }
+            
             const keys = key.split('.');
             let value = this.translations;
             
+            // Debug: mostrar estrutura disponível para keys não encontradas
+            let currentPath = '';
+            
             // Navegar pela estrutura do JSON
             for (const k of keys) {
+                currentPath += (currentPath ? '.' : '') + k;
                 if (value && typeof value === 'object' && k in value) {
                     value = value[k];
                 } else {
                     console.warn(`⚠️ Chave de tradução não encontrada: ${key}`);
+                    console.log(`🔍 Disponível em '${currentPath.replace('.' + k, '')}':`, Object.keys(value || {}));
                     return key; // Retorna a chave se não encontrar tradução
                 }
             }

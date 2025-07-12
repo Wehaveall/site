@@ -85,7 +85,10 @@ class LibraryManager {
      * Renderiza a interface principal das bibliotecas
      */
     renderLibrariesSection() {
-        const t = window.i18nSystem?.t || ((key) => key);
+        const t = window.i18nSystem?.t || ((key) => {
+            console.error(`❌ Erro ao traduzir "${key}": `, key);
+            return key;
+        });
         
         return `
             <div class="libraries-section">
@@ -128,7 +131,10 @@ class LibraryManager {
      * Renderiza os cartões de categoria
      */
     renderCategories() {
-        const t = window.i18nSystem?.t || ((key) => key);
+        const t = window.i18nSystem?.t || ((key) => {
+            console.error(`❌ Erro ao traduzir "${key}": `, key);
+            return key;
+        });
         
         return Object.values(this.categories).map(category => {
             const hasFiles = this.hasFilesForCategory(category.id);

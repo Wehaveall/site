@@ -322,16 +322,8 @@
 
         // Função para mostrar a página de downloads para usuários autorizados
         function showDownloadPage(userData) {
-            const pageTitle = i18nSystem?.t('download.title') || 'Download do Atalho';
-            const pageSubtitle = i18nSystem?.t('download.subtitle') || 'Escolha sua plataforma para começar';
-            const welcomeText = i18nSystem?.t('download.welcome') || 'Bem-vindo(a)';
-            const licenseText = i18nSystem?.t('download.licenseValid') || 'Sua licença é válida até';
-            const windowsText = i18nSystem?.t('download.windows') || 'Windows';
-            const macosText = i18nSystem?.t('download.macos') || 'macOS';
-            const windowsDesc = i18nSystem?.t('download.windowsDesc') || 'Compatível com Windows 10 e 11';
-            const macosDesc = i18nSystem?.t('download.macosDesc') || 'Compatível com macOS 11 ou superior';
-            const downloadWindows = i18nSystem?.t('download.downloadWindows') || 'Baixar para Windows';
-            const downloadMacos = i18nSystem?.t('download.downloadMacos') || 'Baixar para macOS';
+            const pageTitle = i18nSystem?.t('download.libraries.title') || 'Bibliotecas de Atalhos';
+            const pageSubtitle = i18nSystem?.t('download.libraries.subtitle') || 'Baixe bibliotecas pré-construídas para diferentes áreas';
             const backHome = i18nSystem?.t('download.backHome') || 'Voltar à página inicial';
 
             appContainer.innerHTML = `
@@ -339,24 +331,7 @@
                     <h1>${pageTitle}</h1>
                     <div class="subtitle">${pageSubtitle}</div>
                     
-                    <div style="background-color: #e8f5e9; padding: 15px; border-radius: 4px; margin-bottom: 20px; text-align: left;">
-                        <p>${welcomeText}, <strong>${userData.email || 'Usuário'}</strong></p>
-                        <p>${licenseText} ${userData.sub_end && userData.sub_end.seconds ? new Date(userData.sub_end.seconds * 1000).toLocaleDateString() : new Date(userData.sub_end).toLocaleDateString()}</p>
-                    </div>
-                    
-                    <div class="download-grid">
-                        <div class="download-card">
-                            <h3>${windowsText}</h3>
-                            <p>${windowsDesc}</p>
-                            <a href="#" class="download-button">${downloadWindows}</a>
-                        </div>
-                        
-                        <div class="download-card">
-                            <h3>${macosText}</h3>
-                            <p>${macosDesc}</p>
-                            <a href="#" class="download-button">${downloadMacos}</a>
-                        </div>
-                    </div>
+
                     
                     <!-- Seção de Bibliotecas -->
                     ${window.libraryManager ? window.libraryManager.renderLibrariesSection() : ''}
@@ -477,6 +452,10 @@
                     i18nSystem = window.i18nSystem;
                     console.log('🌍 Sistema de tradução carregado no download');
                     
+                    // Verificar se as traduções estão disponíveis
+                    const sampleTranslation = i18nSystem.t('download.libraries.title');
+                    console.log('📋 Teste de tradução download.libraries.title:', sampleTranslation);
+                    
                     // Aplicar traduções iniciais
                     i18nSystem.applyTranslations();
                     
@@ -496,9 +475,28 @@
             try {
                 console.log('🔥 Inicializando Firebase na página de download...');
                 
-                // Aguardar inicialização do Firebase usando a função getFirebaseServices
+                                    // Aguardar inicialização do Firebase usando a função getFirebaseServices
                 const { auth, db, functions } = await getFirebaseServices();
                 console.log("✅ Serviços do Firebase prontos para a página de download");
+                
+                // Verificar se as traduções estão carregadas corretamente
+                if (window.i18nSystem) {
+                    const testTranslations = [
+                        'download.libraries.title',
+                        'download.libraries.subtitle',
+                        'header.features',
+                        'dashboard.logout'
+                    ];
+                    
+                    testTranslations.forEach(key => {
+                        const translation = window.i18nSystem.t(key);
+                        if (translation === key) {
+                            console.warn(`⚠️ Tradução não encontrada: ${key}`);
+                        } else {
+                            console.log(`✅ Tradução OK: ${key} = ${translation}`);
+                        }
+                    });
+                }
                 
                 // Configurar verificação de autenticação
                 auth.onAuthStateChanged(async function (user) {

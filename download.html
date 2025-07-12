@@ -361,9 +361,33 @@
 
         // Função para mostrar a página de ativação manual
         function showActivationPage(userData, user) {
-            const activationTitle = i18nSystem?.t('download.activation.title') || 'Ativação Manual';
-            const activationMessage = i18nSystem?.t('download.activation.message') || 'Seu status de licença não está ativo. Por favor, entre em contato com o suporte para ativar sua licença.';
+            const activationTitle = userData.payment_status === 'paid' ? 'Licença Expirada' : 'Licença Não Encontrada';
+            const activationMessage = userData.payment_status === 'paid' ? 
+                'Sua licença expirou. Por favor, renove sua assinatura para continuar acessando os recursos.' :
+                'Não encontramos uma licença válida para sua conta. Por favor, adquira uma licença para acessar os recursos.';
             const backHome = i18nSystem?.t('download.backHome') || 'Voltar à página inicial';
+
+            // Calcular status da licença
+            let licenseStatus = 'Não encontrada';
+            let licenseExpiry = 'N/A';
+            
+            if (userData.sub_end) {
+                let subEnd;
+                if (userData.sub_end.seconds) {
+                    subEnd = new Date(userData.sub_end.seconds * 1000);
+                } else {
+                    subEnd = new Date(userData.sub_end);
+                }
+                
+                licenseExpiry = subEnd.toLocaleDateString('pt-BR');
+                const now = new Date();
+                
+                if (userData.payment_status === 'paid') {
+                    licenseStatus = subEnd > now ? 'Ativa' : 'Expirada';
+                } else {
+                    licenseStatus = 'Não paga';
+                }
+            }
 
             appContainer.innerHTML = `
                 <div class="container">
@@ -371,21 +395,26 @@
                     <div class="subtitle">${activationMessage}</div>
                     
                     <div style="background-color: #fff3cd; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                        <h3>🔧 Informações de Debug</h3>
+                        <h3>📊 Status da Licença</h3>
                         <p><strong>Email:</strong> ${userData.email || 'N/A'}</p>
-                        <p><strong>Status atual:</strong> <code>${userData.account_status || userData.status || 'undefined'}</code></p>
-                        <p><strong>Status de pagamento:</strong> <code>${userData.payment_status || 'undefined'}</code></p>
-                        <p><strong>Licença ativa:</strong> <code>${userData.license_active || 'undefined'}</code></p>
-                        <p><strong>Data de término:</strong> ${userData.sub_end && userData.sub_end.seconds ? new Date(userData.sub_end.seconds * 1000).toLocaleDateString() : (userData.sub_end || 'N/A')}</p>
+                        <p><strong>Status da Conta:</strong> <code>${userData.account_status || 'undefined'}</code> (${userData.account_status === 'active' ? 'Email verificado' : 'Email não verificado'})</p>
+                        <p><strong>Status de Pagamento:</strong> <code style="color: ${userData.payment_status === 'paid' ? '#28a745' : '#dc3545'};">${userData.payment_status || 'undefined'}</code></p>
+                        <p><strong>Status da Licença:</strong> <code style="color: ${licenseStatus === 'Ativa' ? '#28a745' : '#dc3545'};">${licenseStatus}</code></p>
+                        <p><strong>Data de Término:</strong> ${licenseExpiry}</p>
                         <p><strong>Última atualização:</strong> ${userData.updated_at || 'N/A'}</p>
                         
                         <div style="margin-top: 20px;">
-                            <button onclick="activateUserManually('${user.uid}')" 
-                                    style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
-                                🔓 Ativar Licença (TEMPORÁRIO)
-                            </button>
+                            ${userData.payment_status !== 'paid' ? 
+                                `<a href="comprar.html" style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px; text-decoration: none; display: inline-block;">
+                                    💳 Adquirir Licença
+                                </a>` : 
+                                `<button onclick="activateUserManually('${user.uid}')" 
+                                        style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+                                    🔓 Ativar Licença (TEMPORÁRIO)
+                                </button>`
+                            }
                             <button onclick="checkUserStatus('${user.uid}')" 
-                                    style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+                                    style="background: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
                                 🔄 Recarregar Status
                             </button>
                         </div>
@@ -401,7 +430,7 @@
         // Função para ativar usuário manualmente (TEMPORÁRIA)
         async function activateUserManually(uid) {
             try {
-                console.log('🔧 Ativando usuário manualmente:', uid);
+                console.log('🔧 Ativando licença manualmente:', uid);
                 
                 const firestore = window.db || firebase.firestore();
                 
@@ -410,18 +439,20 @@
                 oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
                 
                 await firestore.collection('users').doc(uid).update({
-                    status: 'active',
-                    sub_end: oneYearFromNow.toISOString(),
+                    payment_status: 'paid',
+                    license_active: true,
+                    sub_end: oneYearFromNow,
+                    sub_start: new Date(),
                     updated_at: new Date().toISOString(),
                     manual_activation: new Date().toISOString()
                 });
                 
-                console.log('✅ Usuário ativado com sucesso!');
+                console.log('✅ Licença ativada com sucesso!');
                 alert('✅ Licença ativada com sucesso! A página será recarregada.');
                 window.location.reload();
                 
             } catch (error) {
-                console.error('❌ Erro ao ativar usuário:', error);
+                console.error('❌ Erro ao ativar licença:', error);
                 alert('❌ Erro ao ativar licença: ' + error.message);
             }
         }
@@ -545,15 +576,17 @@
                             if (userData) {
                                 console.log('Dados do usuário:', userData);
                                 
-                                // 🔧 DEBUG: Mostrar todos os dados do usuário
-                                console.log('🔍 Debug - Account Status:', userData.account_status);
-                                console.log('🔍 Debug - Status (antigo):', userData.status);
+                                // 🔧 DEBUG: Mostrar dados relevantes para licença
+                                console.log('🔍 Debug - Account Status (email verified):', userData.account_status);
                                 console.log('🔍 Debug - Payment Status:', userData.payment_status);
                                 console.log('🔍 Debug - License Active:', userData.license_active);
+                                console.log('🔍 Debug - Sub End:', userData.sub_end);
+                                console.log('🔍 Debug - Email Verified:', userData.email_verified);
                                 console.log('🔍 Debug - Dados completos:', JSON.stringify(userData, null, 2));
 
-                                // Verificar se o usuário tem status ativo
-                                if (userData.account_status === 'active' || userData.status === 'active') {
+                                // Verificar se o usuário tem licença válida
+                                // Verificar se o pagamento foi realizado
+                                if (userData.payment_status === 'paid') {
                                     // Verificar se a assinatura está válida
                                     let subEnd;
                                     // Converter timestamp do Firestore ou string para Date
@@ -568,19 +601,19 @@
 
                                     console.log('🔍 Debug - Data de término:', subEnd);
                                     console.log('🔍 Debug - Data atual:', now);
-                                    console.log('🔍 Debug - Válida?', subEnd > now);
+                                    console.log('🔍 Debug - Licença válida?', subEnd > now);
 
                                     if (subEnd > now) {
-                                        console.log('Usuário autorizado. Exibindo página de downloads.');
+                                        console.log('✅ Usuário autorizado - Licença paga e em vigência. Exibindo página de downloads.');
                                         showDownloadPage(userData);
                                     } else {
-                                        console.log('Assinatura expirada.');
+                                        console.log('❌ Assinatura expirada.');
                                         showUnauthorizedError();
                                     }
                                 } else {
-                                    console.log('Status do usuário não é ativo. Status atual:', userData.status || userData.account_status);
+                                    console.log('❌ Usuário não tem licença paga. Payment Status:', userData.payment_status);
                                     
-                                    // 🔧 TEMPORÁRIO: Mostrar página de ativação manual
+                                    // Mostrar página de ativação manual apenas se não tem licença paga
                                     showActivationPage(userData, user);
                                 }
                             } else {

@@ -18,10 +18,11 @@
             max-width: 800px;
             margin: 0 auto;
             margin-top: 100px; /* Espaço para o header */
+            background-color: transparent;
         }
 
         .container {
-            background-color: #f8f9fa;
+            background-color: transparent;
             border-radius: 8px;
             padding: 20px;
             margin-top: 40px;
@@ -322,23 +323,15 @@
 
                 // Função para mostrar a página de downloads para usuários autorizados
         function showDownloadPage(userData) {
-            const pageTitle = i18nSystem?.t('download.libraries.title') || 'Bibliotecas de Atalhos';
-            const pageSubtitle = i18nSystem?.t('download.libraries.subtitle') || 'Baixe bibliotecas pré-construídas para diferentes áreas';
             const backHome = i18nSystem?.t('download.backHome') || 'Voltar à página inicial';
 
             appContainer.innerHTML = `
-                <div class="container">
-                    <h1>${pageTitle}</h1>
-                    <div class="subtitle">${pageSubtitle}</div>
-                    
-                    <!-- Seção de Bibliotecas -->
-                    <div id="libraries-container">
-                        ${window.libraryManager ? window.libraryManager.renderLibrariesSection() : '<div class="loading">Carregando bibliotecas...</div>'}
-                    </div>
-                    
-                    <div style="text-align: center; margin-top: 40px;">
-                        <a href="index.html" style="color: #666; text-decoration: none;">${backHome}</a>
-                    </div>
+                <div id="libraries-container">
+                    ${window.libraryManager ? window.libraryManager.renderLibrariesSection() : '<div class="loading">Carregando bibliotecas...</div>'}
+                </div>
+                
+                <div style="text-align: center; margin-top: 40px;">
+                    <a href="index.html" style="color: #666; text-decoration: none;">${backHome}</a>
                 </div>
             `;
             

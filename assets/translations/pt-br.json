@@ -389,6 +389,10 @@
         "noFiles": "Nenhum arquivo disponível para esta categoria no idioma selecionado"
       }
     },
+    "activation": {
+      "title": "Ativação de Licença",
+      "message": "Sua licença está aguardando ativação. Use o botão abaixo para ativar manualmente ou entre em contato com o suporte."
+    },
     "unauthorized": {
       "title": "Acesso Restrito",
       "message1": "Esta página é exclusiva para usuários cadastrados que realizaram o pagamento.",

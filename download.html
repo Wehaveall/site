@@ -341,7 +341,7 @@
                     
                     <div style="background-color: #e8f5e9; padding: 15px; border-radius: 4px; margin-bottom: 20px; text-align: left;">
                         <p>${welcomeText}, <strong>${userData.email || 'Usuário'}</strong></p>
-                        <p>${licenseText} ${new Date(userData.sub_end).toLocaleDateString()}</p>
+                        <p>${licenseText} ${userData.sub_end && userData.sub_end.seconds ? new Date(userData.sub_end.seconds * 1000).toLocaleDateString() : new Date(userData.sub_end).toLocaleDateString()}</p>
                     </div>
                     
                     <div class="download-grid">
@@ -385,7 +385,7 @@
                         <p><strong>Status atual:</strong> <code>${userData.account_status || userData.status || 'undefined'}</code></p>
                         <p><strong>Status de pagamento:</strong> <code>${userData.payment_status || 'undefined'}</code></p>
                         <p><strong>Licença ativa:</strong> <code>${userData.license_active || 'undefined'}</code></p>
-                        <p><strong>Data de término:</strong> ${userData.sub_end || 'N/A'}</p>
+                        <p><strong>Data de término:</strong> ${userData.sub_end && userData.sub_end.seconds ? new Date(userData.sub_end.seconds * 1000).toLocaleDateString() : (userData.sub_end || 'N/A')}</p>
                         <p><strong>Última atualização:</strong> ${userData.updated_at || 'N/A'}</p>
                         
                         <div style="margin-top: 20px;">
@@ -529,8 +529,20 @@
                                 // Verificar se o usuário tem status ativo
                                 if (userData.account_status === 'active' || userData.status === 'active') {
                                     // Verificar se a assinatura está válida
-                                    const subEnd = new Date(userData.sub_end);
+                                    let subEnd;
+                                    // Converter timestamp do Firestore ou string para Date
+                                    if (userData.sub_end && userData.sub_end.seconds) {
+                                        // Formato Firestore Timestamp
+                                        subEnd = new Date(userData.sub_end.seconds * 1000);
+                                    } else {
+                                        // Formato string
+                                        subEnd = new Date(userData.sub_end);
+                                    }
                                     const now = new Date();
+
+                                    console.log('🔍 Debug - Data de término:', subEnd);
+                                    console.log('🔍 Debug - Data atual:', now);
+                                    console.log('🔍 Debug - Válida?', subEnd > now);
 
                                     if (subEnd > now) {
                                         console.log('Usuário autorizado. Exibindo página de downloads.');

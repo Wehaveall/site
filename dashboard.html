@@ -377,35 +377,17 @@
 
         // Função para carregar dados do cliente
         async function loadCustomerData(uid) {
+            console.log('🔍 INÍCIO: Carregando dados do usuário com UID:', uid);
+            
             try {
-                console.log('📊 === INÍCIO DO CARREGAMENTO DE DADOS ===');
-                console.log('🔍 UID do usuário:', uid);
-                
-                // Usar a instância global do db ou fallback
-                const firestore = window.db || firebase.firestore();
-                
-                // PRIMEIRO: Buscar diretamente pelo ID do documento (mais eficiente)
-                try {
-                    console.log('🔍 Buscando documento pelo ID:', uid);
-                    const userDoc = await firestore.collection('users').doc(uid).get();
-                    
-                    if (userDoc.exists) {
-                        customerData = userDoc.data();
-                        
-                        console.log('✅ DADOS ENCONTRADOS pelo ID do documento:');
-                        console.log('📋 ID do documento:', userDoc.id);
-                        console.log('📄 Dados completos:', JSON.stringify(customerData, null, 2));
-                        
-                        updateUI();
-                        return;
-                    } else {
-                        console.log('❌ Documento não encontrado pelo ID:', uid);
-                    }
-                } catch (docError) {
-                    console.error('❌ Erro ao buscar documento pelo ID:', docError);
+                const firestore = window.db;
+                if (!firestore) {
+                    throw new Error('Firestore não está disponível');
                 }
                 
-                // SEGUNDO: Buscar por user.uid (caso a estrutura seja diferente)
+                console.log('✅ Firestore disponível, iniciando busca...');
+                
+                // PRIMEIRO: Buscar por user.uid (mais comum)
                 try {
                     console.log('🔍 Buscando por user.uid =', uid);
                     
@@ -424,11 +406,39 @@
                         console.log('✅ DADOS ENCONTRADOS por user.uid:');
                         console.log('📋 ID do documento:', userDoc.id);
                         console.log('📄 Dados completos:', JSON.stringify(customerData, null, 2));
+                        console.log('📛 Campo Nome:', customerData.Nome);
+                        console.log('📛 Campo name:', customerData.name);
+                        console.log('📛 Campo user.displayName:', customerData.user?.displayName);
                         
                         updateUI();
                         return;
                     } else {
                         console.log('❌ Nenhum documento encontrado com user.uid =', uid);
+                        
+                        // SEGUNDO: Buscar por ID do documento
+                        console.log('🔄 Tentativa alternativa: buscar por ID do documento =', uid);
+                        try {
+                            const docRef = firestore.collection('users').doc(uid);
+                            const docSnapshot = await docRef.get();
+                            
+                            if (docSnapshot.exists) {
+                                customerData = docSnapshot.data();
+                                
+                                console.log('✅ DADOS ENCONTRADOS por ID do documento:');
+                                console.log('📋 ID do documento:', docSnapshot.id);
+                                console.log('📄 Dados completos:', JSON.stringify(customerData, null, 2));
+                                console.log('📛 Campo Nome:', customerData.Nome);
+                                console.log('📛 Campo name:', customerData.name);
+                                console.log('📛 Campo user.displayName:', customerData.user?.displayName);
+                                
+                                updateUI();
+                                return;
+                            } else {
+                                console.log('❌ Documento não encontrado por ID:', uid);
+                            }
+                        } catch (docError) {
+                            console.error('❌ Erro ao buscar por ID do documento:', docError);
+                        }
                         
                         // TERCEIRO: Buscar por email
                         console.log('🔄 Tentativa alternativa: buscar por email =', currentUser.email);
@@ -446,6 +456,9 @@
                             console.log('✅ DADOS ENCONTRADOS por email:');
                             console.log('📋 ID do documento:', userDoc.id);
                             console.log('📄 Dados completos:', JSON.stringify(customerData, null, 2));
+                            console.log('📛 Campo Nome:', customerData.Nome);
+                            console.log('📛 Campo name:', customerData.name);
+                            console.log('📛 Campo user.displayName:', customerData.user?.displayName);
                             
                             updateUI();
                             return;
@@ -499,7 +512,7 @@
             const noDataText = i18nSystem ? i18nSystem.t('dashboard.noData') : '-';
             
             // Informações da conta - usando os campos exatos do Firebase
-            document.getElementById('account-name').textContent = customerData.name || noDataText;
+            document.getElementById('account-name').textContent = customerData.Nome || customerData.name || customerData.user?.displayName || noDataText;
             document.getElementById('account-email').textContent = customerData.email || currentUser.email;
             document.getElementById('account-phone').textContent = customerData.phone || noDataText;
             document.getElementById('account-country').textContent = customerData.country || noDataText;
@@ -513,6 +526,7 @@
             }
             
             console.log('✅ Interface atualizada com sucesso');
+            console.log('📛 Nome usado:', customerData.Nome || customerData.name || customerData.user?.displayName || 'não encontrado');
         }
 
         // Configurar event listeners para o dropdown automático do i18n

@@ -4,32 +4,45 @@ service cloud.firestore {
   match /databases/{database}/documents {
     
     // =====================================
-    // 🔒 REGRAS PARA COLEÇÃO DE USUÁRIOS
+    // 🔒 COLEÇÕES SEGURAS POR PADRÃO
     // =====================================
     
-    match /users/{userId} {
-      // Usuários podem apenas ler seus próprios documentos
-      allow read: if request.auth != null && request.auth.uid == userId;
-      
-      // Escrita apenas com validação (CORRIGIDO: removida regra duplicada)
-      allow create, update: if request.auth != null 
-                           && request.auth.uid == userId
-                           && validateUserData(request.resource.data);
-    }
-    
-    // =====================================
-    // 🔒 REGRAS PARA COLEÇÃO DE EMAIL
-    // =====================================
-    
-    match /mail/{emailId} {
-      // Apenas o sistema pode escrever emails (via Admin SDK)
-      // Usuários não podem ler ou escrever emails diretamente
+    // Bloqueia acesso a coleções sensíveis que só devem ser acessadas pelo backend
+    match /mail/{docId} {
       allow read, write: if false;
     }
     
+    match /approved_payments/{docId} {
+        allow read, write: if false;
+    }
+
+    match /chargebacks/{docId} {
+        allow read, write: if false;
+    }
+
     // =====================================
-    // 🔒 REGRAS PARA OUTRAS COLEÇÕES
+    // 🔒 REGRAS PARA A COLEÇÃO DE USUÁRIOS
     // =====================================
+    
+    match /users/{userId} {
+    
+      // LEITURA: Permitida apenas pelo próprio usuário.
+      allow read: if request.auth != null && request.auth.uid == userId;
+      
+      // CRIAÇÃO: Desabilitada para o cliente.
+      allow create: if false;
+      
+      // ATUALIZAÇÃO: Permitida pelo usuário, mas com regras muito estritas.
+      allow update: if request.auth != null 
+                     && request.auth.uid == userId
+                     // 1. Valida APENAS os campos que o usuário PODE mudar.
+                     && validateProfileUpdate(request.resource.data)
+                     // 2. Garante que campos críticos NÃO foram alterados.
+                     && areImmutableFieldsUnchanged(['email', 'id', 'license_active', 'sub_end', 'created_at', 'payment_status']);
+                     
+      // EXCLUSÃO: Desabilitada para o cliente.
+      allow delete: if false;
+    }
     
     // Qualquer outra coleção não especificada é bloqueada por padrão
     match /{document=**} {
@@ -37,31 +50,28 @@ service cloud.firestore {
     }
     
     // =====================================
-    // 🔧 FUNÇÕES DE VALIDAÇÃO
+    // 🔧 FUNÇÕES DE VALIDAÇÃO CORRIGIDAS
     // =====================================
     
-    function validateUserData(data) {
-      // Validar campos obrigatórios
-      return data.keys().hasAll(['Nome', 'email', 'created_at'])
+    // Função específica e segura para validar a ATUALIZAÇÃO do perfil pelo usuário.
+    function validateProfileUpdate(data) {
+      return (data.Nome is string && data.Nome.size() > 0 && data.Nome.size() <= 100)
+          && (data.phone == null || (data.phone is string && data.phone.size() <= 20))
+          && (data.company == null || (data.company is string && data.company.size() <= 100))
+          && (data.country == null || (data.country is string && data.country.size() <= 50));
+    }
+    
+    // Função poderosa que garante que campos imutáveis não foram alterados,
+    // usando as funções nativas e corretas do Firestore.
+    function areImmutableFieldsUnchanged(immutableFields) {
+      // 'diff' compara os dados existentes (resource.data) com os novos (request.resource.data)
+      // e retorna um conjunto de chaves que foram adicionadas, modificadas ou removidas.
+      let affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
       
-      // Validar tipos de dados
-      && data.Nome is string
-      && data.email is string
-      && data.email.matches('.*@.*\\..*') // Formato básico de email
-      
-      // Validar tamanhos
-      && data.Nome.size() > 0 && data.Nome.size() <= 100
-      && data.email.size() > 0 && data.email.size() <= 255
-      
-      // Validar campos opcionais se presentes
-      && (data.phone == null || (data.phone is string && data.phone.size() <= 20))
-      && (data.country == null || (data.country is string && data.country.size() <= 50))
-      
-      // Validar que UID corresponde ao documento (CORRIGIDO: suporte para criação)
-      && data.id == userId
-      
-      // Validar que o email no documento corresponde ao email do usuário autenticado
-      && data.email == request.auth.token.email;
+      // A regra falha se qualquer uma das chaves afetadas estiver na lista de campos imutáveis.
+      // 'hasAny' retorna true se houver uma interseção, então usamos '!' para negar e permitir a escrita
+      // apenas se NÃO houver interseção.
+      return !affectedKeys.hasAny(immutableFields);
     }
   }
 } 

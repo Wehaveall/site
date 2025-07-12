@@ -1607,7 +1607,6 @@ header {
 /* ===================== */
 
 .libraries-section {
-    background-color: var(--background-alt);
     border-radius: 12px;
     padding: 2rem;
     margin-top: 2rem;
@@ -1763,7 +1762,6 @@ header {
 }
 
 .btn-back {
-    background-color: var(--background-alt);
     border: 1px solid var(--border-color);
     color: var(--text-dark);
     padding: 0.5rem 1rem;
@@ -1789,7 +1787,6 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background-color: var(--background-alt);
     border-radius: 8px;
     border: 1px solid var(--border-color);
     transition: all 0.2s ease;

@@ -178,7 +178,7 @@ class LibraryManager {
         const fallbackTexts = {
             legal: {
                 title: 'Jurídico',
-                description: 'Frases e termos jurídicos comuns, petições e documentos legais'
+                description: 'Principais Leis, Códigos e Súmulas do ordenamento jurídico brasileiro.'
             },
             math: {
                 title: 'Matemática',
@@ -298,7 +298,10 @@ class LibraryManager {
             downloadBtnText = t('download.libraries.fileList.downloadBtn');
         } else {
             // Fallback texts
-            const fallbackTitles = { legal: 'Jurídico', math: 'Matemática' };
+            const fallbackTitles = { 
+                legal: 'Jurídico', 
+                math: 'Matemática' 
+            };
             categoryTitle = fallbackTitles[categoryId] || categoryId;
             fileListTitle = 'Arquivos disponíveis';
             noFilesText = 'Nenhum arquivo disponível para esta categoria no idioma selecionado';

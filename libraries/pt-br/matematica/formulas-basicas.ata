@@ -1,0 +1,56 @@
+# Biblioteca Matemática - Fórmulas Básicas
+# Versão: 1.0
+# Idioma: pt-br
+# Categoria: Matemática
+
+# Operações básicas
+soma=+
+subtracao=-
+multiplicacao=×
+divisao=÷
+igual==
+diferente=≠
+maior=>
+menor=<
+maior_igual=≥
+menor_igual=≤
+
+# Fórmulas geométricas
+area_quadrado=A = l²
+area_retangulo=A = b × h
+area_triangulo=A = (b × h) / 2
+area_circulo=A = π × r²
+perimetro_quadrado=P = 4 × l
+perimetro_retangulo=P = 2 × (b + h)
+perimetro_circulo=P = 2 × π × r
+
+# Fórmulas algébricas
+bhaskara=x = (-b ± √(b² - 4ac)) / 2a
+delta=Δ = b² - 4ac
+equacao_reta=y = ax + b
+distancia_pontos=d = √((x₂ - x₁)² + (y₂ - y₁)²)
+
+# Símbolos matemáticos
+pi=π
+infinito=∞
+alfa=α
+beta=β
+gama=γ
+delta=δ
+epsilon=ε
+theta=θ
+lambda=λ
+mu=μ
+sigma=σ
+phi=φ
+omega=ω
+
+# Funções
+raiz_quadrada=√
+raiz_cubica=∛
+potencia=^
+logaritmo=log
+logaritmo_natural=ln
+seno=sen
+cosseno=cos
+tangente=tan 

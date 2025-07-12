@@ -1,0 +1,38 @@
+# Biblioteca Jurídica - Termos Básicos
+# Versão: 1.0
+# Idioma: pt-br
+# Categoria: Jurídico
+
+# Termos processuais básicos
+vsa=Vossa Senhoria
+vex=Vossa Excelência
+mm=Meritíssimo
+dd=Digníssimo
+rqr=requerente
+rqdo=requerido
+autor=autor
+reu=réu
+
+# Expressões jurídicas comuns
+pqr=por quem requer
+nqt=nestes termos
+vrm=vem respeitosamente
+ped=pede deferimento
+esp=espera deferimento
+prov=provimento
+imp=improcedente
+proc=procedente
+
+# Citações legais
+cf=Conforme
+cpc=Código de Processo Civil
+cc=Código Civil
+clt=Consolidação das Leis do Trabalho
+crfb=Constituição da República Federativa do Brasil
+
+# Expressões de cortesia
+rvm=Respeitosamente
+atc=Atenciosamente
+cordial=Cordialmente
+agr=Agradeço
+obr=Obrigado 

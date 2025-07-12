@@ -121,6 +121,11 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
+    <!-- Scripts -->
+    <script src="assets/js/firebase.js"></script>
+    <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/user-display.js"></script>
+    <script src="assets/js/library-manager.js"></script>
 </head>
 
 <body>
@@ -166,10 +171,6 @@
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="assets/js/firebase.js"></script>
-    <script src="assets/js/i18n.js"></script>
-    <script src="assets/js/user-display.js"></script>
     <script>
         // Variáveis globais
         let currentUser = null;
@@ -357,6 +358,9 @@
                         </div>
                     </div>
                     
+                    <!-- Seção de Bibliotecas -->
+                    ${window.libraryManager ? window.libraryManager.renderLibrariesSection() : ''}
+                    
                     <div style="text-align: center; margin-top: 40px;">
                         <a href="index.html" style="color: #666; text-decoration: none;">${backHome}</a>
                     </div>
@@ -495,6 +499,9 @@
                                             <a href="#" class="download-button">${i18nSystem?.t('download.downloadMacos') || 'Baixar para macOS'}</a>
                                         </div>
                                     </div>
+                                    
+                                    <!-- Seção de Bibliotecas -->
+                                    ${window.libraryManager ? window.libraryManager.renderLibrariesSection() : ''}
                                     
                                     <div style="text-align: center; margin-top: 40px;">
                                         <a href="index.html" style="color: #666; text-decoration: none;">${i18nSystem?.t('download.backHome') || 'Voltar à página inicial'}</a>

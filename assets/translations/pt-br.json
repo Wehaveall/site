@@ -352,5 +352,54 @@
       "invalidLink": "O link é inválido ou expirou.",
       "goToLogin": "Ir para Login"
     }
+  },
+  "download": {
+    "title": "Download - Atalho",
+    "subtitle": "Escolha sua plataforma para começar",
+    "welcome": "Bem-vindo(a)",
+    "licenseValid": "Sua licença é válida até",
+    "windows": "Windows",
+    "macos": "macOS",
+    "windowsDesc": "Compatível com Windows 10 e 11",
+    "macosDesc": "Compatível com macOS 11 ou superior",
+    "downloadWindows": "Baixar para Windows",
+    "downloadMacos": "Baixar para macOS",
+    "backHome": "Voltar à página inicial",
+    "loading": "Verificando sua conta...",
+    "libraries": {
+      "title": "Bibliotecas de Atalhos",
+      "subtitle": "Baixe bibliotecas pré-construídas para diferentes áreas",
+      "languageFilter": "Filtrar por idioma:",
+      "allLanguages": "Todos os idiomas",
+      "categories": {
+        "legal": {
+          "title": "Jurídico",
+          "description": "Frases e termos jurídicos comuns, petições e documentos legais"
+        },
+        "math": {
+          "title": "Matemática",
+          "description": "Fórmulas, símbolos matemáticos e expressões científicas"
+        }
+      },
+      "fileList": {
+        "title": "Arquivos disponíveis",
+        "downloadBtn": "Baixar",
+        "size": "Tamanho",
+        "modified": "Modificado",
+        "noFiles": "Nenhum arquivo disponível para esta categoria no idioma selecionado"
+      }
+    },
+    "unauthorized": {
+      "title": "Acesso Restrito",
+      "message1": "Esta página é exclusiva para usuários cadastrados que realizaram o pagamento.",
+      "message2": "Se você já realizou o pagamento, faça login para continuar.",
+      "buyButton": "Adquirir Licença",
+      "backButton": "Voltar à página inicial"
+    },
+    "sessionExpired": {
+      "title": "Atenção: Sua sessão expirou, mas detectamos que você concluiu uma compra recentemente.",
+      "message": "Para sua segurança, faça login novamente para acessar todos os recursos.",
+      "loginButton": "Fazer Login"
+    }
   }
 } 

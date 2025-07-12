@@ -1,0 +1,32 @@
+# Biblioteca Jurídica - Petições Iniciais
+# Versão: 1.0
+# Idioma: pt-br
+# Categoria: Jurídico
+
+# Cabeçalhos de petições
+exc=EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO
+mmj=MERITÍSSIMO JUIZ
+tribunal=EGRÉGIO TRIBUNAL
+comarca=COMARCA DE
+
+# Qualificações
+rqr_qualif=<nome>, <nacionalidade>, <estado_civil>, <profissao>, portador do RG n.º <rg> e CPF n.º <cpf>, residente e domiciliado à <endereco>
+adv_qualif=por intermédio de sua advogada que esta subscreve, inscrita na OAB/<estado> sob o n.º <oab>
+
+# Fundamentos
+fund_legal=Com fundamento no artigo <artigo> do <lei>
+fund_const=Com base no artigo <artigo> da Constituição Federal
+fund_cpc=Nos termos do artigo <artigo> do Código de Processo Civil
+fund_cc=De acordo com o artigo <artigo> do Código Civil
+
+# Pedidos
+ped_inicial=Requer seja a presente ação julgada procedente
+ped_liminar=Requer seja deferida liminar
+ped_tutela=Requer seja concedida tutela antecipada
+ped_gratuidade=Requer os benefícios da assistência judiciária gratuita
+ped_citacao=Requer seja o réu citado
+
+# Encerramentos
+enc_termos=Nestes termos, pede deferimento
+enc_justica=Termos em que espera deferimento, protestando pela verdade dos fatos
+enc_direito=É como pensa, salvo melhor juízo 

@@ -1,0 +1,46 @@
+# Biblioteca Matemática - Estatística
+# Versão: 1.0
+# Idioma: pt-br
+# Categoria: Matemática
+
+# Medidas de tendência central
+media=x̄ = (x₁ + x₂ + ... + xₙ) / n
+mediana=Md
+moda=Mo
+media_ponderada=x̄ₚ = (x₁w₁ + x₂w₂ + ... + xₙwₙ) / (w₁ + w₂ + ... + wₙ)
+
+# Medidas de dispersão
+variancia=σ² = Σ(xᵢ - x̄)² / n
+desvio_padrao=σ = √(σ²)
+amplitude=A = xₘₐₓ - xₘᵢₙ
+coeficiente_variacao=CV = (σ / x̄) × 100%
+
+# Probabilidade
+probabilidade=P(A) = n(A) / n(S)
+prob_condicional=P(A|B) = P(A ∩ B) / P(B)
+prob_uniao=P(A ∪ B) = P(A) + P(B) - P(A ∩ B)
+prob_intersecao=P(A ∩ B)
+
+# Distribuições
+dist_normal=N(μ, σ²)
+dist_binomial=B(n, p)
+dist_poisson=P(λ)
+dist_uniforme=U(a, b)
+
+# Símbolos estatísticos
+media_populacional=μ
+desvio_populacional=σ
+media_amostral=x̄
+desvio_amostral=s
+tamanho_populacao=N
+tamanho_amostra=n
+correlacao=r
+determinacao=R²
+
+# Teste de hipóteses
+h0=H₀
+h1=H₁
+alfa_nivel=α
+p_valor=p-valor
+estatistica_teste=t
+graus_liberdade=gl 

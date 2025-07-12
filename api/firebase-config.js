@@ -43,6 +43,12 @@ export default async function handler(req, res) {
     } else {
         res.setHeader('Access-Control-Allow-Origin', 'https://atalho.me');
     }
+    
+    // ✅ HEADERS DE SEGURANÇA
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('Content-Security-Policy', "default-src 'none'; frame-ancestors 'none'");
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     

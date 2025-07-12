@@ -30,6 +30,8 @@ export default function handler(req, res) {
         res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache por 1 hora
         res.setHeader('X-Content-Type-Options', 'nosniff');
         res.setHeader('X-Frame-Options', 'DENY');
+        res.setHeader('Content-Security-Policy', "default-src 'none'; frame-ancestors 'none'");
+        res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
 
         res.status(200).json(publicConfig);
     } catch (error) {

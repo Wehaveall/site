@@ -29,6 +29,13 @@ service cloud.firestore {
       // LEITURA: Permitida apenas pelo próprio usuário.
       allow read: if request.auth != null && request.auth.uid == userId;
       
+      // LEITURA (para queries): Permitida apenas quando o usuário está autenticado
+      // e está buscando seus próprios dados
+      allow read: if request.auth != null && 
+                     (resource.data.user.uid == request.auth.uid || 
+                      resource.data.email == request.auth.token.email ||
+                      userId == request.auth.uid);
+      
       // CRIAÇÃO: Desabilitada para o cliente.
       allow create: if false;
       

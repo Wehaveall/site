@@ -10,6 +10,9 @@ firebase-debug.log
 *.json
 *.jsonc
 secrets.js
+.env
+.env.local
+.env.production
 
 # Firebase Admin SDK (CRÍTICO)
 *firebase-adminsdk*.json
@@ -19,7 +22,11 @@ shortcut-*-firebase-adminsdk-*.json
 credentials/
 
 # Arquivos de configuração sensível
-assets/js/config.js
+# assets/js/config.js - REMOVIDO: agora não contém credenciais
+
+# Logs de segurança
+security.log
+pentest.log
 
 # Permitir arquivos de tradução
 !assets/translations/*.json

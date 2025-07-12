@@ -1,9 +1,15 @@
 // api/payment-status.js - Vercel Serverless Function SEGURA
 const { MercadoPagoConfig, Payment } = require('mercadopago');
 
-// ✅ CONFIGURAÇÃO SEGURA - Token via variável de ambiente
+// ✅ CONFIGURAÇÃO SEGURA - Token APENAS via variável de ambiente
+const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN || process.env.MP_ACCESS_TOKEN;
+
+if (!accessToken) {
+    throw new Error('MERCADOPAGO_ACCESS_TOKEN não está definido nas variáveis de ambiente.');
+}
+
 const client = new MercadoPagoConfig({
-    accessToken: process.env.MP_ACCESS_TOKEN || 'APP_USR-7601417945820618-013008-5b2554be4b9451d02eaed17ed992b76b-231065568',
+    accessToken: accessToken,
     options: {
         timeout: 10000
     }
@@ -19,29 +25,60 @@ const ALLOWED_ORIGINS = [
     'https://atalho.vercel.app'
 ];
 
-// ✅ RATE LIMITING SIMPLES
-const requestCounts = new Map();
+// ✅ RATE LIMITING PERSISTENTE (FIRESTORE)
+const admin = require('firebase-admin');
 
-function checkRateLimit(ip) {
-    const now = Date.now();
-    const windowStart = Math.floor(now / (15 * 60 * 1000)) * (15 * 60 * 1000); // 15 min window
-    const key = `${ip}-${windowStart}`;
-    
-    const count = requestCounts.get(key) || 0;
-    if (count >= 20) { // Máximo 20 verificações por 15 minutos
-        return false;
-    }
-    
-    requestCounts.set(key, count + 1);
-    
-    // Limpar entradas antigas
-    for (const [k, v] of requestCounts.entries()) {
-        if (k.split('-')[1] < windowStart - (15 * 60 * 1000)) {
-            requestCounts.delete(k);
+// Inicializar Firebase Admin se não foi inicializado
+function initializeFirebaseAdmin() {
+    if (!admin.apps.length) {
+        try {
+            const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+            admin.initializeApp({
+                credential: admin.credential.cert(serviceAccount),
+                databaseURL: "https://shortcut-6256b-default-rtdb.firebaseio.com"
+            });
+        } catch (error) {
+            console.error('Falha na inicialização do Firebase Admin SDK:', error);
         }
     }
-    
-    return true;
+    return admin;
+}
+
+async function checkRateLimit(ip) {
+    try {
+        const adminInstance = initializeFirebaseAdmin();
+        const db = adminInstance.firestore();
+        
+        const now = Date.now();
+        const windowStart = Math.floor(now / (15 * 60 * 1000)) * (15 * 60 * 1000); // 15 min window
+        const rateLimitRef = db.collection('rate_limits').doc(ip);
+        
+        const doc = await rateLimitRef.get();
+        const data = doc.exists ? doc.data() : {};
+        
+        // Limpar dados antigos
+        if (data.windowStart && data.windowStart < windowStart - (15 * 60 * 1000)) {
+            data.count = 0;
+        }
+        
+        const count = data.windowStart === windowStart ? (data.count || 0) : 0;
+        
+        if (count >= 20) { // Máximo 20 verificações por 15 minutos
+            return false;
+        }
+        
+        // Atualizar contagem
+        await rateLimitRef.set({
+            count: count + 1,
+            windowStart: windowStart,
+            lastRequest: now
+        });
+        
+        return true;
+    } catch (error) {
+        console.error('Erro no rate limiting:', error);
+        return true; // Falha segura - permite requisição em caso de erro
+    }
 }
 
 // ✅ VALIDAÇÃO DE ID DE PAGAMENTO
@@ -74,7 +111,7 @@ module.exports = async (req, res) => {
 
         // ✅ RATE LIMITING
         const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'unknown';
-        if (!checkRateLimit(clientIP)) {
+        if (!(await checkRateLimit(clientIP))) {
             console.warn(`🚫 Rate limit excedido para verificação de status - IP: ${clientIP}`);
             return res.status(429).json({
                 success: false,

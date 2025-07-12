@@ -85,10 +85,13 @@ class LibraryManager {
      * Renderiza a interface principal das bibliotecas
      */
     renderLibrariesSection() {
-        const t = window.i18nSystem?.t || ((key) => {
-            console.error(`❌ Erro ao traduzir "${key}": `, key);
-            return key;
-        });
+        // Verificar se o sistema i18n está disponível e as traduções carregadas
+        if (!window.i18nSystem || !window.i18nSystem.translations || Object.keys(window.i18nSystem.translations).length === 0) {
+            console.warn('⚠️ Sistema i18n não está pronto ainda, renderizando com texto padrão');
+            return this.renderLibrariesSectionFallback();
+        }
+        
+        const t = window.i18nSystem.t.bind(window.i18nSystem);
         
         return `
             <div class="libraries-section">
@@ -128,13 +131,92 @@ class LibraryManager {
     }
 
     /**
+     * Renderiza a seção de bibliotecas com texto padrão (fallback)
+     */
+    renderLibrariesSectionFallback() {
+        return `
+            <div class="libraries-section">
+                <div class="libraries-header">
+                    <h2>Bibliotecas de Atalhos</h2>
+                    <p class="libraries-subtitle">Baixe bibliotecas pré-construídas para diferentes áreas</p>
+                </div>
+                
+                <div class="language-filter">
+                    <label for="library-language-select">Filtrar por idioma:</label>
+                    <select id="library-language-select" onchange="libraryManager.onLanguageChange(this.value)">
+                        <option value="all">Todos os idiomas</option>
+                        <option value="pt-br" ${this.selectedLanguage === 'pt-br' ? 'selected' : ''}>Português (Brasil)</option>
+                        <option value="en" ${this.selectedLanguage === 'en' ? 'selected' : ''}>English</option>
+                        <option value="es" ${this.selectedLanguage === 'es' ? 'selected' : ''}>Español</option>
+                        <option value="fr" ${this.selectedLanguage === 'fr' ? 'selected' : ''}>Français</option>
+                        <option value="de" ${this.selectedLanguage === 'de' ? 'selected' : ''}>Deutsch</option>
+                        <option value="it" ${this.selectedLanguage === 'it' ? 'selected' : ''}>Italiano</option>
+                    </select>
+                </div>
+                
+                <div class="categories-grid">
+                    ${this.renderCategoriesFallback()}
+                </div>
+                
+                <div id="file-list-container" class="file-list-container" style="display: none;">
+                    <div class="file-list-header">
+                        <h3 id="file-list-title">Arquivos disponíveis</h3>
+                        <button class="btn-back" onclick="libraryManager.hideFileList()">← Voltar</button>
+                    </div>
+                    <div id="file-list" class="file-list">
+                        <!-- Arquivos serão inseridos aqui -->
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * Renderiza os cartões de categoria com fallback
+     */
+    renderCategoriesFallback() {
+        const fallbackTexts = {
+            legal: {
+                title: 'Jurídico',
+                description: 'Frases e termos jurídicos comuns, petições e documentos legais'
+            },
+            math: {
+                title: 'Matemática',
+                description: 'Fórmulas, símbolos matemáticos e expressões científicas'
+            }
+        };
+
+        return Object.values(this.categories).map(category => {
+            const hasFiles = this.hasFilesForCategory(category.id);
+            const isDisabled = !hasFiles;
+            const fallback = fallbackTexts[category.id] || { title: category.id, description: '' };
+            
+            return `
+                <div class="category-card ${isDisabled ? 'disabled' : ''}" 
+                     onclick="${isDisabled ? '' : `libraryManager.selectCategory('${category.id}')`}">
+                    <div class="category-icon">${category.icon}</div>
+                    <div class="category-content">
+                        <h3>${fallback.title}</h3>
+                        <p>${fallback.description}</p>
+                        <div class="file-count">
+                            ${this.getFileCountText(category.id)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    /**
      * Renderiza os cartões de categoria
      */
     renderCategories() {
-        const t = window.i18nSystem?.t || ((key) => {
-            console.error(`❌ Erro ao traduzir "${key}": `, key);
-            return key;
-        });
+        if (!window.i18nSystem || !window.i18nSystem.translations) {
+            console.warn('⚠️ Sistema i18n não pronto, usando fallback para categorias');
+            return this.renderCategoriesFallback();
+        }
+        
+        const t = window.i18nSystem.t.bind(window.i18nSystem);
         
         return Object.values(this.categories).map(category => {
             const hasFiles = this.hasFilesForCategory(category.id);
@@ -202,20 +284,41 @@ class LibraryManager {
      */
     showFileList(categoryId) {
         const category = this.categories[categoryId];
-        const t = window.i18nSystem?.t || ((key) => key);
+        
+        // Usar traduções com fallback
+        let categoryTitle, fileListTitle, noFilesText, sizeText, modifiedText, downloadBtnText;
+        
+        if (window.i18nSystem && window.i18nSystem.translations && Object.keys(window.i18nSystem.translations).length > 0) {
+            const t = window.i18nSystem.t.bind(window.i18nSystem);
+            categoryTitle = t(category.nameKey);
+            fileListTitle = t('download.libraries.fileList.title');
+            noFilesText = t('download.libraries.fileList.noFiles');
+            sizeText = t('download.libraries.fileList.size');
+            modifiedText = t('download.libraries.fileList.modified');
+            downloadBtnText = t('download.libraries.fileList.downloadBtn');
+        } else {
+            // Fallback texts
+            const fallbackTitles = { legal: 'Jurídico', math: 'Matemática' };
+            categoryTitle = fallbackTitles[categoryId] || categoryId;
+            fileListTitle = 'Arquivos disponíveis';
+            noFilesText = 'Nenhum arquivo disponível para esta categoria no idioma selecionado';
+            sizeText = 'Tamanho';
+            modifiedText = 'Modificado';
+            downloadBtnText = 'Baixar';
+        }
         
         const fileListContainer = document.getElementById('file-list-container');
-        const fileListTitle = document.getElementById('file-list-title');
+        const fileListTitleElement = document.getElementById('file-list-title');
         const fileList = document.getElementById('file-list');
         
-        fileListTitle.textContent = `${t(category.nameKey)} - ${t('download.libraries.fileList.title')}`;
+        fileListTitleElement.textContent = `${categoryTitle} - ${fileListTitle}`;
         
         const files = this.getFilesForCategory(categoryId);
         
         if (files.length === 0) {
             fileList.innerHTML = `
                 <div class="no-files">
-                    <p>${t('download.libraries.fileList.noFiles')}</p>
+                    <p>${noFilesText}</p>
                 </div>
             `;
         } else {
@@ -225,13 +328,13 @@ class LibraryManager {
                         <div class="file-name">${file.displayName}</div>
                         <div class="file-description">${file.description}</div>
                         <div class="file-meta">
-                            <span class="file-size">${t('download.libraries.fileList.size')}: ${file.size}</span>
-                            <span class="file-modified">${t('download.libraries.fileList.modified')}: ${file.modified}</span>
+                            <span class="file-size">${sizeText}: ${file.size}</span>
+                            <span class="file-modified">${modifiedText}: ${file.modified}</span>
                         </div>
                     </div>
                     <div class="file-actions">
                         <button class="btn-download-file" onclick="libraryManager.downloadFile('${categoryId}', '${file.name}')">
-                            ${t('download.libraries.fileList.downloadBtn')}
+                            ${downloadBtnText}
                         </button>
                     </div>
                 </div>
@@ -292,6 +395,35 @@ class LibraryManager {
         // Se está mostrando lista de arquivos, atualize também
         if (this.selectedCategory) {
             this.showFileList(this.selectedCategory);
+        }
+    }
+
+    /**
+     * Re-renderiza a seção completa quando as traduções estão disponíveis
+     */
+    refreshWithTranslations() {
+        console.log('🔄 Re-renderizando LibraryManager com traduções carregadas');
+        
+        // Verificar se as traduções estão disponíveis
+        if (!window.i18nSystem || !window.i18nSystem.translations || Object.keys(window.i18nSystem.translations).length === 0) {
+            console.warn('⚠️ Traduções ainda não estão disponíveis para refresh');
+            return;
+        }
+        
+        // Encontrar o container específico das bibliotecas
+        const librariesContainer = document.getElementById('libraries-container');
+        if (librariesContainer) {
+            librariesContainer.innerHTML = this.renderLibrariesSection();
+            console.log('✅ LibraryManager re-renderizado com traduções (via container)');
+            return;
+        }
+        
+        // Fallback: procurar pela seção
+        const librariesSection = document.querySelector('.libraries-section');
+        if (librariesSection) {
+            const parent = librariesSection.parentNode;
+            parent.innerHTML = this.renderLibrariesSection();
+            console.log('✅ LibraryManager re-renderizado com traduções (via parent)');
         }
     }
 

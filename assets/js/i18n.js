@@ -223,6 +223,11 @@ class AtalhoI18n {
             this.translationCache.set(cacheKey, this.translations);
             console.log(`🔄 Traduções recarregadas para: ${this.currentLanguage}`);
             
+            // Disparar evento de traduções carregadas
+            window.dispatchEvent(new CustomEvent('translationsLoaded', {
+                detail: { language: this.currentLanguage, translations: this.translations }
+            }));
+            
         } catch (error) {
             console.error(`❌ Erro ao carregar traduções para ${this.currentLanguage}:`, error);
             

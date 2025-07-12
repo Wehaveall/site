@@ -320,7 +320,7 @@
             `;
         }
 
-        // Função para mostrar a página de downloads para usuários autorizados
+                // Função para mostrar a página de downloads para usuários autorizados
         function showDownloadPage(userData) {
             const pageTitle = i18nSystem?.t('download.libraries.title') || 'Bibliotecas de Atalhos';
             const pageSubtitle = i18nSystem?.t('download.libraries.subtitle') || 'Baixe bibliotecas pré-construídas para diferentes áreas';
@@ -331,16 +331,39 @@
                     <h1>${pageTitle}</h1>
                     <div class="subtitle">${pageSubtitle}</div>
                     
-
-                    
                     <!-- Seção de Bibliotecas -->
-                    ${window.libraryManager ? window.libraryManager.renderLibrariesSection() : ''}
+                    <div id="libraries-container">
+                        ${window.libraryManager ? window.libraryManager.renderLibrariesSection() : '<div class="loading">Carregando bibliotecas...</div>'}
+                    </div>
                     
                     <div style="text-align: center; margin-top: 40px;">
                         <a href="index.html" style="color: #666; text-decoration: none;">${backHome}</a>
                     </div>
                 </div>
             `;
+            
+            // Se as traduções ainda não estão carregadas, configurar um timer para re-renderizar
+            if (!window.i18nSystem || !window.i18nSystem.translations || Object.keys(window.i18nSystem.translations).length === 0) {
+                console.log('⏳ Aguardando traduções para re-renderizar LibraryManager...');
+                const checkTranslations = setInterval(() => {
+                    if (window.i18nSystem && window.i18nSystem.translations && Object.keys(window.i18nSystem.translations).length > 0) {
+                        console.log('✅ Traduções prontas, re-renderizando LibraryManager');
+                        clearInterval(checkTranslations);
+                        if (window.libraryManager) {
+                            const librariesContainer = document.getElementById('libraries-container');
+                            if (librariesContainer) {
+                                librariesContainer.innerHTML = window.libraryManager.renderLibrariesSection();
+                            }
+                        }
+                    }
+                }, 500); // Verificar a cada 500ms
+                
+                // Timeout de segurança (10 segundos)
+                setTimeout(() => {
+                    clearInterval(checkTranslations);
+                    console.warn('⚠️ Timeout aguardando traduções');
+                }, 10000);
+            }
         }
 
         // Função para mostrar a página de ativação manual
@@ -463,6 +486,18 @@
                     window.addEventListener('languageChanged', function(event) {
                         console.log('🌍 Idioma alterado para:', event.detail.language);
                         i18nSystem.applyTranslations();
+                        // Re-renderizar LibraryManager quando idioma mudar
+                        if (window.libraryManager) {
+                            window.libraryManager.refreshWithTranslations();
+                        }
+                    });
+                    
+                    // Configurar event listener para quando traduções estão carregadas
+                    window.addEventListener('translationsLoaded', function() {
+                        console.log('🔄 Traduções carregadas, re-renderizando LibraryManager');
+                        if (window.libraryManager) {
+                            window.libraryManager.refreshWithTranslations();
+                        }
                     });
                 } else {
                     console.warn('⚠️ Sistema de tradução não encontrado no download');

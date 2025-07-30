@@ -3,105 +3,58 @@
   "buildCommand": "echo 'Static site build'",
   "outputDirectory": ".",
   "functions": {
-    "api/create-pix.js": {
-      "maxDuration": 30
-    },
-    "api/payment-status.js": {
-      "maxDuration": 30
-    },
-    "api/create-user.js": {
-      "maxDuration": 30
-    },
-    "api/webhook.js": {
-      "maxDuration": 30
-    },
-    "api/webhook-metrics.js": {
-      "maxDuration": 30
-    },
-    "api/create-checkout-session.js": {
-      "maxDuration": 30
-    },
-    "api/stripe-webhook.js": {
-      "maxDuration": 30
-    }
+    "api/create-pix.js": { "maxDuration": 30 },
+    "api/payment-status.js": { "maxDuration": 30 },
+    "api/create-user.js": { "maxDuration": 30 },
+    "api/webhook.js": { "maxDuration": 30 },
+    "api/webhook-metrics.js": { "maxDuration": 30 },
+    "api/create-checkout-session.js": { "maxDuration": 30 },
+    "api/stripe-webhook.js": { "maxDuration": 30 },
+    "api/stripe-proxy.js": { "maxDuration": 30 },
+    "api/mercadopago-proxy.js": { "maxDuration": 30 }
   },
   "rewrites": [
-    {
-      "source": "/__/auth/(.*)",
-      "destination": "https://shortcut-6256b.firebaseapp.com/__/auth/$1"
-    },
-    {
-      "source": "/__/firebase/(.*)",
-      "destination": "https://shortcut-6256b.firebaseapp.com/__/firebase/$1"
-    }
+    { "source": "/__/auth/(.*)", "destination": "https://shortcut-6256b.firebaseapp.com/__/auth/$1" },
+    { "source": "/__/firebase/(.*)", "destination": "https://shortcut-6256b.firebaseapp.com/__/firebase/$1" }
   ],
   "headers": [
     {
       "source": "/assets/translations/(.*)",
       "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/json"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600"
-        }
+        { "key": "Content-Type", "value": "application/json" },
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
       ]
     },
     {
       "source": "/libraries/(.*).ata",
       "headers": [
-        {
-          "key": "Content-Type",
-          "value": "text/plain"
-        },
-        {
-          "key": "Content-Disposition",
-          "value": "attachment"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400"
-        }
+        { "key": "Content-Type", "value": "text/plain" },
+        { "key": "Content-Disposition", "value": "attachment" },
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
       ]
     },
     {
       "source": "/(.*)",
       "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "https://atalho.me"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, PUT, DELETE, OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization, x-client-info, apikey, X-CSRF-Token"
-        },
-        {
-          "key": "Strict-Transport-Security",
-          "value": "max-age=31536000; includeSubDomains; preload"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        },
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate, max-age=0" },
+        { "key": "Pragma", "value": "no-cache" },
+        { "key": "Expires", "value": "0" },
+        { "key": "Vary", "value": "*" },
+        { "key": "Access-Control-Allow-Origin", "value": "https://atalho.me" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PUT, DELETE, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization, x-client-info, apikey, X-CSRF-Token" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains; preload" },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-hashes' https://www.gstatic.com https://cdnjs.cloudflare.com https://atalho.me; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com data:; img-src 'self' data: https: blob:; frame-src 'self' https://shortcut-6256b.firebaseapp.com https://www.youtube.com https://youtube.com; connect-src 'self' https://firestore.googleapis.com wss://firestore.googleapis.com https://identitytoolkit.googleapis.com https://www.google-analytics.com;"
-        }
+          "value": "default-src 'self' https://atalho.me; script-src 'self' 'unsafe-inline' 'unsafe-hashes' 'unsafe-eval' https://www.gstatic.com https://cdnjs.cloudflare.com https://atalho.me https://js.stripe.com https://sdk.mercadopago.com https://firebase.googleapis.com data:; script-src-elem 'self' 'unsafe-inline' https://js.stripe.com https://sdk.mercadopago.com https://www.gstatic.com https://cdnjs.cloudflare.com https://firebase.googleapis.com https://atalho.me data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' https://firestore.googleapis.com wss://firestore.googleapis.com https://identitytoolkit.googleapis.com https://www.google-analytics.com https://firebase.googleapis.com https://api.mercadopago.com https://api.stripe.com https://js.stripe.com https://atalho.me; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com https://shortcut-6256b.firebaseapp.com https://www.youtube.com https://youtube.com"
+        },
+        { "key": "Permissions-Policy", "value": "geolocation=(), microphone=(), camera=()" },
+        { "key": "X-CSP-Version", "value": "2025-07-30-VFINAL-2" },
+        { "key": "X-Cache-Bust", "value": "1753897950" }
       ]
     }
   ]
-} 
+}

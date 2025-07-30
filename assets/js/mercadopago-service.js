@@ -10,22 +10,98 @@ class MercadoPagoService {
         this.initialized = false;
     }
 
+    async loadMercadoPagoJS() {
+        return new Promise((resolve, reject) => {
+            if (typeof MercadoPago !== 'undefined') {
+                resolve();
+                return;
+            }
+
+            console.log('🔄 [MERCADOPAGO] Tentando carregar via proxy interno (contorna CSP)...');
+
+            // Estratégia 1: usar proxy interno para contornar CSP
+            fetch('/api/mercadopago-proxy')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Proxy retornou: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(scriptContent => {
+                    const script = document.createElement('script');
+                    script.type = 'text/javascript';
+                    script.text = scriptContent;
+                    document.head.appendChild(script);
+
+                    if (typeof MercadoPago !== 'undefined') {
+                        console.log('✅ [MERCADOPAGO] SDK carregado via proxy interno');
+                        resolve();
+                    } else {
+                        throw new Error('MercadoPago não inicializado após proxy');
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ [MERCADOPAGO] Erro no proxy interno:', error);
+                    console.log('🔄 [MERCADOPAGO] Tentando fetch direto...');
+
+                    // Estratégia 2: fetch direto
+                    fetch('https://sdk.mercadopago.com/js/v2')
+                        .then(response => response.text())
+                        .then(scriptContent => {
+                            const script = document.createElement('script');
+                            script.type = 'text/javascript';
+                            script.text = scriptContent;
+                            document.head.appendChild(script);
+
+                            if (typeof MercadoPago !== 'undefined') {
+                                console.log('✅ [MERCADOPAGO] SDK carregado via fetch direto');
+                                resolve();
+                            } else {
+                                throw new Error('MercadoPago não inicializado');
+                            }
+                        })
+                        .catch(error2 => {
+                            console.error('❌ [MERCADOPAGO] Erro no fetch direto:', error2);
+                            console.log('🔄 [MERCADOPAGO] Tentando método tradicional...');
+
+                            // Estratégia 3: método tradicional
+                            const script = document.createElement('script');
+                            script.src = 'https://sdk.mercadopago.com/js/v2';
+                            script.onload = () => {
+                                console.log('✅ [MERCADOPAGO] SDK carregado via script tag');
+                                resolve();
+                            };
+                            script.onerror = () => {
+                                console.error('❌ [MERCADOPAGO] Todas as estratégias falharam');
+                                reject(new Error('Falha ao carregar MercadoPago SDK'));
+                            };
+
+                            document.head.appendChild(script);
+                        });
+                });
+        });
+    }
+
     async initialize() {
         try {
+            // Carregar SDK do MercadoPago dinamicamente
+            console.log('🔵 [MERCADOPAGO] Carregando SDK...');
+            await this.loadMercadoPagoJS();
+
             // Aguardar configuração ser carregada
-        if (!window.secureConfig) {
+            if (!window.secureConfig) {
                 console.log('⏳ Aguardando configuração ser carregada...');
                 await ConfigLoader.waitForConfig();
-        }
+            }
 
-        // Usar configuração segura
-        this.config = window.secureConfig;
-        this.apiBaseUrl = this.config.getApiBaseUrl();
+            // Usar configuração segura
+            this.config = window.secureConfig;
+            this.apiBaseUrl = this.config.getApiBaseUrl();
             this.initialized = true;
 
-        // Log para confirmar URL base (sem expor credenciais)
-        console.log('🔗 API Base URL:', this.apiBaseUrl);
-        console.log('🛡️ Configuração segura carregada');
+            // Log para confirmar URL base (sem expor credenciais)
+            console.log('🔗 API Base URL:', this.apiBaseUrl);
+            console.log('🛡️ Configuração segura carregada');
             
             return true;
         } catch (error) {

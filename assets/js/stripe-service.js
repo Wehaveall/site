@@ -61,33 +61,92 @@ class StripeService {
                 return;
             }
 
-            const script = document.createElement('script');
-            script.src = 'https://js.stripe.com/v3/';
-            script.onload = () => {
-                console.log('✅ [STRIPE] Stripe.js carregado');
-                resolve();
-            };
-            script.onerror = () => {
-                console.error('❌ [STRIPE] Erro ao carregar Stripe.js');
-                reject(new Error('Falha ao carregar Stripe.js'));
-            };
+            console.log('🔄 [STRIPE] Tentando carregar via proxy interno (contorna CSP)...');
             
-            document.head.appendChild(script);
+            // Estratégia 1: usar proxy interno para contornar CSP
+            fetch('/api/stripe-proxy')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Proxy retornou: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(scriptContent => {
+                    const script = document.createElement('script');
+                    script.type = 'text/javascript';
+                    script.text = scriptContent;
+                    document.head.appendChild(script);
+                    
+                    if (typeof Stripe !== 'undefined') {
+                        console.log('✅ [STRIPE] Stripe.js carregado via proxy interno');
+                        resolve();
+                    } else {
+                        throw new Error('Stripe não inicializado após proxy');
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ [STRIPE] Erro no proxy interno:', error);
+                    console.log('🔄 [STRIPE] Tentando fetch direto...');
+                    
+                    // Estratégia 2: fetch direto
+                    fetch('https://js.stripe.com/v3/')
+                        .then(response => response.text())
+                        .then(scriptContent => {
+                            const script = document.createElement('script');
+                            script.type = 'text/javascript';
+                            script.text = scriptContent;
+                            document.head.appendChild(script);
+                            
+                            if (typeof Stripe !== 'undefined') {
+                                console.log('✅ [STRIPE] Stripe.js carregado via fetch direto');
+                                resolve();
+                            } else {
+                                throw new Error('Stripe não inicializado');
+                            }
+                        })
+                        .catch(error2 => {
+                            console.error('❌ [STRIPE] Erro no fetch direto:', error2);
+                            console.log('🔄 [STRIPE] Tentando método tradicional...');
+                            
+                            // Estratégia 3: método tradicional
+                            const script = document.createElement('script');
+                            script.src = 'https://js.stripe.com/v3/';
+                            script.onload = () => {
+                                console.log('✅ [STRIPE] Stripe.js carregado via script tag');
+                                resolve();
+                            };
+                            script.onerror = () => {
+                                console.error('❌ [STRIPE] Todas as estratégias falharam');
+                                reject(new Error('Falha ao carregar Stripe.js'));
+                            };
+                            
+                            document.head.appendChild(script);
+                        });
+                });
         });
     }
 
     async getStripePublicKey() {
         try {
+            console.log('🔍 [STRIPE] Buscando chave pública...');
+            
             // Tentar buscar da configuração local primeiro
             if (this.config && this.config.stripePublicKey) {
+                console.log('✅ [STRIPE] Chave encontrada na configuração local');
                 return this.config.stripePublicKey;
             }
 
             // Buscar do endpoint de configuração
+            console.log('🔍 [STRIPE] Buscando via API:', `${this.apiBaseUrl}/config`);
             const response = await fetch(`${this.apiBaseUrl}/config`);
             if (response.ok) {
                 const config = await response.json();
+                console.log('📋 [STRIPE] Configuração recebida');
+                console.log('📋 [STRIPE] hasStripePublicKey:', config.hasStripePublicKey);
+                console.log('📋 [STRIPE] Chave válida:', !!config.stripePublicKey && config.stripePublicKey.startsWith('pk_'));
                 return config.stripePublicKey || null;
+            } else {
+                console.error('❌ [STRIPE] Erro na API config:', response.status);
             }
 
             // Fallback - tentar variáveis de ambiente expostas

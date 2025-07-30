@@ -126,7 +126,6 @@ class SecurityValidator {
         if (isPaymentPage) {
             criticalElements = [
                 'script[src*="firebase"]',
-                'script[src*="mercadopago"]',
                 '.payment-option'
             ];
         } else if (isRegistrationPage) {
@@ -245,6 +244,36 @@ class SecurityValidator {
         }
 
         return { valid: true, errors: [] };
+    }
+
+    validatePaymentAttempt(methodOrData, userData = {}) {
+        // Suporte aos dois formatos: novo (method, userData) e antigo (objeto completo)
+        let method, data;
+        
+        if (typeof methodOrData === 'string') {
+            // Formato novo: validatePaymentAttempt(method, userData)
+            method = methodOrData;
+            data = userData;
+        } else if (typeof methodOrData === 'object' && methodOrData.method) {
+            // Formato antigo: validatePaymentAttempt({ method, userEmail, timestamp })
+            method = methodOrData.method;
+            data = methodOrData;
+        } else {
+            console.log('🚫 Parâmetros inválidos para validatePaymentAttempt:', methodOrData);
+            return { valid: false, reason: 'invalid_params' };
+        }
+        
+        const validMethods = ['pix', 'stripe', 'cartao', 'paypal'];
+        
+        if (!validMethods.includes(method)) {
+            console.log('🚫 Método de pagamento inválido:', method);
+            return { valid: false, reason: 'invalid_method' };
+        }
+
+        // Log da tentativa para debug
+        console.log(`💳 Validando tentativa de pagamento: ${method}`, data);
+        
+        return { valid: true };
     }
 
     validateRegistrationForm(formData) {

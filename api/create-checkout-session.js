@@ -189,13 +189,6 @@ module.exports = async (req, res) => {
 
             // Configurações de cobrança
             billing_address_collection: 'required',
-            
-            // Para assinaturas anuais, mostrar informações claras
-            ...(license_type === 'anual' && {
-                consent_collection: {
-                    terms_of_service: 'required'
-                }
-            }),
 
             // Configurações de localização
             locale: language === 'pt-br' ? 'pt-BR' : 

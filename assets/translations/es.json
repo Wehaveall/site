@@ -250,11 +250,37 @@
       "wordIntegration": "Integración con Word",
       "lifetimeUpdates": "Actualizaciones de por vida"
     },
-    "price": "$19.90",
-    "license": "Licencia anual",
+    "plans": {
+      "annual": {
+        "title": "Licencia Anual",
+        "price": "$19.90",
+        "description": "Por año • Renovación automática opcional",
+        "features": [
+          "✅ Acceso completo a todas las funciones",
+          "✅ Actualizaciones automáticas",
+          "✅ Soporte prioritario",
+          "✅ Renovación automática (cancelar en cualquier momento)",
+          "✅ Garantía de 30 días"
+        ]
+      },
+      "lifetime": {
+        "title": "Licencia de por Vida",
+        "price": "$99.00",
+        "description": "Pago único • Para siempre",
+        "features": [
+          "✅ Todo del plan anual",
+          "✅ Acceso de por vida",
+          "✅ Sin renovaciones",
+          "✅ Mejor valor",
+          "✅ Inversión única"
+        ]
+      }
+    },
     "methods": {
+      "pix": "PIX",
       "paypal": "PayPal",
-      "stripe": "Stripe"
+      "stripe": "Tarjeta de Crédito",
+      "creditCard": "💳 Tarjeta de Crédito"
     },
     "authRequired": {
       "title": "Atención:",
@@ -268,6 +294,13 @@
       "canProceed": "Puedes proceder con el pago."
     },
     "loading": "Procesando...",
+    "stripe": {
+      "processing": "Procesando pago...",
+      "redirecting": "Redirigiendo al checkout...",
+      "error": "Error en el pago con tarjeta",
+      "securePayment": "Pago seguro vía Stripe",
+      "cardAccepted": "Tarjetas aceptadas: Visa, Mastercard, American Express"
+    },
     "success": {
       "title": "¡Éxito!",
       "message": "Operación completada con éxito."

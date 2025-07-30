@@ -18,6 +18,9 @@
 
     <!-- Mercado Pago SDK -->
     <script src="https://sdk.mercadopago.com/js/v2"></script>
+    
+    <!-- Stripe SDK -->
+    <script src="https://js.stripe.com/v3/"></script>
 
     <!-- Firebase SDKs - Apenas o essencial para a página de compra -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -73,36 +76,39 @@
                     <span class="hero-subtitle" data-i18n="purchase.subtitle">Otimize sua produtividade hoje mesmo</span>
                 </h1>
 
-                <div class="purchase-grid">
-                    <!-- Product Information -->
-                    <div class="product-info">
-                        <ul class="features-list">
-                            <li>
-                                <i class="fa-solid fa-check"></i>
-                                <span data-i18n="purchase.features.textExpansion">Expansão de texto automática</span>
-                            </li>
-                            <li>
-                                <i class="fa-solid fa-check"></i>
-                                <span data-i18n="purchase.features.databases">Bancos de dados personalizáveis</span>
-                            </li>
-                            <li>
-                                <i class="fa-solid fa-check"></i>
-                                <span data-i18n="purchase.features.formatting">Formatação avançada</span>
-                            </li>
-                            <li>
-                                <i class="fa-solid fa-check"></i>
-                                <span data-i18n="purchase.features.wordIntegration">Integração com Word</span>
-                            </li>
-                            <li>
-                                <i class="fa-solid fa-check"></i>
-                                <span data-i18n="purchase.features.lifetimeUpdates">Atualizações vitalícias</span>
-                            </li>
-                        </ul>
-                        <div class="price-box">
-                            <span class="price" data-i18n="purchase.price">R$ 49,90</span>
-                            <span class="license" data-i18n="purchase.license">Licença anual</span>
+                <!-- Plans Selection -->
+                <div class="pricing-container">
+                    <!-- Annual Plan -->
+                    <div class="pricing-card" id="annual-plan">
+                        <div class="plan-header">
+                            <h3 data-i18n="purchase.plans.annual.title">Licença Anual</h3>
+                            <div class="price-display">
+                                <span class="price" id="annual-price" data-i18n="purchase.plans.annual.price">R$ 49,90</span>
+                                <span class="license" data-i18n="purchase.plans.annual.description">Por ano • Renovação automática opcional</span>
+                            </div>
                         </div>
+                        <ul class="features-list" id="annual-features">
+                            <!-- Features serão preenchidas via JavaScript -->
+                        </ul>
+                        <button class="btn-plan" data-plan="anual" data-i18n="common.select">Selecionar</button>
                     </div>
+
+                    <!-- Lifetime Plan -->
+                    <div class="pricing-card popular" id="lifetime-plan">
+                        <div class="popular-badge" data-i18n="purchase.plans.popular">Mais Popular</div>
+                        <div class="plan-header">
+                            <h3 data-i18n="purchase.plans.lifetime.title">Licença Vitalícia</h3>
+                            <div class="price-display">
+                                <span class="price" id="lifetime-price" data-i18n="purchase.plans.lifetime.price">R$ 299,00</span>
+                                <span class="license" data-i18n="purchase.plans.lifetime.description">Pagamento único • Para sempre</span>
+                            </div>
+                        </div>
+                        <ul class="features-list" id="lifetime-features">
+                            <!-- Features serão preenchidas via JavaScript -->
+                        </ul>
+                        <button class="btn-plan" data-plan="vitalicia" data-i18n="common.select">Selecionar</button>
+                    </div>
+                </div>
 
                     <!-- Payment Section -->
                     <div class="payment-section">
@@ -123,18 +129,30 @@
                             <!-- PIX - Apenas para pt-br -->
                             <button type="button" class="payment-option nav-hidden" data-method="pix" id="pix-option">
                                 <img src="assets/img/pix-logo.png" alt="PIX" class="payment-option-icon">
-                                <div>PIX</div>
+                                <div data-i18n="purchase.methods.pix">PIX</div>
                             </button>
 
-                            <button class="payment-option" data-method="paypal">
+                            <!-- Stripe (Credit Card) -->
+                            <button class="payment-option" data-method="stripe" id="stripe-option">
+                                <i class="fa-solid fa-credit-card payment-option-icon"></i>
+                                <div data-i18n="purchase.methods.creditCard">💳 Cartão de Crédito</div>
+                            </button>
+
+                            <!-- PayPal -->
+                            <button class="payment-option" data-method="paypal" id="paypal-option">
                                 <i class="fa-brands fa-paypal payment-option-icon"></i>
-                                <div>PayPal</div>
+                                <div data-i18n="purchase.methods.paypal">PayPal</div>
                             </button>
+                        </div>
 
-                            <button class="payment-option" data-method="stripe">
-                                <i class="fa-brands fa-stripe payment-option-icon"></i>
-                                <div>Stripe</div>
-                            </button>
+                        <!-- Stripe Payment Info -->
+                        <div id="stripe-info" class="payment-method-info nav-hidden">
+                            <div class="payment-info-content">
+                                <i class="fas fa-shield-alt"></i>
+                                <span data-i18n="purchase.stripe.securePayment">Pagamento seguro via Stripe</span>
+                                <br>
+                                <small data-i18n="purchase.stripe.cardAccepted">Cartões aceitos: Visa, Mastercard, American Express</small>
+                            </div>
                         </div>
 
                         <!-- Language-specific payment notice -->
@@ -232,6 +250,7 @@
     <script src="assets/js/i18n.js"></script>
     <script src="assets/js/user-display.js"></script>
     <script src="assets/js/mercadopago-service.js"></script>
+    <script src="assets/js/stripe-service.js"></script>
     <script src="assets/js/pix-modal.js"></script>
     <script src="assets/js/payment.js"></script>
 
@@ -242,6 +261,8 @@
         let currentLanguage = 'pt-br';
         let currentUser = null;
         let currentUserData = null;
+        let selectedPlan = null;
+        let stripeService = null;
 
         // Função para logout
         async function logout() {
@@ -466,6 +487,7 @@
                         currentLanguage = event.detail.language;
                         console.log('🌍 Idioma alterado para:', currentLanguage);
                         updatePaymentMethodsBasedOnLanguage();
+                        updatePricingBasedOnLanguage();
                         i18nSystem.applyTranslations();
                     });
                 } else {
@@ -477,8 +499,12 @@
                 currentLanguage = 'pt-br';
             }
 
-            // ✅ SEGUNDO: Configurar métodos de pagamento baseado no idioma
+            // ✅ SEGUNDO: Configurar métodos de pagamento e preços baseado no idioma
             updatePaymentMethodsBasedOnLanguage();
+            updatePricingBasedOnLanguage();
+            
+            // ✅ Configurar seleção de planos
+            setupPlanSelection();
 
             // ✅ TERCEIRO: Inicializar Firebase e sistema de autenticação
             try {
@@ -532,9 +558,143 @@
             });
         });
 
+        // Função para atualizar preços baseado no idioma
+        function updatePricingBasedOnLanguage() {
+            if (!i18nSystem) return;
+            
+            // Atualizar preços dos planos
+            const annualPriceEl = document.getElementById('annual-price');
+            const lifetimePriceEl = document.getElementById('lifetime-price');
+            
+            if (annualPriceEl && i18nSystem.translations.purchase?.plans?.annual?.price) {
+                annualPriceEl.textContent = i18nSystem.translations.purchase.plans.annual.price;
+            }
+            
+            if (lifetimePriceEl && i18nSystem.translations.purchase?.plans?.lifetime?.price) {
+                lifetimePriceEl.textContent = i18nSystem.translations.purchase.plans.lifetime.price;
+            }
+            
+            // Atualizar features dos planos
+            updatePlanFeatures();
+            
+            console.log(`💰 Preços atualizados para idioma: ${currentLanguage}`);
+        }
+
+        // Função para atualizar features dos planos
+        function updatePlanFeatures() {
+            if (!i18nSystem || !i18nSystem.translations.purchase?.plans) return;
+            
+            const annualFeatures = document.getElementById('annual-features');
+            const lifetimeFeatures = document.getElementById('lifetime-features');
+            
+            // Features do plano anual
+            if (annualFeatures && i18nSystem.translations.purchase.plans.annual?.features) {
+                annualFeatures.innerHTML = '';
+                i18nSystem.translations.purchase.plans.annual.features.forEach(feature => {
+                    const li = document.createElement('li');
+                    li.innerHTML = feature;
+                    annualFeatures.appendChild(li);
+                });
+            }
+            
+            // Features do plano vitalício
+            if (lifetimeFeatures && i18nSystem.translations.purchase.plans.lifetime?.features) {
+                lifetimeFeatures.innerHTML = '';
+                i18nSystem.translations.purchase.plans.lifetime.features.forEach(feature => {
+                    const li = document.createElement('li');
+                    li.innerHTML = feature;
+                    lifetimeFeatures.appendChild(li);
+                });
+            }
+        }
+
+        // Função para gerenciar seleção de planos
+        function setupPlanSelection() {
+            const planButtons = document.querySelectorAll('.btn-plan');
+            
+            planButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const plan = this.getAttribute('data-plan');
+                    selectPlan(plan);
+                });
+            });
+        }
+
+        // Função para selecionar um plano
+        function selectPlan(plan) {
+            selectedPlan = plan;
+            
+            // Atualizar UI
+            document.querySelectorAll('.pricing-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            const selectedCard = plan === 'anual' ? 
+                document.getElementById('annual-plan') : 
+                document.getElementById('lifetime-plan');
+            
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+            }
+            
+            // Mostrar seção de pagamento
+            const paymentSection = document.querySelector('.payment-section');
+            if (paymentSection) {
+                paymentSection.style.display = 'block';
+                paymentSection.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            console.log(`📦 Plano selecionado: ${plan}`);
+        }
+
+        // Função para processar pagamento com Stripe
+        async function processStripePayment() {
+            if (!selectedPlan) {
+                alert(i18nSystem?.t('purchase.error.selectPlan') || 'Por favor, selecione um plano primeiro.');
+                return;
+            }
+            
+            if (!currentUser) {
+                showAuthRequiredModal();
+                return;
+            }
+            
+            try {
+                // Mostrar loading
+                showLoading(i18nSystem?.t('purchase.stripe.processing') || 'Processando pagamento...');
+                
+                // Inicializar Stripe service se necessário
+                if (!stripeService) {
+                    stripeService = window.stripeService;
+                    await stripeService.initialize();
+                }
+                
+                // Criar sessão de checkout
+                const result = await stripeService.processPayment({
+                    licenseType: selectedPlan,
+                    userEmail: currentUser.email,
+                    userName: currentUser.displayName || currentUserData?.Nome || ''
+                });
+                
+                hideLoading();
+                
+                if (!result.success) {
+                    throw new Error(result.error);
+                }
+                
+                // O redirecionamento acontece automaticamente
+                
+            } catch (error) {
+                hideLoading();
+                console.error('❌ Erro no pagamento Stripe:', error);
+                alert(i18nSystem?.t('purchase.stripe.error') || 'Erro no pagamento com cartão: ' + error.message);
+            }
+        }
+
         // Função para atualizar métodos de pagamento baseado no idioma
         function updatePaymentMethodsBasedOnLanguage() {
             const pixOption = document.getElementById('pix-option');
+            const stripeInfo = document.getElementById('stripe-info');
             const paymentNotice = document.getElementById('payment-language-notice');
             const noticeText = document.getElementById('payment-notice-text');
             
@@ -560,15 +720,20 @@
                     
                     // Mensagens traduzidas para o aviso
                     const notices = {
-                        'en': 'ℹ️ PIX payment is only available for customers in Brazil. Please use PayPal or Stripe.',
-                        'es': 'ℹ️ El pago PIX solo está disponible para clientes en Brasil. Use PayPal o Stripe.',
-                        'fr': 'ℹ️ Le paiement PIX n\'est disponible que pour les clients au Brésil. Utilisez PayPal ou Stripe.',
-                        'de': 'ℹ️ PIX-Zahlung ist nur für Kunden in Brasilien verfügbar. Verwenden Sie PayPal oder Stripe.',
-                        'it': 'ℹ️ Il pagamento PIX è disponibile solo per i clienti in Brasile. Usa PayPal o Stripe.'
+                        'en': 'ℹ️ PIX payment is only available for customers in Brazil. Please use Credit Card or PayPal.',
+                        'es': 'ℹ️ El pago PIX solo está disponible para clientes en Brasil. Use Tarjeta de Crédito o PayPal.',
+                        'fr': 'ℹ️ Le paiement PIX n\'est disponible que pour les clients au Brésil. Utilisez Carte de Crédit ou PayPal.',
+                        'de': 'ℹ️ PIX-Zahlung ist nur für Kunden in Brasilien verfügbar. Verwenden Sie Kreditkarte oder PayPal.',
+                        'it': 'ℹ️ Il pagamento PIX è disponibile solo per i clienti in Brasile. Usa Carta di Credito o PayPal.'
                     };
                     
                     noticeText.textContent = notices[currentLanguage] || notices['en'];
                 }
+            }
+            
+            // Sempre mostrar Stripe para todos os idiomas
+            if (stripeInfo) {
+                stripeInfo.style.display = 'block';
             }
             
             console.log(`🎯 Métodos de pagamento atualizados para idioma: ${currentLanguage}`);
@@ -631,6 +796,174 @@
         padding: 1rem;
         margin-top: 1rem;
         color: #155724;
+    }
+
+    /* Novos estilos para os planos */
+    .pricing-container {
+        display: flex;
+        gap: 2rem;
+        justify-content: center;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+    }
+
+    .pricing-card {
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        min-width: 300px;
+        max-width: 400px;
+        position: relative;
+        transition: all 0.3s ease;
+        background: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .pricing-card.popular {
+        border-color: #007bff;
+        transform: scale(1.05);
+    }
+
+    .pricing-card.selected {
+        border-color: #28a745;
+        box-shadow: 0 8px 16px rgba(40, 167, 69, 0.2);
+    }
+
+    .popular-badge {
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #007bff;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+
+    .plan-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .price-display .price {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #007bff;
+        display: block;
+    }
+
+    .price-display .license {
+        font-size: 0.9rem;
+        color: #666;
+        margin-top: 0.5rem;
+    }
+
+    .features-list {
+        text-align: left;
+        margin: 1.5rem 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .features-list li {
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+    }
+
+    .btn-plan {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        width: 100%;
+        transition: background 0.3s ease;
+    }
+
+    .btn-plan:hover {
+        background: #0056b3;
+    }
+
+    .pricing-card.selected .btn-plan {
+        background: #28a745;
+    }
+
+    .pricing-card.selected .btn-plan:hover {
+        background: #1e7e34;
+    }
+
+    .payment-method-info {
+        background: #e7f3ff;
+        border: 1px solid #b3d9ff;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        color: #004085;
+    }
+
+    .payment-info-content {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .payment-option {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 1rem;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        min-height: 80px;
+        justify-content: center;
+    }
+
+    .payment-option:hover {
+        border-color: #007bff;
+        transform: translateY(-2px);
+    }
+
+    .payment-option.selected {
+        border-color: #28a745;
+        background: #f8fff9;
+    }
+
+    .payment-option-icon {
+        font-size: 1.5rem;
+    }
+
+    .payment-section {
+        display: none;
+        margin-top: 2rem;
+        padding: 2rem;
+        background: #f8f9fa;
+        border-radius: 12px;
+    }
+
+    @media (max-width: 768px) {
+        .pricing-container {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .pricing-card {
+            min-width: 280px;
+            max-width: 350px;
+        }
+        
+        .pricing-card.popular {
+            transform: none;
+        }
     }
     </style>
 </body>

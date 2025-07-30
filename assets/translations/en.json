@@ -250,11 +250,37 @@
       "wordIntegration": "Word integration",
       "lifetimeUpdates": "Lifetime updates"
     },
-    "price": "$19.90",
-    "license": "Annual license",
+    "plans": {
+      "annual": {
+        "title": "Annual License",
+        "price": "$19.90",
+        "description": "Per year • Optional auto-renewal",
+        "features": [
+          "✅ Full access to all features",
+          "✅ Automatic updates",
+          "✅ Priority support",
+          "✅ Auto-renewal (cancel anytime)",
+          "✅ 30-day guarantee"
+        ]
+      },
+      "lifetime": {
+        "title": "Lifetime License",
+        "price": "$99.00",
+        "description": "One-time payment • Forever",
+        "features": [
+          "✅ Everything in annual plan",
+          "✅ Lifetime access",
+          "✅ No renewals",
+          "✅ Best value",
+          "✅ One-time investment"
+        ]
+      }
+    },
     "methods": {
+      "pix": "PIX",
       "paypal": "PayPal",
-      "stripe": "Stripe"
+      "stripe": "Credit Card",
+      "creditCard": "💳 Credit Card"
     },
     "authRequired": {
       "title": "Attention:",
@@ -268,6 +294,13 @@
       "canProceed": "You can proceed with payment."
     },
     "loading": "Processing...",
+    "stripe": {
+      "processing": "Processing payment...",
+      "redirecting": "Redirecting to checkout...",
+      "error": "Credit card payment error",
+      "securePayment": "Secure payment via Stripe",
+      "cardAccepted": "Cards accepted: Visa, Mastercard, American Express"
+    },
     "success": {
       "title": "Success!",
       "message": "Operation completed successfully."

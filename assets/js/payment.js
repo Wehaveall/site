@@ -298,6 +298,13 @@ async function processPayment(method) {
             } else {
                 throw new Error('Container do Mercado Pago não encontrado');
             }
+        } else if (method === 'stripe') {
+            // Processamento com Stripe
+            if (typeof processStripePayment === 'function') {
+                await processStripePayment();
+            } else {
+                throw new Error('Função processStripePayment não encontrada');
+            }
         } else {
             // Para outros métodos mantém simulação temporariamente
             showLoading(`Processando pagamento via ${method}...`);
@@ -306,8 +313,10 @@ async function processPayment(method) {
             showSuccess('Pagamento processado com sucesso!');
 
             const registerForm = document.getElementById('register-form');
-            registerForm.classList.remove('hidden');
-            registerForm.scrollIntoView({ behavior: 'smooth' });
+            if (registerForm) {
+                registerForm.classList.remove('hidden');
+                registerForm.scrollIntoView({ behavior: 'smooth' });
+            }
         }
     } catch (error) {
         console.error('Erro no processamento:', error);

@@ -247,13 +247,40 @@
       "textExpansion": "Expansão de texto automática",
       "databases": "Bancos de dados personalizáveis",
       "formatting": "Formatação avançada",
-      "wordIntegration": "Integração com Word"
+      "wordIntegration": "Integração com Word",
+      "lifetimeUpdates": "Atualizações vitalícias"
     },
-    "price": "R$ 49,90",
-    "license": "Licença anual",
+    "plans": {
+      "annual": {
+        "title": "Licença Anual",
+        "price": "R$ 49,90",
+        "description": "Por ano • Renovação automática opcional",
+        "features": [
+          "✅ Acesso completo a todas as funcionalidades",
+          "✅ Atualizações automáticas",
+          "✅ Suporte prioritário",
+          "✅ Renovação automática (pode cancelar a qualquer momento)",
+          "✅ Garantia de 30 dias"
+        ]
+      },
+      "lifetime": {
+        "title": "Licença Vitalícia",
+        "price": "R$ 299,00",
+        "description": "Pagamento único • Para sempre",
+        "features": [
+          "✅ Tudo do plano anual",
+          "✅ Acesso vitalício",
+          "✅ Sem renovações",
+          "✅ Melhor custo-benefício",
+          "✅ Investimento único"
+        ]
+      }
+    },
     "methods": {
+      "pix": "PIX",
       "paypal": "PayPal",
-      "stripe": "Stripe"
+      "stripe": "Cartão de Crédito",
+      "creditCard": "💳 Cartão de Crédito"
     },
     "authRequired": {
       "title": "Atenção:",
@@ -267,6 +294,13 @@
       "canProceed": "Você pode prosseguir com o pagamento."
     },
     "loading": "Processando...",
+    "stripe": {
+      "processing": "Processando pagamento...",
+      "redirecting": "Redirecionando para checkout...",
+      "error": "Erro no pagamento com cartão",
+      "securePayment": "Pagamento seguro via Stripe",
+      "cardAccepted": "Cartões aceitos: Visa, Mastercard, American Express"
+    },
     "success": {
       "title": "Sucesso!",
       "message": "Operação realizada com sucesso."

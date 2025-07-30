@@ -250,11 +250,37 @@
       "wordIntegration": "Word-Integration",
       "lifetimeUpdates": "Lebenslange Updates"
     },
-    "price": "19,90 €",
-    "license": "Jahreslizenz",
+    "plans": {
+      "annual": {
+        "title": "Jahreslizenz",
+        "price": "17,90 €",
+        "description": "Pro Jahr • Optionale automatische Verlängerung",
+        "features": [
+          "✅ Vollzugriff auf alle Funktionen",
+          "✅ Automatische Updates",
+          "✅ Prioritätssupport",
+          "✅ Automatische Verlängerung (jederzeit kündbar)",
+          "✅ 30-Tage-Garantie"
+        ]
+      },
+      "lifetime": {
+        "title": "Lebenslange Lizenz",
+        "price": "89,00 €",
+        "description": "Einmalige Zahlung • Für immer",
+        "features": [
+          "✅ Alles aus dem Jahresplan",
+          "✅ Lebenslanger Zugang",
+          "✅ Keine Verlängerungen",
+          "✅ Bester Wert",
+          "✅ Einmalige Investition"
+        ]
+      }
+    },
     "methods": {
+      "pix": "PIX",
       "paypal": "PayPal",
-      "stripe": "Stripe"
+      "stripe": "Kreditkarte",
+      "creditCard": "💳 Kreditkarte"
     },
     "authRequired": {
       "title": "Achtung:",
@@ -268,6 +294,13 @@
       "canProceed": "Sie können mit der Zahlung fortfahren."
     },
     "loading": "Verarbeitung...",
+    "stripe": {
+      "processing": "Zahlung wird verarbeitet...",
+      "redirecting": "Weiterleitung zum Checkout...",
+      "error": "Kreditkarten-Zahlungsfehler",
+      "securePayment": "Sichere Zahlung über Stripe",
+      "cardAccepted": "Akzeptierte Karten: Visa, Mastercard, American Express"
+    },
     "success": {
       "title": "Erfolg!",
       "message": "Operation erfolgreich abgeschlossen."

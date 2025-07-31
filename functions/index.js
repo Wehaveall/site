@@ -284,9 +284,8 @@ exports.forceSyncEmailVerification = onCall({
  * SINCRONIZAÇÃO PÚBLICA: Usa oobCode para sincronizar sem autenticação
  * Chamada após verificação de email no emailHandler.html
  *
- * Nota: Como o Firebase Admin SDK não possui verifyActionCode,
- * vamos usar uma abordagem alternativa que busca o usuário via email
- * extraído do oobCode (que já foi verificado no frontend)
+ * CORREÇÃO: Força recarregamento dos dados do usuário do Firebase Auth
+ * para garantir que o status de verificação mais recente seja obtido
  */
 exports.syncEmailVerificationPublic = onRequest({
   region: "us-east1",
@@ -299,27 +298,27 @@ exports.syncEmailVerificationPublic = onRequest({
       throw new Error("oobCode é obrigatório");
     }
 
-    logger.info(`[Public Sync] Sincronizando via oobCode: ${oobCode}`);
+    if (!email) {
+      throw new Error("Email é obrigatório para sincronização");
+    }
+
+    logger.info(`[Public Sync] Sincronizando via oobCode: ${oobCode} para email: ${email}`);
 
     const auth = getAuth();
-
-    // Se email foi fornecido, usar diretamente
-    // Se não, tentar extrair do contexto ou buscar por usuários recentes
-    const targetEmail = email;
     let userRecord = null;
 
-    if (targetEmail) {
-      try {
-        userRecord = await auth.getUserByEmail(targetEmail);
-        logger.info(`[Public Sync] Usuário encontrado: ${userRecord.uid}`);
-      } catch (error) {
-        logger.error(`[Public Sync] Usuário não encontrado: ${targetEmail}`);
-        throw new Error(`Usuário não encontrado para o email fornecido`);
-      }
-    } else {
-      // Fallback: buscar usuários não verificados recentes
-      // Isso é uma limitação da abordagem, mas funciona para casos simples
-      throw new Error("Email é obrigatório para sincronização");
+    try {
+      // Buscar usuário pelo email
+      userRecord = await auth.getUserByEmail(email);
+      logger.info(`[Public Sync] Usuário encontrado: ${userRecord.uid}`);
+
+      // CORREÇÃO: Recarregar dados do usuário para garantir status mais recente
+      userRecord = await auth.getUser(userRecord.uid);
+      logger.info(`[Public Sync] Dados recarregados - email_verified: ${userRecord.emailVerified}`);
+
+    } catch (error) {
+      logger.error(`[Public Sync] Usuário não encontrado: ${email}`, error);
+      throw new Error(`Usuário não encontrado para o email fornecido`);
     }
 
     // Atualizar Firestore com dados do Auth
@@ -340,12 +339,15 @@ exports.syncEmailVerificationPublic = onRequest({
     if (userRecord.emailVerified) {
       updateData.account_status = "active";
       updateData.email_verified_at = new Date().toISOString();
+      logger.info(`[Public Sync] Email verificado confirmado - atualizando para ativo`);
+    } else {
+      logger.warn(`[Public Sync] Email ainda não verificado no Firebase Auth`);
     }
 
     if (userDoc.exists) {
       // Atualizar documento existente
       await userRef.update(updateData);
-      logger.info(`[Public Sync] Documento atualizado: ${userRecord.email}`);
+      logger.info(`[Public Sync] Documento atualizado: ${userRecord.email} - verified: ${userRecord.emailVerified}`);
     } else {
       // Criar documento se não existir
       const newUserData = {
@@ -356,7 +358,7 @@ exports.syncEmailVerificationPublic = onRequest({
       };
 
       await userRef.set(newUserData);
-      logger.info(`[Public Sync] Documento criado: ${userRecord.email}`);
+      logger.info(`[Public Sync] Documento criado: ${userRecord.email} - verified: ${userRecord.emailVerified}`);
     }
 
     response.json({
@@ -597,7 +599,7 @@ exports.activateTrial = onCall({
       status: "active",
       created_at: new Date().toISOString(),
       user_uid: uid || null,
-      user_email: (request.auth && request.auth.token && request.auth.token.email) ? request.auth.token.email : null,
+      user_email: request.auth?.token?.email || null,
     };
 
     // Salvar trial na coleção trials
@@ -645,7 +647,6 @@ exports.checkTrialStatus = onCall({
 }, async (request) => {
   try {
     const {fingerprint, hardware_id, ip_address} = request.data;
-    const uid = request.auth ? request.auth.uid : null;
 
     if (!fingerprint || !hardware_id || !ip_address) {
       throw new Error("Dados de identificação incompletos");
@@ -704,5 +705,129 @@ exports.checkTrialStatus = onCall({
   } catch (error) {
     logger.error("[TRIAL] Erro ao verificar status:", error);
     throw new Error("Erro interno ao verificar trial");
+  }
+});
+
+/**
+ * TRIGGER: Monitora mudanças no trial_status e atualiza license_type automaticamente
+ * Gatilho: Quando um documento de usuário é atualizado no Firestore
+ * Funciona com v2 - monitora mudanças no campo trial_status
+ */
+exports.syncLicenseTypeOnTrialChange = onDocumentUpdated({
+  document: "users/{userId}",
+  region: "us-east1",
+}, async (event) => {
+  const before = event.data.before.data();
+  const after = event.data.after.data();
+  const userId = event.params.userId;
+
+  try {
+    const db = getFirestore();
+    const userRef = db.collection("users").doc(userId);
+    
+    // Detecta mudança no trial_status
+    if (before.trial_status !== after.trial_status) {
+      logger.info(`[License Type Sync] Trial status mudou para UID: ${userId} - ${before.trial_status} → ${after.trial_status}`);
+      
+      const updateData = {
+        updated_at: new Date().toISOString(),
+      };
+
+      // Se trial_status for "active", definir license_type como "trial"
+      if (after.trial_status === "active") {
+        updateData.license_type = "trial";
+        logger.info(`[License Type Sync] Definindo license_type como "trial" para UID: ${userId}`);
+      }
+      // Se trial_status não for "active" e não há licença paga ativa, remover license_type
+      else if (after.trial_status !== "active" && (!after.license_active || after.payment_status !== "paid")) {
+        updateData.license_type = null;
+        logger.info(`[License Type Sync] Removendo license_type para UID: ${userId} - trial não ativo e sem licença paga`);
+      }
+
+      // Só atualizar se houver mudanças necessárias
+      if (updateData.license_type !== undefined) {
+        await userRef.update(updateData);
+        logger.info(`[License Type Sync] License type sincronizado para ${after.email || userId}: ${updateData.license_type}`);
+      }
+    }
+
+    return {success: true};
+  } catch (error) {
+    logger.error(`[License Type Sync] Erro ao sincronizar license_type para UID: ${userId}`, error);
+    return {success: false, error: error.message};
+  }
+});
+
+/**
+ * FUNÇÃO MANUAL: Força sincronização do license_type baseado no status atual
+ * Útil para corrigir usuários que já têm trial ativo mas não têm license_type definido
+ */
+exports.fixLicenseTypeForActiveTrials = onCall({
+  region: "us-east1",
+}, async (request) => {
+  try {
+    const uid = request.auth ? request.auth.uid : null;
+    
+    if (!uid) {
+      throw new Error("Usuário não autenticado");
+    }
+
+    logger.info(`[Fix License Type] Iniciando correção para UID: ${uid}`);
+
+    const db = getFirestore();
+    const userRef = db.collection("users").doc(uid);
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      throw new Error("Usuário não encontrado");
+    }
+
+    const userData = userDoc.data();
+    
+    const updateData = {
+      updated_at: new Date().toISOString(),
+    };
+
+    // Se trial_status for "active" mas license_type não estiver definido ou estiver incorreto
+    if (userData.trial_status === "active") {
+      // Verificar se trial ainda está válido
+      const now = new Date();
+      const trialEnd = userData.trial_end ? userData.trial_end.toDate() : null;
+      
+      if (trialEnd && trialEnd > now) {
+        updateData.license_type = "trial";
+        logger.info(`[Fix License Type] Definindo license_type como "trial" para UID: ${uid}`);
+      } else {
+        // Trial expirado, atualizar status
+        updateData.trial_status = "expired";
+        updateData.license_type = null;
+        logger.info(`[Fix License Type] Trial expirado para UID: ${uid} - removendo license_type`);
+      }
+    }
+    // Se tem licença paga ativa
+    else if (userData.license_active && userData.payment_status === "paid") {
+      updateData.license_type = userData.license_type || "paid";
+      logger.info(`[Fix License Type] Mantendo license_type para licença paga: ${updateData.license_type}`);
+    }
+    // Se não tem trial ativo nem licença paga
+    else {
+      updateData.license_type = null;
+      logger.info(`[Fix License Type] Removendo license_type - sem trial ou licença ativa`);
+    }
+
+    await userRef.update(updateData);
+
+    logger.info(`[Fix License Type] Correção concluída para ${userData.email || uid}: license_type = ${updateData.license_type}`);
+
+    return {
+      success: true,
+      license_type: updateData.license_type,
+      trial_status: userData.trial_status,
+      license_active: userData.license_active,
+      payment_status: userData.payment_status,
+    };
+  } catch (error) {
+    logger.error("[Fix License Type] Erro na correção:", error);
+    throw new Error("Erro interno na correção do license_type");
   }
 });

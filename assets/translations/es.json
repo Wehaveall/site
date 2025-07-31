@@ -12,12 +12,15 @@
     "login": "Iniciar Sesión",
     "dashboard": "Panel",
     "logout": "Cerrar Sesión",
+    "trial": "Prueba Gratis",
     "buy": "Comprar"
   },
   "hero": {
     "title": "Atalho",
     "subtitle": "El camino más corto entre lo que piensas y lo que escribes.",
-    "description": "Transforma tu forma de escribir con expansión automática de texto. ¡Estandariza documentos y aumenta tu productividad en segundos!"
+    "description": "Transforma tu forma de escribir con expansión automática de texto. ¡Estandariza documentos y aumenta tu productividad en segundos!",
+    "trial": "Prueba Gratis por 7 Días",
+    "buy": "Comprar Ahora"
   },
   "features": {
     "title": "Características Principales",

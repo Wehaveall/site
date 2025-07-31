@@ -12,12 +12,15 @@
     "login": "Anmelden",
     "dashboard": "Dashboard",
     "logout": "Abmelden",
+    "trial": "Kostenlos Testen",
     "buy": "Kaufen"
   },
   "hero": {
     "title": "Atalho",
     "subtitle": "Der kürzeste Weg zwischen dem, was Sie denken, und dem, was Sie tippen.",
-    "description": "Verwandeln Sie Ihre Art zu schreiben mit automatischer Texterweiterung. Standardisieren Sie Dokumente und steigern Sie Ihre Produktivität in Sekunden!"
+    "description": "Verwandeln Sie Ihre Art zu schreiben mit automatischer Texterweiterung. Standardisieren Sie Dokumente und steigern Sie Ihre Produktivität in Sekunden!",
+    "trial": "7 Tage kostenlos testen",
+    "buy": "Jetzt kaufen"
   },
   "features": {
     "title": "Hauptfunktionen",

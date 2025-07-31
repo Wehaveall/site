@@ -48,6 +48,7 @@
                         </a>
                     </li>
                     <li id="nav-logout" class="nav-hidden"><a href="#" class="nav-link" onclick="logout()" data-i18n="header.logout">Sair</a></li>
+                    <li><a href="app-download.html" class="nav-link btn-trial" data-i18n="header.trial">Experimente Grátis</a></li>
                     <li><a href="comprar.html" class="nav-link btn-primary" data-i18n="header.buy">Comprar</a></li>
                 </ul>
             </nav>
@@ -77,6 +78,15 @@
                     Transforme sua forma de escrever com expansão automática de texto.
                     Padronize documentos e aumente sua produtividade em segundos!
                 </p>
+                
+                <div class="hero-buttons" style="text-align: center; margin-top: 2rem; gap: 1rem; display: flex; justify-content: center; flex-wrap: wrap;">
+                    <a href="app-download.html" class="btn-trial" data-i18n="hero.trial">
+                        🚀 Experimente Grátis por 7 Dias
+                    </a>
+                    <a href="comprar.html" class="btn-primary" data-i18n="hero.buy">
+                        💳 Comprar Agora
+                    </a>
+                </div>
             </div>
         </div>
     </section>
@@ -490,6 +500,7 @@
         console.log('🔧 Use debugAuth.checkCurrentUser() para verificar autenticação!');
         console.log('🔧 Use debugAuth.forceMenuUpdate() para forçar atualização do menu!');
         console.log('🔧 Use debugAuth.checkMenuElements() para verificar elementos do menu!');
+        console.log('🌍 Use forceApplyTranslations() para forçar reaplicação das traduções!');
     </script>
 
     <style>

@@ -1,6 +1,7 @@
 {
   "projects": {
-    "default": "shortcut-6256b"
+    "default": "shortcut-6256b",
+    "staging": "shortcut-6256b"
   },
   "targets": {},
   "etags": {

@@ -12,12 +12,15 @@
     "login": "Accedi",
     "dashboard": "Dashboard",
     "logout": "Esci",
+    "trial": "Prova Gratis",
     "buy": "Acquista"
   },
   "hero": {
     "title": "Atalho",
     "subtitle": "Il percorso più breve tra quello che pensi e quello che digiti.",
-    "description": "Trasforma il tuo modo di scrivere con l'espansione automatica del testo. Standardizza i documenti e aumenta la tua produttività in pochi secondi!"
+    "description": "Trasforma il tuo modo di scrivere con l'espansione automatica del testo. Standardizza i documenti e aumenta la tua produttività in pochi secondi!",
+    "trial": "Prova Gratis per 7 Giorni",
+    "buy": "Acquista Ora"
   },
   "features": {
     "title": "Caratteristiche Principali",

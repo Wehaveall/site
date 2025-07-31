@@ -135,6 +135,7 @@
                         </a>
                     </li>
                     <li id="nav-logout" style="display: none;"><a href="#" class="nav-link" onclick="logout()" data-i18n="dashboard.logout">Sair</a></li>
+                    <li><a href="app-download.html" class="nav-link btn-trial" data-i18n="header.trial">Experimente Grátis</a></li>
                     <li><a href="comprar.html" class="nav-link btn-primary" data-i18n="header.buy">Comprar</a></li>
                 </ul>
             </nav>
@@ -145,6 +146,34 @@
     <main class="dashboard-main">
         <div class="dashboard-container">
             
+            <!-- Card de Status da Licença -->
+            <div class="card" id="license-card">
+                <h2 class="card-title">🔑 Status da Licença</h2>
+                <div class="card-content" id="license-content">
+                    <div class="loading-spinner" style="margin: 20px auto; width: 30px; height: 30px;"></div>
+                    <p style="text-align: center;">Verificando status da licença...</p>
+                </div>
+            </div>
+
+            <!-- Card de Download do App -->
+            <div class="card" id="download-card">
+                <h2 class="card-title">📱 Baixar Aplicativo</h2>
+                <div class="card-content">
+                    <p>Baixe o Atalho para começar a usar em seu computador:</p>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <a href="app-download.html" class="btn-primary" style="display: inline-block; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                            <i class="fas fa-download"></i> Baixar Atalho
+                        </a>
+                    </div>
+                    <div style="margin-top: 15px; text-align: center;">
+                        <small style="color: #666;">
+                            <i class="fab fa-windows" style="color: #0078d4; margin-right: 5px;"></i>
+                            Exclusivo para Windows 10/11
+                        </small>
+                    </div>
+                </div>
+            </div>
+
             <!-- Card de Informações Pessoais -->
             <div class="card">
                 <h2 class="card-title">👤 Informações Pessoais</h2>
@@ -411,6 +440,7 @@
                         console.log('📛 Campo user.displayName:', customerData.user?.displayName);
                         
                         updateUI();
+                        checkLicenseStatus();
                         return;
                     } else {
                         console.log('❌ Nenhum documento encontrado com user.uid =', uid);
@@ -461,6 +491,7 @@
                             console.log('📛 Campo user.displayName:', customerData.user?.displayName);
                             
                             updateUI();
+                            checkLicenseStatus();
                             return;
                         }
                     }
@@ -483,6 +514,7 @@
                 
                 console.log('🔄 Dados de fallback:', customerData);
                 updateUI();
+                checkLicenseStatus();
                 
             } catch (error) {
                 console.error('❌ ERRO GERAL ao carregar dados:', error);
@@ -500,6 +532,7 @@
                 
                 console.log('🆘 Fallback final:', customerData);
                 updateUI();
+                checkLicenseStatus();
             }
         }
 
@@ -615,6 +648,142 @@
             }
         } catch (error) {
             console.warn('⚠️ Erro ao restaurar popup no carregamento imediato:', error);
+        }
+
+        // Função para verificar status da licença/trial
+        async function checkLicenseStatus() {
+            if (!currentUser || !customerData) return;
+            
+            console.log('🔍 Verificando status da licença...');
+            
+            const licenseContent = document.getElementById('license-content');
+            
+            try {
+                // Verificar licença ativa
+                if (customerData.license_active && customerData.payment_status === 'paid') {
+                    const licenseEnd = customerData.sub_end?.toDate ? customerData.sub_end.toDate() : new Date(customerData.sub_end);
+                    if (licenseEnd && licenseEnd > new Date()) {
+                        const daysRemaining = Math.ceil((licenseEnd - new Date()) / (1000 * 60 * 60 * 24));
+                        
+                        licenseContent.innerHTML = `
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                                <i class="fas fa-crown" style="font-size: 2rem; color: #007bff;"></i>
+                                <div>
+                                    <h3 style="margin: 0; color: #007bff;">✅ Licença Ativa</h3>
+                                    <p style="margin: 5px 0 0 0; color: #666;">
+                                        Licença ${customerData.license_type || 'Padrão'} válida até ${licenseEnd.toLocaleDateString('pt-BR')}
+                                    </p>
+                                </div>
+                            </div>
+                            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                                <p style="margin: 0;"><strong>Dias restantes:</strong> ${daysRemaining} dias</p>
+                                <p style="margin: 5px 0 0 0;"><strong>Método de pagamento:</strong> ${customerData.payment_method || 'N/A'}</p>
+                            </div>
+                            <div style="text-align: center;">
+                                <a href="app-download.html" class="btn-primary" style="display: inline-block; padding: 10px 20px; text-decoration: none; border-radius: 6px;">
+                                    <i class="fas fa-download"></i> Baixar Versão Completa
+                                </a>
+                            </div>
+                        `;
+                        return;
+                    }
+                }
+
+                // Verificar trial ativo
+                if (customerData.trial_status === 'active') {
+                    const trialEnd = customerData.trial_end?.toDate ? customerData.trial_end.toDate() : new Date(customerData.trial_end);
+                    if (trialEnd && trialEnd > new Date()) {
+                        const daysRemaining = Math.ceil((trialEnd - new Date()) / (1000 * 60 * 60 * 24));
+                        
+                        licenseContent.innerHTML = `
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                                <i class="fas fa-clock" style="font-size: 2rem; color: #28a745;"></i>
+                                <div>
+                                    <h3 style="margin: 0; color: #28a745;">🚀 Trial Ativo</h3>
+                                    <p style="margin: 5px 0 0 0; color: #666;">
+                                        Trial válido até ${trialEnd.toLocaleDateString('pt-BR')}
+                                    </p>
+                                </div>
+                            </div>
+                            <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                                <p style="margin: 0;"><strong>Dias restantes:</strong> ${daysRemaining} dias</p>
+                                <p style="margin: 5px 0 0 0;">Experimente todas as funcionalidades do Atalho gratuitamente!</p>
+                            </div>
+                            <div style="text-align: center; gap: 10px;">
+                                <a href="app-download.html" class="btn-primary" style="display: inline-block; padding: 10px 20px; text-decoration: none; border-radius: 6px; margin-right: 10px;">
+                                    <i class="fas fa-download"></i> Baixar Trial
+                                </a>
+                                <a href="comprar.html" style="display: inline-block; padding: 10px 20px; text-decoration: none; border-radius: 6px; background: #dc3545; color: white;">
+                                    💳 Adquirir Licença
+                                </a>
+                            </div>
+                        `;
+                        return;
+                    }
+                }
+
+                // Verificar se já usou trial este ano
+                const currentYear = new Date().getFullYear();
+                if (customerData.last_trial_year === currentYear) {
+                    licenseContent.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <i class="fas fa-times-circle" style="font-size: 2rem; color: #dc3545;"></i>
+                            <div>
+                                <h3 style="margin: 0; color: #dc3545;">❌ Trial Expirado</h3>
+                                <p style="margin: 5px 0 0 0; color: #666;">
+                                    Você já utilizou seu trial gratuito este ano
+                                </p>
+                            </div>
+                        </div>
+                        <div style="background: #f8d7da; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <p style="margin: 0;">Adquira uma licença para continuar usando o Atalho com todas as funcionalidades.</p>
+                            <p style="margin: 5px 0 0 0;"><strong>Próximo trial disponível:</strong> 01/01/${currentYear + 1}</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <a href="comprar.html" style="display: inline-block; padding: 12px 24px; text-decoration: none; border-radius: 6px; background: #dc3545; color: white; font-weight: 600;">
+                                💳 Adquirir Licença
+                            </a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Trial disponível
+                licenseContent.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <i class="fas fa-gift" style="font-size: 2rem; color: #ffc107;"></i>
+                        <div>
+                            <h3 style="margin: 0; color: #ffc107;">🎉 Trial Disponível</h3>
+                            <p style="margin: 5px 0 0 0; color: #666;">
+                                Experimente o Atalho gratuitamente por 7 dias
+                            </p>
+                        </div>
+                    </div>
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                        <p style="margin: 0;">Ative seu trial gratuito e teste todas as funcionalidades do Atalho sem compromisso.</p>
+                    </div>
+                    <div style="text-align: center; gap: 10px;">
+                        <a href="app-download.html" class="btn-primary" style="display: inline-block; padding: 12px 24px; text-decoration: none; border-radius: 6px; background: #28a745; color: white; font-weight: 600; margin-right: 10px;">
+                            🚀 Ativar Trial Gratuito
+                        </a>
+                        <a href="comprar.html" style="display: inline-block; padding: 12px 24px; text-decoration: none; border-radius: 6px; background: #dc3545; color: white; font-weight: 600;">
+                            💳 Comprar Diretamente
+                        </a>
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('❌ Erro ao verificar status da licença:', error);
+                licenseContent.innerHTML = `
+                    <div style="text-align: center; color: #dc3545;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                        <p>Erro ao verificar status da licença.</p>
+                        <button onclick="checkLicenseStatus()" style="padding: 8px 16px; border: none; background: #007bff; color: white; border-radius: 4px; cursor: pointer;">
+                            🔄 Tentar Novamente
+                        </button>
+                    </div>
+                `;
+            }
         }
     </script>
 </body>

@@ -61,12 +61,35 @@ class LibraryManager {
         
         this.selectedCategory = null;
         this.selectedLanguage = 'pt-br';
-        this.init();
+        this.initialized = false;
     }
 
-    init() {
+    async waitForI18nSystem() {
+        // Aguardar até o sistema i18n estar disponível e pronto
+        let attempts = 0;
+        const maxAttempts = 50; // 5 segundos máximo (50 * 100ms)
+        
+        while (attempts < maxAttempts) {
+            if (window.i18nSystem && window.i18nSystem.getCurrentLanguage && typeof window.i18nSystem.getCurrentLanguage === 'function') {
+                console.log('✅ Sistema i18n encontrado e pronto');
+                return;
+            }
+            
+            await new Promise(resolve => setTimeout(resolve, 100));
+            attempts++;
+        }
+        
+        console.warn('⚠️ Sistema i18n não encontrado após 5 segundos, usando configuração padrão');
+    }
+
+    async init() {
+        if (this.initialized) return;
+        
+        // Aguardar o sistema de i18n estar pronto
+        await this.waitForI18nSystem();
+        
         // Sincronizar com sistema de idiomas se disponível
-        if (window.i18nSystem) {
+        if (window.i18nSystem?.getCurrentLanguage) {
             this.currentLanguage = window.i18nSystem.getCurrentLanguage();
             this.selectedLanguage = this.currentLanguage;
         }
@@ -78,6 +101,7 @@ class LibraryManager {
             this.updateUI();
         });
         
+        this.initialized = true;
         console.log('📚 LibraryManager inicializado');
     }
 
@@ -452,8 +476,19 @@ class LibraryManager {
     }
 }
 
-// Inicializar o gerenciador de bibliotecas
-window.libraryManager = new LibraryManager();
+// Função para inicializar o LibraryManager de forma segura
+async function initializeLibraryManager() {
+    window.libraryManager = new LibraryManager();
+    await window.libraryManager.init();
+    console.log('📚 LibraryManager pronto para uso');
+}
+
+// Inicializar quando o DOM estiver pronto
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeLibraryManager);
+} else {
+    initializeLibraryManager();
+}
 
 // Exportar para uso em outros scripts
 window.LibraryManager = LibraryManager; 

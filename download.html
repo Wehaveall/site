@@ -12,7 +12,6 @@
         .download-container {
             font-family: Arial, sans-serif;
             line-height: 1.6;
-            margin: 0;
             padding: 20px;
             color: #333;
             max-width: 800px;
@@ -156,6 +155,7 @@
                         </a>
                     </li>
                     <li id="nav-logout" style="display: none;"><a href="#" class="nav-link" onclick="logout()" data-i18n="dashboard.logout">Sair</a></li>
+                    <li><a href="app-download.html" class="nav-link btn-trial" data-i18n="header.trial">Experimente Grátis</a></li>
                     <li><a href="comprar.html" class="nav-link btn-primary" data-i18n="header.buy">Comprar</a></li>
                 </ul>
             </nav>
@@ -511,7 +511,7 @@
                         console.log('🌍 Idioma alterado para:', event.detail.language);
                         i18nSystem.applyTranslations();
                         // Re-renderizar LibraryManager quando idioma mudar
-                        if (window.libraryManager) {
+                        if (window.libraryManager && window.libraryManager.initialized) {
                             window.libraryManager.refreshWithTranslations();
                         }
                     });
@@ -519,7 +519,7 @@
                     // Configurar event listener para quando traduções estão carregadas
                     window.addEventListener('translationsLoaded', function() {
                         console.log('🔄 Traduções carregadas, re-renderizando LibraryManager');
-                        if (window.libraryManager) {
+                        if (window.libraryManager && window.libraryManager.initialized) {
                             window.libraryManager.refreshWithTranslations();
                         }
                     });

@@ -12,12 +12,15 @@
     "login": "Sign In",
     "dashboard": "Dashboard",
     "logout": "Sign Out",
+    "trial": "Try Free",
     "buy": "Buy"
   },
   "hero": {
     "title": "Atalho",
     "subtitle": "The shortest path between what you think and what you type.",
-    "description": "Transform your writing with automatic text expansion. Standardize documents and boost your productivity in seconds!"
+    "description": "Transform your writing with automatic text expansion. Standardize documents and boost your productivity in seconds!",
+    "trial": "Try Free for 7 Days",
+    "buy": "Buy Now"
   },
   "features": {
     "title": "Main Features",
@@ -386,6 +389,44 @@
       "message": "An error occurred during email verification.",
       "invalidLink": "The link is invalid or has expired.",
       "goToLogin": "Go to Login"
+    }
+  },
+  "appDownload": {
+    "title": "Download Atalho - App Download",
+    "subtitle": "Download the app and start saving time in your typing",
+    "authRequired": "Login Required",
+    "authMessage": "Sign in or create an account to download Atalho",
+    "licenseStatus": {
+      "active": "License Active",
+      "trial": "Trial Active",
+      "available": "Trial Available",
+      "expired": "Trial Expired",
+      "unavailable": "Trial Unavailable"
+    },
+    "buttons": {
+      "downloadWindows": "Download Atalho",
+      "activateTrial": "Activate Free Trial",
+      "buyLicense": "Buy License",
+      "downloadTrial": "Download Trial Version",
+      "downloadFull": "Download Atalho"
+    },
+    "platforms": {
+      "windows": "Windows 10/11 (64-bit) - Full version",
+      "requirements": "Requirements: Windows 10 (version 1903 or higher) or Windows 11"
+    },
+    "features": {
+      "expansion": "Transform shortcuts into complete texts",
+      "sync": "Your shortcuts on all devices", 
+      "security": "Encrypted and protected data",
+      "productivity": "Save up to 40% of typing time"
+    },
+    "messages": {
+      "trialActive": "days remaining",
+      "trialExpired": "Trial expired - wait for next year",
+      "alreadyLicensed": "You already have an active license",
+      "downloadStarted": "Download Started",
+      "downloadError": "Download link not available",
+      "windowsOnly": "Windows 10/11 exclusive"
     }
   }
 } 

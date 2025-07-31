@@ -12,12 +12,15 @@
     "login": "Se connecter",
     "dashboard": "Tableau de bord",
     "logout": "Se déconnecter",
+    "trial": "Essai Gratuit",
     "buy": "Acheter"
   },
   "hero": {
     "title": "Atalho",
     "subtitle": "Le chemin le plus court entre ce que vous pensez et ce que vous tapez.",
-    "description": "Transformez votre façon d'écrire avec l'expansion automatique de texte. Standardisez les documents et augmentez votre productivité en quelques secondes !"
+    "description": "Transformez votre façon d'écrire avec l'expansion automatique de texte. Standardisez les documents et augmentez votre productivité en quelques secondes !",
+    "trial": "Essayez Gratuitement 7 Jours",
+    "buy": "Acheter Maintenant"
   },
   "features": {
     "title": "Fonctionnalités Principales",

@@ -482,3 +482,227 @@ exports.sendCustomEmailVerification = onCall({
     throw new Error("Erro interno ao enviar email de verificação");
   }
 });
+
+/**
+ * Função para ativar trial de 7 dias
+ * Controla por IP + fingerprint + hardware ID
+ * Limite: uma vez por ano por combinação única
+ */
+exports.activateTrial = onCall({
+  region: "us-east1",
+}, async (request) => {
+  try {
+    const {fingerprint, hardware_id, ip_address} = request.data;
+    const uid = request.auth ? request.auth.uid : null;
+
+    // Validações básicas
+    if (!fingerprint || !hardware_id || !ip_address) {
+      throw new Error("Dados de identificação incompletos");
+    }
+
+    logger.info(`[TRIAL] Solicitação para UID: ${uid}, IP: ${ip_address}, HW: ${hardware_id.substring(0, 8)}...`);
+
+    const db = getFirestore();
+    const currentYear = new Date().getFullYear();
+
+    // Criar identificador único baseado na combinação de fatores
+    const machineFingerprint = `${ip_address}_${fingerprint}_${hardware_id}`;
+    const fingerprintHash = require("crypto")
+        .createHash("sha256")
+        .update(machineFingerprint)
+        .digest("hex");
+
+    // Verificar se já existe trial ativo para esta máquina no ano atual
+    const trialQuery = db.collection("trials")
+        .where("machine_fingerprint", "==", fingerprintHash)
+        .where("year", "==", currentYear)
+        .limit(1);
+
+    const existingTrials = await trialQuery.get();
+
+    if (!existingTrials.empty) {
+      const existingTrial = existingTrials.docs[0].data();
+
+      // Verificar se o trial ainda está ativo
+      const now = new Date();
+      const trialEnd = existingTrial.trial_end.toDate();
+
+      if (trialEnd > now) {
+        logger.info(`[TRIAL] Trial já ativo para máquina até ${trialEnd}`);
+        return {
+          success: false,
+          error: "TRIAL_ALREADY_ACTIVE",
+          message: "Você já possui um trial ativo nesta máquina",
+          trial_end: trialEnd.toISOString(),
+          days_remaining: Math.ceil((trialEnd - now) / (1000 * 60 * 60 * 24)),
+        };
+      } else {
+        // Trial expirado, mas já foi usado este ano
+        logger.info(`[TRIAL] Trial já usado neste ano para máquina`);
+        return {
+          success: false,
+          error: "TRIAL_ALREADY_USED",
+          message: "Trial já foi utilizado nesta máquina este ano",
+          next_available: `01/01/${currentYear + 1}`,
+        };
+      }
+    }
+
+    // Se usuário está logado, verificar também no documento do usuário
+    if (uid) {
+      const userRef = db.collection("users").doc(uid);
+      const userDoc = await userRef.get();
+
+      if (userDoc.exists) {
+        const userData = userDoc.data();
+
+        // Verificar se usuário já tem licença ativa
+        if (userData.license_active && userData.payment_status === "paid") {
+          const licenseEnd = userData.sub_end ? userData.sub_end.toDate() : null;
+          if (licenseEnd && licenseEnd > new Date()) {
+            return {
+              success: false,
+              error: "ALREADY_LICENSED",
+              message: "Usuário já possui licença ativa",
+              license_end: licenseEnd.toISOString(),
+              license_type: userData.license_type || "unknown",
+            };
+          }
+        }
+
+        // Verificar se usuário já usou trial este ano
+        if (userData.last_trial_year === currentYear) {
+          return {
+            success: false,
+            error: "USER_TRIAL_USED",
+            message: "Usuário já utilizou trial este ano",
+            next_available: `01/01/${currentYear + 1}`,
+          };
+        }
+      }
+    }
+
+    // Criar novo trial
+    const trialStart = new Date();
+    const trialEnd = new Date(trialStart.getTime() + (7 * 24 * 60 * 60 * 1000)); // +7 dias
+
+    const trialData = {
+      machine_fingerprint: fingerprintHash,
+      ip_address: ip_address,
+      browser_fingerprint: fingerprint,
+      hardware_id: hardware_id,
+      trial_start: trialStart,
+      trial_end: trialEnd,
+      year: currentYear,
+      status: "active",
+      created_at: new Date().toISOString(),
+      user_uid: uid || null,
+      user_email: (request.auth && request.auth.token && request.auth.token.email) ? request.auth.token.email : null,
+    };
+
+    // Salvar trial na coleção trials
+    const trialRef = await db.collection("trials").add(trialData);
+    logger.info(`[TRIAL] Trial criado: ${trialRef.id}`);
+
+    // Se usuário está logado, atualizar documento do usuário
+    if (uid) {
+      const userRef = db.collection("users").doc(uid);
+      const userUpdateData = {
+        trial_status: "active",
+        trial_start: trialStart,
+        trial_end: trialEnd,
+        trial_machine_fingerprint: fingerprintHash,
+        trial_id: trialRef.id,
+        last_trial_year: currentYear,
+        updated_at: new Date().toISOString(),
+      };
+
+      await userRef.set(userUpdateData, {merge: true});
+      logger.info(`[TRIAL] Usuário ${uid} atualizado com dados do trial`);
+    }
+
+    logger.info(`[TRIAL] Trial ativado com sucesso: ${trialRef.id} - válido até ${trialEnd}`);
+
+    return {
+      success: true,
+      trial_id: trialRef.id,
+      trial_start: trialStart.toISOString(),
+      trial_end: trialEnd.toISOString(),
+      days_remaining: 7,
+      message: "Trial de 7 dias ativado com sucesso!",
+    };
+  } catch (error) {
+    logger.error("[TRIAL] Erro ao ativar trial:", error);
+    throw new Error("Erro interno ao ativar trial");
+  }
+});
+
+/**
+ * Função para verificar status do trial
+ */
+exports.checkTrialStatus = onCall({
+  region: "us-east1",
+}, async (request) => {
+  try {
+    const {fingerprint, hardware_id, ip_address} = request.data;
+    const uid = request.auth ? request.auth.uid : null;
+
+    if (!fingerprint || !hardware_id || !ip_address) {
+      throw new Error("Dados de identificação incompletos");
+    }
+
+    const db = getFirestore();
+    const currentYear = new Date().getFullYear();
+
+    // Criar identificador único
+    const machineFingerprint = `${ip_address}_${fingerprint}_${hardware_id}`;
+    const fingerprintHash = require("crypto")
+        .createHash("sha256")
+        .update(machineFingerprint)
+        .digest("hex");
+
+    // Buscar trial ativo para esta máquina
+    const trialQuery = db.collection("trials")
+        .where("machine_fingerprint", "==", fingerprintHash)
+        .where("year", "==", currentYear)
+        .limit(1);
+
+    const trialDocs = await trialQuery.get();
+
+    if (trialDocs.empty) {
+      return {
+        has_trial: false,
+        can_activate: true,
+        message: "Trial disponível para ativação",
+      };
+    }
+
+    const trialData = trialDocs.docs[0].data();
+    const now = new Date();
+    const trialEnd = trialData.trial_end.toDate();
+    const isActive = trialEnd > now;
+
+    if (isActive) {
+      const daysRemaining = Math.ceil((trialEnd - now) / (1000 * 60 * 60 * 24));
+      return {
+        has_trial: true,
+        is_active: true,
+        can_activate: false,
+        trial_end: trialEnd.toISOString(),
+        days_remaining: daysRemaining,
+        message: `Trial ativo - ${daysRemaining} dias restantes`,
+      };
+    } else {
+      return {
+        has_trial: true,
+        is_active: false,
+        can_activate: false,
+        trial_end: trialEnd.toISOString(),
+        message: "Trial expirado - aguarde próximo ano para novo trial",
+      };
+    }
+  } catch (error) {
+    logger.error("[TRIAL] Erro ao verificar status:", error);
+    throw new Error("Erro interno ao verificar trial");
+  }
+});

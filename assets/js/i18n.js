@@ -28,22 +28,31 @@ class AtalhoI18n {
         this.initializationPromise = (async () => {
             try {
                 this.currentLanguage = this.detectLanguage();
-                await this.loadTranslations(true); 
+                const translationsLoaded = await this.loadTranslations(true); 
+                
+                if (!translationsLoaded) {
+                    throw new Error('Falha ao carregar traduções');
+                }
                 
                 // DOM-dependent actions should wait for DOMContentLoaded
                 if (document.readyState === 'loading') {
                     await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve));
                 }
                 
-                this.applyAll();
+                // Verificar se as traduções estão disponíveis antes de aplicar
+                if (this.translations && Object.keys(this.translations).length > 0) {
+                    this.applyAll();
+                } else {
+                    console.warn('⚠️ Traduções não disponíveis para aplicação');
+                }
 
                 this.isInitialized = true;
                 console.log(`🌍 Atalho I18n inicializado em: ${this.currentLanguage}`);
             } catch (error) {
                 console.error('❌ Erro ao inicializar i18n:', error);
                 this.currentLanguage = this.fallbackLanguage;
-                await this.loadTranslations();
-                if (document.readyState !== 'loading') {
+                const fallbackLoaded = await this.loadTranslations();
+                if (fallbackLoaded && document.readyState !== 'loading') {
                     this.applyAll();
                 }
             } finally {
@@ -143,7 +152,7 @@ class AtalhoI18n {
         if (!forceReload && this.translationCache.has(cacheKey)) {
             this.translations = this.translationCache.get(cacheKey);
             console.log(`📦 Traduções carregadas do cache para: ${this.currentLanguage}`);
-            return;
+            return true;
         }
 
         try {
@@ -155,16 +164,25 @@ class AtalhoI18n {
             this.translationCache.set(cacheKey, this.translations);
             
             console.log(`🔄 Traduções recarregadas para: ${this.currentLanguage}`);
+            
+            // Verificar se as traduções foram carregadas corretamente
+            if (!this.translations || Object.keys(this.translations).length === 0) {
+                throw new Error('Traduções vazias carregadas');
+            }
+            
             window.dispatchEvent(new CustomEvent('translationsLoaded', {
                 detail: { language: this.currentLanguage, translations: this.translations }
             }));
+            
+            return true;
         } catch (error) {
             console.error(`❌ Erro ao carregar traduções para ${this.currentLanguage}:`, error);
             if (this.currentLanguage !== this.fallbackLanguage) {
                 console.log(`🔄 Tentando fallback para ${this.fallbackLanguage}`);
                 this.currentLanguage = this.fallbackLanguage;
-                await this.loadTranslations(forceReload);
+                return await this.loadTranslations(forceReload);
             }
+            return false;
         }
     }
 
@@ -196,29 +214,56 @@ class AtalhoI18n {
     }
 
     applyTranslations() {
+        if (!this.translations || Object.keys(this.translations).length === 0) {
+            console.warn('⚠️ Tentando aplicar traduções mas elas não estão carregadas ainda');
+            return;
+        }
+
+        let translatedCount = 0;
+        let errorCount = 0;
+
         document.querySelectorAll('[data-i18n]').forEach(element => {
             const key = element.getAttribute('data-i18n');
             const translated = this.t(key);
-            if (element.tagName === 'INPUT' && element.type === 'submit') {
-                element.value = translated;
-            } else if (element.hasAttribute('placeholder')) {
-                element.placeholder = translated;
-            } else {
-                // Verificar se contém HTML (como <br/>)
-                if (translated.includes('<br/>') || translated.includes('<br>')) {
-                    element.innerHTML = translated;
+            
+            if (translated !== key) {
+                translatedCount++;
+                if (element.tagName === 'INPUT' && element.type === 'submit') {
+                    element.value = translated;
+                } else if (element.hasAttribute('placeholder')) {
+                    element.placeholder = translated;
                 } else {
-                    element.textContent = translated;
+                    // Verificar se contém HTML (como <br/>)
+                    if (translated.includes('<br/>') || translated.includes('<br>')) {
+                        element.innerHTML = translated;
+                    } else {
+                        element.textContent = translated;
+                    }
                 }
+            } else {
+                errorCount++;
             }
         });
 
         document.querySelectorAll('[data-i18n-html]').forEach(element => {
             const key = element.getAttribute('data-i18n-html');
-            element.innerHTML = this.t(key);
+            const translated = this.t(key);
+            if (translated !== key) {
+                translatedCount++;
+                element.innerHTML = translated;
+            } else {
+                errorCount++;
+            }
         });
 
         document.documentElement.lang = this.currentLanguage;
+        
+        if (errorCount > 0) {
+            console.warn(`⚠️ ${errorCount} chaves de tradução não encontradas durante aplicação`);
+        }
+        if (translatedCount > 0) {
+            console.log(`✅ ${translatedCount} elementos traduzidos com sucesso`);
+        }
     }
 
     updateMetaTags() {
@@ -262,8 +307,17 @@ class AtalhoI18n {
         this.currentLanguage = newLang;
         localStorage.setItem('atalho_language', newLang);
 
-        await this.loadTranslations(true);
-        this.applyAll();
+        const translationsLoaded = await this.loadTranslations(true);
+        if (translationsLoaded && this.translations && Object.keys(this.translations).length > 0) {
+            this.applyAll();
+            // Aguardar um momento para garantir que elementos dinâmicos sejam traduzidos
+            setTimeout(() => {
+                this.forceApplyTranslations();
+            }, 50);
+        } else {
+            console.error('❌ Falha ao carregar traduções para o idioma:', newLang);
+            return;
+        }
 
         const url = new URL(window.location);
         url.searchParams.set('lang', newLang);
@@ -272,6 +326,14 @@ class AtalhoI18n {
         if (document.querySelector('#language-selector')) this.updateLanguageSelector();
         window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: newLang } }));
         console.log(`✅ Idioma alterado para: ${newLang}`);
+    }
+
+    getCurrentLanguage() {
+        return this.currentLanguage;
+    }
+
+    getSupportedLanguages() {
+        return [...this.supportedLanguages];
     }
 
     setupLanguageSelector() {
@@ -356,6 +418,16 @@ class AtalhoI18n {
             opt.classList.toggle('selected', opt.dataset.lang === this.currentLanguage);
         });
     }
+
+    // Função pública para forçar reaplicação das traduções
+    forceApplyTranslations() {
+        if (this.isInitialized && this.translations) {
+            console.log('🔄 Forçando reaplicação das traduções...');
+            this.applyTranslations();
+        } else {
+            console.warn('⚠️ Sistema i18n não inicializado ou traduções não carregadas');
+        }
+    }
 }
 
 // 🚀 INICIALIZAÇÃO GLOBAL
@@ -366,3 +438,14 @@ window.t = (key, variables) => window.atalhoI18n.t(key, variables);
 window.changeLanguage = (lang) => window.atalhoI18n.changeLanguage(lang);
 window.getCurrentLanguage = () => window.atalhoI18n.getCurrentLanguage();
 window.getSupportedLanguages = () => window.atalhoI18n.getSupportedLanguages();
+window.forceApplyTranslations = () => window.atalhoI18n.forceApplyTranslations();
+
+// Adicionar listener para replicar traduções em elementos carregados dinamicamente
+window.addEventListener('DOMContentLoaded', () => {
+    // Aguardar um pequeno delay para garantir que tudo esteja carregado
+    setTimeout(() => {
+        if (window.atalhoI18n?.isInitialized) {
+            window.atalhoI18n.forceApplyTranslations();
+        }
+    }, 100);
+});

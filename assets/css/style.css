@@ -133,7 +133,8 @@ body {
     margin-right: auto;
     display: flex;
     align-items: center;
-    padding-right: 1rem;
+    padding-right: 3rem;
+    min-width: 200px;
 }
 
 .logo a {
@@ -161,7 +162,7 @@ body {
 
 .nav-links {
     display: flex;
-    gap: 2.5rem;
+    gap: 1.8rem;
     list-style: none;
     align-items: center;
     margin-left: auto;
@@ -250,12 +251,40 @@ body {
     font-weight: 500;
     transition: all 0.2s ease;
     border: 2px solid var(--text-dark);
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-primary:hover {
     background: var(--text-dark);
     color: white;
     transform: translateY(-1px);
+}
+
+.btn-trial {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white !important;
+    padding: 0.4rem 0.8rem;
+    border-radius: 25px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.btn-trial:hover {
+    background: linear-gradient(135deg, #218838 0%, #1ea087 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    color: white !important;
 }
 
 /* ---------------- */
@@ -331,6 +360,9 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 100%;
     text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-hero:hover {
@@ -348,6 +380,10 @@ body {
     background: transparent;
     color: var(--text-dark);
     border: 2px solid var(--text-dark);
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 1rem 2rem;
     border-radius: 8px;
     text-decoration: none;
@@ -591,6 +627,7 @@ body {
 .btn-download {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
     background: var(--text-dark);
     color: white;
@@ -599,6 +636,7 @@ body {
     text-decoration: none;
     font-weight: 500;
     transition: all 0.2s ease;
+    text-align: center;
 }
 
 .btn-download:hover {
@@ -1773,6 +1811,10 @@ header {
     cursor: pointer;
     font-size: 0.9rem;
     transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 .btn-back:hover {
@@ -1841,7 +1883,9 @@ header {
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
+    text-align: center;
 }
 
 .btn-download-file:hover {

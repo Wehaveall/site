@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="appDownload.title">Baixar Atalho - Download do Aplicativo</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" href="assets/img/Atalho.png" type="image/png">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    
+    <style>
+        .download-hero {
+            background: linear-gradient(120deg,
+                #e6dac8 0%,
+                #e6dac8 20%,
+                #f0e9df 40%,
+                white 60%);
+            color: var(--text-dark);
+            text-align: center;
+            padding: 4rem 2rem;
+            margin-top: 70px;
+        }
+
+        .download-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .download-hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .download-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .status-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--primary);
+        }
+
+        .status-card.trial {
+            border-left-color: #28a745;
+        }
+
+        .status-card.licensed {
+            border-left-color: #007bff;
+        }
+
+        .status-card.expired {
+            border-left-color: #dc3545;
+        }
+
+        .status-card.available {
+            border-left-color: #ffc107;
+        }
+
+        .status-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .status-icon {
+            font-size: 2rem;
+        }
+
+        .status-info h3 {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .status-info p {
+            margin: 0.5rem 0 0 0;
+            color: #666;
+        }
+
+        .download-center {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .download-card-single {
+            background: white;
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            transition: transform 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .download-card-single:hover {
+            transform: translateY(-8px);
+            border-color: #0078d4;
+            box-shadow: 0 12px 35px rgba(0, 120, 212, 0.15);
+        }
+
+        .download-card-single .platform-icon {
+            margin-bottom: 1.5rem;
+        }
+
+        .download-card-single h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .download-card-single p {
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .system-requirements {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            color: #6c757d;
+        }
+
+        .system-requirements i {
+            color: #0078d4;
+            margin-right: 0.5rem;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-download:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-download-main {
+            background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%);
+            color: white;
+            padding: 1rem 3rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 120, 212, 0.3);
+        }
+
+        .btn-download-main:hover {
+            background: linear-gradient(135deg, #106ebe 0%, #005a9e 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 120, 212, 0.4);
+        }
+
+        .btn-download-main:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-trial {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .btn-trial:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-buy {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-buy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .feature-item i {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .auth-required {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .auth-required i {
+            font-size: 4rem;
+            color: #ffc107;
+            margin-bottom: 1rem;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-auth {
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-width: 140px;
+            font-size: 1rem;
+        }
+
+        .btn-login {
+            background: var(--text-dark);
+            color: white;
+            border: 2px solid var(--text-dark);
+        }
+
+        .btn-login:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-register {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .btn-register:hover {
+            background: linear-gradient(135deg, #218838 0%, #1ea087 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .download-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .download-hero p {
+                font-size: 1rem;
+            }
+            
+            .download-card-single {
+                margin: 0 1rem;
+                padding: 2rem 1.5rem;
+            }
+            
+            .btn-download-main {
+                padding: 0.8rem 2rem;
+                font-size: 1.1rem;
+            }
+
+            .auth-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-auth {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+    </style>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
+</head>
+
+<body class="light-theme">
+    <!-- Header -->
+    <header class="header">
+        <div class="navbar">
+            <div class="logo">
+                <a href="index.html" class="logo-link">
+                    <img src="assets/img/Atalho.png" alt="Logo Atalho" class="logo-img" />
+                    <span class="logo-text">Atalho</span>
+                </a>
+            </div>
+            <nav class="nav-menu">
+                <ul class="nav-links" id="nav-links">
+                    <li><a href="index.html#features" class="nav-link" data-i18n="header.features">Recursos</a></li>
+                    <li><a href="tutoriais.html" class="nav-link" data-i18n="header.tutorials">Tutoriais</a></li>
+                    <li><a href="download.html" class="nav-link nav-link-multiline" data-i18n="header.downloads">Downloads de Bibliotecas</a></li>
+                    <!-- Links dinâmicos baseados na autenticação -->
+                    <li id="nav-register" class="nav-hidden"><a href="register.html" class="nav-link" data-i18n="header.register">Cadastro</a></li>
+                    <li id="nav-login" class="nav-hidden"><a href="login.html" class="nav-link" data-i18n="header.login">Entrar</a></li>
+                    <li id="nav-user-info" class="nav-hidden">
+                        <a href="dashboard.html" class="nav-link nav-user-link" id="nav-user-name">
+                            <div class="nav-user-name">
+                                <div class="loading-spinner"></div>
+                            </div>
+                        </a>
+                    </li>
+                    <li id="nav-logout" class="nav-hidden"><a href="#" class="nav-link" onclick="logout()" data-i18n="header.logout">Sair</a></li>
+                    <li><a href="comprar.html" class="nav-link btn-primary" data-i18n="header.buy">Comprar</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="download-hero">
+        <div class="hero-content">
+            <h1><i class="fas fa-download"></i> Download do Atalho</h1>
+            <p data-i18n="appDownload.subtitle">Baixe o aplicativo e comece a economizar tempo na sua digitação</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="download-container">
+        <!-- Loading -->
+        <div id="loading-section" class="loading">
+            <div class="loading-spinner"></div>
+        </div>
+
+        <!-- Auth Required -->
+        <div id="auth-required" class="auth-required" style="display: none;">
+            <i class="fas fa-user-lock"></i>
+            <h2 data-i18n="appDownload.authRequired">Login Necessário</h2>
+            <p data-i18n="appDownload.authMessage">Faça login ou crie uma conta para baixar o Atalho</p>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn-auth btn-login" data-i18n="header.login">Entrar</a>
+                <a href="register.html" class="btn-auth btn-register" data-i18n="header.register">Cadastrar</a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="main-content" style="display: none;">
+            <!-- Status Card -->
+            <div id="status-card" class="status-card">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+
+            <!-- Download Card -->
+            <div class="download-center">
+                <div class="download-card-single">
+                    <div class="platform-icon">
+                        <i class="fab fa-windows" style="color: #0078d4; font-size: 4rem;"></i>
+                    </div>
+                    <h3>Download para Windows</h3>
+                    <p>Windows 10/11 (64-bit) - Versão completa</p>
+                    <button id="download-windows" class="btn-download-main" onclick="downloadApp()">
+                        <i class="fas fa-download"></i> Baixar Atalho
+                    </button>
+                    <div class="system-requirements">
+                        <small>
+                            <i class="fas fa-info-circle"></i> 
+                            Requisitos: Windows 10 (versão 1903 ou superior) ou Windows 11
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="features-grid">
+                <div class="feature-item">
+                    <i class="fas fa-bolt"></i>
+                    <div>
+                        <strong>Expansão Automática</strong>
+                        <p>Transforme atalhos em textos completos</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-sync"></i>
+                    <div>
+                        <strong>Sincronização</strong>
+                        <p>Seus atalhos em todos os dispositivos</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <div>
+                        <strong>Segurança</strong>
+                        <p>Dados criptografados e protegidos</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-rocket"></i>
+                    <div>
+                        <strong>Produtividade</strong>
+                        <p>Economize até 40% do tempo digitando</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="assets/js/firebase.js"></script>
+    <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/user-display.js"></script>
+    
+    <script>
+        let currentUser = null;
+        let userStatus = null;
+        let deviceFingerprint = null;
+        let hardwareId = null;
+        let userIP = null;
+
+        // URLs de download do Windows (você deve substituir por suas URLs reais)
+        const DOWNLOAD_URLS = {
+            windows: {
+                trial: 'https://releases.atalho.me/trial/atalho-trial-windows.exe',
+                licensed: 'https://releases.atalho.me/full/atalho-windows.exe'
+            }
+        };
+
+        // Gerar fingerprint do dispositivo
+        function generateDeviceFingerprint() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.textBaseline = 'top';
+            ctx.font = '14px Arial';
+            ctx.fillText('Device fingerprint', 2, 2);
+            
+            const fingerprint = btoa(JSON.stringify({
+                userAgent: navigator.userAgent,
+                language: navigator.language,
+                platform: navigator.platform,
+                screen: `${screen.width}x${screen.height}`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                canvas: canvas.toDataURL(),
+                webgl: getWebGLFingerprint()
+            }));
+            
+            return fingerprint;
+        }
+
+        function getWebGLFingerprint() {
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (!gl) return 'no-webgl';
+                
+                const renderer = gl.getParameter(gl.RENDERER);
+                const vendor = gl.getParameter(gl.VENDOR);
+                return `${vendor}-${renderer}`;
+            } catch (e) {
+                return 'webgl-error';
+            }
+        }
+
+        // Gerar hardware ID baseado em características do navegador
+        function generateHardwareId() {
+            const characteristics = [
+                navigator.hardwareConcurrency || 'unknown',
+                navigator.deviceMemory || 'unknown',
+                screen.colorDepth,
+                navigator.maxTouchPoints,
+                window.devicePixelRatio
+            ];
+            
+            return btoa(characteristics.join('-'));
+        }
+
+        // Obter IP do usuário
+        async function getUserIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                console.warn('Não foi possível obter IP:', error);
+                return 'unknown';
+            }
+        }
+
+        // Verificar status do usuário
+        async function checkUserStatus() {
+            if (!currentUser) return null;
+
+            try {
+                const db = window.db;
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                
+                if (!userDoc.exists) {
+                    return { type: 'no_account' };
+                }
+
+                const userData = userDoc.data();
+                
+                // Verificar licença ativa
+                if (userData.license_active && userData.payment_status === 'paid') {
+                    const licenseEnd = userData.sub_end?.toDate();
+                    if (licenseEnd && licenseEnd > new Date()) {
+                        return {
+                            type: 'licensed',
+                            license_type: userData.license_type,
+                            license_end: licenseEnd,
+                            data: userData
+                        };
+                    }
+                }
+
+                // Verificar trial ativo
+                if (userData.trial_status === 'active') {
+                    const trialEnd = userData.trial_end?.toDate();
+                    if (trialEnd && trialEnd > new Date()) {
+                        const daysRemaining = Math.ceil((trialEnd - new Date()) / (1000 * 60 * 60 * 24));
+                        return {
+                            type: 'trial_active',
+                            trial_end: trialEnd,
+                            days_remaining: daysRemaining,
+                            data: userData
+                        };
+                    }
+                }
+
+                // Verificar se pode ativar trial
+                const functions = window.functions;
+                if (functions) {
+                    const checkTrialStatus = functions.httpsCallable('checkTrialStatus');
+                    const trialResult = await checkTrialStatus({
+                        fingerprint: deviceFingerprint,
+                        hardware_id: hardwareId,
+                        ip_address: userIP
+                    });
+
+                    if (trialResult.data.can_activate) {
+                        return { type: 'trial_available', data: userData };
+                    } else {
+                        return { 
+                            type: 'trial_unavailable', 
+                            message: trialResult.data.message,
+                            data: userData 
+                        };
+                    }
+                }
+
+                return { type: 'trial_available', data: userData };
+
+            } catch (error) {
+                console.error('Erro ao verificar status:', error);
+                return { type: 'error', error };
+            }
+        }
+
+        // Renderizar status card
+        function renderStatusCard(status) {
+            const statusCard = document.getElementById('status-card');
+            
+            switch (status.type) {
+                case 'licensed':
+                    statusCard.className = 'status-card licensed';
+                    statusCard.innerHTML = `
+                        <div class="status-header">
+                            <i class="fas fa-crown status-icon" style="color: #007bff;"></i>
+                            <div class="status-info">
+                                <h3>✅ Licença Ativa</h3>
+                                <p>Licença ${status.license_type} válida até ${status.license_end.toLocaleDateString('pt-BR')}</p>
+                            </div>
+                        </div>
+                        <p>Você pode baixar a versão completa do Atalho e usar todas as funcionalidades.</p>
+                    `;
+                    enableDownloads('licensed');
+                    break;
+
+                case 'trial_active':
+                    statusCard.className = 'status-card trial';
+                    statusCard.innerHTML = `
+                        <div class="status-header">
+                            <i class="fas fa-clock status-icon" style="color: #28a745;"></i>
+                            <div class="status-info">
+                                <h3>🚀 Trial Ativo</h3>
+                                <p>${status.days_remaining} dias restantes (até ${status.trial_end.toLocaleDateString('pt-BR')})</p>
+                            </div>
+                        </div>
+                        <p>Você está usando o trial gratuito. Baixe o aplicativo e aproveite!</p>
+                        <a href="comprar.html" class="btn-buy">💳 Adquirir Licença Completa</a>
+                    `;
+                    enableDownloads('trial');
+                    break;
+
+                case 'trial_available':
+                    statusCard.className = 'status-card available';
+                    statusCard.innerHTML = `
+                        <div class="status-header">
+                            <i class="fas fa-gift status-icon" style="color: #ffc107;"></i>
+                            <div class="status-info">
+                                <h3>🎉 Trial Disponível</h3>
+                                <p>Experimente o Atalho gratuitamente por 7 dias</p>
+                            </div>
+                        </div>
+                        <p>Ative seu trial gratuito de 7 dias e teste todas as funcionalidades do Atalho.</p>
+                        <button class="btn-trial" onclick="activateTrial()">
+                            <i class="fas fa-play"></i> Ativar Trial Gratuito
+                        </button>
+                        <a href="comprar.html" class="btn-buy">💳 Comprar Diretamente</a>
+                    `;
+                    disableDownloads();
+                    break;
+
+                case 'trial_unavailable':
+                    statusCard.className = 'status-card expired';
+                    statusCard.innerHTML = `
+                        <div class="status-header">
+                            <i class="fas fa-times-circle status-icon" style="color: #dc3545;"></i>
+                            <div class="status-info">
+                                <h3>❌ Trial Indisponível</h3>
+                                <p>${status.message}</p>
+                            </div>
+                        </div>
+                        <p>Você já utilizou seu trial gratuito. Adquira uma licença para continuar usando.</p>
+                        <a href="comprar.html" class="btn-buy">💳 Adquirir Licença</a>
+                    `;
+                    disableDownloads();
+                    break;
+
+                default:
+                    statusCard.className = 'status-card';
+                    statusCard.innerHTML = `
+                        <div class="status-header">
+                            <i class="fas fa-info-circle status-icon" style="color: #17a2b8;"></i>
+                            <div class="status-info">
+                                <h3>ℹ️ Status da Conta</h3>
+                                <p>Verificando informações...</p>
+                            </div>
+                        </div>
+                    `;
+                    disableDownloads();
+            }
+        }
+
+        // Habilitar download
+        function enableDownloads(type) {
+            const btn = document.getElementById('download-windows');
+            btn.disabled = false;
+            btn.dataset.downloadType = type;
+            
+            if (type === 'trial') {
+                btn.innerHTML = '<i class="fas fa-download"></i> Baixar Versão Trial';
+            } else {
+                btn.innerHTML = '<i class="fas fa-download"></i> Baixar Atalho';
+            }
+        }
+
+        // Desabilitar download
+        function disableDownloads() {
+            const btn = document.getElementById('download-windows');
+            btn.disabled = true;
+            btn.innerHTML = '🔒 Ative o trial ou compre uma licença';
+        }
+
+        // Ativar trial
+        async function activateTrial() {
+            try {
+                const btn = event.target;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Ativando...';
+
+                const functions = window.functions;
+                const activateTrialFunc = functions.httpsCallable('activateTrial');
+                
+                const result = await activateTrialFunc({
+                    fingerprint: deviceFingerprint,
+                    hardware_id: hardwareId,
+                    ip_address: userIP
+                });
+
+                if (result.data.success) {
+                    alert('✅ ' + result.data.message);
+                    window.location.reload();
+                } else {
+                    alert('❌ ' + result.data.message);
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-play"></i> Ativar Trial Gratuito';
+                }
+
+            } catch (error) {
+                console.error('Erro ao ativar trial:', error);
+                alert('❌ Erro ao ativar trial. Tente novamente.');
+                
+                const btn = event.target;
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-play"></i> Ativar Trial Gratuito';
+            }
+        }
+
+        // Download do aplicativo
+        function downloadApp() {
+            const btn = document.getElementById('download-windows');
+            const downloadType = btn.dataset.downloadType;
+            
+            if (!downloadType) {
+                alert('❌ Você precisa ativar o trial ou ter uma licença para baixar o aplicativo.');
+                return;
+            }
+
+            const downloadUrl = DOWNLOAD_URLS.windows[downloadType];
+            
+            if (downloadUrl) {
+                // Criar link temporário para download
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = '';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Feedback visual
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Download Iniciado';
+                btn.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = '';
+                }, 3000);
+            } else {
+                alert('❌ Link de download não disponível.');
+            }
+        }
+
+        // Logout
+        async function logout() {
+            try {
+                if (window.auth) {
+                    await window.auth.signOut();
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                console.error('Erro no logout:', error);
+            }
+        }
+
+        // Inicialização
+        async function init() {
+            try {
+                // Aguardar inicialização do Firebase
+                await getFirebaseServices();
+                
+                // Gerar identificadores do dispositivo
+                deviceFingerprint = generateDeviceFingerprint();
+                hardwareId = generateHardwareId();
+                userIP = await getUserIP();
+
+                console.log('🔍 Identificadores gerados:', {
+                    fingerprint: deviceFingerprint.substring(0, 20) + '...',
+                    hardwareId: hardwareId.substring(0, 20) + '...',
+                    ip: userIP
+                });
+
+                // Observar mudanças de autenticação
+                window.auth.onAuthStateChanged(async (user) => {
+                    const loadingSection = document.getElementById('loading-section');
+                    const authRequired = document.getElementById('auth-required');
+                    const mainContent = document.getElementById('main-content');
+
+                    if (user) {
+                        console.log('👤 Usuário logado:', user.email);
+                        currentUser = user;
+                        
+                        // Atualizar menu
+                        updateNavMenu(user);
+                        
+                        // Verificar status e renderizar
+                        const status = await checkUserStatus();
+                        console.log('📊 Status do usuário:', status);
+                        
+                        userStatus = status;
+                        renderStatusCard(status);
+                        
+                        // Mostrar conteúdo principal
+                        loadingSection.style.display = 'none';
+                        authRequired.style.display = 'none';
+                        mainContent.style.display = 'block';
+                        
+                    } else {
+                        console.log('👤 Usuário não logado');
+                        
+                        // Mostrar tela de autenticação necessária
+                        loadingSection.style.display = 'none';
+                        authRequired.style.display = 'block';
+                        mainContent.style.display = 'none';
+                        
+                        // Atualizar menu
+                        updateNavMenu(null);
+                    }
+                });
+
+            } catch (error) {
+                console.error('❌ Erro na inicialização:', error);
+                
+                document.getElementById('loading-section').innerHTML = `
+                    <div class="alert alert-danger">
+                        <h3>❌ Erro de Conexão</h3>
+                        <p>Não foi possível conectar aos serviços. Verifique sua conexão e recarregue a página.</p>
+                        <button onclick="window.location.reload()" class="btn-download">
+                            🔄 Recarregar Página
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Função para atualizar menu (reutilizada de outras páginas)
+        function updateNavMenu(user) {
+            const navRegister = document.getElementById('nav-register');
+            const navLogin = document.getElementById('nav-login');
+            const navUserInfo = document.getElementById('nav-user-info');
+            const navLogout = document.getElementById('nav-logout');
+
+            if (user) {
+                if (navRegister) navRegister.style.display = 'none';
+                if (navLogin) navLogin.style.display = 'none';
+                if (navUserInfo) navUserInfo.style.display = 'flex';
+                if (navLogout) navLogout.style.display = 'flex';
+                
+                if (window.updateUserDisplayName) {
+                    updateUserDisplayName(user);
+                }
+            } else {
+                if (navRegister) navRegister.style.display = 'flex';
+                if (navLogin) navLogin.style.display = 'flex';
+                if (navUserInfo) navUserInfo.style.display = 'none';
+                if (navLogout) navLogout.style.display = 'none';
+            }
+        }
+
+        // Inicializar quando DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

@@ -12,12 +12,15 @@
     "login": "Entrar",
     "dashboard": "Dashboard",
     "logout": "Sair",
+    "trial": "Experimente Grátis",
     "buy": "Comprar"
   },
   "hero": {
     "title": "Atalho",
     "subtitle": "O caminho mais curto entre o que você pensa e o que digita.",
-    "description": "Transforme sua forma de escrever com expansão automática de texto. Padronize documentos e aumente sua produtividade em segundos!"
+    "description": "Transforme sua forma de escrever com expansão automática de texto. Padronize documentos e aumente sua produtividade em segundos!",
+    "trial": "Experimente Grátis por 7 Dias",
+    "buy": "Comprar Agora"
   },
   "features": {
     "title": "Recursos Principais",
@@ -442,6 +445,44 @@
       "title": "Atenção: Sua sessão expirou, mas detectamos que você concluiu uma compra recentemente.",
       "message": "Para sua segurança, faça login novamente para acessar todos os recursos.",
       "loginButton": "Fazer Login"
+    }
+  },
+  "appDownload": {
+    "title": "Baixar Atalho - Download do Aplicativo",
+    "subtitle": "Baixe o aplicativo e comece a economizar tempo na sua digitação",
+    "authRequired": "Login Necessário",
+    "authMessage": "Faça login ou crie uma conta para baixar o Atalho",
+    "licenseStatus": {
+      "active": "Licença Ativa",
+      "trial": "Trial Ativo",
+      "available": "Trial Disponível",
+      "expired": "Trial Expirado",
+      "unavailable": "Trial Indisponível"
+    },
+    "buttons": {
+      "downloadWindows": "Baixar Atalho",
+      "activateTrial": "Ativar Trial Gratuito",
+      "buyLicense": "Adquirir Licença",
+      "downloadTrial": "Baixar Versão Trial",
+      "downloadFull": "Baixar Atalho"
+    },
+    "platforms": {
+      "windows": "Windows 10/11 (64-bit) - Versão completa",
+      "requirements": "Requisitos: Windows 10 (versão 1903 ou superior) ou Windows 11"
+    },
+    "features": {
+      "expansion": "Transforme atalhos em textos completos",
+      "sync": "Seus atalhos em todos os dispositivos", 
+      "security": "Dados criptografados e protegidos",
+      "productivity": "Economize até 40% do tempo digitando"
+    },
+    "messages": {
+      "trialActive": "dias restantes",
+      "trialExpired": "Trial expirado - aguarde próximo ano",
+      "alreadyLicensed": "Você já possui uma licença ativa",
+      "downloadStarted": "Download Iniciado",
+      "downloadError": "Link de download não disponível",
+      "windowsOnly": "Exclusivo para Windows 10/11"
     }
   }
 } 

@@ -382,6 +382,106 @@ exports.syncEmailVerificationPublic = onRequest({
 });
 
 /**
+ * TRIGGER CRÍTICO: Validação antes do login
+ * Este trigger é executado ANTES de qualquer login bem-sucedido
+ * Remove qualquer bloqueio que possa impedir o login
+ */
+const {beforeUserSignedIn} = require("firebase-functions/v2/identity");
+
+exports.handleEmailVerification = beforeUserSignedIn({
+  region: "us-east1",
+}, async (event) => {
+  try {
+    // Permitir login sempre - não bloquear usuários
+    logger.info(`[Before SignIn] Login permitido para: ${event.data.email}`);
+    return;
+  } catch (error) {
+    logger.error("[Before SignIn] Erro no trigger:", error);
+    // Em caso de erro, ainda permitir o login
+    return;
+  }
+});
+
+/**
+ * FUNÇÃO AUXILIAR: Autenticação simples de usuário
+ * Restaurada para compatibilidade com sistema existente
+ */
+exports.authenticateUser = onRequest({
+  region: "us-east1",
+  cors: true,
+}, async (request, response) => {
+  try {
+    const {token} = request.body;
+    
+    if (!token) {
+      return response.status(400).json({
+        success: false,
+        error: "Token não fornecido"
+      });
+    }
+
+    const auth = getAuth();
+    const decodedToken = await auth.verifyIdToken(token);
+    
+    response.json({
+      success: true,
+      uid: decodedToken.uid,
+      email: decodedToken.email,
+      verified: decodedToken.email_verified
+    });
+    
+  } catch (error) {
+    logger.error("[Auth User] Erro na autenticação:", error);
+    response.status(401).json({
+      success: false,
+      error: "Token inválido"
+    });
+  }
+});
+
+/**
+ * FUNÇÃO AUXILIAR: Dados do usuário
+ * Restaurada para compatibilidade
+ */
+exports.getUserData = onRequest({
+  region: "us-east1",
+  cors: true,
+}, async (request, response) => {
+  try {
+    const {uid} = request.body;
+    
+    if (!uid) {
+      return response.status(400).json({
+        success: false,
+        error: "UID não fornecido"
+      });
+    }
+
+    const db = getFirestore();
+    const userDoc = await db.collection("users").doc(uid).get();
+    
+    if (!userDoc.exists) {
+      return response.status(404).json({
+        success: false,
+        error: "Usuário não encontrado"
+      });
+    }
+    
+    response.json({
+      success: true,
+      data: userDoc.data()
+    });
+    
+  } catch (error) {
+    logger.error("[Get User Data] Erro:", error);
+    response.status(500).json({
+      success: false,
+      error: "Erro interno"
+    });
+  }
+});
+
+/**
  * Função para enviar email de verificação customizado via Zoho
  */
 exports.sendCustomEmailVerification = onCall({

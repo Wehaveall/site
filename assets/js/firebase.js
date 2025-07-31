@@ -34,7 +34,7 @@ async function initializeFirebase() {
         let functions = null;
         try {
             if (firebase.functions) {
-                functions = firebase.functions();
+                functions = firebase.app().functions('us-east1');
                 console.log("✅ Firebase Functions carregado");
             } else {
                 console.log("⚠️ Firebase Functions não disponível nesta página");

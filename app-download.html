@@ -798,8 +798,11 @@
                 });
 
                 if (result.data.success) {
-                    alert('✅ ' + result.data.message);
-                    window.location.reload();
+                    // O trial foi ativado com sucesso.
+                    // Agora, vamos verificar o novo status e atualizar a interface.
+                    const newStatus = await checkUserStatus();
+                    userStatus = newStatus;
+                    renderStatusCard(newStatus);
                 } else {
                     alert('❌ ' + result.data.message);
                     btn.disabled = false;
